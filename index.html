@@ -1194,6 +1194,353 @@
             transition: opacity 0.3s ease;
         }
 
+        /* ============ CASE PAGE — LIGHT VARIANT (white bg, blue accent) ============ */
+        .case-page.cp-light {
+            background: #ffffff;
+            color: #0a0a0a;
+        }
+        body.case-open .case-page.cp-light.open ::selection {
+            background: rgba(41,98,255,0.18);
+        }
+        .cp-light .cp-meta { color: rgba(0,0,0,0.55); }
+        .cp-light .cp-meta-no { color: #2962ff; }
+        .cp-light .cp-meta-divider { background: rgba(0,0,0,0.16); }
+        .cp-light .cp-title { color: #0a0a0a; }
+        .cp-light .cp-title em { color: #2962ff; }
+        .cp-light .cp-sub { color: rgba(0,0,0,0.62); }
+        .cp-light .cp-tldr {
+            background: rgba(41,98,255,0.04);
+            border-left: 2px solid #2962ff;
+        }
+        .cp-light .cp-tldr-label { color: #2962ff; }
+        .cp-light .cp-tldr li { color: rgba(0,0,0,0.86); }
+        .cp-light .cp-tldr li::before { background: #2962ff; }
+        .cp-light .cp-tldr li em { color: #2962ff; font-style: normal; font-weight: 500; }
+        .cp-light .cp-timeline {
+            background: rgba(255,255,255,0.92);
+            border-top: 1px solid rgba(0,0,0,0.06);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .cp-light .cp-tl-item {
+            border: 1px solid rgba(0,0,0,0.12);
+            color: rgba(0,0,0,0.55);
+        }
+        .cp-light .cp-tl-item:hover {
+            color: #0a0a0a;
+            border-color: rgba(0,0,0,0.32);
+        }
+        .cp-light .cp-tl-item.active {
+            color: #2962ff;
+            border-color: #2962ff;
+            background: rgba(41,98,255,0.06);
+        }
+        .cp-light .cp-section { border-bottom: 1px solid rgba(0,0,0,0.06); }
+        .cp-light .cp-sec-num { color: #2962ff; }
+        .cp-light .cp-sec-title { color: #0a0a0a; }
+        .cp-light .cp-sec-body { color: rgba(0,0,0,0.74); }
+        .cp-light .cp-sec-body strong { color: #0a0a0a; }
+        .cp-light .cp-sec-body em { color: #2962ff; font-style: normal; font-weight: 500; }
+        .cp-light .cp-sec-body li::before { background: #2962ff; }
+        .cp-light .cp-sec-body li strong { color: #2962ff; }
+        .cp-light .cp-figure {
+            background:
+                linear-gradient(135deg, rgba(41,98,255,0.05) 0%, rgba(41,98,255,0.01) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(41,98,255,0.04) 12px, rgba(41,98,255,0.04) 13px);
+            border: 1px dashed rgba(41,98,255,0.32);
+            color: rgba(41,98,255,0.7);
+        }
+        .cp-light .cp-figure-cap { color: rgba(0,0,0,0.45); }
+        .cp-light .cp-gallery {
+            background: #fbfbfc;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+        .cp-light .cp-gallery-label { color: #2962ff; }
+        .cp-light .cp-gallery-title { color: #0a0a0a; }
+        .cp-light .cp-gallery-hint { color: rgba(0,0,0,0.5); }
+        .cp-light .cp-gallery-tile {
+            background:
+                linear-gradient(135deg, rgba(41,98,255,0.04) 0%, rgba(41,98,255,0.01) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(41,98,255,0.04) 12px, rgba(41,98,255,0.04) 13px);
+            border: 1px dashed rgba(41,98,255,0.22);
+            color: rgba(41,98,255,0.55);
+        }
+        .cp-light .cp-close {
+            background: rgba(255,255,255,0.78);
+            border: 1px solid rgba(0,0,0,0.16);
+            color: #0a0a0a;
+        }
+        .cp-light .cp-close:hover {
+            border-color: #2962ff;
+            background: rgba(41,98,255,0.08);
+            color: #2962ff;
+        }
+
+        /* Layout primitives for varied composition */
+        .cp-kicker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: #2962ff;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+        .cp-light .cp-kicker { color: #2962ff; }
+
+        .cp-pullquote {
+            margin: 56px 0 64px;
+            padding: 32px 0;
+            border-top: 1px solid rgba(0,0,0,0.08);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(22px, 2.4vw, 30px);
+            font-weight: 500;
+            line-height: 1.32;
+            letter-spacing: -0.015em;
+            color: #0a0a0a;
+            max-width: 30ch;
+            position: relative;
+        }
+        .cp-pullquote::before {
+            content: '\201C';
+            color: #2962ff;
+            font-size: 1.1em;
+            line-height: 1;
+            margin-right: 8px;
+            font-weight: 400;
+        }
+        .cp-pullquote::after {
+            content: '\201D';
+            color: #2962ff;
+            line-height: 1;
+            font-weight: 400;
+        }
+
+        .cp-stat-row {
+            margin: 36px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .cp-stat {
+            padding: 26px 28px;
+            border: 1px solid rgba(41,98,255,0.22);
+            background: rgba(41,98,255,0.03);
+        }
+        .cp-stat-num {
+            font-size: clamp(34px, 4vw, 48px);
+            font-weight: 600;
+            color: #2962ff;
+            letter-spacing: -0.025em;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .cp-stat-num small { font-size: 0.55em; opacity: 0.7; font-weight: 500; }
+        .cp-stat-num .cp-stat-arrow { color: rgba(0,0,0,0.4); margin: 0 12px; font-weight: 400; }
+        .cp-stat-label {
+            font-size: 13px;
+            letter-spacing: 0.04em;
+            color: rgba(0,0,0,0.55);
+            line-height: 1.45;
+        }
+
+        .cp-product-grid {
+            margin: 32px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+        }
+        .cp-product {
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 22px 22px 24px;
+            transition: border-color 0.2s, transform 0.15s, box-shadow 0.18s;
+            background: #fff;
+        }
+        .cp-product:hover {
+            border-color: #2962ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(41,98,255,0.06);
+        }
+        .cp-product-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: #0a0a0a;
+            letter-spacing: -0.005em;
+        }
+        .cp-product-name::before { content: '◆'; color: #2962ff; margin-right: 8px; font-size: 9px; vertical-align: 2px; }
+        .cp-product-blurb {
+            font-size: 13px;
+            color: rgba(0,0,0,0.6);
+            line-height: 1.5;
+        }
+
+        /* Two-column aside row */
+        .cp-aside-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 36px;
+            margin: 32px 0;
+            align-items: start;
+        }
+        @media (max-width: 800px) {
+            .cp-aside-row { grid-template-columns: 1fr; gap: 18px; }
+        }
+        .cp-aside-card {
+            padding: 22px 24px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: #fafafa;
+        }
+        .cp-aside-card-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: #2962ff;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .cp-aside-card p { font-size: 14px; line-height: 1.55; color: rgba(0,0,0,0.72); }
+
+        /* Full-bleed slideshow */
+        .cp-slideshow {
+            margin: 56px calc(50% - 50vw) 64px;
+            width: 100vw;
+            background: #f4f6fa;
+            padding: 36px 5vw 30px;
+            position: relative;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .cp-slideshow-head {
+            max-width: 980px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .cp-slideshow-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: #2962ff;
+            font-weight: 500;
+        }
+        .cp-slideshow-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: rgba(0,0,0,0.5);
+            letter-spacing: 0.18em;
+        }
+        .cp-slideshow-frame {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background:
+                linear-gradient(135deg, rgba(41,98,255,0.06) 0%, rgba(41,98,255,0.01) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 14px, rgba(41,98,255,0.045) 14px, rgba(41,98,255,0.045) 15px);
+            border: 1px solid rgba(0,0,0,0.08);
+            overflow: hidden;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .cp-slides {
+            position: absolute;
+            inset: 0;
+        }
+        .cp-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.42s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(41,98,255,0.55);
+            font-size: 12px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 0 5vw;
+        }
+        .cp-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .cp-slide.gone-left { transform: translateX(-40px); }
+        .cp-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .cp-slide-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px; height: 46px;
+            border: 1px solid rgba(0,0,0,0.16);
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #0a0a0a;
+            font-size: 22px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.18s, color 0.18s, background 0.18s;
+            z-index: 2;
+        }
+        .cp-slide-arrow:hover {
+            border-color: #2962ff;
+            color: #2962ff;
+        }
+        .cp-slide-arrow:disabled { opacity: 0.32; cursor: default; }
+        .cp-slide-prev { left: 16px; }
+        .cp-slide-next { right: 16px; }
+
+        .cp-slideshow-foot {
+            max-width: 980px;
+            margin: 18px auto 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+        }
+        .cp-slideshow-cap {
+            font-size: 13px;
+            color: rgba(0,0,0,0.55);
+            line-height: 1.5;
+            max-width: 60ch;
+        }
+        .cp-slideshow-dots {
+            list-style: none;
+            display: flex;
+            gap: 6px;
+            padding: 0;
+            margin: 0;
+        }
+        .cp-slideshow-dots li {
+            width: 7px; height: 7px;
+            border: 1px solid rgba(0,0,0,0.32);
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .cp-slideshow-dots li.active {
+            background: #2962ff;
+            border-color: #2962ff;
+        }
+
+        @media (max-width: 700px) {
+            .cp-slideshow { padding: 28px 22px 24px; }
+            .cp-slide-arrow { width: 38px; height: 38px; font-size: 18px; }
+            .cp-slide-prev { left: 8px; }
+            .cp-slide-next { right: 8px; }
+            .cp-stat-row { gap: 10px; }
+        }
+
         /* ============ CUSTOM CURSOR ============ */
         @media (hover: hover) and (pointer: fine) {
             body { cursor: none; }
@@ -4428,6 +4775,10 @@
                             <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>bi-directional sync</li>
                         </ul>
                         <div class="case-meta">Health Samurai · Senior PD · 2023</div>
+                        <button class="case-open-btn" data-open-case="cs02" type="button" aria-label="Open full case">
+                            <span class="open-arrow" aria-hidden="true">↓</span>
+                            <span>Open case</span>
+                        </button>
                     </div>
                 </article>
 
@@ -4630,6 +4981,280 @@
                 <p class="cp-gallery-hint">Drop screenshots of the system, redesign frames and tools here — they'll tile across the full width.</p>
             </div>
             <div class="cp-gallery-grid" id="cp-gallery-grid-cs01">
+                <div class="cp-gallery-tile">image · slot 01</div>
+                <div class="cp-gallery-tile">image · slot 02</div>
+                <div class="cp-gallery-tile">image · slot 03</div>
+                <div class="cp-gallery-tile">image · slot 04</div>
+                <div class="cp-gallery-tile">image · slot 05</div>
+                <div class="cp-gallery-tile">image · slot 06</div>
+                <div class="cp-gallery-tile">image · slot 07</div>
+                <div class="cp-gallery-tile">image · slot 08</div>
+                <div class="cp-gallery-tile">image · slot 09</div>
+            </div>
+        </section>
+    </section>
+
+    <!-- Case page: full-page detail for cs02 (Health Samurai overall) — light theme -->
+    <section class="case-page cp-light" id="case-page-cs02" data-case-page="cs02" aria-label="Health Samurai case study">
+        <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
+            <span class="cp-close-arrow" aria-hidden="true">↑</span>
+            <span>back to showcase</span>
+        </button>
+        <div class="cp-inner">
+            <header class="cp-hero">
+                <div class="cp-meta">
+                    <span class="cp-meta-no">CS/02</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>Health Samurai</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>Senior Product Designer</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>2024 — present</span>
+                </div>
+                <h1 class="cp-title">A design system for <em>five healthcare products</em>, half of it generated by AI.</h1>
+                <p class="cp-sub">Health Samurai is a healthcare-IT company building FHIR-native infrastructure: Aidbox, Aidbox Forms, Audit Box, MPI Box, MDM Box. Flat org — no QAs, no PMs, only senior T-shape engineers and Friday seminars where designers and engineers cross-train.</p>
+            </header>
+
+            <div class="cp-tldr">
+                <div class="cp-tldr-label">// TL;DR</div>
+                <ul>
+                    <li>Stood up a shadCN-based design system end-to-end — Figma + code + Storybook in lockstep, plus a Claude skill that pulled components straight out of Figma <em>before that tooling existed elsewhere</em>.</li>
+                    <li>Built a markdown-first landing platform with an in-browser MCP chat: product owners draft in MD, point-and-edit in the live DOM, and ship in days. Time-to-landing dropped from <em>1–1.5 months to 3–4 days</em>.</li>
+                    <li>Generators on top of the same primitives — presentation generator for any teammate, kudos image generator trained on the brand mascot, all wired through the design system.</li>
+                    <li>Vibecoded the FireCamp conference app in a week — voting, schedule, subscriptions. It became the proof point that convinced C-level the code-first approach was real.</li>
+                </ul>
+            </div>
+
+            <nav class="cp-timeline" aria-label="Case timeline">
+                <ol class="cp-timeline-list">
+                    <li><button class="cp-tl-item active" data-target="cp-sec-02-01" type="button">
+                        <span class="cp-tl-num">01 / Start</span>
+                        <span class="cp-tl-name">Joining HS</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-02-02" type="button">
+                        <span class="cp-tl-num">02 / System</span>
+                        <span class="cp-tl-name">Design system</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-02-03" type="button">
+                        <span class="cp-tl-num">03 / Products</span>
+                        <span class="cp-tl-name">Product redesign</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-02-04" type="button">
+                        <span class="cp-tl-num">04 / Platform</span>
+                        <span class="cp-tl-name">Landing platform</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-02-05" type="button">
+                        <span class="cp-tl-num">05 / Generators</span>
+                        <span class="cp-tl-name">Decks &amp; tools</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-02-06" type="button">
+                        <span class="cp-tl-num">06 / Vibecoding</span>
+                        <span class="cp-tl-name">FireCamp &amp; proof</span>
+                    </button></li>
+                </ol>
+            </nav>
+
+            <article class="cp-section" id="cp-sec-02-01">
+                <div class="cp-kicker">01 — Start</div>
+                <h2 class="cp-sec-title">Joining as the second designer</h2>
+                <div class="cp-sec-body">
+                    <p>I joined Health Samurai as the second designer. The brief was wide: stand up the design function, ship a system, redesign the existing product line, and lay AI-first design infrastructure. The company was already pointed that way — I started experimenting with code-first from day one.</p>
+                </div>
+
+                <div class="cp-aside-row">
+                    <div class="cp-sec-body">
+                        <p>The starting state was honest: every product had been built by engineers without a designer. They worked, but carried real UX/UI debt. There was no design system. Landings were authored by C-level — content duplicated, scattered across pages, and unfocused. The blog and docs were just as scattered.</p>
+                        <p>A single landing took <strong>1–1.5 months</strong> end-to-end, mostly because the approval chain was long and the surface to edit was hand-rolled.</p>
+                    </div>
+                    <aside class="cp-aside-card">
+                        <div class="cp-aside-card-label">// the team</div>
+                        <p>Flat org by design: no QAs, no PMs, only senior T-shape engineers. Every Friday the company runs internal seminars — designers teach engineers visual fundamentals, engineers teach designers how to read code. Cross-training is the culture, not a perk.</p>
+                    </aside>
+                </div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-02-02">
+                <div class="cp-kicker">02 — System</div>
+                <h2 class="cp-sec-title">A design system on shadCN, mirrored in Figma and code</h2>
+                <div class="cp-sec-body">
+                    <p>Built the design system on <strong>shadCN</strong> — not raw Tailwind, but a styled, extended layer with custom components for tighter control. Each component lived twice: in Figma and in code. Every one of them shipped through Storybook for engineering review before landing in production.</p>
+                </div>
+
+                <p class="cp-pullquote">The Claude skill pulled components straight out of Figma — at a moment when this kind of tooling didn't exist yet.</p>
+
+                <div class="cp-sec-body">
+                    <p>I iteratively tightened the prompt so the agent parsed component anatomy correctly, and set up a sync script: a change on either side propagated to the other in seconds. <em>One source of truth, two surfaces.</em></p>
+                </div>
+
+                <div class="cp-figure">image · figma library + storybook side-by-side</div>
+                <div class="cp-figure-cap">Components mirrored across Figma and Storybook — single source of truth, two surfaces.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-02-03">
+                <div class="cp-kicker">03 — Products</div>
+                <h2 class="cp-sec-title">Redesigning what engineers had built</h2>
+                <div class="cp-sec-body">
+                    <p>Improved UX and UI across five products that had been assembled without a designer. I rebuilt mockups in Figma, prototyped, ran reviews with engineers and customers, and worked out what stuck. Phase two — migrating the products onto the new design system — is still in flight.</p>
+                </div>
+
+                <div class="cp-product-grid">
+                    <div class="cp-product">
+                        <div class="cp-product-name">Aidbox</div>
+                        <div class="cp-product-blurb">The core FHIR data platform — flagship product.</div>
+                    </div>
+                    <div class="cp-product">
+                        <div class="cp-product-name">Aidbox Forms</div>
+                        <div class="cp-product-blurb">Clinical form builder on top of Aidbox.</div>
+                    </div>
+                    <div class="cp-product">
+                        <div class="cp-product-name">MPI Box</div>
+                        <div class="cp-product-blurb">Master patient index — identity reconciliation.</div>
+                    </div>
+                    <div class="cp-product">
+                        <div class="cp-product-name">MDM Box</div>
+                        <div class="cp-product-blurb">Master data management for healthcare entities.</div>
+                    </div>
+                    <div class="cp-product">
+                        <div class="cp-product-name">Audit Box</div>
+                        <div class="cp-product-blurb">Audit trail tool — events, queries, compliance.</div>
+                    </div>
+                </div>
+
+                <div class="cp-figure">image · before / after for one of the products</div>
+                <div class="cp-figure-cap">Before / after of a product UI brought onto the new system.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-02-04">
+                <div class="cp-kicker">04 — Platform</div>
+                <h2 class="cp-sec-title">Landings: from 1.5 months to 3–4 days</h2>
+                <div class="cp-sec-body">
+                    <p>The old way was a chain: brief, design, review, dev, review, ship — each handoff burning days. I rebuilt the surface around <strong>markdown</strong> and a small set of agents.</p>
+                    <ul>
+                        <li><strong>Step 1.</strong> Product owner writes content in Markdown.</li>
+                        <li><strong>Step 2.</strong> System auto-assembles a draft landing from the MD.</li>
+                        <li><strong>Step 3.</strong> Owner uses an in-browser MCP chat to point at any DOM element and say what to change — live.</li>
+                        <li><strong>Step 4.</strong> Designer polishes; landing ships in 3–4 days.</li>
+                    </ul>
+                    <p>All legacy landings ran through this pipeline — single visual style, one place to edit.</p>
+                </div>
+
+                <div class="cp-stat-row">
+                    <div class="cp-stat">
+                        <div class="cp-stat-num">1.5<small>mo</small> <span class="cp-stat-arrow">→</span> 3–4<small>d</small></div>
+                        <div class="cp-stat-label">Time to ship a landing — from a 1–1.5-month chain to 3–4 days end-to-end.</div>
+                    </div>
+                    <div class="cp-stat">
+                        <div class="cp-stat-num">100<small>%</small></div>
+                        <div class="cp-stat-label">All legacy landings migrated onto a single visual system.</div>
+                    </div>
+                </div>
+
+                <!-- Slideshow: landing platform — flip through stages of the pipeline -->
+                <div class="cp-slideshow" data-slideshow="cs02-landing-platform">
+                    <div class="cp-slideshow-head">
+                        <span class="cp-slideshow-tag">// landing platform · click through</span>
+                        <span class="cp-slideshow-counter">01 / 06</span>
+                    </div>
+                    <div class="cp-slideshow-frame">
+                        <div class="cp-slides">
+                            <div class="cp-slide active">image · slide 01 · markdown source</div>
+                            <div class="cp-slide">image · slide 02 · auto-assembled draft</div>
+                            <div class="cp-slide">image · slide 03 · MCP chat picking a DOM element</div>
+                            <div class="cp-slide">image · slide 04 · live edit suggestion</div>
+                            <div class="cp-slide">image · slide 05 · designer polish in figma/code</div>
+                            <div class="cp-slide">image · slide 06 · shipped landing</div>
+                        </div>
+                        <button class="cp-slide-arrow cp-slide-prev" type="button" aria-label="Previous slide">‹</button>
+                        <button class="cp-slide-arrow cp-slide-next" type="button" aria-label="Next slide">›</button>
+                    </div>
+                    <div class="cp-slideshow-foot">
+                        <p class="cp-slideshow-cap">Drop screenshots of the markdown source, the auto-assembled draft, the MCP chat, and the shipped landing — they'll flip through with the arrows.</p>
+                        <ol class="cp-slideshow-dots" aria-hidden="true">
+                            <li class="active"></li><li></li><li></li><li></li><li></li><li></li>
+                        </ol>
+                    </div>
+                </div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-02-05">
+                <div class="cp-kicker">05 — Generators</div>
+                <h2 class="cp-sec-title">Decks, blocks, and a kudos image generator</h2>
+                <div class="cp-sec-body">
+                    <p><strong>A block library for non-tech.</strong> Built a library of blocks and "organisms" any non-technical employee can use. They open the system, snap a page together like Lego, fill the copy, and download an MD or hand it to an agent.</p>
+                    <p><strong>Presentation generator.</strong> On top of the same primitives I built a deck generator. Anyone — sales, support, tech — drops in an MD file and gets a fully styled presentation in the company's identity. It quietly killed the chronic shortage of decent decks across the org.</p>
+                    <p><strong>Kudos image generator.</strong> Health Samurai runs an internal "kudos" currency through a Telegram bot. Wrote a generator that takes the gratitude text and an LLM trained on the brand's mascot — and renders the mascot acting out the scene. Every kudos gets its own picture.</p>
+                </div>
+
+                <!-- Slideshow: presentation generator — flip through generated decks -->
+                <div class="cp-slideshow" data-slideshow="cs02-deck-generator">
+                    <div class="cp-slideshow-head">
+                        <span class="cp-slideshow-tag">// presentation generator · click through</span>
+                        <span class="cp-slideshow-counter">01 / 06</span>
+                    </div>
+                    <div class="cp-slideshow-frame">
+                        <div class="cp-slides">
+                            <div class="cp-slide active">image · slide 01 · markdown input</div>
+                            <div class="cp-slide">image · slide 02 · cover + agenda</div>
+                            <div class="cp-slide">image · slide 03 · content slide</div>
+                            <div class="cp-slide">image · slide 04 · diagram slide (mermaid-styled)</div>
+                            <div class="cp-slide">image · slide 05 · kudos generator UI</div>
+                            <div class="cp-slide">image · slide 06 · kudos sample render</div>
+                        </div>
+                        <button class="cp-slide-arrow cp-slide-prev" type="button" aria-label="Previous slide">‹</button>
+                        <button class="cp-slide-arrow cp-slide-next" type="button" aria-label="Next slide">›</button>
+                    </div>
+                    <div class="cp-slideshow-foot">
+                        <p class="cp-slideshow-cap">Slides for the deck generator and a couple of kudos samples — drop renders in and they'll flip with the arrows.</p>
+                        <ol class="cp-slideshow-dots" aria-hidden="true">
+                            <li class="active"></li><li></li><li></li><li></li><li></li><li></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="cp-sec-body">
+                    <p><strong>Blog &amp; docs.</strong> Reworked the blog and documentation: everything systematized, all served from MD, single style. Wired analytics directly into the page — a logged-in employee sees PostHog data in a right-side drawer on every page, no context switch.</p>
+                </div>
+                <div class="cp-figure">image · blog post with posthog drawer open</div>
+                <div class="cp-figure-cap">PostHog data sits inside the page — logged-in employees never leave the article.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-02-06">
+                <div class="cp-kicker">06 — Vibecoding</div>
+                <h2 class="cp-sec-title">FireCamp — the proof point</h2>
+                <div class="cp-sec-body">
+                    <p>FireCamp is Health Samurai's annual healthcare-IT gathering in Portugal. In 2023–2024 the whole event — round tables, topics, navigation — was running on paper.</p>
+                    <p>In a week I shipped a responsive web app: <em>voting on talks, section subscriptions, schedule</em>. It became the "star of the day" at the conference — and the first serious vibecoded production story that convinced C-level the code-first approach was real, not a side project.</p>
+                </div>
+
+                <p class="cp-pullquote">The first serious vibecoded production story that convinced C-level the approach was real.</p>
+
+                <div class="cp-aside-row">
+                    <div class="cp-aside-card">
+                        <div class="cp-aside-card-label">// BOF Application</div>
+                        <p>UI for an internal product, built in code. Validated component patterns we then folded back into the system.</p>
+                    </div>
+                    <div class="cp-aside-card">
+                        <div class="cp-aside-card-label">// JSON Parser</div>
+                        <p>A working concept built to validate a UI hypothesis for Aidbox — easier to ship the prototype than to argue from a mockup.</p>
+                    </div>
+                </div>
+
+                <div class="cp-sec-body">
+                    <p>From day one I built every non-trivial design — anything beyond a single screen or flow — in React first and demoed it as a working prototype. Not a mockup, not a Figma file: a thing that ran. That's the standard now.</p>
+                </div>
+
+                <div class="cp-figure">image · firecamp app · home + schedule</div>
+                <div class="cp-figure-cap">FireCamp app — voting, schedule, section subscriptions. Shipped in a week.</div>
+            </article>
+        </div>
+
+        <section class="cp-gallery" aria-label="Visual gallery">
+            <div class="cp-gallery-head">
+                <div class="cp-gallery-label">// gallery</div>
+                <h3 class="cp-gallery-title">Visual selection</h3>
+                <p class="cp-gallery-hint">Drop screenshots of the system, redesigns, generators and FireCamp here — they'll tile across the full width.</p>
+            </div>
+            <div class="cp-gallery-grid" id="cp-gallery-grid-cs02">
                 <div class="cp-gallery-tile">image · slot 01</div>
                 <div class="cp-gallery-tile">image · slot 02</div>
                 <div class="cp-gallery-tile">image · slot 03</div>
@@ -5873,7 +6498,10 @@
                 page.scrollTop = 0;
                 body.classList.add('case-open');
                 window.__sfx?.engage?.();
-                requestAnimationFrame(() => initTimeline(page));
+                requestAnimationFrame(() => {
+                    initTimeline(page);
+                    page.querySelectorAll('.cp-slideshow').forEach(initSlideshow);
+                });
             }
 
             function closeCase() {
@@ -5931,6 +6559,62 @@
                 }, { root: page, rootMargin: '-30% 0px -55% 0px', threshold: 0 });
 
                 sections.forEach(s => io.observe(s));
+            }
+
+            function initSlideshow(el) {
+                if (initialized.has(el)) return;
+                initialized.add(el);
+                const slides = Array.from(el.querySelectorAll('.cp-slide'));
+                const counter = el.querySelector('.cp-slideshow-counter');
+                const dots = Array.from(el.querySelectorAll('.cp-slideshow-dots li'));
+                const prev = el.querySelector('.cp-slide-prev');
+                const next = el.querySelector('.cp-slide-next');
+                if (!slides.length) return;
+                let idx = 0;
+                const total = slides.length;
+
+                function pad(n) { return String(n).padStart(2, '0'); }
+                function update() {
+                    slides.forEach((s, i) => {
+                        s.classList.toggle('active', i === idx);
+                        s.classList.toggle('gone-left', i < idx);
+                    });
+                    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                    if (counter) counter.textContent = `${pad(idx + 1)} / ${pad(total)}`;
+                    if (prev) prev.disabled = idx === 0;
+                    if (next) next.disabled = idx === total - 1;
+                }
+                function go(delta) {
+                    const newIdx = Math.max(0, Math.min(total - 1, idx + delta));
+                    if (newIdx === idx) return;
+                    idx = newIdx;
+                    update();
+                    window.__sfx?.tick?.();
+                }
+
+                prev?.addEventListener('click', () => go(-1));
+                next?.addEventListener('click', () => go(1));
+                dots.forEach((d, i) => d.addEventListener('click', () => {
+                    if (i === idx) return;
+                    idx = i; update();
+                    window.__sfx?.tick?.();
+                }));
+
+                // keyboard nav when slideshow has focus or hover
+                let focused = false;
+                el.addEventListener('mouseenter', () => focused = true);
+                el.addEventListener('mouseleave', () => focused = false);
+                el.tabIndex = 0;
+                el.addEventListener('focusin', () => focused = true);
+                el.addEventListener('focusout', () => focused = false);
+                document.addEventListener('keydown', (e) => {
+                    if (!focused) return;
+                    if (!body.classList.contains('case-open')) return;
+                    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); }
+                    if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+                });
+
+                update();
             }
         })();
     </script>
