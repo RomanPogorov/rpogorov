@@ -548,6 +548,81 @@
             overflow: hidden;
         }
 
+        /* Warning action buttons (Send / Hide) */
+        .warn-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            overflow: hidden;
+            animation: warn-actions-in 0.34s ease-out forwards;
+        }
+        @keyframes warn-actions-in {
+            from { opacity: 0; transform: translateY(-4px); max-height: 0; }
+            to   { opacity: 1; transform: translateY(0); max-height: 60px; }
+        }
+        .warn-btn {
+            appearance: none;
+            border: 1px solid rgba(255, 181, 71, 0.45);
+            background: rgba(255, 181, 71, 0.08);
+            color: #ffd47a;
+            font-family: inherit;
+            font-size: 9px;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            padding: 5px 9px;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+        }
+        .warn-btn:hover {
+            border-color: #ffb547;
+            background: rgba(255, 181, 71, 0.18);
+            color: #fff;
+        }
+        .warn-btn.ghost {
+            border-color: rgba(255, 181, 71, 0.25);
+            background: transparent;
+            color: rgba(255, 181, 71, 0.65);
+        }
+        .warn-btn.ghost:hover {
+            color: #ffd47a;
+            border-color: rgba(255, 181, 71, 0.5);
+        }
+
+        /* Resolved (delegated) state — green accent */
+        .agent-item.warn-resolved {
+            border-left-color: #4ade80;
+            background: linear-gradient(
+                90deg,
+                rgba(74, 222, 128, 0.10) 0%,
+                rgba(74, 222, 128, 0) 100%
+            );
+        }
+        .agent-item.warn-resolved .agent-dot {
+            background: #4ade80;
+            box-shadow: 0 0 7px rgba(74, 222, 128, 0.75);
+            animation: none;
+        }
+        .agent-item.warn-resolved .agent-name { color: #b6f5cb; }
+        .agent-item.warn-resolved .agent-name .agent-tag { color: #4ade80; opacity: 1; }
+        .agent-item.warn-resolved .agent-task { color: #d6fcdf; opacity: 0.95; }
+
+        /* Fade-out when hidden / resolved-and-finished */
+        .agent-item.warn-fade {
+            opacity: 0;
+            transform: translateX(10px);
+            max-height: 0;
+            margin: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            transition:
+                opacity 0.4s ease,
+                transform 0.4s ease,
+                max-height 0.45s ease,
+                margin 0.45s ease,
+                padding 0.45s ease;
+            overflow: hidden;
+        }
+
         /* Clickable agents */
         .agent-item { cursor: pointer; }
         .agent-item:hover {
@@ -3679,6 +3754,52 @@
                 idxMap['flow-watch'] = 0;
                 metaIdxMap['flow-watch'] = 0;
                 window.__sfx?.warn();
+
+                // After 4 more seconds — show action buttons (Send to Agent / Hide)
+                setTimeout(() => {
+                    if (!li.isConnected) return;
+                    const actions = document.createElement('div');
+                    actions.className = 'warn-actions';
+                    actions.innerHTML = `
+                        <button class="warn-btn" data-act="send" type="button">Send to its Agent</button>
+                        <button class="warn-btn ghost" data-act="hide" type="button">Hide</button>
+                    `;
+                    li.querySelector('.agent-body').appendChild(actions);
+
+                    const fadeAndRemove = () => {
+                        const idx = items.indexOf(li);
+                        if (idx > -1) items.splice(idx, 1);
+                        delete POOL['flow-watch'];
+                        delete META_POOL['flow-watch'];
+                        li.classList.add('warn-fade');
+                        setTimeout(() => li.remove(), 480);
+                    };
+
+                    actions.addEventListener('click', (e) => {
+                        const btn = e.target.closest('.warn-btn');
+                        if (!btn) return;
+                        e.stopPropagation();
+                        const act = btn.dataset.act;
+                        window.__sfx?.click();
+                        if (act === 'send') {
+                            // Pretend we delegate to the agent that owns this flow
+                            li.classList.remove('warning');
+                            li.classList.add('warn-resolved');
+                            const taskEl = li.querySelector('[data-task]');
+                            const metaEl = li.querySelector('[data-meta]');
+                            if (taskEl) taskEl.textContent = '→ delegated to FIGMA-SYNC';
+                            if (metaEl) metaEl.textContent = 'agent acknowledged · resolving';
+                            // Stop further random updates for this row
+                            delete POOL['flow-watch'];
+                            delete META_POOL['flow-watch'];
+                            actions.remove();
+                            // Auto-fade after 3s
+                            setTimeout(fadeAndRemove, 3000);
+                        } else if (act === 'hide') {
+                            fadeAndRemove();
+                        }
+                    });
+                }, 4000);
             }, 14000);
         })();
     </script>
