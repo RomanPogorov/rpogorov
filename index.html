@@ -1797,9 +1797,18 @@
             transition: opacity 0.7s ease;
         }
 
-        body.engaged .backdrop {
+        body.engaged .backdrop,
+        body.dw-open .backdrop {
             opacity: 1;
             pointer-events: auto;
+        }
+
+        /* Hide the center prompt while a detail window is open — its frame
+           was bleeding through behind the semi-transparent .dw */
+        body.dw-open .prompt {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
         }
 
         /* push everything behind the backdrop further into depth (no scale on video — only blur/dim) */
