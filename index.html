@@ -927,6 +927,12 @@
             );
             transform: translateX(-2px);
         }
+        /* No native blue focus ring — replace with subtle accent ring (keyboard nav only) */
+        .release-item { outline: none; }
+        .release-item:focus-visible {
+            border-color: var(--acc);
+            box-shadow: inset 0 0 0 1px rgba(var(--acc-rgb), 0.6);
+        }
         .release-meta-row {
             display: flex;
             justify-content: space-between;
