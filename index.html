@@ -547,6 +547,281 @@
             animation: agent-inject 0.5s ease-out forwards;
             overflow: hidden;
         }
+
+        /* Clickable agents */
+        .agent-item { cursor: pointer; }
+        .agent-item:hover {
+            border-left-color: var(--acc);
+            background: linear-gradient(
+                90deg,
+                rgba(var(--acc-rgb), 0.14) 0%,
+                rgba(var(--acc-rgb), 0.0) 100%
+            );
+        }
+
+        /* ============ RELEASES ============ */
+        .releases-block {
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .releases-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .release-item {
+            cursor: pointer;
+            padding: 8px 10px;
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            background: linear-gradient(
+                135deg,
+                rgba(var(--acc-rgb), 0.04) 0%,
+                rgba(var(--acc-rgb), 0.0) 100%
+            );
+            position: relative;
+            text-align: left;
+            text-transform: none;
+            letter-spacing: 0;
+            transition: border-color 0.2s, background 0.2s, transform 0.2s;
+        }
+        .release-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            border-top: 1px solid rgba(var(--acc-rgb), 0.6);
+            border-left: 1px solid rgba(var(--acc-rgb), 0.6);
+        }
+        .release-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 6px;
+            height: 6px;
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.6);
+            border-right: 1px solid rgba(var(--acc-rgb), 0.6);
+        }
+        .release-item:hover {
+            border-color: var(--acc);
+            background: linear-gradient(
+                135deg,
+                rgba(var(--acc-rgb), 0.12) 0%,
+                rgba(var(--acc-rgb), 0.02) 100%
+            );
+            transform: translateX(-2px);
+        }
+        .release-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            margin-bottom: 4px;
+        }
+        .release-version {
+            color: var(--acc);
+            letter-spacing: 0.1em;
+        }
+        .release-date {
+            color: var(--dim);
+            opacity: 0.7;
+        }
+        .release-name {
+            color: var(--ink);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            margin-bottom: 3px;
+        }
+        .release-summary {
+            color: var(--dim);
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.35;
+            opacity: 0.8;
+        }
+
+        /* ============ DETAIL HOLO-WINDOW ============ */
+        .dw {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: min(880px, 86vw);
+            height: min(620px, 80vh);
+            z-index: 11;
+            opacity: 0;
+            pointer-events: none;
+            transform-origin: 50% 50%;
+            transform:
+                translate(-50%, -50%)
+                perspective(1500px)
+                rotateY(-30deg)
+                translateZ(-220px)
+                scaleX(0.55) scaleY(0.78);
+            filter: blur(6px) brightness(1.6);
+            transition:
+                transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1),
+                opacity 0.5s ease,
+                filter 0.65s ease;
+        }
+        body.dw-open .dw {
+            opacity: 1;
+            pointer-events: auto;
+            transform:
+                translate(-50%, -50%)
+                perspective(1500px)
+                rotateY(var(--dw-ry, 0deg))
+                rotateX(var(--dw-rx, 0deg))
+                translateZ(0)
+                scaleX(1) scaleY(1);
+            filter: blur(0) brightness(1);
+        }
+        .dw-frame {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg,
+                rgba(var(--acc-rgb), 0.05) 0%,
+                rgba(2, 12, 22, 0.88) 30%,
+                rgba(2, 12, 22, 0.94) 100%);
+            backdrop-filter: blur(18px) saturate(1.4);
+            -webkit-backdrop-filter: blur(18px) saturate(1.4);
+            box-shadow:
+                0 0 60px rgba(var(--acc-rgb), 0.25),
+                0 0 200px rgba(var(--acc-rgb), 0.10),
+                inset 0 0 80px rgba(var(--acc-rgb), 0.06);
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        body.dw-open .dw-frame {
+            animation: projector-flicker 0.95s ease-out 0.05s 1 both;
+        }
+        .dw-beam {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                rgba(var(--acc-rgb), 0.35) 49%,
+                rgba(var(--acc-rgb), 0.55) 50%,
+                rgba(var(--acc-rgb), 0.35) 51%,
+                transparent 100%);
+            mix-blend-mode: screen;
+            z-index: 5;
+        }
+        body.dw-open .dw-beam {
+            animation: panel-beam-wipe 0.85s ease-out forwards;
+        }
+        .dw-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 22px 28px 18px;
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.15);
+            position: relative;
+        }
+        .dw-tag {
+            color: var(--dim);
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .dw-title {
+            color: var(--acc);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(var(--acc-rgb), 0.5);
+        }
+        .dw-close {
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--ink);
+            padding: 6px 10px;
+            font-family: inherit;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+        }
+        .dw-close:hover {
+            border-color: var(--acc);
+            color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
+        }
+        .dw-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px 28px 28px;
+            color: var(--ink);
+            font-size: 13px;
+            line-height: 1.55;
+        }
+        .dw-section { margin-bottom: 22px; }
+        .dw-section h3 {
+            color: var(--acc);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin: 0 0 10px;
+            font-weight: 600;
+        }
+        .dw-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .dw-stat {
+            border: 1px solid rgba(var(--acc-rgb), 0.15);
+            padding: 12px;
+            background: rgba(var(--acc-rgb), 0.03);
+        }
+        .dw-stat-k {
+            color: var(--dim);
+            font-size: 9px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .dw-stat-v {
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .dw-list { list-style: none; padding: 0; margin: 0; }
+        .dw-list li {
+            padding: 6px 0 6px 14px;
+            position: relative;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            color: var(--ink);
+            opacity: 0.85;
+            border-bottom: 1px dashed rgba(var(--acc-rgb), 0.08);
+        }
+        .dw-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--acc);
+        }
         .agent-dot {
             flex: 0 0 auto;
             width: 6px;
@@ -2170,6 +2445,36 @@
                             </div>
                         </li>
                     </ul>
+
+                    <div class="releases-block">
+                        <span class="label">// recent releases</span>
+                        <ul class="releases-list" id="releases-list">
+                            <li class="release-item" data-id="aida" tabindex="0">
+                                <div class="release-meta-row">
+                                    <span class="release-version">v3.4.0</span>
+                                    <span class="release-date">2 days ago</span>
+                                </div>
+                                <div class="release-name">AIDA · Onboarding</div>
+                                <div class="release-summary">multi-step onboarding rebuilt with adaptive variants · +24% completion</div>
+                            </li>
+                            <li class="release-item" data-id="vault" tabindex="0">
+                                <div class="release-meta-row">
+                                    <span class="release-version">v1.8.2</span>
+                                    <span class="release-date">5 days ago</span>
+                                </div>
+                                <div class="release-name">Vault · Knowledge OS</div>
+                                <div class="release-summary">graph view · cross-source RAG · ingest pipeline rewrite</div>
+                            </li>
+                            <li class="release-item" data-id="prism" tabindex="0">
+                                <div class="release-meta-row">
+                                    <span class="release-version">v0.9.0</span>
+                                    <span class="release-date">2 weeks ago</span>
+                                </div>
+                                <div class="release-name">Prism · Design Tokens</div>
+                                <div class="release-summary">single source of truth · figma↔code sync · 312 tokens</div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="corner br">
             <span class="label">// audio vibe</span>
@@ -2220,6 +2525,21 @@
 
     <!-- Backdrop with scanlines blur — appears when panel opens -->
     <div class="backdrop"></div>
+
+    <!-- Detail holographic window: opens for agent / release clicks -->
+    <aside class="dw" id="dw" aria-hidden="true">
+        <div class="dw-beam"></div>
+        <div class="dw-frame">
+            <header class="dw-header">
+                <div>
+                    <span class="dw-tag" id="dw-tag">// agent</span>
+                    <h2 class="dw-title" id="dw-title">SIGNAL</h2>
+                </div>
+                <button class="dw-close" id="dw-close" type="button">ESC</button>
+            </header>
+            <div class="dw-content" id="dw-content"></div>
+        </div>
+    </aside>
 
     <!-- Holographic Panel -->
     <aside class="panel" id="panel" aria-hidden="true">
@@ -2783,6 +3103,348 @@
                 curRX += ((targetRX + idleX) - curRX) * lerp;
                 panel.style.setProperty('--p-ry', curRY.toFixed(2) + 'deg');
                 panel.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
+            }
+            requestAnimationFrame(tick);
+        })();
+    </script>
+
+    <!-- Detail holo-window: open with agent or release content -->
+    <script>
+        (() => {
+            const dw = document.getElementById('dw');
+            const dwTitle = document.getElementById('dw-title');
+            const dwTag = document.getElementById('dw-tag');
+            const dwContent = document.getElementById('dw-content');
+            const dwClose = document.getElementById('dw-close');
+            const body = document.body;
+
+            const DETAIL = {
+                figma: {
+                    tag: '// agent',
+                    title: 'FIGMA-SYNC',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Components</div><div class="dw-stat-v">291 / 312</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Tokens</div><div class="dw-stat-v">847</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Drift</div><div class="dw-stat-v">0.4%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Last Sync</div><div class="dw-stat-v">1s</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// pipeline</h3>
+                            <ul class="dw-list">
+                                <li>Figma → tokens.json (color · type · spacing · radius)</li>
+                                <li>tokens.json → CSS custom properties + TS const exports</li>
+                                <li>component variants → React primitives via codegen</li>
+                                <li>icons → optimized SVG sprite + react-icons exports</li>
+                                <li>continuous diff: webhook on Figma library publish</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// recent activity</h3>
+                            <ul class="dw-list">
+                                <li>16:42 — pushed 18 updated icons → react</li>
+                                <li>16:33 — reconciled palette · 4 conflicts auto-resolved</li>
+                                <li>16:21 — merged button variants → primitives</li>
+                                <li>15:58 — synced typography scale (12 sizes)</li>
+                            </ul>
+                        </div>`,
+                },
+                proto: {
+                    tag: '// agent',
+                    title: 'PROTO-LAB',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Variants</div><div class="dw-stat-v">4 live</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Sessions</div><div class="dw-stat-v">2,712</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Lift</div><div class="dw-stat-v">+18.2%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Confidence</div><div class="dw-stat-v">94.7%</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// variants</h3>
+                            <ul class="dw-list">
+                                <li>v1 · baseline · 22.1% conv · -0.0% (control)</li>
+                                <li>v2 · split CTA · 24.6% conv · +11.3%</li>
+                                <li>v3 · adaptive flow · 26.1% conv · +18.2% ◀ leading</li>
+                                <li>v4 · minimal copy · 21.8% conv · -1.4%</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// next</h3>
+                            <ul class="dw-list">
+                                <li>spin up v5 — refined CTA hierarchy from v3 winner</li>
+                                <li>kill v1 (control) once 99% confidence reached</li>
+                                <li>cohort split: free-trial vs paid for v3 vs v4</li>
+                            </ul>
+                        </div>`,
+                },
+                audit: {
+                    tag: '// agent',
+                    title: 'UI-AUDIT',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Screens</div><div class="dw-stat-v">91</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Issues</div><div class="dw-stat-v">2</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Auto-Fix</div><div class="dw-stat-v">11</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">A11y</div><div class="dw-stat-v">98.4%</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// open findings</h3>
+                            <ul class="dw-list">
+                                <li>spacing drift on /settings/billing — 3 hits → patch ready</li>
+                                <li>button radius mismatch in /onboarding step 4 → patch ready</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// resolved (today)</h3>
+                            <ul class="dw-list">
+                                <li>typography scale drift — 11 hits auto-fixed via codemod</li>
+                                <li>focus ring missing on 4 inputs — patched</li>
+                                <li>contrast bump on disabled states (AA → AAA)</li>
+                            </ul>
+                        </div>`,
+                },
+                port: {
+                    tag: '// agent',
+                    title: 'MOBILE-PORT',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Compose</div><div class="dw-stat-v">100%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">SwiftUI</div><div class="dw-stat-v">61%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Snapshots</div><div class="dw-stat-v">0 diffs</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Bundle</div><div class="dw-stat-v">-12kB</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// in flight</h3>
+                            <ul class="dw-list">
+                                <li>Form fields → SwiftUI — 4/14 done, ETA 2h</li>
+                                <li>Navigation primitives → both platforms — design locked</li>
+                                <li>icon set → asset catalogues — auto-generated</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// shipped</h3>
+                            <ul class="dw-list">
+                                <li>Buttons (primary · ghost · destructive) — 28/28</li>
+                                <li>Cards (compact · feature · highlight) — 9/9</li>
+                                <li>Modals · sheets · toasts</li>
+                            </ul>
+                        </div>`,
+                },
+                motion: {
+                    tag: '// agent',
+                    title: 'MOTION-RUN',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Variants</div><div class="dw-stat-v">240</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">FPS</div><div class="dw-stat-v">60</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Best Fit</div><div class="dw-stat-v">cubic-out</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Lottie</div><div class="dw-stat-v">1.4 kB</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// curves under test</h3>
+                            <ul class="dw-list">
+                                <li>spring(0.85, 0.3) — natural pop, 73% match to brief</li>
+                                <li>cubic-bezier(.2, .9, .3, 1) — best fit, 91% match</li>
+                                <li>ease-out + 90ms — fastest perceived response</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// outputs</h3>
+                            <ul class="dw-list">
+                                <li>tokens: motion.fast · motion.standard · motion.slow</li>
+                                <li>Lottie exports for Android &amp; iOS — 1.4 kB each</li>
+                                <li>CSS keyframes for web — 8 transitions, 240 LoC</li>
+                            </ul>
+                        </div>`,
+                },
+                'flow-watch': {
+                    tag: '// alert',
+                    title: 'FLOW-WATCH',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Severity</div><div class="dw-stat-v">P2</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Affected</div><div class="dw-stat-v">5 users</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">First Seen</div><div class="dw-stat-v">6m ago</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">ETA Fix</div><div class="dw-stat-v">~12m</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// timeline</h3>
+                            <ul class="dw-list">
+                                <li>00:00 · drop detected on checkout step 3</li>
+                                <li>02:14 · cohort isolated · 5 sessions affected</li>
+                                <li>04:30 · replicated on staging</li>
+                                <li>06:42 · root cause: cdn cache miss → stale config</li>
+                                <li>09:15 · patch v0.4.2 staged · monitoring</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// fix plan</h3>
+                            <ul class="dw-list">
+                                <li>force-purge CDN edge nodes for /api/checkout/* paths</li>
+                                <li>add stale-while-revalidate header (60s)</li>
+                                <li>regression test: synthetic checkout every 5 min</li>
+                            </ul>
+                        </div>`,
+                },
+                aida: {
+                    tag: '// release · v3.4.0',
+                    title: 'AIDA · ONBOARDING',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Completion</div><div class="dw-stat-v">+24%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Steps</div><div class="dw-stat-v">5 → 3</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Drop Off</div><div class="dw-stat-v">-31%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Ship Date</div><div class="dw-stat-v">2 days ago</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// what shipped</h3>
+                            <ul class="dw-list">
+                                <li>Adaptive flow: skip steps based on signed-up plan</li>
+                                <li>Inline validation replacing 4 modal error screens</li>
+                                <li>Progress shown as breadcrumbs instead of bar</li>
+                                <li>Auto-saved drafts so users can resume later</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// stack</h3>
+                            <ul class="dw-list">
+                                <li>React Hook Form · Zod schemas</li>
+                                <li>Framer Motion for step transitions</li>
+                                <li>Server-driven content via JSON spec</li>
+                            </ul>
+                        </div>`,
+                },
+                vault: {
+                    tag: '// release · v1.8.2',
+                    title: 'VAULT · KNOWLEDGE OS',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Sources</div><div class="dw-stat-v">14</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Documents</div><div class="dw-stat-v">38k</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Search p95</div><div class="dw-stat-v">120 ms</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Ship Date</div><div class="dw-stat-v">5 days ago</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// what shipped</h3>
+                            <ul class="dw-list">
+                                <li>Graph view of relationships across notes &amp; sources</li>
+                                <li>Cross-source RAG: query merges Notion + Drive + Slack + GitHub</li>
+                                <li>Ingest pipeline rewritten — 8× faster, 60% smaller index</li>
+                                <li>Hybrid search: BM25 + vector + recency boost</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// stack</h3>
+                            <ul class="dw-list">
+                                <li>Postgres + pgvector for hybrid search</li>
+                                <li>Rust ingest workers · multiplexed connectors</li>
+                                <li>Anthropic Claude for synthesis · streaming UX</li>
+                            </ul>
+                        </div>`,
+                },
+                prism: {
+                    tag: '// release · v0.9.0',
+                    title: 'PRISM · DESIGN TOKENS',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Tokens</div><div class="dw-stat-v">312</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Platforms</div><div class="dw-stat-v">5</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Drift</div><div class="dw-stat-v">0%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Ship Date</div><div class="dw-stat-v">2 weeks ago</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// what shipped</h3>
+                            <ul class="dw-list">
+                                <li>Single source of truth for color · type · spacing · radius · motion</li>
+                                <li>Bidirectional Figma↔code sync via plugin + GitHub action</li>
+                                <li>Theme overrides per brand: 4 active brands today</li>
+                                <li>Output to CSS · iOS · Android · React Native · Tailwind config</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// stack</h3>
+                            <ul class="dw-list">
+                                <li>Style Dictionary as transformer base</li>
+                                <li>Custom Figma plugin · variables API · token studio sync</li>
+                                <li>GitHub action: PR-on-change with visual diff preview</li>
+                            </ul>
+                        </div>`,
+                },
+            };
+
+            function open(id) {
+                const data = DETAIL[id];
+                if (!data) return;
+                dwTag.textContent = data.tag;
+                dwTitle.textContent = data.title;
+                dwContent.innerHTML = data.html;
+                dwContent.scrollTop = 0;
+                body.classList.add('dw-open');
+                dw.setAttribute('aria-hidden', 'false');
+            }
+
+            function close() {
+                body.classList.remove('dw-open');
+                dw.setAttribute('aria-hidden', 'true');
+            }
+
+            // Click handlers — agents (delegated, works for injected entries too)
+            document.getElementById('agents-list').addEventListener('click', (e) => {
+                const li = e.target.closest('.agent-item');
+                if (!li) return;
+                open(li.dataset.id);
+            });
+            document.getElementById('releases-list').addEventListener('click', (e) => {
+                const li = e.target.closest('.release-item');
+                if (!li) return;
+                open(li.dataset.id);
+            });
+
+            dwClose.addEventListener('click', close);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && body.classList.contains('dw-open')) close();
+            });
+            // Click outside frame closes
+            dw.addEventListener('click', (e) => {
+                if (e.target === dw) close();
+            });
+
+            // ---- mouse parallax for the detail window ----
+            const baseRY = 0, baseRX = 0;
+            const mouseAmpY = 5, mouseAmpX = 3.5;
+            const idleAmpY = 1.0, idleAmpX = 0.7;
+            const lerp = 0.07;
+            let targetRY = baseRY, targetRX = baseRX;
+            let curRY = baseRY, curRX = baseRX;
+
+            document.addEventListener('mousemove', (e) => {
+                if (!body.classList.contains('dw-open')) return;
+                const r = dw.getBoundingClientRect();
+                const inside =
+                    e.clientX >= r.left && e.clientX <= r.right &&
+                    e.clientY >= r.top  && e.clientY <= r.bottom;
+                if (!inside) {
+                    targetRY = baseRY;
+                    targetRX = baseRX;
+                    return;
+                }
+                const nx = (e.clientX - r.left) / r.width - 0.5;
+                const ny = (e.clientY - r.top)  / r.height - 0.5;
+                targetRY = baseRY + nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
+            });
+
+            const start = performance.now();
+            function tick(t) {
+                requestAnimationFrame(tick);
+                if (!body.classList.contains('dw-open')) return;
+                const dt = (t - start) / 1000;
+                const idleY = Math.sin(dt * 0.4) * idleAmpY;
+                const idleX = Math.cos(dt * 0.3) * idleAmpX;
+                curRY += ((targetRY + idleY) - curRY) * lerp;
+                curRX += ((targetRX + idleX) - curRX) * lerp;
+                dw.style.setProperty('--dw-ry', curRY.toFixed(2) + 'deg');
+                dw.style.setProperty('--dw-rx', curRX.toFixed(2) + 'deg');
             }
             requestAnimationFrame(tick);
         })();
