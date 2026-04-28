@@ -499,8 +499,48 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 6vh 5vw 4vh;
             box-sizing: border-box;
+        }
+        /* Scanlines + film grain over the whole basement — same vibe as hero */
+        .showcase-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 2px,
+                rgba(var(--acc-rgb), 0.05) 3px,
+                transparent 4px
+            );
+            mix-blend-mode: screen;
+            opacity: 0.7;
+        }
+        .showcase-inner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+        }
+
+        /* Floating intro tag, top-left of basement */
+        .showcase-intro {
+            position: absolute;
+            top: 22px;
+            left: 5vw;
+            right: 5vw;
+            z-index: 5;
+            max-width: 70vw;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .showcase-intro.faded {
+            opacity: 0.18;
+            transform: translateY(-4px);
         }
         .showcase-tag {
             color: var(--acc);
@@ -508,119 +548,182 @@
             font-size: 11px;
             letter-spacing: 0.22em;
             text-transform: uppercase;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             display: block;
-            opacity: 0.85;
+            opacity: 0.9;
         }
+        .showcase-tag::before { content: '▸ '; }
         .showcase-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(28px, 4.5vw, 56px);
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            color: var(--ink);
-            margin: 0 0 6px;
-            line-height: 1.05;
+            display: none; /* keep tag-only in floating overlay */
         }
-        .showcase-title-em {
-            color: var(--acc);
-            text-shadow: 0 0 24px rgba(var(--acc-rgb), 0.45);
-            font-weight: 500;
-        }
+        .showcase-title-em { color: var(--acc); }
         .showcase-sub {
             color: var(--dim);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            letter-spacing: 0.12em;
-            margin: 6px 0 18px;
-            opacity: 0.7;
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            margin: 4px 0 0;
+            opacity: 0.65;
+        }
+        .showcase-sub .blink::after {
+            content: '▮';
+            animation: blink 1s steps(1) infinite;
+            margin-left: 4px;
+            color: var(--acc);
         }
 
-        /* Cases carousel */
+        /* ============ CARROUSEL: ONE CASE PER VIEWPORT ============ */
         .cases {
-            flex: 1;
+            position: absolute;
+            inset: 0;
             display: flex;
-            gap: 24px;
             overflow-x: auto;
             overflow-y: hidden;
             scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
-            padding: 8px 4px 18px;
-            margin: 0 -4px;
             scrollbar-width: none;
+            z-index: 2;
         }
         .cases::-webkit-scrollbar { display: none; }
         .case {
-            flex: 0 0 min(900px, 90vw);
-            scroll-snap-align: center;
+            flex: 0 0 100vw;
+            height: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 24px;
-            padding: 22px;
-            border: 1px solid rgba(var(--acc-rgb), 0.22);
-            background: linear-gradient(180deg, rgba(var(--acc-rgb), 0.04), rgba(var(--acc-rgb), 0.0));
-            box-shadow:
-                0 0 40px rgba(var(--acc-rgb), 0.08),
-                inset 0 0 60px rgba(var(--acc-rgb), 0.04);
+            grid-template-columns: 1.15fr 1fr;
+            gap: 5vw;
+            padding: 12vh 7vw 12vh;
             position: relative;
+            box-sizing: border-box;
+            align-items: center;
         }
-        .case::before, .case::after {
+        /* Faint grid behind every case — same vibe as the hero's .grid */
+        .case::before {
             content: '';
             position: absolute;
-            width: 14px; height: 14px;
-            border: 1px solid var(--acc);
+            inset: 0;
+            background:
+                linear-gradient(rgba(var(--acc-rgb), 0.05) 1px, transparent 1px) 0 0 / 60px 60px,
+                linear-gradient(90deg, rgba(var(--acc-rgb), 0.05) 1px, transparent 1px) 0 0 / 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+            pointer-events: none;
+            z-index: 1;
         }
-        .case::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-        .case::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
         .case-media {
+            position: relative;
             background: #0b0d10;
-            border: 1px solid rgba(var(--acc-rgb), 0.10);
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 0;
+            box-shadow:
+                0 0 60px rgba(var(--acc-rgb), 0.18),
+                inset 0 0 60px rgba(var(--acc-rgb), 0.05);
+            transform: translateY(20px) scale(0.97);
+            opacity: 0;
+            filter: blur(4px) brightness(0.8);
+            transition:
+                opacity 0.7s ease,
+                transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1),
+                filter 0.7s ease;
         }
+        .case.active .case-media {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            filter: blur(0) brightness(1);
+        }
+        /* Corner ticks on media frame */
+        .case-media::before, .case-media::after {
+            content: '';
+            position: absolute;
+            width: 18px; height: 18px;
+            border: 1px solid var(--acc);
+            z-index: 2;
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.5);
+        }
+        .case-media::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .case-media::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
         .case-media img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
+            filter: contrast(1.05) saturate(0.95);
         }
+        /* Image overlay scanlines for that CRT feel */
+        .case-media::marker { content: none; }
+
         .case-body {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             min-width: 0;
             color: var(--ink);
+            position: relative;
+            z-index: 2;
+            align-self: center;
+        }
+        .case.active .case-body > * {
+            animation: case-line-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1) backwards;
+        }
+        .case.active .case-head     { animation-delay: 0.10s; }
+        .case.active .case-title    { animation-delay: 0.18s; }
+        .case.active .case-desc     { animation-delay: 0.30s; }
+        .case.active .case-tags     { animation-delay: 0.42s; }
+        .case.active .case-meta     { animation-delay: 0.54s; }
+        @keyframes case-line-in {
+            from { opacity: 0; transform: translateY(14px); filter: blur(3px); }
+            to   { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
         .case-head {
             display: flex;
             justify-content: space-between;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 0.2em;
+            font-size: 11px;
+            letter-spacing: 0.22em;
             color: var(--acc);
-            opacity: 0.85;
+            opacity: 0.95;
+            text-transform: uppercase;
         }
+        .case-head::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 6px);
+            height: 1px;
+            background: linear-gradient(to right, var(--acc) 0%, transparent 70%);
+            opacity: 0.6;
+        }
+        .case-no::before { content: '◆ '; opacity: 0.7; }
         .case-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(20px, 2.4vw, 30px);
-            font-weight: 600;
-            margin: 0;
-            line-height: 1.15;
+            font-size: clamp(28px, 3.2vw, 48px);
+            font-weight: 700;
+            margin: 14px 0 0;
+            line-height: 1.1;
             color: var(--ink);
+            letter-spacing: 0.01em;
         }
         .case-title em {
             color: var(--acc);
             font-style: normal;
-            text-shadow: 0 0 18px rgba(var(--acc-rgb), 0.4);
+            text-shadow:
+                0 0 18px rgba(var(--acc-rgb), 0.45),
+                0 0 36px rgba(var(--acc-rgb), 0.25);
         }
         .case-desc {
             color: var(--ink);
-            opacity: 0.78;
-            font-size: 14px;
-            line-height: 1.55;
+            opacity: 0.82;
+            font-size: clamp(14px, 1.05vw, 16px);
+            line-height: 1.6;
             margin: 0;
+            max-width: 56ch;
         }
         .case-tags {
             list-style: none;
@@ -633,31 +736,39 @@
         .case-tags li {
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
-            padding: 5px 9px;
-            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            padding: 6px 10px;
+            border: 1px solid rgba(var(--acc-rgb), 0.35);
             color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.04);
         }
         .case-meta {
-            margin-top: auto;
+            margin-top: 6px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.22em;
             color: var(--dim);
             text-transform: uppercase;
+            opacity: 0.85;
         }
-        @media (max-width: 800px) {
-            .case { grid-template-columns: 1fr; }
+        .case-meta::before { content: '◇ '; color: var(--acc); opacity: 0.8; }
+        @media (max-width: 900px) {
+            .case { grid-template-columns: 1fr; padding: 4vh 6vw; gap: 18px; }
+            .case-media { min-height: 38vh; }
         }
 
-        /* Carousel nav */
+        /* Carousel nav — floating at bottom of basement */
         .cases-nav {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 18px;
-            margin-top: 14px;
+            z-index: 5;
         }
         .cases-arrow {
             appearance: none;
@@ -3913,9 +4024,8 @@
     <section class="showcase" id="showcase" aria-label="Recent works">
         <div class="showcase-inner">
             <div class="showcase-intro">
-                <span class="showcase-tag">// archive · 2010 — 2026</span>
-                <h2 class="showcase-title">Fifteen years of work,<br><span class="showcase-title-em">these are the recent ones I keep coming back to.</span></h2>
-                <p class="showcase-sub">Scroll horizontally · or use ← →</p>
+                <span class="showcase-tag">// archive · 2010 — 2026 · selected works</span>
+                <p class="showcase-sub">scroll · drag · <span class="blink">← →</span></p>
             </div>
 
             <div class="cases" id="cases">
@@ -5157,6 +5267,14 @@
                 document.body.classList.add('showcase-open');
                 cases.scrollLeft = 0;
                 window.__sfx?.engage?.();
+                // Activate the first case immediately so its entry animations fire
+                items.forEach((el, i) => el.classList.toggle('active', i === 0));
+                if (items[0]) {
+                    items[0].classList.remove('active');
+                    void items[0].offsetWidth;
+                    items[0].classList.add('active');
+                }
+                if (intro) intro.classList.remove('faded');
             }
             function close() {
                 document.body.classList.remove('showcase-open');
@@ -5167,6 +5285,23 @@
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
             });
             back.addEventListener('click', close);
+
+            // IntersectionObserver: which case is in viewport → .active for entry anim
+            const intro = document.querySelector('.showcase-intro');
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                        // Replay animation by toggling active off then on
+                        const el = entry.target;
+                        el.classList.remove('active');
+                        // force reflow so animations re-run
+                        // eslint-disable-next-line no-unused-expressions
+                        el.offsetWidth;
+                        el.classList.add('active');
+                    }
+                });
+            }, { root: cases, threshold: [0.5, 0.75] });
+            items.forEach((el) => io.observe(el));
 
             function currentIndex() {
                 const sl = cases.scrollLeft;
@@ -5196,6 +5331,7 @@
                 Array.from(dotsList.children).forEach((d, i) => d.classList.toggle('active', i === idx));
                 prev.disabled = idx === 0;
                 next.disabled = idx === items.length - 1;
+                if (intro) intro.classList.toggle('faded', idx > 0);
             }, { passive: true });
 
             document.addEventListener('keydown', (e) => {
