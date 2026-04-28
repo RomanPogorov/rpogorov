@@ -584,14 +584,20 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
             text-align: center;
             pointer-events: auto;
             cursor: pointer;
             user-select: none;
-            transition: opacity 0.5s ease, transform 0.5s ease;
             width: min(640px, 88vw);
             padding: 48px 60px;
+            transform-origin: 50% 50%;
+            transform:
+                translate(-50%, -50%)
+                perspective(1400px)
+                rotateY(var(--prompt-ry, 0deg))
+                rotateX(var(--prompt-rx, 0deg));
+            will-change: transform;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
         /* the tron frame: 4 light bars that form a rectangle */
@@ -2633,6 +2639,54 @@
         });
     </script>
 
+
+    <!-- Center prompt: subtle 3D parallax (active only when NOT engaged) -->
+    <script>
+        (() => {
+            const prompt = document.getElementById('prompt');
+            const body = document.body;
+            if (!prompt) return;
+
+            const baseRY = 0, baseRX = 0;
+            const mouseAmpY = 3.5;
+            const mouseAmpX = 2.5;
+            const idleAmpY = 0.7;
+            const idleAmpX = 0.5;
+            const lerp = 0.06;
+
+            let targetRY = baseRY, targetRX = baseRX;
+            let curRY = baseRY, curRX = baseRX;
+
+            document.addEventListener('mousemove', (e) => {
+                if (body.classList.contains('engaged')) return;
+                const nx = e.clientX / window.innerWidth - 0.5;
+                const ny = e.clientY / window.innerHeight - 0.5;
+                targetRY = baseRY + nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
+            });
+
+            const start = performance.now();
+            function tick(t) {
+                requestAnimationFrame(tick);
+                if (body.classList.contains('engaged')) {
+                    // ease back to neutral so engaged transform isn't fighting us
+                    curRY *= 0.9;
+                    curRX *= 0.9;
+                    targetRY = 0;
+                    targetRX = 0;
+                } else {
+                    const dt = (t - start) / 1000;
+                    const idleY = Math.sin(dt * 0.42) * idleAmpY;
+                    const idleX = Math.cos(dt * 0.31) * idleAmpX;
+                    curRY += ((targetRY + idleY) - curRY) * lerp;
+                    curRX += ((targetRX + idleX) - curRX) * lerp;
+                }
+                prompt.style.setProperty('--prompt-ry', curRY.toFixed(2) + 'deg');
+                prompt.style.setProperty('--prompt-rx', curRX.toFixed(2) + 'deg');
+            }
+            requestAnimationFrame(tick);
+        })();
+    </script>
 
     <!-- Central panel: hologram parallax (active only when engaged) -->
     <script>
