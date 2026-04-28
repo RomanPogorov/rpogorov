@@ -1344,14 +1344,14 @@
                     to bottom,
                     transparent 0,
                     transparent 2px,
-                    rgba(var(--acc-rgb), 0.10) 2px,
-                    rgba(var(--acc-rgb), 0.10) 3px
+                    rgba(var(--acc-rgb), 0.08) 2px,
+                    rgba(var(--acc-rgb), 0.08) 3px
                 ),
                 linear-gradient(180deg,
-                    rgba(2, 8, 14, 0.82) 0%,
-                    rgba(2, 8, 14, 0.88) 100%);
-            backdrop-filter: blur(20px) saturate(1.2);
-            -webkit-backdrop-filter: blur(20px) saturate(1.2);
+                    rgba(2, 8, 14, 0.55) 0%,
+                    rgba(2, 8, 14, 0.62) 100%);
+            backdrop-filter: blur(14px) saturate(1.15);
+            -webkit-backdrop-filter: blur(14px) saturate(1.15);
             border: 1px solid rgba(var(--acc-rgb), 0.30);
             box-shadow:
                 0 0 80px rgba(var(--acc-rgb), 0.28),
@@ -1365,25 +1365,20 @@
                        rotateX(var(--chat-fs-rx, 0deg));
             transform-style: preserve-3d;
             will-change: transform;
-            animation: chat-fs-in 0.85s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: chat-fs-in 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
         @keyframes chat-fs-in {
-            /* Detach from the right HUD column → stretch out, glide to center,
-               then a small spring settle. */
+            /* Detach from the right HUD column → stretch out, soft settle */
             0% {
                 opacity: 0;
                 transform-origin: 100% 50%;
-                transform: translate(38vw, -2vh) perspective(1500px) rotateY(20deg) scale(0.42, 0.62);
+                transform: translate(34vw, -1vh) perspective(1500px) rotateY(16deg) scale(0.5, 0.66);
                 filter: blur(4px);
             }
-            35% { opacity: 1; }
-            65% {
+            45% { opacity: 1; filter: blur(0); }
+            80% {
                 opacity: 1;
-                transform: translate(-50%, 0) perspective(1500px) rotateY(-3deg) scale(1.04, 1.04);
-                filter: blur(0);
-            }
-            82% {
-                transform: translate(-50%, 0) perspective(1500px) rotateY(1deg) scale(0.985, 0.985);
+                transform: translate(-50%, 0) perspective(1500px) rotateY(-1deg) scale(1.012, 1.012);
             }
             100% {
                 opacity: 1;
