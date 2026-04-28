@@ -381,6 +381,25 @@
             text-align: right;
         }
 
+        /* ============ PRE-GATE: hide site until consent ============ */
+        body.pre-gate .stage,
+        body.pre-gate .grid,
+        body.pre-gate .horizon,
+        body.pre-gate .noise,
+        body.pre-gate .scanlines,
+        body.pre-gate .vignette,
+        body.pre-gate .hud,
+        body.pre-gate .backdrop,
+        body.pre-gate .panel,
+        body.pre-gate .dw {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        .stage, .grid, .horizon, .noise, .scanlines, .vignette,
+        .hud, .backdrop {
+            transition: opacity 0.9s ease;
+        }
+
         /* ============ AUDIO GATE ============ */
         .audio-gate {
             position: fixed;
@@ -533,16 +552,15 @@
             to { opacity: 1; transform: translateX(0); }
         }
         body.console-revealed .hud-right .agents-head             { animation: hud-item-in 0.5s ease-out 0.20s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:nth-child(1) { animation: hud-item-in 0.5s ease-out 0.40s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:nth-child(2) { animation: hud-item-in 0.5s ease-out 0.55s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:nth-child(3) { animation: hud-item-in 0.5s ease-out 0.70s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:nth-child(4) { animation: hud-item-in 0.5s ease-out 0.85s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:nth-child(5) { animation: hud-item-in 0.5s ease-out 1.00s forwards; }
-        body.console-revealed .hud-right .releases-block > .label { animation: hud-item-in 0.5s ease-out 1.30s forwards; }
-        body.console-revealed .hud-right .release-item:nth-child(1) { animation: hud-item-in 0.5s ease-out 1.50s forwards; }
-        body.console-revealed .hud-right .release-item:nth-child(2) { animation: hud-item-in 0.5s ease-out 1.65s forwards; }
-        body.console-revealed .hud-right .release-item:nth-child(3) { animation: hud-item-in 0.5s ease-out 1.80s forwards; }
-        body.console-revealed .hud-right .corner.br               { animation: hud-item-in 0.5s ease-out 2.00s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(1) { animation: hud-item-in 0.5s ease-out 0.40s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(2) { animation: hud-item-in 0.5s ease-out 0.55s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(3) { animation: hud-item-in 0.5s ease-out 0.70s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(4) { animation: hud-item-in 0.5s ease-out 0.85s forwards; }
+        body.console-revealed .hud-right .releases-block > .label { animation: hud-item-in 0.5s ease-out 1.10s forwards; }
+        body.console-revealed .hud-right .release-item:nth-child(1) { animation: hud-item-in 0.5s ease-out 1.30s forwards; }
+        body.console-revealed .hud-right .release-item:nth-child(2) { animation: hud-item-in 0.5s ease-out 1.45s forwards; }
+        body.console-revealed .hud-right .release-item:nth-child(3) { animation: hud-item-in 0.5s ease-out 1.60s forwards; }
+        body.console-revealed .hud-right .corner.br               { animation: hud-item-in 0.5s ease-out 1.80s forwards; }
 
         .hud-right-stack {
             position: absolute;
@@ -2789,7 +2807,7 @@
     </style>
 </head>
 
-<body data-theme="green">
+<body class="pre-gate" data-theme="green">
 
     <!-- Layered background -->
     <div class="stage">
@@ -2879,14 +2897,6 @@
                                 <div class="agent-name">MOBILE-PORT <span class="agent-tag">// ios/android</span></div>
                                 <div class="agent-task" data-task>porting buttons · 12/28 done</div>
                                 <div class="agent-meta" data-meta>compose ✓ · swiftui in progress</div>
-                            </div>
-                        </li>
-                        <li class="agent-item" data-id="motion">
-                            <span class="agent-dot"></span>
-                            <div class="agent-body">
-                                <div class="agent-name">MOTION-RUN <span class="agent-tag">// fx</span></div>
-                                <div class="agent-task" data-task>generating 6 transition variants</div>
-                                <div class="agent-meta" data-meta>spring · ease-out · cubic · sample</div>
                             </div>
                         </li>
                     </ul>
@@ -3603,6 +3613,8 @@
                 gate.classList.add('dismissed');
                 document.body.classList.add('audio-gated');
                 if (!withSound) document.body.classList.add('audio-silent');
+                // Reveal the rest of the site (was hidden until consent)
+                document.body.classList.remove('pre-gate');
                 // Fire global start event — agents IIFE listens for it
                 document.dispatchEvent(new CustomEvent('app:start', { detail: { withSound } }));
             }
@@ -3680,6 +3692,12 @@
                 click:    () => { tone({ freq: 2400, dur: 0.03, type: 'square', gain: 0.04 }); noiseBurst({ dur: 0.025, gain: 0.025 }); },
                 open:     () => sweep({ f1: 380, f2: 1900, dur: 0.32, type: 'sine', gain: 0.07 }),
                 close:    () => sweep({ f1: 1700, f2: 320, dur: 0.22, type: 'sine', gain: 0.05 }),
+                // Elegant bell-like arpeggio for hologram materialization
+                materialize: () => {
+                    tone({ freq: 1108, dur: 0.55, type: 'sine', gain: 0.022, attack: 0.018 });
+                    setTimeout(() => tone({ freq: 1396, dur: 0.50, type: 'sine', gain: 0.020, attack: 0.018 }), 70);
+                    setTimeout(() => tone({ freq: 1864, dur: 0.45, type: 'sine', gain: 0.016, attack: 0.018 }), 180);
+                },
                 warn:     () => { tone({ freq: 880, dur: 0.08, type: 'square', gain: 0.04 }); setTimeout(() => tone({ freq: 660, dur: 0.08, type: 'square', gain: 0.04 }), 90); },
                 engage:   () => { sweep({ f1: 240, f2: 1400, dur: 0.42, type: 'sawtooth', gain: 0.045 }); setTimeout(() => tone({ freq: 1800, dur: 0.05, type: 'square', gain: 0.04 }), 380); },
                 disengage:() => sweep({ f1: 1400, f2: 240, dur: 0.32, type: 'sawtooth', gain: 0.04 }),
@@ -4251,20 +4269,20 @@
 
             // Whole reveal sequence runs only after the audio gate is dismissed
             const startSequence = () => {
-                // Reveal the right console at t=2s with staggered items + soft sweep SFX
+                // Right console materializes at t=10s with elegant bell SFX
                 setTimeout(() => {
                     document.body.classList.add('console-revealed');
-                    window.__sfx?.open?.();
-                }, 2000);
+                    window.__sfx?.materialize?.();
+                }, 10000);
 
-                // Random update loop starts after items have appeared (~4.5s)
+                // Random update loop starts after items have appeared (~12.5s)
                 setTimeout(() => {
                     (function loop() {
                         setTimeout(() => { tick(); loop(); }, 1400 + Math.random() * 1800);
                     })();
-                }, 4500);
+                }, 12500);
 
-                // Yellow FLOW-WATCH warning lands a few seconds after items settle (~8s total)
+                // FLOW-WATCH warning lands ~10s after the panel finished appearing (~20s total)
                 setTimeout(() => {
                 const li = document.createElement('li');
                 li.className = 'agent-item warning injected';
@@ -4296,7 +4314,7 @@
                 idxMap['flow-watch'] = 0;
                 metaIdxMap['flow-watch'] = 0;
                 window.__sfx?.warn();
-                }, 8000);
+                }, 20000);
             }; // end startSequence
 
             // Wait for the audio gate to be dismissed before kicking off the show
