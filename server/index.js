@@ -30,7 +30,18 @@ if (!TG_TOKEN) {
 }
 
 // ---------- persistent state ----------
-let state = { lastUpdateId: 0, threads: {}, sentMap: {}, lastActiveThread: null };
+let state = {
+  lastUpdateId: 0,
+  threads: {},
+  sentMap: {},
+  lastActiveThread: null,
+  // thread → visitor's TG chat_id (set when visitor presses /start <thread> in the bot)
+  threadFwd: {},
+  // visitor's TG chat_id → thread (reverse lookup so we can route their TG msgs back)
+  chatToThread: {},
+  // optional username metadata supplied via /api/chat/pickup
+  threadUsername: {},
+};
 try {
   state = Object.assign(state, JSON.parse(fs.readFileSync(STATE_PATH, 'utf-8')));
 } catch (_) {}
@@ -72,7 +83,23 @@ function appendMsg(threadId, role, text) {
   // wake long-polls
   for (const fn of (waiters[threadId] || [])) fn(msg);
   delete waiters[threadId];
+
+  // Forward Roman's replies to the visitor's TG chat if they took the
+  // conversation to Telegram (visitor pressed /start <thread> in the bot).
+  if (role === 'roman' && state.threadFwd[threadId]) {
+    sendTelegramMessage(state.threadFwd[threadId], text).catch(() => {});
+  }
+
   return msg;
+}
+
+async function sendTelegramMessage(chatId, text) {
+  const r = await fetch(TG_API('sendMessage'), {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true }),
+  });
+  return r.json();
 }
 
 const waiters = {};
@@ -92,13 +119,47 @@ async function tgGetUpdates() {
     for (const upd of data.result) {
       state.lastUpdateId = upd.update_id;
       const msg = upd.message;
-      if (!msg || String(msg.chat.id) !== ROMAN_CHAT_ID) continue;
+      if (!msg) continue;
+      const fromChatId = String(msg.chat.id);
       const text = msg.text || msg.caption || '[media]';
-      // Skip Telegram /commands (start, help, etc.)
+
+      // ---------- Visitor side (anyone who isn't Roman) ----------
+      if (fromChatId !== ROMAN_CHAT_ID) {
+        // /start <thread_id> — visitor "took" the conversation to Telegram
+        const startMatch = text.match(/^\/start(?:\s+(\S+))?/);
+        if (startMatch) {
+          const payload = startMatch[1];
+          if (payload && state.threads[payload]) {
+            state.threadFwd[payload] = msg.chat.id;
+            state.chatToThread[fromChatId] = payload;
+            saveLater();
+            sendTelegramMessage(msg.chat.id,
+              "✓ Connected. You're now picked up by Roman's bot — every reply he sends will arrive here. You can answer either in this chat or in your browser tab; both stay in sync.").catch(() => {});
+            // Also tell Roman someone picked up
+            const username = state.threadUsername[payload] ? ` @${state.threadUsername[payload]}` : '';
+            sendTelegramMessage(ROMAN_CHAT_ID,
+              `🔗 Visitor${username} took thread #${payload.slice(0,8)} to Telegram (chat ${msg.chat.id}). Future replies in this bot to that thread will also DM them.`).catch(() => {});
+          }
+          continue;
+        }
+        // Visitor types in TG after pickup — route as visitor msg in their thread
+        const linkedThread = state.chatToThread[fromChatId];
+        if (linkedThread && state.threads[linkedThread]) {
+          appendMsg(linkedThread, 'visitor', text);
+          state.lastActiveThread = linkedThread;
+          // Surface in Roman's bot too (so he sees it the same way as website-sent msgs)
+          const u = state.threadUsername[linkedThread] || '';
+          const tag = `💬 [#${linkedThread.slice(0, 8)}${u ? ' @' + u : ''}] (from TG)\n${text}`;
+          sendTelegramMessage(ROMAN_CHAT_ID, tag)
+            .then(d => { if (d?.ok) state.sentMap[d.result.message_id] = linkedThread; saveLater(); })
+            .catch(() => {});
+        }
+        continue;
+      }
+
+      // ---------- Roman side ----------
       if (text.startsWith('/')) continue;
       const replyId = msg.reply_to_message?.message_id;
-      // Route by reply_to mapping; fallbacks: lastActiveThread, then any thread
-      // with a recent visitor message (handles state restarts).
       const threadId =
         (replyId && state.sentMap[replyId]) ||
         state.lastActiveThread ||
@@ -198,6 +259,17 @@ const server = http.createServer(async (req, res) => {
       delete waiters[thread];
     });
     return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/chat/pickup') {
+    let body;
+    try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
+    const thread = String(body.thread || '').slice(0, 64);
+    const username = String(body.username || '').slice(0, 32);
+    if (!thread) return send(res, 400, { error: 'thread required' });
+    state.threadUsername[thread] = username;
+    saveLater();
+    return send(res, 200, { ok: true });
   }
 
   if (req.method === 'GET' && url.pathname === '/api/chat/health') {

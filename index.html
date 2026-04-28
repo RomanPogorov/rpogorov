@@ -1328,6 +1328,70 @@
         .chat-send:hover { background: var(--acc); color: var(--bg); }
         .chat-send:disabled { opacity: 0.4; cursor: wait; }
 
+        /* Take-to-Telegram pickup row */
+        .chat-pickup {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 6px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(var(--acc-rgb), 0.18);
+        }
+        .chat-pickup-prefix {
+            color: var(--ink);
+            opacity: 0.6;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: 0.06em;
+        }
+        .chat-pickup-row {
+            display: flex;
+            gap: 5px;
+            align-items: stretch;
+        }
+        .chat-pickup-row input {
+            flex: 1;
+            min-width: 0;
+            appearance: none;
+            background: rgba(var(--acc-rgb), 0.04);
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            color: var(--ink);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            padding: 6px 8px;
+            outline: none;
+        }
+        .chat-pickup-row input::placeholder { color: var(--ink); opacity: 0.5; }
+        .chat-pickup-row input:focus {
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
+        }
+        .chat-pickup-btn {
+            appearance: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.06);
+            border: 1px solid rgba(var(--acc-rgb), 0.45);
+            padding: 5px 10px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+        }
+        .chat-pickup-btn:hover {
+            color: var(--bg);
+            background: var(--acc);
+            border-color: var(--acc);
+        }
+        .chat-pickup-status {
+            color: #4ade80;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .chat-pickup-status.show { opacity: 0.95; }
+
         /* ============ CHAT FULLSCREEN — HOLOGRAM IN AIR ============ */
         body.chat-fullscreen .chat-pane {
             position: fixed;
@@ -3432,6 +3496,14 @@
                         <input type="text" id="chat-input" placeholder="type a message…" maxlength="2000">
                         <button type="submit" class="chat-send" aria-label="Send">→</button>
                     </form>
+                    <div class="chat-pickup" id="chat-pickup">
+                        <span class="chat-pickup-prefix">// continue in telegram</span>
+                        <div class="chat-pickup-row">
+                            <input type="text" id="chat-pickup-username" placeholder="@your_telegram" maxlength="32" autocomplete="off">
+                            <button type="button" id="chat-pickup-btn" class="chat-pickup-btn">take to TG →</button>
+                        </div>
+                        <span class="chat-pickup-status" id="chat-pickup-status"></span>
+                    </div>
                 </div>
 
                 <div class="hud-bottom">
@@ -4493,6 +4565,29 @@
                     sendBtn.disabled = false;
                 }
             });
+
+            // Take-to-Telegram pickup
+            const BOT_USERNAME = 'clauderunnerstranger_bot';
+            const pickupBtn = document.getElementById('chat-pickup-btn');
+            const pickupInput = document.getElementById('chat-pickup-username');
+            const pickupStatus = document.getElementById('chat-pickup-status');
+            if (pickupBtn) {
+                pickupBtn.addEventListener('click', async () => {
+                    const username = pickupInput.value.trim().replace(/^@/, '').slice(0, 32);
+                    try {
+                        await fetch('api/chat/pickup', {
+                            method: 'POST',
+                            headers: { 'content-type': 'application/json' },
+                            body: JSON.stringify({ thread, username }),
+                        });
+                    } catch {}
+                    const url = `https://t.me/${BOT_USERNAME}?start=${encodeURIComponent(thread)}`;
+                    window.open(url, '_blank', 'noopener');
+                    pickupStatus.textContent = '→ open the bot, press Start. Roman\'s replies will land in your TG.';
+                    pickupStatus.classList.add('show');
+                    window.__sfx?.click?.();
+                });
+            }
 
             // Long-poll for messages — render BOTH visitor and roman, dedup by id
             // (so reload restores full history from server). Set silent=true on
