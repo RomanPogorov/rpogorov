@@ -3424,7 +3424,16 @@
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') disengage();
-            if (e.key === 'Enter' && !body.classList.contains('engaged')) engage();
+            // Enter triggers engage only when no input/textarea/contentEditable is focused
+            if (e.key === 'Enter' && !body.classList.contains('engaged')) {
+                const el = document.activeElement;
+                const isTyping = el && (
+                    el.tagName === 'INPUT' ||
+                    el.tagName === 'TEXTAREA' ||
+                    el.isContentEditable
+                );
+                if (!isTyping) engage();
+            }
         });
 
         // ===== tabs =====
