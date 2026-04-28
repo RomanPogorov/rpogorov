@@ -381,6 +381,9 @@
             text-align: right;
         }
 
+        /* HTML [hidden] must always win over our display rules */
+        [hidden] { display: none !important; }
+
         /* ============ PRE-GATE: hide site until consent ============ */
         body.pre-gate .stage,
         body.pre-gate .grid,
@@ -3412,8 +3415,6 @@
         }
 
         prompt.addEventListener('click', engage);
-        document.querySelector('.stage').addEventListener('click', engage);
-        document.querySelector('.grid').addEventListener('click', engage);
 
         closeBtn.addEventListener('click', (e) => { e.stopPropagation(); disengage(); });
 
