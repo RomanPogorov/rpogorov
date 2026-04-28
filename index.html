@@ -388,6 +388,16 @@
         /* HTML [hidden] must always win over our display rules */
         [hidden] { display: none !important; }
 
+        /* Replace default blue text-selection with accent color */
+        ::selection {
+            background: rgba(var(--acc-rgb), 0.35);
+            color: var(--ink);
+        }
+        ::-moz-selection {
+            background: rgba(var(--acc-rgb), 0.35);
+            color: var(--ink);
+        }
+
         /* ============ PRE-GATE: hide site until consent ============ */
         body.pre-gate .stage,
         body.pre-gate .grid,
@@ -454,6 +464,7 @@
         .audio-gate-frame {
             position: relative;
             padding: 36px 44px 30px;
+            user-select: none;
             background:
                 linear-gradient(180deg,
                     rgba(var(--acc-rgb), 0.06) 0%,
