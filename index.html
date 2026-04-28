@@ -398,6 +398,27 @@
             opacity: 0 !important;
             pointer-events: none !important;
         }
+        /* Pause all background animations until consent — nothing should be
+           working under the gate */
+        body.pre-gate .stage *,
+        body.pre-gate .grid,
+        body.pre-gate .horizon,
+        body.pre-gate .noise,
+        body.pre-gate .scanlines,
+        body.pre-gate .hud,
+        body.pre-gate .hud *,
+        body.pre-gate .prompt,
+        body.pre-gate .prompt *,
+        body.pre-gate .panel,
+        body.pre-gate .panel *,
+        body.pre-gate .dw,
+        body.pre-gate .dw * {
+            animation-play-state: paused !important;
+        }
+        body.pre-gate .stage video {
+            /* keep video element instantiated for fast start, but don't actually
+               play it under the gate */
+        }
         .stage, .grid, .horizon, .noise, .scanlines, .vignette,
         .hud, .backdrop {
             transition: opacity 0.9s ease;
@@ -3494,10 +3515,13 @@
             console.log('[bg] video loaded ok');
         });
 
-        video.play().catch(() => {
-            // if blocked, start on first interaction
-            document.addEventListener('click', () => video.play(), { once: true });
-        });
+        // Don't autoplay video under the audio gate — start only after consent.
+        const tryPlayVideo = () => video.play().catch(() => {});
+        if (document.body.classList.contains('pre-gate')) {
+            document.addEventListener('app:start', tryPlayVideo, { once: true });
+        } else {
+            tryPlayVideo();
+        }
     </script>
 
 
@@ -3700,21 +3724,24 @@
                 src.stop(t + dur + 0.01);
             }
 
+            const isSilent = () => document.body.classList.contains('audio-silent');
+            const gate = (fn) => (...args) => { if (isSilent()) return; return fn(...args); };
+
             const SFX = {
-                hover:    () => tone({ freq: 1500, dur: 0.04, type: 'triangle', gain: 0.025 }),
-                tick:     () => tone({ freq: 3200, dur: 0.018, type: 'sine', gain: 0.03 }),
-                click:    () => { tone({ freq: 2400, dur: 0.03, type: 'square', gain: 0.04 }); noiseBurst({ dur: 0.025, gain: 0.025 }); },
-                open:     () => sweep({ f1: 380, f2: 1900, dur: 0.32, type: 'sine', gain: 0.07 }),
-                close:    () => sweep({ f1: 1700, f2: 320, dur: 0.22, type: 'sine', gain: 0.05 }),
+                hover:    gate(() => tone({ freq: 1500, dur: 0.04, type: 'triangle', gain: 0.025 })),
+                tick:     gate(() => tone({ freq: 3200, dur: 0.018, type: 'sine', gain: 0.03 })),
+                click:    gate(() => { tone({ freq: 2400, dur: 0.03, type: 'square', gain: 0.04 }); noiseBurst({ dur: 0.025, gain: 0.025 }); }),
+                open:     gate(() => sweep({ f1: 380, f2: 1900, dur: 0.32, type: 'sine', gain: 0.07 })),
+                close:    gate(() => sweep({ f1: 1700, f2: 320, dur: 0.22, type: 'sine', gain: 0.05 })),
                 // Elegant bell-like arpeggio for hologram materialization
-                materialize: () => {
+                materialize: gate(() => {
                     tone({ freq: 1108, dur: 0.55, type: 'sine', gain: 0.022, attack: 0.018 });
                     setTimeout(() => tone({ freq: 1396, dur: 0.50, type: 'sine', gain: 0.020, attack: 0.018 }), 70);
                     setTimeout(() => tone({ freq: 1864, dur: 0.45, type: 'sine', gain: 0.016, attack: 0.018 }), 180);
-                },
-                warn:     () => { tone({ freq: 880, dur: 0.08, type: 'square', gain: 0.04 }); setTimeout(() => tone({ freq: 660, dur: 0.08, type: 'square', gain: 0.04 }), 90); },
-                engage:   () => { sweep({ f1: 240, f2: 1400, dur: 0.42, type: 'sawtooth', gain: 0.045 }); setTimeout(() => tone({ freq: 1800, dur: 0.05, type: 'square', gain: 0.04 }), 380); },
-                disengage:() => sweep({ f1: 1400, f2: 240, dur: 0.32, type: 'sawtooth', gain: 0.04 }),
+                }),
+                warn:     gate(() => { tone({ freq: 880, dur: 0.08, type: 'square', gain: 0.04 }); setTimeout(() => tone({ freq: 660, dur: 0.08, type: 'square', gain: 0.04 }), 90); }),
+                engage:   gate(() => { sweep({ f1: 240, f2: 1400, dur: 0.42, type: 'sawtooth', gain: 0.045 }); setTimeout(() => tone({ freq: 1800, dur: 0.05, type: 'square', gain: 0.04 }), 380); }),
+                disengage:gate(() => sweep({ f1: 1400, f2: 240, dur: 0.32, type: 'sawtooth', gain: 0.04 })),
             };
             window.__sfx = SFX;
 
@@ -4542,6 +4569,8 @@
             const wake = (e) => {
                 if (btn.contains(e.target)) return;
                 if (!audio.muted) return;
+                // Respect Silent mode — let user explicitly toggle the audio button
+                if (document.body.classList.contains('audio-silent')) return;
                 audio.muted = false;
                 setupGraph();
                 if (audio.paused) audio.play().catch(() => { });
