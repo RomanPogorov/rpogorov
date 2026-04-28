@@ -1397,7 +1397,12 @@
             font-size: 10px;
             letter-spacing: 0.18em;
             cursor: pointer;
-            transition: border-color 0.2s, color 0.2s, background 0.2s;
+            transition:
+                border-color 0.18s,
+                color 0.18s,
+                background 0.18s,
+                transform 0.12s,
+                box-shadow 0.18s;
         }
         .dw-close:hover,
         .dw-nav:hover:not(:disabled) {
@@ -1405,21 +1410,60 @@
             color: var(--acc);
             background: rgba(var(--acc-rgb), 0.08);
         }
+        .dw-close:active,
+        .dw-nav:active:not(:disabled) {
+            transform: scale(0.92);
+            background: rgba(var(--acc-rgb), 0.18);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.45);
+        }
         .dw-nav { padding: 4px 9px; min-width: 28px; }
         .dw-nav-key { font-size: 13px; line-height: 1; display: inline-block; }
         .dw-nav:disabled { opacity: 0.3; cursor: default; }
+        .dw-nav.flash {
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.22);
+            box-shadow: 0 0 16px rgba(var(--acc-rgb), 0.6);
+        }
 
-        /* Fade animation when navigating between items */
-        .dw-content {
-            transition: opacity 0.18s ease;
+        /* JUICY swap animation between items in detail-window */
+        .dw-content,
+        .dw-title,
+        .dw-tag {
+            transition:
+                opacity 0.22s ease,
+                transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
-        .dw-frame.swapping .dw-content,
-        .dw-frame.swapping .dw-title,
-        .dw-frame.swapping .dw-tag {
+        .dw-frame.swap-out-left .dw-content,
+        .dw-frame.swap-out-left .dw-title,
+        .dw-frame.swap-out-left .dw-tag {
             opacity: 0;
-            transition: opacity 0.16s ease;
+            transform: translateX(-30px);
         }
-        .dw-title, .dw-tag { transition: opacity 0.18s ease; }
+        .dw-frame.swap-out-right .dw-content,
+        .dw-frame.swap-out-right .dw-title,
+        .dw-frame.swap-out-right .dw-tag {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        .dw-frame.swap-in-from-right .dw-content,
+        .dw-frame.swap-in-from-right .dw-title,
+        .dw-frame.swap-in-from-right .dw-tag {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: none;
+        }
+        .dw-frame.swap-in-from-left .dw-content,
+        .dw-frame.swap-in-from-left .dw-title,
+        .dw-frame.swap-in-from-left .dw-tag {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: none;
+        }
+
+        /* Beam flash across frame on swap, reusing the engage beam keyframes */
+        .dw-frame.swap-flash .dw-beam {
+            animation: panel-beam-wipe 0.5s ease-out forwards;
+        }
         .dw-content {
             flex: 1;
             overflow-y: auto;
@@ -4499,13 +4543,30 @@
                 if (idx === -1) return;
                 const next = list[idx + dir];
                 if (!next) return;
-                // brief fade swap
-                dwFrame.classList.add('swapping');
+
                 window.__sfx?.tick?.();
+                const btn = dir > 0 ? dwNext : dwPrev;
+                btn.classList.add('flash');
+                setTimeout(() => btn.classList.remove('flash'), 220);
+
+                // dir > 0 → slide content out to the LEFT, new content comes IN from the RIGHT
+                const outClass = dir > 0 ? 'swap-out-left' : 'swap-out-right';
+                const inClass  = dir > 0 ? 'swap-in-from-right' : 'swap-in-from-left';
+
+                dwFrame.classList.add(outClass);
+                dwFrame.classList.add('swap-flash');
+
                 setTimeout(() => {
+                    dwFrame.classList.remove(outClass);
+                    dwFrame.classList.add(inClass);
                     inject(next);
-                    dwFrame.classList.remove('swapping');
-                }, 160);
+                    // Force reflow so the no-transition incoming state is applied
+                    void dwFrame.offsetWidth;
+                    // Drop the in-class — the content animates back to its rest state
+                    dwFrame.classList.remove(inClass);
+                }, 230);
+
+                setTimeout(() => dwFrame.classList.remove('swap-flash'), 600);
             }
 
             // Click handlers — agents (delegated, works for injected entries too)
