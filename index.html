@@ -3790,7 +3790,7 @@
                         if (!btn) return;
                         e.stopPropagation();
                         const act = btn.dataset.act;
-                        window.__sfx?.click();
+                        // tick already fires from capture-phase delegated handler (.agent-item is in TICK_SEL)
                         if (act === 'send') {
                             // Pretend we delegate to the agent that owns this flow
                             li.classList.remove('warning');
