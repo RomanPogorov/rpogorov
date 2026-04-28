@@ -1968,6 +1968,12 @@
             opacity: 1;
             pointer-events: auto;
         }
+        /* Detail window: lighter backdrop (less blur, less darkening) than the
+           full OS panel so the right HUD list stays readable while browsing */
+        body.dw-open .backdrop {
+            backdrop-filter: blur(3px) brightness(0.7);
+            -webkit-backdrop-filter: blur(3px) brightness(0.7);
+        }
 
         /* Hide the center prompt while a detail window is open — its frame
            was bleeding through behind the semi-transparent .dw */
