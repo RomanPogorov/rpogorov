@@ -3764,52 +3764,6 @@
                 idxMap['flow-watch'] = 0;
                 metaIdxMap['flow-watch'] = 0;
                 window.__sfx?.warn();
-
-                // After 4 more seconds — show action buttons (Send to Agent / Hide)
-                setTimeout(() => {
-                    if (!li.isConnected) return;
-                    const actions = document.createElement('div');
-                    actions.className = 'warn-actions';
-                    actions.innerHTML = `
-                        <button class="warn-btn primary" data-act="send" type="button">→ Send to its Agent</button>
-                        <button class="warn-btn ghost" data-act="hide" type="button">Hide</button>
-                    `;
-                    li.querySelector('.agent-body').appendChild(actions);
-
-                    const fadeAndRemove = () => {
-                        const idx = items.indexOf(li);
-                        if (idx > -1) items.splice(idx, 1);
-                        delete POOL['flow-watch'];
-                        delete META_POOL['flow-watch'];
-                        li.classList.add('warn-fade');
-                        setTimeout(() => li.remove(), 480);
-                    };
-
-                    actions.addEventListener('click', (e) => {
-                        const btn = e.target.closest('.warn-btn');
-                        if (!btn) return;
-                        e.stopPropagation();
-                        const act = btn.dataset.act;
-                        // tick already fires from capture-phase delegated handler (.agent-item is in TICK_SEL)
-                        if (act === 'send') {
-                            // Pretend we delegate to the agent that owns this flow
-                            li.classList.remove('warning');
-                            li.classList.add('warn-resolved');
-                            const taskEl = li.querySelector('[data-task]');
-                            const metaEl = li.querySelector('[data-meta]');
-                            if (taskEl) taskEl.textContent = '→ delegated to FIGMA-SYNC';
-                            if (metaEl) metaEl.textContent = 'agent acknowledged · resolving';
-                            // Stop further random updates for this row
-                            delete POOL['flow-watch'];
-                            delete META_POOL['flow-watch'];
-                            actions.remove();
-                            // Auto-fade after 3s
-                            setTimeout(fadeAndRemove, 3000);
-                        } else if (act === 'hide') {
-                            fadeAndRemove();
-                        }
-                    });
-                }, 4000);
             }, 14000);
         })();
     </script>
