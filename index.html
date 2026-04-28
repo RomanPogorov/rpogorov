@@ -848,37 +848,88 @@
         /* ============ HOLOGRAPHIC PANEL — TRON ============ */
         .panel {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            width: min(880px, 94vw);
-            height: min(680px, 86vh);
+            top: 6vh;
+            right: 3vw;
+            width: min(560px, 50vw);
+            height: 88vh;
             z-index: 10;
             opacity: 0;
             pointer-events: none;
-            transform: translate(-50%, calc(-50% + 60px)) scale(0.92);
+            transform-origin: 100% 50%;
+            transform:
+                perspective(1500px)
+                rotateY(-38deg)
+                translateZ(-220px)
+                scaleX(0.55)
+                scaleY(0.8);
+            filter: blur(6px) brightness(1.6);
             transition:
-                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.6s ease;
-            perspective: 1600px;
-            perspective-origin: 50% 50%;
+                transform 0.9s cubic-bezier(0.2, 0.9, 0.3, 1),
+                opacity 0.55s ease,
+                filter 0.7s ease;
         }
 
         body.engaged .panel {
-            transform: translate(-50%, -50%) scale(1);
             opacity: 1;
             pointer-events: auto;
+            transform:
+                perspective(1500px)
+                rotateY(var(--p-ry, -12deg))
+                rotateX(var(--p-rx, 0deg))
+                translateZ(0)
+                scaleX(1)
+                scaleY(1);
+            filter: blur(0) brightness(1);
+        }
+
+        /* Projector flicker — runs once at engage */
+        @keyframes projector-flicker {
+            0%   { opacity: 0; }
+            10%  { opacity: 0.6; }
+            14%  { opacity: 0.15; }
+            22%  { opacity: 0.95; }
+            28%  { opacity: 0.4; }
+            36%  { opacity: 1; }
+            44%  { opacity: 0.85; }
+            52%  { opacity: 1; }
+            60%  { opacity: 0.92; }
+            100% { opacity: 1; }
+        }
+        body.engaged .panel-frame {
+            animation: projector-flicker 0.95s ease-out 0.05s 1 both;
+        }
+
+        /* Scanline beam wipe — appears during engage transition */
+        .panel-beam {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(var(--acc-rgb), 0.35) 49%,
+                rgba(var(--acc-rgb), 0.55) 50%,
+                rgba(var(--acc-rgb), 0.35) 51%,
+                transparent 100%
+            );
+            mix-blend-mode: screen;
+            z-index: 5;
+        }
+        @keyframes panel-beam-wipe {
+            0%   { transform: translateY(110%); opacity: 0; }
+            10%  { opacity: 1; }
+            85%  { opacity: 1; }
+            100% { transform: translateY(-110%); opacity: 0; }
+        }
+        body.engaged .panel-beam {
+            animation: panel-beam-wipe 0.85s ease-out forwards;
         }
 
         .panel-frame {
             position: relative;
             width: 100%;
             height: 100%;
-            transform-origin: 50% 50%;
-            transform-style: preserve-3d;
-            transform:
-                rotateY(var(--p-ry, 0deg))
-                rotateX(var(--p-rx, 0deg));
-            will-change: transform;
             background:
                 linear-gradient(180deg,
                     rgba(var(--acc-rgb), 0.04) 0%,
@@ -1982,6 +2033,7 @@
 
     <!-- Holographic Panel -->
     <aside class="panel" id="panel" aria-hidden="true">
+        <div class="panel-beam"></div>
         <div class="panel-frame">
             <span class="perimeter"></span>
             <span class="streak"></span>
@@ -2437,24 +2489,25 @@
     </script>
 
 
-    <!-- Central panel: hologram parallax (active when engaged) -->
+    <!-- Central panel: hologram parallax (active only when engaged) -->
     <script>
         (() => {
-            const frame = document.querySelector('.panel-frame');
+            const panel = document.getElementById('panel');
             const body = document.body;
-            if (!frame) return;
+            if (!panel) return;
 
-            const baseRY = 0, baseRX = 0;
-            const idleAmpY = 1.2;
-            const idleAmpX = 0.8;
-            const mouseAmpY = 5;
+            const baseRY = -12;
+            const baseRX = 0;
+            const mouseAmpY = 6;
             const mouseAmpX = 4;
-            const lerp = 0.08;
+            const idleAmpY = 1.4;
+            const idleAmpX = 0.9;
+            const lerp = 0.07;
 
             let targetRY = baseRY;
             let targetRX = baseRX;
-            let curRY = 0;
-            let curRX = 0;
+            let curRY = baseRY;
+            let curRX = baseRX;
 
             document.addEventListener('mousemove', (e) => {
                 if (!body.classList.contains('engaged')) return;
@@ -2467,21 +2520,14 @@
             const start = performance.now();
             function tick(t) {
                 requestAnimationFrame(tick);
-                if (!body.classList.contains('engaged')) {
-                    // ease back to neutral when closed (avoid jarring snap on next open)
-                    curRY *= 0.92;
-                    curRX *= 0.92;
-                    targetRY = baseRY;
-                    targetRX = baseRX;
-                } else {
-                    const dt = (t - start) / 1000;
-                    const idleY = Math.sin(dt * 0.35) * idleAmpY;
-                    const idleX = Math.cos(dt * 0.27) * idleAmpX;
-                    curRY += ((targetRY + idleY) - curRY) * lerp;
-                    curRX += ((targetRX + idleX) - curRX) * lerp;
-                }
-                frame.style.setProperty('--p-ry', curRY.toFixed(2) + 'deg');
-                frame.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
+                if (!body.classList.contains('engaged')) return;
+                const dt = (t - start) / 1000;
+                const idleY = Math.sin(dt * 0.35) * idleAmpY;
+                const idleX = Math.cos(dt * 0.27) * idleAmpX;
+                curRY += ((targetRY + idleY) - curRY) * lerp;
+                curRX += ((targetRX + idleX) - curRX) * lerp;
+                panel.style.setProperty('--p-ry', curRY.toFixed(2) + 'deg');
+                panel.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
             }
             requestAnimationFrame(tick);
         })();
