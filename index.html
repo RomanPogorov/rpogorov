@@ -381,6 +381,85 @@
             text-align: right;
         }
 
+        /* ============ RIGHT-SIDE 3D HUD PANEL ============ */
+        .hud-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: clamp(280px, 28vw, 420px);
+            perspective: 1100px;
+            perspective-origin: 110% 50%;
+            pointer-events: none;
+        }
+
+        .hud-right-stack {
+            position: absolute;
+            inset: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transform-origin: 100% 50%;
+            transform-style: preserve-3d;
+            transform:
+                rotateY(var(--ry, -14deg))
+                rotateX(var(--rx, 0deg))
+                translateZ(0);
+            will-change: transform;
+        }
+
+        /* Holographic edge: faint vertical guide along the panel's left side */
+        .hud-right-stack::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: -14px;
+            width: 1px;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(var(--acc-rgb), 0.5) 20%,
+                rgba(var(--acc-rgb), 0.5) 80%,
+                transparent 100%
+            );
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.4);
+        }
+        .hud-right-stack::after {
+            content: '';
+            position: absolute;
+            inset: -8px -10px -8px -10px;
+            border: 1px solid rgba(var(--acc-rgb), 0.12);
+            box-shadow:
+                inset 0 0 30px rgba(var(--acc-rgb), 0.05),
+                0 0 18px rgba(var(--acc-rgb), 0.08);
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0,
+                    transparent 2px,
+                    rgba(var(--acc-rgb), 0.025) 2px,
+                    rgba(var(--acc-rgb), 0.025) 3px
+                );
+            pointer-events: none;
+            transform: translateZ(-8px);
+        }
+
+        /* Override absolute positioning for corners inside the 3D stack */
+        .hud-right .corner.tr,
+        .hud-right .corner.br {
+            position: static;
+            inset: auto;
+            top: auto;
+            right: auto;
+            bottom: auto;
+            text-align: right;
+            pointer-events: auto;
+        }
+        /* Subtle z-stagger for hologram depth */
+        .hud-right .corner.tr { transform: translateZ(20px); }
+        .hud-right .corner.br { transform: translateZ(8px); }
+
         .hud .corner .label {
             color: var(--dim);
             display: block;
@@ -1826,10 +1905,6 @@
             <span class="label">// signal</span>
             <span class="blink">LIVE FEED</span>
         </div>
-        <div class="corner tr">
-            <span class="label">// session</span>
-            <span class="tc" id="clock">00:00:00</span>
-        </div>
         <div class="corner bl">
             <span class="label">// color vibe</span>
             <div class="theme-switch" id="theme-switch">
@@ -1839,7 +1914,15 @@
                 <button class="theme-dot" data-theme="mono" aria-label="Mono"></button>
             </div>
         </div>
-        <div class="corner br">
+
+        <!-- Right-side panel: 3D perspective, tilts on mouse -->
+        <div class="hud-right" id="hud-right">
+            <div class="hud-right-stack" id="hud-right-stack">
+                <div class="corner tr">
+                    <span class="label">// session</span>
+                    <span class="tc" id="clock">00:00:00</span>
+                </div>
+                <div class="corner br">
             <span class="label">// audio vibe</span>
             <div class="ap-group">
                 <button id="ap-toggle" class="ap-btn ap-grunge" type="button" aria-label="Unmute">
@@ -1857,6 +1940,8 @@
                 <canvas id="ap-viz" class="ap-viz" aria-hidden="true"></canvas>
             </div>
             <audio id="ap-audio" loop preload="auto"></audio>
+                </div>
+            </div>
         </div>
 
         <!-- center prompt -->
@@ -2343,6 +2428,51 @@
         });
     </script>
 
+
+    <!-- Right-side HUD: hologram parallax -->
+    <script>
+        (() => {
+            const stack = document.getElementById('hud-right-stack');
+            if (!stack) return;
+
+            const baseRY = -14;     // resting tilt (deg)
+            const baseRX = 0;
+            const idleAmpY = 1.6;   // gentle floating amplitude (deg)
+            const idleAmpX = 1.0;
+            const mouseAmpY = 8;    // mouse-driven extra tilt (deg)
+            const mouseAmpX = 6;
+            const lerp = 0.06;
+
+            let targetRY = baseRY;
+            let targetRX = baseRX;
+            let curRY = baseRY;
+            let curRX = baseRX;
+
+            document.addEventListener('mousemove', (e) => {
+                const nx = e.clientX / window.innerWidth - 0.5;     // -0.5 .. 0.5
+                const ny = e.clientY / window.innerHeight - 0.5;
+                targetRY = baseRY + nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
+            });
+
+            const start = performance.now();
+            function tick(t) {
+                requestAnimationFrame(tick);
+                const dt = (t - start) / 1000;
+
+                // idle sine-drift superimposed on cursor target
+                const idleY = Math.sin(dt * 0.5) * idleAmpY;
+                const idleX = Math.cos(dt * 0.37) * idleAmpX;
+
+                curRY += ((targetRY + idleY) - curRY) * lerp;
+                curRX += ((targetRX + idleX) - curRX) * lerp;
+
+                stack.style.setProperty('--ry', curRY.toFixed(2) + 'deg');
+                stack.style.setProperty('--rx', curRX.toFixed(2) + 'deg');
+            }
+            requestAnimationFrame(tick);
+        })();
+    </script>
 
     <!-- Audio buttons -->
     <style>
