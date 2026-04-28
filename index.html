@@ -388,6 +388,72 @@
         /* HTML [hidden] must always win over our display rules */
         [hidden] { display: none !important; }
 
+        /* ============ CUSTOM CURSOR ============ */
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: none; }
+            * { cursor: none !important; }
+        }
+        .cur-dot, .cur-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 9999;
+            will-change: transform;
+            mix-blend-mode: screen;
+        }
+        .cur-dot {
+            width: 4px;
+            height: 4px;
+            margin: -2px 0 0 -2px;
+            background: var(--acc);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.9);
+        }
+        .cur-ring {
+            width: 24px;
+            height: 24px;
+            margin: -12px 0 0 -12px;
+            border: 1px solid rgba(var(--acc-rgb), 0.55);
+            border-radius: 50%;
+            transition:
+                width 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
+                height 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
+                margin 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
+                border-color 0.18s ease,
+                background 0.18s ease,
+                opacity 0.18s ease;
+            box-shadow: inset 0 0 6px rgba(var(--acc-rgb), 0.15);
+        }
+        body.cur-hover .cur-ring {
+            width: 38px;
+            height: 38px;
+            margin: -19px 0 0 -19px;
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
+            box-shadow:
+                inset 0 0 8px rgba(var(--acc-rgb), 0.25),
+                0 0 14px rgba(var(--acc-rgb), 0.25);
+        }
+        body.cur-text .cur-ring {
+            width: 4px;
+            height: 22px;
+            margin: -11px 0 0 -2px;
+            border-radius: 1px;
+            border: 1px solid rgba(var(--acc-rgb), 0.7);
+            background: rgba(var(--acc-rgb), 0.15);
+        }
+        body.cur-text .cur-dot { opacity: 0; }
+        body.cur-down .cur-ring {
+            width: 18px;
+            height: 18px;
+            margin: -9px 0 0 -9px;
+            border-color: var(--acc);
+        }
+        @media (hover: none) {
+            .cur-dot, .cur-ring { display: none; }
+        }
+
         /* Replace default blue text-selection with accent color */
         ::selection {
             background: rgba(var(--acc-rgb), 0.35);
@@ -3773,6 +3839,77 @@
                 curRX += ((targetRX + idleX) - curRX) * lerp;
                 panel.style.setProperty('--p-ry', curRY.toFixed(2) + 'deg');
                 panel.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
+            }
+            requestAnimationFrame(tick);
+        })();
+    </script>
+
+    <!-- Custom cursor: dot + lagging ring, reactive to interactive hover -->
+    <script>
+        (() => {
+            // Skip on touch / coarse pointer
+            if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+            const dot = document.createElement('div');
+            const ring = document.createElement('div');
+            dot.className = 'cur-dot';
+            ring.className = 'cur-ring';
+            document.body.appendChild(dot);
+            document.body.appendChild(ring);
+
+            const HOVER_SEL = [
+                'a', 'button',
+                '.agent-item', '.release-item', '.theme-dot',
+                '.ap-btn', '.dw-close', '.tab', '.hud-tab',
+                '.chat-sug-btn', '.audio-gate-btn',
+                '.prompt', '.warn-btn', '.theme-switch'
+            ].join(',');
+            const TEXT_SEL = 'input[type="text"], textarea, [contenteditable="true"]';
+
+            let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+            let rx = mx, ry = my;
+            let visible = false;
+
+            const show = () => {
+                if (visible) return;
+                visible = true;
+                dot.style.opacity = '1';
+                ring.style.opacity = '1';
+            };
+            const hide = () => {
+                visible = false;
+                dot.style.opacity = '0';
+                ring.style.opacity = '0';
+            };
+            // Start hidden until first move so they don't flash at 0,0
+            dot.style.opacity = '0';
+            ring.style.opacity = '0';
+
+            document.addEventListener('mousemove', (e) => {
+                mx = e.clientX;
+                my = e.clientY;
+                show();
+                // hover detection
+                const t = e.target;
+                if (!t || !t.closest) return;
+                const overText = t.closest(TEXT_SEL);
+                const overHover = !overText && t.closest(HOVER_SEL);
+                document.body.classList.toggle('cur-hover', !!overHover);
+                document.body.classList.toggle('cur-text', !!overText);
+            }, { passive: true });
+
+            document.addEventListener('mousedown', () => document.body.classList.add('cur-down'));
+            document.addEventListener('mouseup',   () => document.body.classList.remove('cur-down'));
+            document.addEventListener('mouseleave', hide);
+            document.addEventListener('mouseenter', show);
+
+            const lerp = 0.22;
+            function tick() {
+                requestAnimationFrame(tick);
+                rx += (mx - rx) * lerp;
+                ry += (my - ry) * lerp;
+                dot.style.transform  = `translate(${mx}px, ${my}px)`;
+                ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
             }
             requestAnimationFrame(tick);
         })();
