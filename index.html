@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <style>
         /* ============ CORE ============ */
@@ -830,6 +830,368 @@
             color: var(--acc);
             border-color: var(--acc);
             background: rgba(var(--acc-rgb), 0.08);
+        }
+
+        /* ============ CASE PAGE — full-page case detail (Inter, b/w/blue) ============ */
+        .case-open-btn {
+            margin-top: 22px;
+            appearance: none;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.55);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            padding: 9px 18px;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s, transform 0.12s, box-shadow 0.18s;
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .case-open-btn:hover {
+            background: rgba(var(--acc-rgb), 0.1);
+            border-color: var(--acc);
+            box-shadow: 0 0 18px rgba(var(--acc-rgb), 0.22);
+        }
+        .case-open-btn .open-arrow {
+            display: inline-block;
+            transition: transform 0.25s;
+            animation: open-arrow-bounce 1.8s ease-in-out infinite;
+        }
+        .case-open-btn:hover .open-arrow { transform: translateY(3px); animation-play-state: paused; }
+        .case-open-btn:active { transform: scale(0.97); }
+        @keyframes open-arrow-bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(3px); }
+        }
+
+        .case-page {
+            position: fixed;
+            inset: 0;
+            z-index: 35;
+            background: #050505;
+            color: #ffffff;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            transform: translateY(100%);
+            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow: hidden;
+            pointer-events: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        body.case-open .case-page.open {
+            transform: translateY(0);
+            pointer-events: auto;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .case-page * { box-sizing: border-box; }
+
+        .cp-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 96px 40px 140px;
+        }
+
+        .cp-close {
+            position: fixed;
+            top: 22px;
+            right: 24px;
+            z-index: 50;
+            appearance: none;
+            background: rgba(5,5,5,0.6);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            padding: 9px 16px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: border-color 0.18s, background 0.18s, color 0.18s;
+            display: none;
+        }
+        body.case-open .cp-close { display: inline-flex; align-items: center; gap: 8px; }
+        .cp-close:hover {
+            border-color: #4d9eff;
+            background: rgba(77,158,255,0.12);
+            color: #4d9eff;
+        }
+        .cp-close-arrow { font-size: 13px; line-height: 1; }
+
+        /* hero */
+        .cp-hero { padding-bottom: 56px; }
+        .cp-meta {
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 28px;
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .cp-meta-no { color: #4d9eff; font-weight: 600; }
+        .cp-meta-divider { width: 24px; height: 1px; background: rgba(255,255,255,0.22); }
+        .cp-title {
+            font-size: clamp(36px, 5.4vw, 64px);
+            line-height: 1.04;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            max-width: 18ch;
+        }
+        .cp-title em { color: #4d9eff; font-style: normal; font-weight: 600; }
+        .cp-sub {
+            margin-top: 26px;
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            max-width: 60ch;
+            line-height: 1.55;
+            font-weight: 400;
+        }
+
+        /* TLDR */
+        .cp-tldr {
+            margin: 0 0 80px;
+            padding: 30px 36px 32px;
+            background: rgba(77,158,255,0.05);
+            border-left: 2px solid #4d9eff;
+        }
+        .cp-tldr-label {
+            font-size: 10px;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: #4d9eff;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .cp-tldr ul { list-style: none; padding: 0; margin: 0; }
+        .cp-tldr li {
+            font-size: 16px;
+            line-height: 1.55;
+            padding: 7px 0 7px 26px;
+            position: relative;
+            color: rgba(255,255,255,0.94);
+            font-weight: 400;
+        }
+        .cp-tldr li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 17px;
+            width: 14px; height: 1px;
+            background: #4d9eff;
+        }
+
+        /* Timeline (sticky nav) */
+        .cp-timeline {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: rgba(5,5,5,0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            margin: 0 -40px;
+            padding: 16px 40px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .cp-timeline-list {
+            display: flex;
+            gap: 6px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .cp-timeline-list::-webkit-scrollbar { display: none; }
+        .cp-tl-item {
+            flex: 1 0 auto;
+            min-width: 168px;
+            text-align: left;
+            padding: 11px 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: transparent;
+            color: rgba(255,255,255,0.65);
+            cursor: pointer;
+            font-family: inherit;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
+        }
+        .cp-tl-item:hover {
+            color: #fff;
+            border-color: rgba(255,255,255,0.32);
+        }
+        .cp-tl-item.active {
+            color: #4d9eff;
+            border-color: #4d9eff;
+            background: rgba(77,158,255,0.07);
+        }
+        .cp-tl-num {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            opacity: 0.65;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .cp-tl-name { font-size: 13px; font-weight: 500; }
+
+        /* Sections */
+        .cp-section {
+            padding: 84px 0 56px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            scroll-margin-top: 96px;
+        }
+        .cp-section:last-of-type { border-bottom: none; }
+        .cp-sec-num {
+            font-size: 10px;
+            letter-spacing: 0.32em;
+            color: #4d9eff;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+        .cp-sec-title {
+            font-size: clamp(26px, 3vw, 36px);
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            margin-bottom: 26px;
+            line-height: 1.15;
+            max-width: 22ch;
+        }
+        .cp-sec-body {
+            font-size: 16px;
+            line-height: 1.65;
+            color: rgba(255,255,255,0.82);
+            max-width: 65ch;
+            font-weight: 400;
+        }
+        .cp-sec-body p { margin-bottom: 16px; }
+        .cp-sec-body p:last-child { margin-bottom: 0; }
+        .cp-sec-body strong { color: #fff; font-weight: 600; }
+        .cp-sec-body em { color: #4d9eff; font-style: normal; font-weight: 500; }
+        .cp-sec-body ul { list-style: none; padding: 0; margin: 18px 0; }
+        .cp-sec-body li {
+            padding: 7px 0 7px 24px;
+            position: relative;
+        }
+        .cp-sec-body li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 16px;
+            width: 14px;
+            height: 1px;
+            background: #4d9eff;
+            opacity: 0.7;
+        }
+        .cp-sec-body li strong { color: #4d9eff; font-weight: 600; margin-right: 4px; }
+
+        /* Figure placeholder */
+        .cp-figure {
+            margin: 32px 0 6px;
+            aspect-ratio: 16 / 9;
+            background:
+                linear-gradient(135deg, rgba(77,158,255,0.06) 0%, rgba(77,158,255,0.01) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(77,158,255,0.05) 12px, rgba(77,158,255,0.05) 13px);
+            border: 1px dashed rgba(77,158,255,0.3);
+            color: rgba(77,158,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .cp-figure-cap {
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            margin-top: 10px;
+            letter-spacing: 0.04em;
+            margin-bottom: 24px;
+        }
+
+        /* Gallery */
+        .cp-gallery { padding: 96px 0 0; }
+        .cp-gallery-head { margin-bottom: 26px; }
+        .cp-gallery-label {
+            font-size: 10px;
+            letter-spacing: 0.32em;
+            color: #4d9eff;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .cp-gallery-title {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .cp-gallery-hint {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.5;
+        }
+        .cp-gallery-strip {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 8px 0 28px;
+            margin: 0 -40px;
+            padding-left: 40px;
+            padding-right: 40px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(77,158,255,0.4) rgba(255,255,255,0.04);
+        }
+        .cp-gallery-strip::-webkit-scrollbar { height: 6px; }
+        .cp-gallery-strip::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+        .cp-gallery-strip::-webkit-scrollbar-thumb {
+            background: rgba(77,158,255,0.4);
+            border-radius: 3px;
+        }
+        .cp-gallery-tile {
+            flex: 0 0 70%;
+            aspect-ratio: 16 / 10;
+            background:
+                linear-gradient(135deg, rgba(77,158,255,0.04) 0%, rgba(77,158,255,0.01) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(77,158,255,0.04) 12px, rgba(77,158,255,0.04) 13px);
+            border: 1px dashed rgba(77,158,255,0.22);
+            color: rgba(77,158,255,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            scroll-snap-align: start;
+        }
+        @media (max-width: 700px) {
+            .cp-inner { padding: 76px 22px 110px; }
+            .cp-timeline { margin: 0 -22px; padding: 14px 22px; }
+            .cp-tl-item { min-width: 144px; padding: 10px 14px; }
+            .cp-tldr { padding: 24px 22px; }
+            .cp-gallery-strip { margin: 0 -22px; padding-left: 22px; padding-right: 22px; }
+            .cp-gallery-tile { flex: 0 0 86%; }
+        }
+
+        /* Hide showcase chrome when case is open */
+        body.case-open .cases-nav,
+        body.case-open .showcase-back,
+        body.case-open .showcase-cue {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
 
         /* ============ CUSTOM CURSOR ============ */
@@ -4044,6 +4406,10 @@
                             <li>tokens</li><li>multi-brand</li><li>information arch</li><li>figma ↔ code</li>
                         </ul>
                         <div class="case-meta">Americor · Lead PD · 2024</div>
+                        <button class="case-open-btn" data-open-case="cs01" type="button" aria-label="Open full case">
+                            <span class="open-arrow" aria-hidden="true">↓</span>
+                            <span>Open case</span>
+                        </button>
                     </div>
                 </article>
 
@@ -4127,6 +4493,152 @@
             </nav>
 
             <button class="showcase-back" id="showcase-back" type="button" aria-label="Back to top">↑ back</button>
+        </div>
+    </section>
+
+    <!-- Case page: full-page detail for cs01 (Americor overall) -->
+    <section class="case-page" id="case-page-cs01" data-case-page="cs01" aria-label="Americor case study">
+        <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
+            <span class="cp-close-arrow" aria-hidden="true">↑</span>
+            <span>back to showcase</span>
+        </button>
+        <div class="cp-inner">
+            <header class="cp-hero">
+                <div class="cp-meta">
+                    <span class="cp-meta-no">CS/01</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>Americor</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>Lead Product Designer</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>2023 — 2025</span>
+                </div>
+                <h1 class="cp-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h1>
+                <p class="cp-sub">Americor — финтех в сфере debt relief. Веб + мобильные приложения для iOS и Android. Меня взяли лидом, чтобы навести порядок в дизайн-процессах и провести редизайн продуктовой линейки под IPO.</p>
+            </header>
+
+            <div class="cp-tldr">
+                <div class="cp-tldr-label">// TL;DR</div>
+                <ul>
+                    <li>Спроектировал и внедрил многоуровневую дизайн-систему для трёх платформ (iOS / Android / Web): root → semantic → brand → platform. Покрыли ~50–60% интерфейсов, дали единый язык нескольким брендам Americor.</li>
+                    <li>Перевёл процесс с «макет → передача → разработка» на code-first: за финальные ~3 месяца команда работала на живом React-прототипе и Storybook, новые фичи собирались из кода.</li>
+                    <li>Под IPO-редизайн выстроил процесс пользовательских интервью и собственный анализатор отзывов из Facebook-группы — решения опирались на данные.</li>
+                    <li>Работал вдвоём с junior-дизайнером, который рос на задачах нарастающей сложности под моим контролем.</li>
+                </ul>
+            </div>
+
+            <nav class="cp-timeline" aria-label="Case timeline">
+                <ol class="cp-timeline-list">
+                    <li><button class="cp-tl-item active" data-target="cp-sec-01" type="button">
+                        <span class="cp-tl-num">01 / Старт</span>
+                        <span class="cp-tl-name">Аудит и контекст</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-02" type="button">
+                        <span class="cp-tl-num">02 / Foundation</span>
+                        <span class="cp-tl-name">Дизайн-система</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-03" type="button">
+                        <span class="cp-tl-num">03 / Pre-IPO</span>
+                        <span class="cp-tl-name">Редизайн</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-04" type="button">
+                        <span class="cp-tl-num">04 / Tools</span>
+                        <span class="cp-tl-name">Vibecoding tools</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-05" type="button">
+                        <span class="cp-tl-num">05 / Shift</span>
+                        <span class="cp-tl-name">Code-first прототипы</span>
+                    </button></li>
+                </ol>
+            </nav>
+
+            <article class="cp-section" id="cp-sec-01">
+                <div class="cp-sec-num">01 — Старт</div>
+                <h2 class="cp-sec-title">Что было до меня и с чего начал</h2>
+                <div class="cp-sec-body">
+                    <p>В команде работали middle- и junior-дизайнеры. <strong>Единой дизайн-системы не существовало</strong>: компоненты не были оформлены как компоненты — переиспользуемые блоки лежали россыпью по файлам. При создании нового макета дизайнер каждый раз собирал страницу из разрозненных кусков вручную. Массово поддерживать и обновлять интерфейсы при таком подходе было невозможно.</p>
+                    <p>Предыдущая попытка привлечь фриланс-дизайнера для разработки фирменного стиля не увенчалась успехом — за полгода работа была выполнена на 40–50%, после чего дизайнер ушёл. Разработчики тратили <em>недели</em>, пытаясь найти «источник правды» для компонентов. Визуальная консистентность между платформами отсутствовала.</p>
+                    <p>Начал с аудита: собрал все экраны приложений (десктоп + адаптив, iOS, Android), выявил паттерны и определил, что необходимо систематизировать в первую очередь.</p>
+                </div>
+                <div class="cp-figure">image · audit landscape (before)</div>
+                <div class="cp-figure-cap">Аудит исходных макетов: какие паттерны можно унифицировать, какие — нет.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-02">
+                <div class="cp-sec-num">02 — Foundation</div>
+                <h2 class="cp-sec-title">Многоуровневая дизайн-система</h2>
+                <div class="cp-sec-body">
+                    <p>На основе аудита спроектировал и реализовал многоуровневую архитектуру токенов:</p>
+                    <ul>
+                        <li><strong>Root</strong> — базовые значения: цвета, отступы, типографика.</li>
+                        <li><strong>Semantic</strong> — слой со смысловыми именами токенов.</li>
+                        <li><strong>Brand</strong> — уровень брендов: у Americor есть дочерние компании в разных штатах с отдельной цветовой идентичностью из-за различий в законодательстве.</li>
+                        <li><strong>Platform modes</strong> — Android, iOS, Web — управление из одного места.</li>
+                    </ul>
+                    <p>Параллельно реорганизовал всю структуру в Figma: итерации, ветки для разработки, понятная навигация по макетам. Вместе с командами начали покомпонентно раскатывать систему на текущие приложения и покрыли <strong>~50–60% интерфейсов</strong>.</p>
+                </div>
+                <div class="cp-figure">image · token architecture diagram (root → semantic → brand → platform)</div>
+                <div class="cp-figure-cap">Схема четырёх слоёв токенов и трёх режимов под платформы.</div>
+                <div class="cp-figure">image · figma library structure</div>
+                <div class="cp-figure-cap">Реорганизация библиотек в Figma: ветки, итерации, навигация.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-03">
+                <div class="cp-sec-num">03 — Pre-IPO</div>
+                <h2 class="cp-sec-title">Редизайн под подготовку к IPO</h2>
+                <div class="cp-sec-body">
+                    <p>В процессе внедрения дизайн-системы руководство приняло решение о <strong>полном редизайне мобильного и веб-приложений</strong> — компания готовилась к IPO, текущий дизайн потерял актуальность.</p>
+                    <p>Middle-дизайнер к тому моменту ушла, и мы работали вдвоём с junior-дизайнером. Я вёл редизайн, менторил коллегу, контролировал качество.</p>
+                    <p>Чтобы решения опирались на данные, а не на предположения, я выстроил процесс сбора обратной связи: проводил пользовательские интервью и параллельно запустил собственный анализатор отзывов из Facebook-группы (см. следующий раздел).</p>
+                </div>
+                <div class="cp-figure">image · before / after key screens</div>
+                <div class="cp-figure-cap">Сравнение ключевых экранов до и после редизайна.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-04">
+                <div class="cp-sec-num">04 — Tools</div>
+                <h2 class="cp-sec-title">Vibecoding: собственные инструменты для решений</h2>
+                <div class="cp-sec-body">
+                    <p><strong>Анализатор обратной связи из Facebook-группы.</strong> Написал парсер, который собирал все посты и комментарии из Facebook-группы Americor. Каждое сообщение проходило через нейросеть, определявшую <em>тему</em> (UX, служба поддержки, конкретная фича) и <em>сентимент</em> (жалоба, благодарность, просьба, недовольство). Построил UI с фильтрацией по сентиментам и темам — команда быстро находила проблемные области и принимала решения по редизайну на основе реальных данных.</p>
+                    <p><strong>Симулятор NSF Shortfall.</strong> При проектировании сложной фичи прогнозирования shortfall для платежных дат столкнулся с запутанной бизнес-логикой. Самостоятельно написал интерактивный симулятор: помог разобраться в механике, верифицировать сценарии, ускорить проектирование.</p>
+                </div>
+                <div class="cp-figure">image · feedback analyzer UI (filters by topic + sentiment)</div>
+                <div class="cp-figure-cap">Анализатор отзывов: фильтрация по темам и сентименту.</div>
+                <div class="cp-figure">image · NSF shortfall simulator</div>
+                <div class="cp-figure-cap">Симулятор бизнес-логики shortfall для платежных дат.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-05">
+                <div class="cp-sec-num">05 — Shift</div>
+                <h2 class="cp-sec-title">Code-first: живые прототипы вместо макетов</h2>
+                <div class="cp-sec-body">
+                    <p>На финальном этапе работы (последние ~3 месяца) перевёл весь дизайн-процесс на <strong>code-first</strong>: собрал все экраны приложения, включая адаптив, в реальное React-приложение. Рядом развернул Storybook, в который вносил каждый компонент — из этих компонентов строился весь интерфейс.</p>
+                    <p>Новые фичи собирал практически полностью из кода с помощью Claude, а затем уже из готового кода <em>генерировал компоненты для Figma</em> — для передачи разработчикам. Гипотезы фиксировались и тестировались на реальном работающем прототипе, а не на статичных макетах.</p>
+                    <p>Это перевернуло процесс: вместо «дизайн → передача → разработка» стало <strong>«прототип в коде → валидация → передача готовых компонентов»</strong>.</p>
+                </div>
+                <div class="cp-figure">image · live React prototype + Storybook side-by-side</div>
+                <div class="cp-figure-cap">Живой прототип в React и компоненты в Storybook — единый источник правды.</div>
+                <div class="cp-figure">image · code → figma reverse pipeline</div>
+                <div class="cp-figure-cap">Обратный пайплайн: компоненты из кода в Figma для разработки.</div>
+            </article>
+
+            <section class="cp-gallery" aria-label="Visual gallery">
+                <div class="cp-gallery-head">
+                    <div class="cp-gallery-label">// gallery</div>
+                    <h3 class="cp-gallery-title">Визуальная подборка</h3>
+                    <p class="cp-gallery-hint">Свайп / скролл вправо. Сюда лягут скриншоты системы, экраны редизайна и инструменты.</p>
+                </div>
+                <div class="cp-gallery-strip" id="cp-gallery-strip-cs01">
+                    <div class="cp-gallery-tile">image · slot 01</div>
+                    <div class="cp-gallery-tile">image · slot 02</div>
+                    <div class="cp-gallery-tile">image · slot 03</div>
+                    <div class="cp-gallery-tile">image · slot 04</div>
+                    <div class="cp-gallery-tile">image · slot 05</div>
+                    <div class="cp-gallery-tile">image · slot 06</div>
+                    <div class="cp-gallery-tile">image · slot 07</div>
+                    <div class="cp-gallery-tile">image · slot 08</div>
+                </div>
+            </section>
         </div>
     </section>
 
@@ -5336,10 +5848,89 @@
 
             document.addEventListener('keydown', (e) => {
                 if (!document.body.classList.contains('showcase-open')) return;
+                if (document.body.classList.contains('case-open')) return; // case-page handles its own ESC
                 if (e.key === 'Escape') { close(); return; }
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
             });
+        })();
+    </script>
+
+    <!-- Case page: open/close + sticky timeline navigation -->
+    <script>
+        (() => {
+            const body = document.body;
+            const openButtons = document.querySelectorAll('[data-open-case]');
+            const pages = document.querySelectorAll('.case-page');
+            if (!openButtons.length || !pages.length) return;
+            const initialized = new WeakSet();
+
+            function openCase(id) {
+                const page = document.querySelector(`.case-page[data-case-page="${id}"]`);
+                if (!page) return;
+                pages.forEach(p => p.classList.toggle('open', p === page));
+                page.scrollTop = 0;
+                body.classList.add('case-open');
+                window.__sfx?.engage?.();
+                requestAnimationFrame(() => initTimeline(page));
+            }
+
+            function closeCase() {
+                body.classList.remove('case-open');
+                pages.forEach(p => p.classList.remove('open'));
+                window.__sfx?.disengage?.();
+            }
+
+            openButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openCase(btn.dataset.openCase);
+                });
+            });
+
+            document.querySelectorAll('[data-cp-close]').forEach(btn => {
+                btn.addEventListener('click', closeCase);
+            });
+
+            // ESC closes case-page first; capture-phase so it runs before the showcase handler
+            document.addEventListener('keydown', (e) => {
+                if (!body.classList.contains('case-open')) return;
+                if (e.key === 'Escape') {
+                    e.stopPropagation();
+                    closeCase();
+                }
+            }, true);
+
+            function initTimeline(page) {
+                if (initialized.has(page)) return;
+                initialized.add(page);
+                const items = Array.from(page.querySelectorAll('.cp-tl-item'));
+                const sections = Array.from(page.querySelectorAll('.cp-section'));
+                if (!items.length || !sections.length) return;
+
+                items.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const target = page.querySelector(`#${item.dataset.target}`);
+                        if (!target) return;
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        window.__sfx?.tick?.();
+                    });
+                });
+
+                const setActive = (id) => {
+                    items.forEach(i => i.classList.toggle('active', i.dataset.target === id));
+                };
+
+                const io = new IntersectionObserver((entries) => {
+                    // Pick the entry closest to the top (most visible at the sticky-nav threshold)
+                    const visible = entries.filter(e => e.isIntersecting);
+                    if (!visible.length) return;
+                    visible.sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
+                    setActive(visible[0].target.id);
+                }, { root: page, rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+
+                sections.forEach(s => io.observe(s));
+            }
         })();
     </script>
 
