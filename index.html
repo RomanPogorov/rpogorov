@@ -124,7 +124,11 @@
             transform: translate(-50%, -50%);
             object-fit: cover;
             filter: contrast(1.15) saturate(1.0) brightness(0.8);
-            transition: filter 0.8s ease;
+            opacity: 0;
+            transition: opacity 1.2s ease, filter 0.8s ease;
+        }
+        body.video-revealed .stage video {
+            opacity: 1;
         }
 
         /* ============ NOISE / GRAIN ============ */
@@ -3515,12 +3519,20 @@
             console.log('[bg] video loaded ok');
         });
 
-        // Don't autoplay video under the audio gate — start only after consent.
+        // Don't autoplay video under the audio gate — and even after consent,
+        // give the central interface its entrance animation breathing room
+        // (~1.5s) on the green gradient before fading the video in.
         const tryPlayVideo = () => video.play().catch(() => {});
-        if (document.body.classList.contains('pre-gate')) {
-            document.addEventListener('app:start', tryPlayVideo, { once: true });
-        } else {
+        const revealVideo = () => {
+            document.body.classList.add('video-revealed');
             tryPlayVideo();
+        };
+        if (document.body.classList.contains('pre-gate')) {
+            document.addEventListener('app:start', () => {
+                setTimeout(revealVideo, 1500);
+            }, { once: true });
+        } else {
+            revealVideo();
         }
     </script>
 
@@ -4568,9 +4580,13 @@
             // doesn't race with click on the same element.
             const wake = (e) => {
                 if (btn.contains(e.target)) return;
-                if (!audio.muted) return;
-                // Respect Silent mode — let user explicitly toggle the audio button
+                // The audio gate handles its own audio decision — never let
+                // a stray pointerdown on it unmute prematurely (pointerdown
+                // fires BEFORE the gate's click handler can set audio-silent).
+                if (e.target.closest('.audio-gate')) return;
+                if (document.body.classList.contains('pre-gate')) return;
                 if (document.body.classList.contains('audio-silent')) return;
+                if (!audio.muted) return;
                 audio.muted = false;
                 setupGraph();
                 if (audio.paused) audio.play().catch(() => { });
