@@ -4440,6 +4440,9 @@
             align-items: center;
             gap: 10px;
         }
+        .corner.bl .vibe-row .theme-switch {
+            margin-top: 0;   /* override stand-alone offset for in-row layout */
+        }
 
         .ap-btn {
             appearance: none;
@@ -4477,7 +4480,7 @@
         .ap-btn.unmuted .icon-muted { display: none; }
 
         .ap-btn.ap-grunge {
-            width: 14px; height: 14px;
+            width: 20px; height: 20px;
             padding: 0;
             justify-content: center;
             gap: 0;
@@ -4498,7 +4501,7 @@
             transition: opacity .15s, filter .15s;
             flex: 0 0 auto;
         }
-        .ap-btn.ap-grunge svg { width: 7px; height: 7px; }
+        .ap-btn.ap-grunge svg { width: 9px; height: 9px; }
         .ap-btn.ap-grunge:hover {
             opacity: 1;
             filter: drop-shadow(0 0 4px rgba(var(--acc-rgb), 0.6));
