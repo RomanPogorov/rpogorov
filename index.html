@@ -1382,7 +1382,13 @@
             margin: 0;
             text-shadow: 0 0 20px rgba(var(--acc-rgb), 0.5);
         }
-        .dw-close {
+        .dw-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .dw-close,
+        .dw-nav {
             background: transparent;
             border: 1px solid rgba(var(--acc-rgb), 0.4);
             color: var(--ink);
@@ -1393,11 +1399,27 @@
             cursor: pointer;
             transition: border-color 0.2s, color 0.2s, background 0.2s;
         }
-        .dw-close:hover {
+        .dw-close:hover,
+        .dw-nav:hover:not(:disabled) {
             border-color: var(--acc);
             color: var(--acc);
             background: rgba(var(--acc-rgb), 0.08);
         }
+        .dw-nav { padding: 4px 9px; min-width: 28px; }
+        .dw-nav-key { font-size: 13px; line-height: 1; display: inline-block; }
+        .dw-nav:disabled { opacity: 0.3; cursor: default; }
+
+        /* Fade animation when navigating between items */
+        .dw-content {
+            transition: opacity 0.18s ease;
+        }
+        .dw-frame.swapping .dw-content,
+        .dw-frame.swapping .dw-title,
+        .dw-frame.swapping .dw-tag {
+            opacity: 0;
+            transition: opacity 0.16s ease;
+        }
+        .dw-title, .dw-tag { transition: opacity 0.18s ease; }
         .dw-content {
             flex: 1;
             overflow-y: auto;
@@ -3223,7 +3245,15 @@
                     <span class="dw-tag" id="dw-tag">// agent</span>
                     <h2 class="dw-title" id="dw-title">SIGNAL</h2>
                 </div>
-                <button class="dw-close" id="dw-close" type="button">ESC</button>
+                <div class="dw-actions">
+                    <button class="dw-nav" id="dw-prev" type="button" aria-label="Previous">
+                        <span class="dw-nav-key">←</span>
+                    </button>
+                    <button class="dw-nav" id="dw-next" type="button" aria-label="Next">
+                        <span class="dw-nav-key">→</span>
+                    </button>
+                    <button class="dw-close" id="dw-close" type="button">ESC</button>
+                </div>
             </header>
             <div class="dw-content" id="dw-content"></div>
         </div>
@@ -4161,11 +4191,15 @@
     <script>
         (() => {
             const dw = document.getElementById('dw');
+            const dwFrame = dw.querySelector('.dw-frame');
             const dwTitle = document.getElementById('dw-title');
             const dwTag = document.getElementById('dw-tag');
             const dwContent = document.getElementById('dw-content');
             const dwClose = document.getElementById('dw-close');
+            const dwPrev = document.getElementById('dw-prev');
+            const dwNext = document.getElementById('dw-next');
             const body = document.body;
+            let currentId = null;
 
             const DETAIL = {
                 figma: {
@@ -4421,13 +4455,32 @@
                 },
             };
 
-            function open(id) {
+            // Build the ordered list of navigable items from current DOM
+            // (so dynamically-injected entries like FLOW-WATCH are included).
+            function navList() {
+                return Array.from(document.querySelectorAll(
+                    '#agents-list .agent-item, #releases-list .release-item'
+                )).map(li => li.dataset.id).filter(Boolean);
+            }
+
+            function inject(id) {
                 const data = DETAIL[id];
-                if (!data) return;
+                if (!data) return false;
+                currentId = id;
                 dwTag.textContent = data.tag;
                 dwTitle.textContent = data.title;
                 dwContent.innerHTML = data.html;
                 dwContent.scrollTop = 0;
+                // disable nav buttons at the ends
+                const list = navList();
+                const idx = list.indexOf(id);
+                dwPrev.disabled = idx <= 0;
+                dwNext.disabled = idx === -1 || idx >= list.length - 1;
+                return true;
+            }
+
+            function open(id) {
+                if (!inject(id)) return;
                 body.classList.add('dw-open');
                 dw.setAttribute('aria-hidden', 'false');
                 // tick from delegated capture handler is enough — no sweep on top
@@ -4436,6 +4489,23 @@
             function close() {
                 body.classList.remove('dw-open');
                 dw.setAttribute('aria-hidden', 'true');
+                currentId = null;
+            }
+
+            function navigate(dir) {
+                if (!body.classList.contains('dw-open') || !currentId) return;
+                const list = navList();
+                const idx = list.indexOf(currentId);
+                if (idx === -1) return;
+                const next = list[idx + dir];
+                if (!next) return;
+                // brief fade swap
+                dwFrame.classList.add('swapping');
+                window.__sfx?.tick?.();
+                setTimeout(() => {
+                    inject(next);
+                    dwFrame.classList.remove('swapping');
+                }, 160);
             }
 
             // Click handlers — agents (delegated, works for injected entries too)
@@ -4451,8 +4521,13 @@
             });
 
             dwClose.addEventListener('click', close);
+            dwPrev.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1); });
+            dwNext.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && body.classList.contains('dw-open')) close();
+                if (!body.classList.contains('dw-open')) return;
+                if (e.key === 'Escape') { close(); return; }
+                if (e.key === 'ArrowLeft')  { e.preventDefault(); navigate(-1); }
+                if (e.key === 'ArrowRight') { e.preventDefault(); navigate(1); }
             });
             // Click outside frame closes
             dw.addEventListener('click', (e) => {
