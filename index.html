@@ -3911,18 +3911,22 @@
             const sugWrap = document.getElementById('chat-sug');
 
             let lastId = 0;
+            const rendered = new Set(); // dedup by server msg id
 
-            function addMsg({ role, text, id }) {
+            function addMsg({ role, text, id, silent }) {
+                if (id != null && rendered.has(id)) return;
+                if (id != null) rendered.add(id);
                 const div = document.createElement('div');
                 div.className = 'chat-msg from-' + role;
+                if (id != null) div.dataset.msgId = id;
                 const txt = document.createElement('div');
                 txt.className = 'chat-msg-text';
                 txt.textContent = text;
                 div.appendChild(txt);
                 threadEl.appendChild(div);
                 threadEl.scrollTop = threadEl.scrollHeight;
-                if (id && id > lastId) lastId = id;
-                if (role === 'roman') window.__sfx?.tick?.();
+                if (id != null && id > lastId) lastId = id;
+                if (role === 'roman' && !silent) window.__sfx?.tick?.();
             }
 
             sugWrap.addEventListener('click', (e) => {
@@ -3938,7 +3942,6 @@
                 if (!text || sendBtn.disabled) return;
                 input.value = '';
                 sendBtn.disabled = true;
-                addMsg({ role: 'visitor', text });
                 try {
                     const r = await fetch('api/chat/send', {
                         method: 'POST',
@@ -3946,7 +3949,7 @@
                         body: JSON.stringify({ thread, text }),
                     });
                     const data = await r.json();
-                    if (data?.msg?.id && data.msg.id > lastId) lastId = data.msg.id;
+                    if (data?.msg) addMsg({ role: 'visitor', text: data.msg.text, id: data.msg.id });
                     if (!data.ok) throw new Error('send failed');
                 } catch (err) {
                     addMsg({ role: 'error', text: '⚠ message could not be sent' });
@@ -3955,7 +3958,10 @@
                 }
             });
 
-            // Long-poll for replies. Stops only on page unload.
+            // Long-poll for messages — render BOTH visitor and roman, dedup by id
+            // (so reload restores full history from server). Set silent=true on
+            // initial load so all backlog roman msgs don't fire SFX in a burst.
+            let initialLoad = true;
             (async function poll() {
                 while (true) {
                     try {
@@ -3963,11 +3969,9 @@
                         if (!r.ok) { await new Promise((res) => setTimeout(res, 2000)); continue; }
                         const data = await r.json();
                         for (const m of (data.msgs || [])) {
-                            if (m.id <= lastId) continue;
-                            // we already render visitor msgs locally on send; only roman/system from server
-                            if (m.role === 'roman') addMsg({ role: 'roman', text: m.text, id: m.id });
-                            else if (m.id > lastId) lastId = m.id;
+                            addMsg({ role: m.role, text: m.text, id: m.id, silent: initialLoad });
                         }
+                        initialLoad = false;
                     } catch (e) {
                         await new Promise((res) => setTimeout(res, 2500));
                     }
