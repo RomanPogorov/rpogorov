@@ -628,6 +628,10 @@
             text-align: right;
             pointer-events: auto;
         }
+        /* All stack children must catch clicks (parent .hud-right is none) */
+        .hud-right .hud-right-stack > * {
+            pointer-events: auto;
+        }
         /* Subtle z-stagger for hologram depth */
         .hud-right .corner.tr { transform: translateZ(20px); }
         .hud-right .corner.br { transform: translateZ(8px); }
