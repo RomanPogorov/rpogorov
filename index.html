@@ -391,7 +391,38 @@
             perspective: 1100px;
             perspective-origin: 110% 50%;
             pointer-events: none;
+            opacity: 0;
+            filter: blur(10px) brightness(1.8);
+            transition: opacity 0.7s ease, filter 0.8s ease;
         }
+        body.console-revealed .hud-right {
+            opacity: 1;
+            filter: blur(0) brightness(1);
+        }
+
+        /* Children start hidden, then stagger-reveal once .console-revealed is set */
+        .hud-right .agents-head,
+        .hud-right .agent-item,
+        .hud-right .releases-block > .label,
+        .hud-right .release-item,
+        .hud-right .corner.br {
+            opacity: 0;
+            transform: translateX(14px);
+        }
+        @keyframes hud-item-in {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        body.console-revealed .hud-right .agents-head             { animation: hud-item-in 0.5s ease-out 0.20s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:nth-child(1) { animation: hud-item-in 0.5s ease-out 0.40s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:nth-child(2) { animation: hud-item-in 0.5s ease-out 0.55s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:nth-child(3) { animation: hud-item-in 0.5s ease-out 0.70s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:nth-child(4) { animation: hud-item-in 0.5s ease-out 0.85s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:nth-child(5) { animation: hud-item-in 0.5s ease-out 1.00s forwards; }
+        body.console-revealed .hud-right .releases-block > .label { animation: hud-item-in 0.5s ease-out 1.30s forwards; }
+        body.console-revealed .hud-right .release-item:nth-child(1) { animation: hud-item-in 0.5s ease-out 1.50s forwards; }
+        body.console-revealed .hud-right .release-item:nth-child(2) { animation: hud-item-in 0.5s ease-out 1.65s forwards; }
+        body.console-revealed .hud-right .release-item:nth-child(3) { animation: hud-item-in 0.5s ease-out 1.80s forwards; }
+        body.console-revealed .hud-right .corner.br               { animation: hud-item-in 0.5s ease-out 2.00s forwards; }
 
         .hud-right-stack {
             position: absolute;
@@ -3726,12 +3757,20 @@
                 setTimeout(() => it.classList.remove('flash'), 700);
             }
 
-            // Random interval between updates: 1.4–3.2s
-            (function loop() {
-                setTimeout(() => { tick(); loop(); }, 1400 + Math.random() * 1800);
-            })();
+            // Reveal the right console at t=8s with staggered items + soft sweep SFX
+            setTimeout(() => {
+                document.body.classList.add('console-revealed');
+                window.__sfx?.open?.();
+            }, 8000);
 
-            // After ~14s — inject a yellow warning entry (user flow drop)
+            // Random update loop starts after items have appeared (~10s)
+            setTimeout(() => {
+                (function loop() {
+                    setTimeout(() => { tick(); loop(); }, 1400 + Math.random() * 1800);
+                })();
+            }, 10500);
+
+            // Yellow FLOW-WATCH warning lands a few seconds after items settle (~14s total)
             setTimeout(() => {
                 const li = document.createElement('li');
                 li.className = 'agent-item warning injected';
