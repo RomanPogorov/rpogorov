@@ -4266,35 +4266,56 @@
                         document.getElementById('chat-input')?.focus();
                     } else {
                         // Switching back to dashboard always exits fullscreen
-                        document.body.classList.remove('chat-fullscreen');
+                        if (document.body.classList.contains('chat-fullscreen')) {
+                            exitFullscreen();
+                        }
                         dashboard.hidden = false;
                         chatPane.hidden = true;
                     }
                 });
             });
 
-            // Fullscreen toggle for the chat pane
+            // Fullscreen toggle for the chat pane.
+            // The right HUD is wrapped in a 3D-transformed parent (.hud-right-stack),
+            // which establishes a containing block for any position:fixed descendant.
+            // To make fullscreen actually relative to the viewport we move the
+            // chat-pane node to <body> on enter and return it on exit.
             const fsBtn = document.getElementById('chat-fs-toggle');
+            const originalParent = chatPane.parentNode;
+            const originalNextSibling = chatPane.nextSibling;
+
+            function enterFullscreen() {
+                if (document.body.classList.contains('chat-fullscreen')) return;
+                document.body.appendChild(chatPane);
+                document.body.classList.add('chat-fullscreen');
+                window.__sfx?.engage?.();
+                requestAnimationFrame(() => document.getElementById('chat-input')?.focus());
+            }
+            function exitFullscreen() {
+                if (!document.body.classList.contains('chat-fullscreen')) return;
+                document.body.classList.remove('chat-fullscreen');
+                if (originalNextSibling) {
+                    originalParent.insertBefore(chatPane, originalNextSibling);
+                } else {
+                    originalParent.appendChild(chatPane);
+                }
+                window.__sfx?.disengage?.();
+            }
+
             if (fsBtn) {
                 fsBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const wasFs = document.body.classList.toggle('chat-fullscreen');
-                    if (wasFs) {
-                        window.__sfx?.engage?.();
-                        document.getElementById('chat-input')?.focus();
-                    } else {
-                        window.__sfx?.disengage?.();
-                    }
+                    if (document.body.classList.contains('chat-fullscreen')) exitFullscreen();
+                    else enterFullscreen();
                 });
                 // ESC exits fullscreen first (before any panel-close handlers below)
                 document.addEventListener('keydown', (e) => {
                     if (e.key !== 'Escape') return;
                     if (document.body.classList.contains('chat-fullscreen')) {
-                        document.body.classList.remove('chat-fullscreen');
-                        window.__sfx?.disengage?.();
+                        exitFullscreen();
                         e.stopPropagation();
                     }
-                }, true);   // capture phase so it runs before the panel/dw handlers
+                }, true);
             }
 
             // ---- chat ----
