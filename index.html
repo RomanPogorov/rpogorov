@@ -859,6 +859,8 @@
             transition:
                 transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
                 opacity 0.6s ease;
+            perspective: 1600px;
+            perspective-origin: 50% 50%;
         }
 
         body.engaged .panel {
@@ -871,6 +873,12 @@
             position: relative;
             width: 100%;
             height: 100%;
+            transform-origin: 50% 50%;
+            transform-style: preserve-3d;
+            transform:
+                rotateY(var(--p-ry, 0deg))
+                rotateX(var(--p-rx, 0deg));
+            will-change: transform;
             background:
                 linear-gradient(180deg,
                     rgba(var(--acc-rgb), 0.04) 0%,
@@ -2428,6 +2436,56 @@
         });
     </script>
 
+
+    <!-- Central panel: hologram parallax (active when engaged) -->
+    <script>
+        (() => {
+            const frame = document.querySelector('.panel-frame');
+            const body = document.body;
+            if (!frame) return;
+
+            const baseRY = 0, baseRX = 0;
+            const idleAmpY = 1.2;
+            const idleAmpX = 0.8;
+            const mouseAmpY = 5;
+            const mouseAmpX = 4;
+            const lerp = 0.08;
+
+            let targetRY = baseRY;
+            let targetRX = baseRX;
+            let curRY = 0;
+            let curRX = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                if (!body.classList.contains('engaged')) return;
+                const nx = e.clientX / window.innerWidth - 0.5;
+                const ny = e.clientY / window.innerHeight - 0.5;
+                targetRY = baseRY + nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
+            });
+
+            const start = performance.now();
+            function tick(t) {
+                requestAnimationFrame(tick);
+                if (!body.classList.contains('engaged')) {
+                    // ease back to neutral when closed (avoid jarring snap on next open)
+                    curRY *= 0.92;
+                    curRX *= 0.92;
+                    targetRY = baseRY;
+                    targetRX = baseRX;
+                } else {
+                    const dt = (t - start) / 1000;
+                    const idleY = Math.sin(dt * 0.35) * idleAmpY;
+                    const idleX = Math.cos(dt * 0.27) * idleAmpX;
+                    curRY += ((targetRY + idleY) - curRY) * lerp;
+                    curRX += ((targetRX + idleX) - curRX) * lerp;
+                }
+                frame.style.setProperty('--p-ry', curRY.toFixed(2) + 'deg');
+                frame.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
+            }
+            requestAnimationFrame(tick);
+        })();
+    </script>
 
     <!-- Right-side HUD: hologram parallax -->
     <script>
