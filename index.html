@@ -471,31 +471,12 @@
         body.pre-gate .noise,
         body.pre-gate .scanlines,
         body.pre-gate .vignette,
-        body.pre-gate .bottom-shade,
         body.pre-gate .hud,
         body.pre-gate .backdrop,
         body.pre-gate .panel,
         body.pre-gate .dw {
             opacity: 0 !important;
             pointer-events: none !important;
-        }
-
-        /* Soft bottom darkening for legibility of chat input, tabs, vibe-row,
-           release cards over the bright video bg */
-        .bottom-shade {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 38vh;
-            pointer-events: none;
-            z-index: 4;
-            background: linear-gradient(
-                to bottom,
-                transparent 0%,
-                rgba(0, 0, 0, 0.35) 50%,
-                rgba(0, 0, 0, 0.7) 100%
-            );
         }
         /* Pause all background animations until consent — nothing should be
            working under the gate */
@@ -1272,10 +1253,10 @@
         .chat-sug-btn {
             appearance: none;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
-            color: var(--dim);
-            background: transparent;
-            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            font-size: 10px;
+            color: var(--ink);
+            background: rgba(var(--acc-rgb), 0.05);
+            border: 1px solid rgba(var(--acc-rgb), 0.45);
             padding: 5px 9px;
             cursor: pointer;
             transition: color 0.15s, border-color 0.15s, background 0.15s;
@@ -1283,7 +1264,7 @@
         .chat-sug-btn:hover {
             color: var(--acc);
             border-color: var(--acc);
-            background: rgba(var(--acc-rgb), 0.06);
+            background: rgba(var(--acc-rgb), 0.14);
         }
 
         .chat-input-row {
@@ -1304,7 +1285,7 @@
             outline: none;
             transition: border-color 0.15s, background 0.15s;
         }
-        .chat-input-row input::placeholder { color: var(--dim); opacity: 0.7; }
+        .chat-input-row input::placeholder { color: var(--ink); opacity: 0.6; }
         .chat-input-row input:focus {
             border-color: var(--acc);
             background: rgba(var(--acc-rgb), 0.08);
@@ -3134,7 +3115,6 @@
     <div class="noise"></div>
     <div class="scanlines"></div>
     <div class="vignette"></div>
-    <div class="bottom-shade"></div>
 
     <!-- Audio gate: requests permission for sound on entry -->
     <div class="audio-gate" id="audio-gate" role="dialog" aria-label="Audio permission">
