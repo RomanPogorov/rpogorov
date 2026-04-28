@@ -508,6 +508,45 @@
                 rgba(var(--acc-rgb), 0.0) 100%
             );
         }
+
+        /* WARNING variant — yellow tone, soft alarm */
+        .agent-item.warning {
+            border-left-color: #ffb547;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 181, 71, 0.10) 0%,
+                rgba(255, 181, 71, 0) 100%
+            );
+        }
+        .agent-item.warning.flash {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 181, 71, 0.22) 0%,
+                rgba(255, 181, 71, 0) 100%
+            );
+        }
+        .agent-item.warning .agent-dot {
+            background: #ffb547;
+            box-shadow: 0 0 7px rgba(255, 181, 71, 0.8);
+            animation: warn-pulse 1.0s ease-in-out infinite;
+        }
+        @keyframes warn-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.5; transform: scale(0.7); }
+        }
+        .agent-item.warning .agent-name { color: #ffd47a; }
+        .agent-item.warning .agent-name .agent-tag { color: #ffb547; opacity: 1; }
+        .agent-item.warning .agent-task { color: #ffe6b8; opacity: 0.95; }
+
+        /* Slide-in for newly-injected entries */
+        @keyframes agent-inject {
+            0%   { opacity: 0; transform: translateX(8px); max-height: 0; }
+            100% { opacity: 1; transform: translateX(0); max-height: 80px; }
+        }
+        .agent-item.injected {
+            animation: agent-inject 0.5s ease-out forwards;
+            overflow: hidden;
+        }
         .agent-dot {
             flex: 0 0 auto;
             width: 6px;
@@ -2640,7 +2679,7 @@
     </script>
 
 
-    <!-- Center prompt: subtle 3D parallax (active only when NOT engaged) -->
+    <!-- Center prompt: subtle 3D parallax — only when cursor is over the prompt -->
     <script>
         (() => {
             const prompt = document.getElementById('prompt');
@@ -2659,8 +2698,17 @@
 
             document.addEventListener('mousemove', (e) => {
                 if (body.classList.contains('engaged')) return;
-                const nx = e.clientX / window.innerWidth - 0.5;
-                const ny = e.clientY / window.innerHeight - 0.5;
+                const r = prompt.getBoundingClientRect();
+                const inside =
+                    e.clientX >= r.left && e.clientX <= r.right &&
+                    e.clientY >= r.top  && e.clientY <= r.bottom;
+                if (!inside) {
+                    targetRY = baseRY;
+                    targetRX = baseRX;
+                    return;
+                }
+                const nx = (e.clientX - r.left) / r.width - 0.5;
+                const ny = (e.clientY - r.top)  / r.height - 0.5;
                 targetRY = baseRY + nx * mouseAmpY * 2;
                 targetRX = baseRX - ny * mouseAmpX * 2;
             });
@@ -2669,7 +2717,6 @@
             function tick(t) {
                 requestAnimationFrame(tick);
                 if (body.classList.contains('engaged')) {
-                    // ease back to neutral so engaged transform isn't fighting us
                     curRY *= 0.9;
                     curRX *= 0.9;
                     targetRY = 0;
@@ -2710,8 +2757,17 @@
 
             document.addEventListener('mousemove', (e) => {
                 if (!body.classList.contains('engaged')) return;
-                const nx = e.clientX / window.innerWidth - 0.5;
-                const ny = e.clientY / window.innerHeight - 0.5;
+                const r = panel.getBoundingClientRect();
+                const inside =
+                    e.clientX >= r.left && e.clientX <= r.right &&
+                    e.clientY >= r.top  && e.clientY <= r.bottom;
+                if (!inside) {
+                    targetRY = baseRY;
+                    targetRX = baseRX;
+                    return;
+                }
+                const nx = (e.clientX - r.left) / r.width - 0.5;
+                const ny = (e.clientY - r.top)  / r.height - 0.5;
                 targetRY = baseRY + nx * mouseAmpY * 2;
                 targetRX = baseRX - ny * mouseAmpX * 2;
             });
@@ -2835,20 +2891,54 @@
             (function loop() {
                 setTimeout(() => { tick(); loop(); }, 1400 + Math.random() * 1800);
             })();
+
+            // After ~14s — inject a yellow warning entry (user flow drop)
+            setTimeout(() => {
+                const li = document.createElement('li');
+                li.className = 'agent-item warning injected';
+                li.dataset.id = 'flow-watch';
+                li.innerHTML = `
+                    <span class="agent-dot"></span>
+                    <div class="agent-body">
+                        <div class="agent-name">FLOW-WATCH <span class="agent-tag">// alert</span></div>
+                        <div class="agent-task" data-task>checkout drop on step 3 · investigating</div>
+                        <div class="agent-meta" data-meta>3 sessions affected · last 4m ago</div>
+                    </div>`;
+                list.appendChild(li);
+                items.push(li);
+                POOL['flow-watch'] = [
+                    'checkout drop on step 3 · investigating',
+                    'checkout drop on step 3 · 5 affected · 6m',
+                    'replicating on staging · cohort isolated',
+                    'root cause: cdn cache miss · patching',
+                    'patch staged · v0.4.2 · monitoring',
+                    'green for 4m · auto-resolved ✓',
+                ];
+                META_POOL['flow-watch'] = [
+                    '3 sessions affected · last 4m ago',
+                    '5 sessions affected · last 1m ago',
+                    'replication 2/5 attempts',
+                    'patch v0.4.2 staged',
+                    'green for 4m · auto-resolved',
+                ];
+                idxMap['flow-watch'] = 0;
+                metaIdxMap['flow-watch'] = 0;
+            }, 14000);
         })();
     </script>
 
-    <!-- Right-side HUD: hologram parallax -->
+    <!-- Right-side HUD: hologram parallax — only when cursor is over the panel -->
     <script>
         (() => {
             const stack = document.getElementById('hud-right-stack');
-            if (!stack) return;
+            const hudRight = document.getElementById('hud-right');
+            if (!stack || !hudRight) return;
 
-            const baseRY = -14;     // resting tilt (deg)
+            const baseRY = -14;
             const baseRX = 0;
-            const idleAmpY = 1.6;   // gentle floating amplitude (deg)
+            const idleAmpY = 1.6;
             const idleAmpX = 1.0;
-            const mouseAmpY = 8;    // mouse-driven extra tilt (deg)
+            const mouseAmpY = 8;
             const mouseAmpX = 6;
             const lerp = 0.06;
 
@@ -2858,8 +2948,17 @@
             let curRX = baseRX;
 
             document.addEventListener('mousemove', (e) => {
-                const nx = e.clientX / window.innerWidth - 0.5;     // -0.5 .. 0.5
-                const ny = e.clientY / window.innerHeight - 0.5;
+                const r = hudRight.getBoundingClientRect();
+                const inside =
+                    e.clientX >= r.left && e.clientX <= r.right &&
+                    e.clientY >= r.top  && e.clientY <= r.bottom;
+                if (!inside) {
+                    targetRY = baseRY;
+                    targetRX = baseRX;
+                    return;
+                }
+                const nx = (e.clientX - r.left) / r.width - 0.5;
+                const ny = (e.clientY - r.top)  / r.height - 0.5;
                 targetRY = baseRY + nx * mouseAmpY * 2;
                 targetRX = baseRX - ny * mouseAmpX * 2;
             });
