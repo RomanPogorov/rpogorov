@@ -1365,20 +1365,37 @@
                        rotateX(var(--chat-fs-rx, 0deg));
             transform-style: preserve-3d;
             will-change: transform;
-            animation: chat-fs-in 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: chat-fs-in 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
         @keyframes chat-fs-in {
-            /* Detach from the right HUD column → stretch out, soft settle */
+            /* STAGE 1 (0–12%): detach — small peel-off from the right edge */
             0% {
                 opacity: 0;
                 transform-origin: 100% 50%;
-                transform: translate(34vw, -1vh) perspective(1500px) rotateY(16deg) scale(0.5, 0.66);
-                filter: blur(4px);
+                transform: translate(40vw, 0) perspective(1500px) rotateY(22deg) scale(0.3, 0.5);
+                filter: brightness(2) blur(6px);
             }
-            45% { opacity: 1; filter: blur(0); }
-            80% {
+            12% {
+                opacity: 0.55;
+                transform: translate(35vw, 0) perspective(1500px) rotateY(22deg) scale(0.3, 0.5);
+                filter: brightness(1.9) blur(5px);
+            }
+            /* STAGE 2 (12–48%): glide to center, still tilted and small */
+            48% {
+                opacity: 0.85;
+                transform: translate(-50%, 0) perspective(1500px) rotateY(18deg) scale(0.6, 0.8);
+                filter: brightness(1.55) blur(2px);
+            }
+            /* STAGE 3 (48–74%): expand + unfold rotation */
+            74% {
                 opacity: 1;
+                transform: translate(-50%, 0) perspective(1500px) rotateY(4deg) scale(1, 1);
+                filter: brightness(1.22) blur(0);
+            }
+            /* STAGE 4 (74–100%): darken to its final dark frosted bg, gentle settle */
+            88% {
                 transform: translate(-50%, 0) perspective(1500px) rotateY(-1deg) scale(1.012, 1.012);
+                filter: brightness(1.06);
             }
             100% {
                 opacity: 1;
@@ -1386,7 +1403,7 @@
                            rotateY(var(--chat-fs-ry, 0deg))
                            rotateX(var(--chat-fs-rx, 0deg))
                            scale(1, 1);
-                filter: blur(0);
+                filter: brightness(1);
             }
         }
 
