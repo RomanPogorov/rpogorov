@@ -3174,6 +3174,7 @@
 
             const SFX = {
                 hover:    () => tone({ freq: 1500, dur: 0.04, type: 'triangle', gain: 0.025 }),
+                tick:     () => tone({ freq: 3200, dur: 0.018, type: 'sine', gain: 0.03 }),
                 click:    () => { tone({ freq: 2400, dur: 0.03, type: 'square', gain: 0.04 }); noiseBurst({ dur: 0.025, gain: 0.025 }); },
                 open:     () => sweep({ f1: 380, f2: 1900, dur: 0.32, type: 'sine', gain: 0.07 }),
                 close:    () => sweep({ f1: 1700, f2: 320, dur: 0.22, type: 'sine', gain: 0.05 }),
@@ -3184,13 +3185,16 @@
             window.__sfx = SFX;
 
             // Hover & click delegation — works on dynamically added nodes too
-            const HOVER_SEL = '.agent-item, .release-item, .theme-dot, .ap-btn, .dw-close, .prompt';
+            const HOVER_SEL = '.agent-item, .release-item, .theme-dot, .ap-btn, .dw-close, .prompt, .tab';
             const CLICK_SEL = '.agent-item, .release-item, .theme-dot, .ap-btn, .dw-close';
+            const TICK_SEL = '.tab';
             document.addEventListener('pointerenter', (e) => {
                 if (e.target.closest && e.target.closest(HOVER_SEL)) SFX.hover();
             }, true);
             document.addEventListener('click', (e) => {
-                if (e.target.closest && e.target.closest(CLICK_SEL)) SFX.click();
+                if (!e.target.closest) return;
+                if (e.target.closest(TICK_SEL)) { SFX.tick(); return; }
+                if (e.target.closest(CLICK_SEL)) SFX.click();
             }, true);
         })();
     </script>
