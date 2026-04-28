@@ -388,6 +388,339 @@
         /* HTML [hidden] must always win over our display rules */
         [hidden] { display: none !important; }
 
+        /* ============ SHOWCASE ============ */
+        /* Down-arrow cue at the bottom of the hero viewport */
+        .showcase-cue {
+            position: fixed;
+            left: 50%;
+            bottom: 14px;
+            transform: translateX(-50%);
+            z-index: 6;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 10px 18px;
+            color: var(--ink);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            cursor: pointer;
+            user-select: none;
+            opacity: 0.85;
+            transition: opacity 0.18s, transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        .showcase-cue::before,
+        .showcase-cue::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(var(--acc-rgb), 0.5), transparent);
+            top: 50%;
+        }
+        .showcase-cue::before { right: 100%; margin-right: 6px; }
+        .showcase-cue::after { left: 100%; margin-left: 6px; }
+        .showcase-cue:hover {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-2px);
+            color: var(--acc);
+        }
+        .showcase-cue-arrow {
+            display: inline-block;
+            color: var(--acc);
+            font-size: 13px;
+            line-height: 1;
+            animation: showcase-arrow-bounce 1.6s ease-in-out infinite;
+        }
+        @keyframes showcase-arrow-bounce {
+            0%, 100% { transform: translateY(0); opacity: 0.7; }
+            50%      { transform: translateY(4px); opacity: 1; }
+        }
+        body.engaged .showcase-cue,
+        body.dw-open .showcase-cue,
+        body.chat-fullscreen .showcase-cue,
+        body.pre-gate .showcase-cue,
+        body.showcase-open .showcase-cue {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* The basement section itself — black, full viewport, slides up into view */
+        .showcase {
+            position: fixed;
+            top: 100vh;             /* off-screen below the hero */
+            left: 0;
+            right: 0;
+            height: 100vh;
+            background: #050608;
+            z-index: 7;
+            overflow: hidden;
+            transition: top 0.85s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        body.showcase-open .showcase {
+            top: 0;
+        }
+        /* And reciprocally push the hero off the top, like sliding to a basement */
+        .stage,
+        .grid,
+        .horizon,
+        .noise,
+        .scanlines,
+        .vignette,
+        .hud,
+        .prompt {
+            transition: transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease, filter 0.6s ease;
+        }
+        body.showcase-open .stage,
+        body.showcase-open .grid,
+        body.showcase-open .horizon,
+        body.showcase-open .noise,
+        body.showcase-open .scanlines,
+        body.showcase-open .vignette,
+        body.showcase-open .hud {
+            transform: translateY(-12vh) scale(0.96);
+            opacity: 0.3;
+            filter: blur(6px);
+            pointer-events: none;
+        }
+        body.showcase-open .prompt {
+            transform: translate(-50%, calc(-50% - 14vh)) perspective(1400px)
+                       rotateY(var(--prompt-ry, 0deg))
+                       rotateX(var(--prompt-rx, 0deg))
+                       scale(0.85);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .showcase-inner {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 6vh 5vw 4vh;
+            box-sizing: border-box;
+        }
+        .showcase-tag {
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: block;
+            opacity: 0.85;
+        }
+        .showcase-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(28px, 4.5vw, 56px);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: var(--ink);
+            margin: 0 0 6px;
+            line-height: 1.05;
+        }
+        .showcase-title-em {
+            color: var(--acc);
+            text-shadow: 0 0 24px rgba(var(--acc-rgb), 0.45);
+            font-weight: 500;
+        }
+        .showcase-sub {
+            color: var(--dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            margin: 6px 0 18px;
+            opacity: 0.7;
+        }
+
+        /* Cases carousel */
+        .cases {
+            flex: 1;
+            display: flex;
+            gap: 24px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            padding: 8px 4px 18px;
+            margin: 0 -4px;
+            scrollbar-width: none;
+        }
+        .cases::-webkit-scrollbar { display: none; }
+        .case {
+            flex: 0 0 min(900px, 90vw);
+            scroll-snap-align: center;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 24px;
+            padding: 22px;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            background: linear-gradient(180deg, rgba(var(--acc-rgb), 0.04), rgba(var(--acc-rgb), 0.0));
+            box-shadow:
+                0 0 40px rgba(var(--acc-rgb), 0.08),
+                inset 0 0 60px rgba(var(--acc-rgb), 0.04);
+            position: relative;
+        }
+        .case::before, .case::after {
+            content: '';
+            position: absolute;
+            width: 14px; height: 14px;
+            border: 1px solid var(--acc);
+        }
+        .case::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .case::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+        .case-media {
+            background: #0b0d10;
+            border: 1px solid rgba(var(--acc-rgb), 0.10);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+        }
+        .case-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .case-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 0;
+            color: var(--ink);
+        }
+        .case-head {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: var(--acc);
+            opacity: 0.85;
+        }
+        .case-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(20px, 2.4vw, 30px);
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.15;
+            color: var(--ink);
+        }
+        .case-title em {
+            color: var(--acc);
+            font-style: normal;
+            text-shadow: 0 0 18px rgba(var(--acc-rgb), 0.4);
+        }
+        .case-desc {
+            color: var(--ink);
+            opacity: 0.78;
+            font-size: 14px;
+            line-height: 1.55;
+            margin: 0;
+        }
+        .case-tags {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .case-tags li {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 5px 9px;
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            color: var(--acc);
+        }
+        .case-meta {
+            margin-top: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            color: var(--dim);
+            text-transform: uppercase;
+        }
+        @media (max-width: 800px) {
+            .case { grid-template-columns: 1fr; }
+        }
+
+        /* Carousel nav */
+        .cases-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            margin-top: 14px;
+        }
+        .cases-arrow {
+            appearance: none;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--ink);
+            font-size: 14px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: border-color .15s, color .15s, background .15s, transform .12s;
+        }
+        .cases-arrow:hover {
+            border-color: var(--acc);
+            color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
+        }
+        .cases-arrow:active { transform: scale(0.92); }
+        .cases-arrow:disabled { opacity: 0.35; cursor: default; }
+        .cases-dots {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 8px;
+        }
+        .cases-dot {
+            width: 8px;
+            height: 8px;
+            border: 1px solid rgba(var(--acc-rgb), 0.5);
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.18s, border-color 0.18s, transform 0.15s;
+        }
+        .cases-dot.active {
+            background: var(--acc);
+            border-color: var(--acc);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.7);
+        }
+        .cases-dot:hover { transform: scale(1.25); }
+
+        .showcase-back {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            appearance: none;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            padding: 6px 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: color .15s, border-color .15s, background .15s;
+        }
+        .showcase-back:hover {
+            color: var(--acc);
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
+        }
+
         /* ============ CUSTOM CURSOR ============ */
         @media (hover: hover) and (pointer: fine) {
             body { cursor: none; }
@@ -3571,6 +3904,122 @@
     <!-- Backdrop with scanlines blur — appears when panel opens -->
     <div class="backdrop"></div>
 
+    <!-- Showcase — basement slide with carousel of recent works -->
+    <div class="showcase-cue" id="showcase-cue" role="button" tabindex="0" aria-label="Open showcase">
+        <span class="showcase-cue-label">Showcase</span>
+        <span class="showcase-cue-arrow" aria-hidden="true">↓</span>
+    </div>
+
+    <section class="showcase" id="showcase" aria-label="Recent works">
+        <div class="showcase-inner">
+            <div class="showcase-intro">
+                <span class="showcase-tag">// archive · 2010 — 2026</span>
+                <h2 class="showcase-title">Fifteen years of work,<br><span class="showcase-title-em">these are the recent ones I keep coming back to.</span></h2>
+                <p class="showcase-sub">Scroll horizontally · or use ← →</p>
+            </div>
+
+            <div class="cases" id="cases">
+                <article class="case" data-case="cs01">
+                    <div class="case-media">
+                        <img src="showcase/cases/cs01-americor.png" alt="Americor multi-brand design system">
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/01</span>
+                            <span class="case-role">Designer</span>
+                        </div>
+                        <h3 class="case-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h3>
+                        <p class="case-desc">Audited three platforms, unpacked a ghost design system that never existed as components, and shipped a 4-layer token architecture: root → semantic → brand → platform. Every screen now speaks one language across iOS, Android and web.</p>
+                        <ul class="case-tags">
+                            <li>tokens</li><li>multi-brand</li><li>information arch</li><li>figma ↔ code</li>
+                        </ul>
+                        <div class="case-meta">Americor · Lead PD · 2024</div>
+                    </div>
+                </article>
+
+                <article class="case" data-case="cs02">
+                    <div class="case-media">
+                        <img src="showcase/cases/cs02-aidbox.png" alt="Health Samurai design system">
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/02</span>
+                            <span class="case-role">Designer</span>
+                        </div>
+                        <h3 class="case-title">A design system for <em>five healthcare products</em>, half of it generated by AI.</h3>
+                        <p class="case-desc">Designed in Figma, shipped in code, synced both ways. Wrote a Claude skill to pull components from Figma back when that pattern didn't exist yet. Every component ships through Storybook review.</p>
+                        <ul class="case-tags">
+                            <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>bi-directional sync</li>
+                        </ul>
+                        <div class="case-meta">Health Samurai · Senior PD · 2023</div>
+                    </div>
+                </article>
+
+                <article class="case" data-case="cs03">
+                    <div class="case-media">
+                        <img src="showcase/cases/cs03-landings.jpg" alt="Landing page pipeline">
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/03</span>
+                            <span class="case-role">Designer</span>
+                        </div>
+                        <h3 class="case-title">From 1.5 months to <em>4 days</em> — the landing page pipeline.</h3>
+                        <p class="case-desc">C-level was drafting landings by hand. Rebuilt the system around Markdown + a block library non-designers could assemble. Owners edit live in the DOM via an MCP chat. A designer polishes and ships.</p>
+                        <ul class="case-tags">
+                            <li>markdown-first</li><li>block library</li><li>mcp</li><li>dogfooded brand</li>
+                        </ul>
+                        <div class="case-meta">Health Samurai · 2023 — 2025</div>
+                    </div>
+                </article>
+
+                <article class="case" data-case="cs04">
+                    <div class="case-media">
+                        <img src="showcase/cases/cs04-creditor.png" alt="Creditor card lifecycle">
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/04</span>
+                            <span class="case-role">Designer</span>
+                        </div>
+                        <h3 class="case-title">The creditor card &amp; its <em>lifecycle</em>.</h3>
+                        <p class="case-desc">The central object in the user's universe. Designed 11 states, 5 transitions, and an animated timeline that turns abstract "program progress" into something tangible — without overwhelming first-time users.</p>
+                        <ul class="case-tags">
+                            <li>state design</li><li>micro-interactions</li><li>empty states</li><li>motion</li>
+                        </ul>
+                        <div class="case-meta">Americor · UX · 2024</div>
+                    </div>
+                </article>
+
+                <article class="case" data-case="cs05">
+                    <div class="case-media">
+                        <img src="showcase/cases/cs05-databricks.png" alt="Databricks UX exploration">
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/05</span>
+                            <span class="case-role">Consulting</span>
+                        </div>
+                        <h3 class="case-title">Databricks — taming the <em>data-platform UX</em>.</h3>
+                        <p class="case-desc">An exploration of how a power-user analytics platform can stay readable for newcomers without losing its density. Reorganized the navigation around what users come to do, not where engineering keeps the code.</p>
+                        <ul class="case-tags">
+                            <li>information density</li><li>onboarding</li><li>nav restructure</li><li>data viz</li>
+                        </ul>
+                        <div class="case-meta">Databricks · Consulting · 2022</div>
+                    </div>
+                </article>
+            </div>
+
+            <nav class="cases-nav" aria-label="Carousel navigation">
+                <button class="cases-arrow" id="cases-prev" type="button" aria-label="Previous case">←</button>
+                <ol class="cases-dots" id="cases-dots"></ol>
+                <button class="cases-arrow" id="cases-next" type="button" aria-label="Next case">→</button>
+            </nav>
+
+            <button class="showcase-back" id="showcase-back" type="button" aria-label="Back to top">↑ back</button>
+        </div>
+    </section>
+
     <!-- Detail holographic window: opens for agent / release clicks -->
     <aside class="dw" id="dw" aria-hidden="true">
         <div class="dw-beam"></div>
@@ -4678,6 +5127,83 @@
                     }
                 }
             })();
+        })();
+    </script>
+
+    <!-- Showcase: down-arrow opens basement section with cases carousel -->
+    <script>
+        (() => {
+            const cue = document.getElementById('showcase-cue');
+            const back = document.getElementById('showcase-back');
+            const cases = document.getElementById('cases');
+            const prev = document.getElementById('cases-prev');
+            const next = document.getElementById('cases-next');
+            const dotsList = document.getElementById('cases-dots');
+            if (!cue || !cases) return;
+            const items = Array.from(cases.querySelectorAll('.case'));
+
+            // Build dots
+            items.forEach((_, i) => {
+                const li = document.createElement('li');
+                li.className = 'cases-dot';
+                if (i === 0) li.classList.add('active');
+                li.dataset.idx = String(i);
+                li.tabIndex = 0;
+                li.addEventListener('click', () => scrollTo(i));
+                dotsList.appendChild(li);
+            });
+
+            function open() {
+                document.body.classList.add('showcase-open');
+                cases.scrollLeft = 0;
+                window.__sfx?.engage?.();
+            }
+            function close() {
+                document.body.classList.remove('showcase-open');
+                window.__sfx?.disengage?.();
+            }
+            cue.addEventListener('click', open);
+            cue.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+            });
+            back.addEventListener('click', close);
+
+            function currentIndex() {
+                const sl = cases.scrollLeft;
+                const w = cases.clientWidth;
+                let bestIdx = 0, bestDist = Infinity;
+                items.forEach((el, i) => {
+                    const elCenter = el.offsetLeft + el.offsetWidth / 2;
+                    const viewCenter = sl + w / 2;
+                    const d = Math.abs(elCenter - viewCenter);
+                    if (d < bestDist) { bestDist = d; bestIdx = i; }
+                });
+                return bestIdx;
+            }
+            function scrollTo(idx) {
+                const el = items[Math.max(0, Math.min(items.length - 1, idx))];
+                if (!el) return;
+                const target = el.offsetLeft - (cases.clientWidth - el.offsetWidth) / 2;
+                cases.scrollTo({ left: target, behavior: 'smooth' });
+                window.__sfx?.tick?.();
+            }
+
+            prev.addEventListener('click', () => scrollTo(currentIndex() - 1));
+            next.addEventListener('click', () => scrollTo(currentIndex() + 1));
+
+            cases.addEventListener('scroll', () => {
+                const idx = currentIndex();
+                Array.from(dotsList.children).forEach((d, i) => d.classList.toggle('active', i === idx));
+                prev.disabled = idx === 0;
+                next.disabled = idx === items.length - 1;
+            }, { passive: true });
+
+            document.addEventListener('keydown', (e) => {
+                if (!document.body.classList.contains('showcase-open')) return;
+                if (e.key === 'Escape') { close(); return; }
+                if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
+                if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
+            });
         })();
     </script>
 
