@@ -810,6 +810,28 @@
             );
         }
 
+        /* Selected state — when this item's detail-window is open */
+        .agent-item.selected {
+            border-left-color: var(--acc);
+            background: linear-gradient(
+                90deg,
+                rgba(var(--acc-rgb), 0.14) 0%,
+                rgba(var(--acc-rgb), 0.0) 100%
+            );
+            box-shadow: inset 0 0 12px rgba(var(--acc-rgb), 0.12);
+        }
+        .release-item.selected {
+            border-color: var(--acc);
+            background: linear-gradient(
+                135deg,
+                rgba(var(--acc-rgb), 0.12) 0%,
+                rgba(var(--acc-rgb), 0.02) 100%
+            );
+            box-shadow:
+                0 0 14px rgba(var(--acc-rgb), 0.25),
+                inset 0 0 10px rgba(var(--acc-rgb), 0.10);
+        }
+
         /* WARNING variant — yellow tone, soft alarm */
         .agent-item.warning {
             border-left-color: #ffb547;
@@ -4515,6 +4537,14 @@
                 dwTitle.textContent = data.title;
                 dwContent.innerHTML = data.html;
                 dwContent.scrollTop = 0;
+                // mark the matching list item as selected
+                document.querySelectorAll(
+                    '#agents-list .agent-item.selected, #releases-list .release-item.selected'
+                ).forEach(el => el.classList.remove('selected'));
+                const liveItem = document.querySelector(
+                    `#agents-list .agent-item[data-id="${id}"], #releases-list .release-item[data-id="${id}"]`
+                );
+                if (liveItem) liveItem.classList.add('selected');
                 // disable nav buttons at the ends
                 const list = navList();
                 const idx = list.indexOf(id);
@@ -4534,6 +4564,9 @@
                 body.classList.remove('dw-open');
                 dw.setAttribute('aria-hidden', 'true');
                 currentId = null;
+                document.querySelectorAll(
+                    '#agents-list .agent-item.selected, #releases-list .release-item.selected'
+                ).forEach(el => el.classList.remove('selected'));
             }
 
             function navigate(dir) {
