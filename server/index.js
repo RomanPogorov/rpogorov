@@ -133,12 +133,38 @@ async function tgGetUpdates() {
             state.threadFwd[payload] = msg.chat.id;
             state.chatToThread[fromChatId] = payload;
             saveLater();
-            sendTelegramMessage(msg.chat.id,
-              "✓ Connected. You're now picked up by Roman's bot — every reply he sends will arrive here. You can answer either in this chat or in your browser tab; both stay in sync.").catch(() => {});
-            // Also tell Roman someone picked up
+
+            // Greeting
+            await sendTelegramMessage(msg.chat.id,
+              "✓ Connected. Sending you the conversation so far. New replies from Roman will land here too. You can answer in this chat or in your browser — both stay in sync.").catch(() => {});
+
+            // Dump the entire thread history so the user gets the conversation
+            // immediately, as if it had been happening here all along.
+            const t = state.threads[payload];
+            if (t && t.msgs.length) {
+              const lines = t.msgs.map(m => {
+                const who = m.role === 'roman' ? 'Roman' : (m.role === 'visitor' ? 'You' : '·');
+                return `${who}: ${m.text}`;
+              });
+              // Telegram message limit ~4000 chars — chunk if needed
+              const chunks = [];
+              let buf = '📜 Conversation:\n\n';
+              for (const line of lines) {
+                if ((buf + line + '\n\n').length > 3500) { chunks.push(buf); buf = ''; }
+                buf += line + '\n\n';
+              }
+              if (buf.trim()) chunks.push(buf);
+              for (const c of chunks) await sendTelegramMessage(msg.chat.id, c).catch(() => {});
+            }
+
+            // Notify Roman
             const username = state.threadUsername[payload] ? ` @${state.threadUsername[payload]}` : '';
             sendTelegramMessage(ROMAN_CHAT_ID,
-              `🔗 Visitor${username} took thread #${payload.slice(0,8)} to Telegram (chat ${msg.chat.id}). Future replies in this bot to that thread will also DM them.`).catch(() => {});
+              `🔗 Visitor${username} took thread #${payload.slice(0,8)} to Telegram (chat ${msg.chat.id}). Future replies forward to them.`).catch(() => {});
+          } else {
+            // /start without a valid payload — generic greeting
+            sendTelegramMessage(msg.chat.id,
+              "Hi! This bot connects portfolio chats to Telegram. To pick up a conversation, click 'Take to Telegram' on the website.").catch(() => {});
           }
           continue;
         }
