@@ -884,6 +884,196 @@
             opacity: 0.8;
         }
 
+        /* ============ HUD TABS + CHAT PANE ============ */
+        .hud-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .hud-tabs {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid rgba(var(--acc-rgb), 0.18);
+            padding-top: 8px;
+        }
+        .hud-tab {
+            flex: 1;
+            appearance: none;
+            background: transparent;
+            border: none;
+            color: var(--dim);
+            font-family: inherit;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            padding: 8px 6px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+        .hud-tab:hover { color: var(--ink); }
+        .hud-tab.active {
+            color: var(--acc);
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.5);
+        }
+        .hud-tab.active::after {
+            content: '';
+            position: absolute;
+            left: 12%;
+            right: 12%;
+            bottom: -8px;
+            height: 2px;
+            background: var(--acc);
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.6);
+        }
+
+        /* CHAT PANE */
+        .chat-pane {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            flex: 1;
+            gap: 10px;
+            text-align: left;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .chat-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .chat-online {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--ink);
+            opacity: 0.75;
+        }
+        .chat-online .online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 7px rgba(74, 222, 128, 0.85);
+            animation: agent-pulse 1.4s ease-in-out infinite;
+        }
+        .chat-online-text {
+            color: #b6f5cb;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: 0.06em;
+        }
+        .chat-thread {
+            flex: 1;
+            min-height: 140px;
+            max-height: 50vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            padding: 8px 4px;
+            border: 1px solid rgba(var(--acc-rgb), 0.10);
+            background: rgba(var(--acc-rgb), 0.02);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.3) transparent;
+        }
+        .chat-thread::-webkit-scrollbar { width: 6px; }
+        .chat-thread::-webkit-scrollbar-thumb {
+            background: rgba(var(--acc-rgb), 0.3);
+        }
+        .chat-msg {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            line-height: 1.45;
+            padding: 7px 10px;
+            max-width: 90%;
+        }
+        .chat-msg.from-system {
+            color: var(--dim);
+            border-left: 2px solid rgba(var(--acc-rgb), 0.4);
+            opacity: 0.85;
+            font-style: italic;
+        }
+        .chat-msg.from-visitor {
+            align-self: flex-end;
+            color: var(--ink);
+            background: rgba(var(--acc-rgb), 0.08);
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+        }
+        .chat-msg.from-roman {
+            align-self: flex-start;
+            color: #c9f5d8;
+            background: rgba(74, 222, 128, 0.08);
+            border-left: 2px solid #4ade80;
+        }
+        .chat-msg.from-error {
+            align-self: stretch;
+            text-align: center;
+            color: #ffb547;
+            font-style: italic;
+            opacity: 0.85;
+        }
+        .chat-msg-text { white-space: pre-wrap; word-break: break-word; }
+
+        .chat-sug {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .chat-sug-btn {
+            appearance: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.5px;
+            color: var(--dim);
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            padding: 5px 9px;
+            cursor: pointer;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+        }
+        .chat-sug-btn:hover {
+            color: var(--acc);
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.06);
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 6px;
+            align-items: stretch;
+        }
+        .chat-input-row input {
+            flex: 1;
+            min-width: 0;
+            appearance: none;
+            background: rgba(var(--acc-rgb), 0.04);
+            border: 1px solid rgba(var(--acc-rgb), 0.25);
+            color: var(--ink);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            padding: 8px 10px;
+            outline: none;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .chat-input-row input::placeholder { color: var(--dim); opacity: 0.7; }
+        .chat-input-row input:focus {
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
+        }
+        .chat-send {
+            appearance: none;
+            background: rgba(var(--acc-rgb), 0.1);
+            border: 1px solid var(--acc);
+            color: var(--acc);
+            font-size: 14px;
+            padding: 4px 14px;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+        .chat-send:hover { background: var(--acc); color: var(--bg); }
+        .chat-send:disabled { opacity: 0.4; cursor: wait; }
+
         /* ============ DETAIL HOLO-WINDOW ============ */
         .dw {
             position: fixed;
@@ -2731,6 +2921,32 @@
                         </ul>
                     </div>
                 </div>
+                <!-- Chat pane (hidden by default, swaps with dashboard via tabs) -->
+                <div class="chat-pane" id="chat-pane" hidden>
+                    <div class="chat-head">
+                        <span class="label">// chat</span>
+                        <span class="chat-online">
+                            <span class="online-dot"></span>
+                            <span class="chat-online-text">Roman online</span>
+                        </span>
+                    </div>
+                    <div class="chat-thread" id="chat-thread">
+                        <div class="chat-msg from-system">
+                            <div class="chat-msg-text">Hi · ask me anything. Replies arrive from Telegram, usually fast.</div>
+                        </div>
+                    </div>
+                    <div class="chat-sug" id="chat-sug">
+                        <button type="button" class="chat-sug-btn" data-text="What's your stack?">What's your stack?</button>
+                        <button type="button" class="chat-sug-btn" data-text="Tell me about Prism">Tell me about Prism</button>
+                        <button type="button" class="chat-sug-btn" data-text="Open for projects?">Open for projects?</button>
+                    </div>
+                    <form class="chat-input-row" id="chat-form" autocomplete="off">
+                        <input type="text" id="chat-input" placeholder="type a message…" maxlength="2000">
+                        <button type="submit" class="chat-send" aria-label="Send">→</button>
+                    </form>
+                </div>
+
+                <div class="hud-bottom">
                 <div class="corner br">
             <span class="label">// audio vibe</span>
             <div class="ap-group">
@@ -2749,6 +2965,11 @@
                 <canvas id="ap-viz" class="ap-viz" aria-hidden="true"></canvas>
             </div>
             <audio id="ap-audio" loop preload="auto"></audio>
+                </div>
+                <nav class="hud-tabs" role="tablist">
+                    <button type="button" class="hud-tab active" data-pane="dashboard">DASHBOARD</button>
+                    <button type="button" class="hud-tab" data-pane="chat">CHAT</button>
+                </nav>
                 </div>
             </div>
         </div>
@@ -3477,6 +3698,112 @@
                 if (e.target.closest(TICK_SEL))  { SFX.tick();  return; }
                 if (e.target.closest(CLICK_SEL)) { SFX.click(); }
             }, true);
+        })();
+    </script>
+
+    <!-- HUD tabs (Dashboard / Chat) + chat backend wiring -->
+    <script>
+        (() => {
+            const tabs = document.querySelectorAll('.hud-tab');
+            const dashboard = document.querySelector('.corner.tr.agents-feed');
+            const chatPane = document.getElementById('chat-pane');
+            if (!dashboard || !chatPane) return;
+
+            tabs.forEach((tab) => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.pane;
+                    tabs.forEach((t) => t.classList.toggle('active', t === tab));
+                    if (target === 'chat') {
+                        dashboard.hidden = true;
+                        chatPane.hidden = false;
+                        document.getElementById('chat-input')?.focus();
+                    } else {
+                        dashboard.hidden = false;
+                        chatPane.hidden = true;
+                    }
+                });
+            });
+
+            // ---- chat ----
+            const STORE = 'rpogorov_chat';
+            const thread = (() => {
+                let v = localStorage.getItem(STORE + '_thread');
+                if (!v) {
+                    v = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)) + Date.now().toString(36);
+                    localStorage.setItem(STORE + '_thread', v);
+                }
+                return v;
+            })();
+
+            const threadEl = document.getElementById('chat-thread');
+            const form = document.getElementById('chat-form');
+            const input = document.getElementById('chat-input');
+            const sendBtn = form.querySelector('.chat-send');
+            const sugWrap = document.getElementById('chat-sug');
+
+            let lastId = 0;
+
+            function addMsg({ role, text, id }) {
+                const div = document.createElement('div');
+                div.className = 'chat-msg from-' + role;
+                const txt = document.createElement('div');
+                txt.className = 'chat-msg-text';
+                txt.textContent = text;
+                div.appendChild(txt);
+                threadEl.appendChild(div);
+                threadEl.scrollTop = threadEl.scrollHeight;
+                if (id && id > lastId) lastId = id;
+                if (role === 'roman') window.__sfx?.tick?.();
+            }
+
+            sugWrap.addEventListener('click', (e) => {
+                const b = e.target.closest('.chat-sug-btn');
+                if (!b) return;
+                input.value = b.dataset.text;
+                input.focus();
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const text = input.value.trim();
+                if (!text || sendBtn.disabled) return;
+                input.value = '';
+                sendBtn.disabled = true;
+                addMsg({ role: 'visitor', text });
+                try {
+                    const r = await fetch('api/chat/send', {
+                        method: 'POST',
+                        headers: { 'content-type': 'application/json' },
+                        body: JSON.stringify({ thread, text }),
+                    });
+                    const data = await r.json();
+                    if (data?.msg?.id && data.msg.id > lastId) lastId = data.msg.id;
+                    if (!data.ok) throw new Error('send failed');
+                } catch (err) {
+                    addMsg({ role: 'error', text: '⚠ message could not be sent' });
+                } finally {
+                    sendBtn.disabled = false;
+                }
+            });
+
+            // Long-poll for replies. Stops only on page unload.
+            (async function poll() {
+                while (true) {
+                    try {
+                        const r = await fetch(`api/chat/poll?thread=${encodeURIComponent(thread)}&after=${lastId}`);
+                        if (!r.ok) { await new Promise((res) => setTimeout(res, 2000)); continue; }
+                        const data = await r.json();
+                        for (const m of (data.msgs || [])) {
+                            if (m.id <= lastId) continue;
+                            // we already render visitor msgs locally on send; only roman/system from server
+                            if (m.role === 'roman') addMsg({ role: 'roman', text: m.text, id: m.id });
+                            else if (m.id > lastId) lastId = m.id;
+                        }
+                    } catch (e) {
+                        await new Promise((res) => setTimeout(res, 2500));
+                    }
+                }
+            })();
         })();
     </script>
 
