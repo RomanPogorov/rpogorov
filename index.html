@@ -1328,22 +1328,64 @@
         .chat-send:hover { background: var(--acc); color: var(--bg); }
         .chat-send:disabled { opacity: 0.4; cursor: wait; }
 
-        /* Take-to-Telegram pickup row */
+        /* Take-to-Telegram pickup — collapsed by default, expands on click */
         .chat-pickup {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-top: 6px;
-            padding-top: 8px;
-            border-top: 1px dashed rgba(var(--acc-rgb), 0.18);
+            margin-top: 4px;
+            padding-top: 6px;
+            border-top: 1px dashed rgba(var(--acc-rgb), 0.15);
         }
-        .chat-pickup-prefix {
+        .chat-pickup-trigger {
+            appearance: none;
+            background: transparent;
+            border: none;
             color: var(--ink);
-            opacity: 0.6;
+            opacity: 0.45;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
+            font-size: 10px;
+            letter-spacing: 0.04em;
+            padding: 4px 0;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: opacity 0.15s, color 0.15s, letter-spacing 0.15s;
+        }
+        .chat-pickup-trigger:hover {
+            opacity: 1;
+            color: var(--acc);
             letter-spacing: 0.06em;
         }
+        .chat-pickup-form {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            position: relative;
+            padding-top: 4px;
+        }
+        .chat-pickup.expanded .chat-pickup-trigger { display: none; }
+        .chat-pickup.expanded .chat-pickup-form {
+            display: flex;
+            animation: pickup-in 0.32s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        @keyframes pickup-in {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .chat-pickup-close {
+            appearance: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: var(--ink);
+            opacity: 0.55;
+            font-size: 16px;
+            line-height: 1;
+            padding: 2px 6px;
+            cursor: pointer;
+            transition: opacity 0.15s, color 0.15s;
+        }
+        .chat-pickup-close:hover { opacity: 1; color: var(--acc); }
         .chat-pickup-row {
             display: flex;
             gap: 5px;
@@ -3480,12 +3522,15 @@
                         <button type="submit" class="chat-send" aria-label="Send">→</button>
                     </form>
                     <div class="chat-pickup" id="chat-pickup">
-                        <span class="chat-pickup-prefix">// continue in telegram</span>
-                        <div class="chat-pickup-row">
-                            <input type="text" id="chat-pickup-username" placeholder="@your_telegram" maxlength="32" autocomplete="off">
-                            <button type="button" id="chat-pickup-btn" class="chat-pickup-btn">take to TG →</button>
+                        <button type="button" class="chat-pickup-trigger" id="chat-pickup-trigger">→ continue in telegram</button>
+                        <div class="chat-pickup-form">
+                            <button type="button" class="chat-pickup-close" id="chat-pickup-close" aria-label="Close">×</button>
+                            <div class="chat-pickup-row">
+                                <input type="text" id="chat-pickup-username" placeholder="@your_telegram" maxlength="32" autocomplete="off">
+                                <button type="button" id="chat-pickup-btn" class="chat-pickup-btn">take to TG →</button>
+                            </div>
+                            <span class="chat-pickup-status" id="chat-pickup-status"></span>
                         </div>
-                        <span class="chat-pickup-status" id="chat-pickup-status"></span>
                     </div>
                 </div>
 
@@ -4549,11 +4594,28 @@
                 }
             });
 
-            // Take-to-Telegram pickup — sends transcript directly from Roman's
-            // user account to the visitor's @username. No /start required.
+            // Take-to-Telegram pickup — collapsed by default, expand on trigger
+            const pickupContainer = document.getElementById('chat-pickup');
+            const pickupTrigger = document.getElementById('chat-pickup-trigger');
+            const pickupClose = document.getElementById('chat-pickup-close');
             const pickupBtn = document.getElementById('chat-pickup-btn');
             const pickupInput = document.getElementById('chat-pickup-username');
             const pickupStatus = document.getElementById('chat-pickup-status');
+            if (pickupTrigger) {
+                pickupTrigger.addEventListener('click', () => {
+                    pickupContainer.classList.add('expanded');
+                    requestAnimationFrame(() => pickupInput?.focus());
+                    window.__sfx?.tick?.();
+                });
+            }
+            if (pickupClose) {
+                pickupClose.addEventListener('click', () => {
+                    pickupContainer.classList.remove('expanded');
+                    pickupStatus.classList.remove('show');
+                    pickupStatus.textContent = '';
+                    window.__sfx?.tick?.();
+                });
+            }
             if (pickupBtn) {
                 pickupBtn.addEventListener('click', async () => {
                     const username = pickupInput.value.trim().replace(/^@/, '').slice(0, 32);
@@ -4579,6 +4641,11 @@
                             pickupStatus.textContent = `✓ sent to @${username}. check your Telegram.`;
                             pickupStatus.style.color = '#4ade80';
                             window.__sfx?.engage?.();
+                            // Auto-collapse after the user has had time to read confirmation
+                            setTimeout(() => {
+                                pickupContainer.classList.remove('expanded');
+                                pickupStatus.classList.remove('show');
+                            }, 4000);
                         } else {
                             pickupStatus.textContent = `⚠ ${data.error || 'send failed'}`;
                             pickupStatus.style.color = '#ffb547';
