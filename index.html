@@ -3557,13 +3557,12 @@
                 dwContent.scrollTop = 0;
                 body.classList.add('dw-open');
                 dw.setAttribute('aria-hidden', 'false');
-                window.__sfx?.open();
+                // tick from delegated capture handler is enough — no sweep on top
             }
 
             function close() {
                 body.classList.remove('dw-open');
                 dw.setAttribute('aria-hidden', 'true');
-                window.__sfx?.close();
             }
 
             // Click handlers — agents (delegated, works for injected entries too)
