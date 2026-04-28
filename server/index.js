@@ -30,7 +30,7 @@ if (!TG_TOKEN) {
 }
 
 // ---------- persistent state ----------
-let state = { lastUpdateId: 0, threads: {}, sentMap: {} };
+let state = { lastUpdateId: 0, threads: {}, sentMap: {}, lastActiveThread: null };
 try {
   state = Object.assign(state, JSON.parse(fs.readFileSync(STATE_PATH, 'utf-8')));
 } catch (_) {}
@@ -78,10 +78,17 @@ async function tgGetUpdates() {
       state.lastUpdateId = upd.update_id;
       const msg = upd.message;
       if (!msg || String(msg.chat.id) !== ROMAN_CHAT_ID) continue;
-      const replyId = msg.reply_to_message?.message_id;
-      const threadId = replyId ? state.sentMap[replyId] : null;
-      if (!threadId) continue;
       const text = msg.text || msg.caption || '[media]';
+      // Skip Telegram /commands (start, help, etc.)
+      if (text.startsWith('/')) continue;
+      const replyId = msg.reply_to_message?.message_id;
+      // Route by reply_to mapping; fallback to most recently active thread
+      const threadId = (replyId && state.sentMap[replyId]) || state.lastActiveThread;
+      if (!threadId) {
+        console.log('roman msg with no thread context, dropping:', text.slice(0, 60));
+        continue;
+      }
+      console.log(`roman → thread ${threadId.slice(0,8)}: ${text.slice(0, 80)}`);
       appendMsg(threadId, 'roman', text);
     }
     saveLater();
@@ -120,8 +127,9 @@ const server = http.createServer(async (req, res) => {
     const text = String(body.text || '').trim().slice(0, 2000);
     if (!thread || !text) return send(res, 400, { error: 'thread and text required' });
 
-    // Save visitor message
+    // Save visitor message + mark this thread as the active one
     const visitorMsg = appendMsg(thread, 'visitor', text);
+    state.lastActiveThread = thread;
 
     // Send to Telegram, tagged with thread for human readability
     const tgText = `💬 [#${thread.slice(0, 8)}]\n${text}\n\n— reply to this message to respond`;
