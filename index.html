@@ -2881,13 +2881,28 @@
             <span class="blink">LIVE FEED</span>
         </div>
         <div class="corner bl">
-            <span class="label">// color vibe</span>
-            <div class="theme-switch" id="theme-switch">
-                <button class="theme-dot active" data-theme="green" aria-label="Green"></button>
-                <button class="theme-dot" data-theme="cyan" aria-label="Cyan"></button>
-                <button class="theme-dot" data-theme="ember" aria-label="Ember"></button>
-                <button class="theme-dot" data-theme="mono" aria-label="Mono"></button>
+            <span class="label">// vibe settings</span>
+            <div class="vibe-row">
+                <div class="theme-switch" id="theme-switch">
+                    <button class="theme-dot active" data-theme="green" aria-label="Green"></button>
+                    <button class="theme-dot" data-theme="cyan" aria-label="Cyan"></button>
+                    <button class="theme-dot" data-theme="ember" aria-label="Ember"></button>
+                    <button class="theme-dot" data-theme="mono" aria-label="Mono"></button>
+                </div>
+                <button id="ap-toggle" class="ap-btn ap-grunge" type="button" aria-label="Unmute">
+                    <svg class="icon-unmuted" viewBox="0 0 14 12" aria-hidden="true">
+                        <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
+                        <path d="M9 3.5 Q11 6 9 8.5" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+                        <path d="M10.5 2 Q13.5 6 10.5 10" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+                    </svg>
+                    <svg class="icon-muted" viewBox="0 0 14 12" aria-hidden="true">
+                        <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
+                        <line x1="9" y1="3.5" x2="13" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+                        <line x1="13" y1="3.5" x2="9" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+                    </svg>
+                </button>
             </div>
+            <audio id="ap-audio" loop preload="auto"></audio>
         </div>
 
         <!-- Right-side panel: 3D perspective, tilts on mouse -->
@@ -2989,25 +3004,6 @@
                 </div>
 
                 <div class="hud-bottom">
-                <div class="corner br">
-            <span class="label">// audio vibe</span>
-            <div class="ap-group">
-                <button id="ap-toggle" class="ap-btn ap-grunge" type="button" aria-label="Unmute">
-                    <svg class="icon-unmuted" viewBox="0 0 14 12" aria-hidden="true">
-                        <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
-                        <path d="M9 3.5 Q11 6 9 8.5" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
-                        <path d="M10.5 2 Q13.5 6 10.5 10" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
-                    </svg>
-                    <svg class="icon-muted" viewBox="0 0 14 12" aria-hidden="true">
-                        <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
-                        <line x1="9" y1="3.5" x2="13" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
-                        <line x1="13" y1="3.5" x2="9" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
-                    </svg>
-                </button>
-                <canvas id="ap-viz" class="ap-viz" aria-hidden="true"></canvas>
-            </div>
-            <audio id="ap-audio" loop preload="auto"></audio>
-                </div>
                 <nav class="hud-tabs" role="tablist">
                     <button type="button" class="hud-tab active" data-pane="dashboard">DASHBOARD</button>
                     <button type="button" class="hud-tab" data-pane="chat">CHAT</button>
@@ -4438,14 +4434,14 @@
 
     <!-- Audio buttons -->
     <style>
-        .hud .corner.br .ap-group {
-            display: inline-flex;
-            gap: 6px;
-            margin-top: 2px;
-            justify-content: flex-end;
+        /* Vibe-row: theme dots + audio button side by side in bottom-left */
+        .corner.bl .vibe-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .hud .corner.br .ap-btn {
+        .ap-btn {
             appearance: none;
             background: rgba(var(--acc-rgb, 0, 229, 255), 0.05);
             border: 1px solid rgba(var(--acc-rgb, 0, 229, 255), 0.35);
@@ -4460,39 +4456,28 @@
             line-height: 1;
             transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
         }
-
-        .hud .corner.br .ap-btn svg {
-            width: 8px;
-            height: 8px;
-            fill: currentColor;
-            flex: 0 0 auto;
+        .ap-btn svg {
+            width: 8px; height: 8px; fill: currentColor; flex: 0 0 auto;
+        }
+        .ap-btn:hover {
+            color: var(--acc);
+            border-color: rgba(var(--acc-rgb), 0.7);
+            background: rgba(var(--acc-rgb), 0.1);
+        }
+        .ap-btn.active {
+            color: var(--acc);
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.15);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.5),
+                inset 0 0 8px rgba(var(--acc-rgb), 0.15);
         }
 
-        .hud .corner.br .ap-btn:hover {
-            color: var(--acc, #00e5ff);
-            border-color: rgba(var(--acc-rgb, 0, 229, 255), 0.7);
-            background: rgba(var(--acc-rgb, 0, 229, 255), 0.1);
-        }
+        .ap-btn .icon-unmuted { display: none; }
+        .ap-btn.unmuted .icon-unmuted { display: inline; }
+        .ap-btn.unmuted .icon-muted { display: none; }
 
-        .hud .corner.br .ap-btn.active {
-            color: var(--acc, #00e5ff);
-            border-color: var(--acc, #00e5ff);
-            background: rgba(var(--acc-rgb, 0, 229, 255), 0.15);
-            box-shadow: 0 0 10px rgba(var(--acc-rgb, 0, 229, 255), 0.5),
-                inset 0 0 8px rgba(var(--acc-rgb, 0, 229, 255), 0.15);
-        }
-
-        .hud .corner.br .ap-btn .icon-pause { display: none; }
-        .hud .corner.br .ap-btn.playing .icon-play { display: none; }
-        .hud .corner.br .ap-btn.playing .icon-pause { display: inline; }
-
-        .hud .corner.br .ap-btn .icon-unmuted { display: none; }
-        .hud .corner.br .ap-btn.unmuted .icon-unmuted { display: inline; }
-        .hud .corner.br .ap-btn.unmuted .icon-muted { display: none; }
-
-        .hud .corner.br .ap-btn.ap-grunge {
-            width: 22px;
-            height: 22px;
+        .ap-btn.ap-grunge {
+            width: 22px; height: 22px;
             padding: 0;
             justify-content: center;
             gap: 0;
@@ -4500,10 +4485,10 @@
             background:
                 repeating-linear-gradient(
                     45deg,
-                    rgba(var(--acc-rgb, 0, 229, 255), 0.06) 0 1px,
+                    rgba(var(--acc-rgb), 0.06) 0 1px,
                     transparent 1px 3px
                 ),
-                rgba(var(--acc-rgb, 0, 229, 255), 0.04);
+                rgba(var(--acc-rgb), 0.04);
             clip-path: polygon(
                 22% 0, 78% 0, 100% 22%, 100% 78%,
                 78% 100%, 22% 100%, 0 78%, 0 22%
@@ -4512,41 +4497,27 @@
             opacity: 0.7;
             transition: opacity .15s, filter .15s;
         }
-        .hud .corner.br .ap-btn.ap-grunge svg {
-            width: 9px;
-            height: 9px;
-        }
-        .hud .corner.br .ap-btn.ap-grunge:hover {
+        .ap-btn.ap-grunge svg { width: 9px; height: 9px; }
+        .ap-btn.ap-grunge:hover {
             opacity: 1;
-            filter: drop-shadow(0 0 4px rgba(var(--acc-rgb, 0, 229, 255), 0.6));
+            filter: drop-shadow(0 0 4px rgba(var(--acc-rgb), 0.6));
         }
-        .hud .corner.br .ap-btn.ap-grunge.unmuted {
+        .ap-btn.ap-grunge.unmuted {
             opacity: 1;
             background:
                 repeating-linear-gradient(
                     45deg,
-                    rgba(var(--acc-rgb, 0, 229, 255), 0.12) 0 1px,
+                    rgba(var(--acc-rgb), 0.12) 0 1px,
                     transparent 1px 3px
                 ),
-                rgba(var(--acc-rgb, 0, 229, 255), 0.08);
-            filter: drop-shadow(0 0 6px rgba(var(--acc-rgb, 0, 229, 255), 0.5));
-        }
-
-        .hud .corner.br .ap-viz {
-            display: inline-block;
-            vertical-align: middle;
-            width: 64px;
-            height: 14px;
-            image-rendering: pixelated;
+                rgba(var(--acc-rgb), 0.08);
+            filter: drop-shadow(0 0 6px rgba(var(--acc-rgb), 0.5));
         }
     </style>
     <script>
         (() => {
             const audio = document.getElementById('ap-audio');
             const btn = document.getElementById('ap-toggle');
-            const canvas = document.getElementById('ap-viz');
-            const cx = canvas.getContext('2d');
-
             audio.src = 'audio.opus';
             audio.volume = 0.4;
             audio.muted = true;
@@ -4561,21 +4532,9 @@
             setUI();
             audio.addEventListener('volumechange', setUI);
 
-            // ---------- Audio analysis graph ----------
-            let audioCtx, analyser, dataArr;
-            const setupGraph = () => {
-                if (audioCtx) { try { audioCtx.resume(); } catch {} return; }
-                try {
-                    const AC = window.AudioContext || window.webkitAudioContext;
-                    audioCtx = new AC();
-                    const src = audioCtx.createMediaElementSource(audio);
-                    analyser = audioCtx.createAnalyser();
-                    analyser.fftSize = 64;
-                    src.connect(analyser);
-                    analyser.connect(audioCtx.destination);
-                    dataArr = new Uint8Array(analyser.frequencyBinCount);
-                } catch (e) { /* visualization will idle */ }
-            };
+            // No-op: visualizer was removed; left here so existing call sites
+            // (wake / click) keep their shape.
+            const setupGraph = () => {};
 
             // Try silent autoplay (most browsers allow it muted).
             audio.play().catch(() => { });
@@ -4602,54 +4561,11 @@
             // Toggle is mute/unmute (audio is always playing in background).
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                setupGraph();
                 audio.muted = !audio.muted;
                 if (!audio.muted && audio.paused) {
                     audio.play().catch(() => { });
                 }
             });
-
-            // ---------- Histogram drawing loop ----------
-            const BARS = 14;
-            const resizeCanvas = () => {
-                const dpr = window.devicePixelRatio || 1;
-                const cssW = canvas.clientWidth || 64;
-                const cssH = canvas.clientHeight || 14;
-                canvas.width = Math.round(cssW * dpr);
-                canvas.height = Math.round(cssH * dpr);
-            };
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-
-            const accent = () => (getComputedStyle(document.body).getPropertyValue('--acc') || '#00e5ff').trim();
-
-            let phase = 0;
-            const draw = () => {
-                requestAnimationFrame(draw);
-                const w = canvas.width, h = canvas.height;
-                cx.clearRect(0, 0, w, h);
-                cx.fillStyle = accent();
-                const bw = Math.max(1, Math.floor(w / BARS) - 1);
-
-                if (analyser && !audio.paused && !audio.muted) {
-                    analyser.getByteFrequencyData(dataArr);
-                    for (let i = 0; i < BARS; i++) {
-                        const idx = Math.floor((i + 1) * (dataArr.length / (BARS + 2)));
-                        const v = dataArr[idx] / 255;
-                        const bh = Math.max(1, Math.round(v * h));
-                        cx.fillRect(i * (bw + 1), h - bh, bw, bh);
-                    }
-                } else {
-                    // idle: gentle sine pulse so it doesn't look dead
-                    phase += 0.02;
-                    for (let i = 0; i < BARS; i++) {
-                        const v = (Math.sin(phase + i * 0.4) + 1) * 0.08 + 0.06;
-                        const bh = Math.max(1, Math.round(v * h));
-                        cx.fillRect(i * (bw + 1), h - bh, bw, bh);
-                    }
-                }
-            };
-            draw();
         })();
     </script>
 
