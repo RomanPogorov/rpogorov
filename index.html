@@ -2915,12 +2915,14 @@
             body.classList.add('engaged');
             if (status) status.textContent = 'INTERFACE · ACTIVE';
             panel.setAttribute('aria-hidden', 'false');
+            window.__sfx?.engage();
         }
 
         function disengage() {
             body.classList.remove('engaged');
             if (status) status.textContent = 'STANDBY · CHILL MODE';
             panel.setAttribute('aria-hidden', 'true');
+            window.__sfx?.disengage();
         }
 
         prompt.addEventListener('click', engage);
@@ -3105,6 +3107,91 @@
                 panel.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
             }
             requestAnimationFrame(tick);
+        })();
+    </script>
+
+    <!-- UI sound effects: synthesized via Web Audio (no files, minimal cyberpunk beeps) -->
+    <script>
+        (() => {
+            let ac = null;
+            function ctx() {
+                if (!ac) {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    if (!AC) return null;
+                    ac = new AC();
+                }
+                if (ac.state === 'suspended') ac.resume();
+                return ac;
+            }
+            function tone({ freq = 1200, dur = 0.06, type = 'sine', gain = 0.05, attack = 0.005 }) {
+                const a = ctx(); if (!a) return;
+                const t = a.currentTime;
+                const osc = a.createOscillator();
+                const g = a.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                g.gain.setValueAtTime(0, t);
+                g.gain.linearRampToValueAtTime(gain, t + attack);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                osc.connect(g).connect(a.destination);
+                osc.start(t);
+                osc.stop(t + dur + 0.02);
+            }
+            function sweep({ f1, f2, dur = 0.22, type = 'sine', gain = 0.06 }) {
+                const a = ctx(); if (!a) return;
+                const t = a.currentTime;
+                const osc = a.createOscillator();
+                const g = a.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(f1, t);
+                osc.frequency.exponentialRampToValueAtTime(f2, t + dur);
+                g.gain.setValueAtTime(0, t);
+                g.gain.linearRampToValueAtTime(gain, t + 0.008);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                osc.connect(g).connect(a.destination);
+                osc.start(t);
+                osc.stop(t + dur + 0.02);
+            }
+            function noiseBurst({ dur = 0.04, gain = 0.05, hp = 2200 }) {
+                const a = ctx(); if (!a) return;
+                const t = a.currentTime;
+                const buf = a.createBuffer(1, Math.max(1, Math.floor(a.sampleRate * dur)), a.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+                const src = a.createBufferSource();
+                src.buffer = buf;
+                const filt = a.createBiquadFilter();
+                filt.type = 'highpass';
+                filt.frequency.value = hp;
+                const g = a.createGain();
+                g.gain.setValueAtTime(0, t);
+                g.gain.linearRampToValueAtTime(gain, t + 0.002);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                src.connect(filt).connect(g).connect(a.destination);
+                src.start(t);
+                src.stop(t + dur + 0.01);
+            }
+
+            const SFX = {
+                hover:    () => tone({ freq: 1500, dur: 0.04, type: 'triangle', gain: 0.025 }),
+                click:    () => { tone({ freq: 2400, dur: 0.03, type: 'square', gain: 0.04 }); noiseBurst({ dur: 0.025, gain: 0.025 }); },
+                open:     () => sweep({ f1: 380, f2: 1900, dur: 0.32, type: 'sine', gain: 0.07 }),
+                close:    () => sweep({ f1: 1700, f2: 320, dur: 0.22, type: 'sine', gain: 0.05 }),
+                warn:     () => { tone({ freq: 880, dur: 0.08, type: 'square', gain: 0.04 }); setTimeout(() => tone({ freq: 660, dur: 0.08, type: 'square', gain: 0.04 }), 90); },
+                engage:   () => { sweep({ f1: 240, f2: 1400, dur: 0.42, type: 'sawtooth', gain: 0.045 }); setTimeout(() => tone({ freq: 1800, dur: 0.05, type: 'square', gain: 0.04 }), 380); },
+                disengage:() => sweep({ f1: 1400, f2: 240, dur: 0.32, type: 'sawtooth', gain: 0.04 }),
+            };
+            window.__sfx = SFX;
+
+            // Hover & click delegation — works on dynamically added nodes too
+            const HOVER_SEL = '.agent-item, .release-item, .theme-dot, .ap-btn, .dw-close, .prompt';
+            const CLICK_SEL = '.agent-item, .release-item, .theme-dot, .ap-btn, .dw-close';
+            document.addEventListener('pointerenter', (e) => {
+                if (e.target.closest && e.target.closest(HOVER_SEL)) SFX.hover();
+            }, true);
+            document.addEventListener('click', (e) => {
+                if (e.target.closest && e.target.closest(CLICK_SEL)) SFX.click();
+            }, true);
         })();
     </script>
 
@@ -3381,11 +3468,13 @@
                 dwContent.scrollTop = 0;
                 body.classList.add('dw-open');
                 dw.setAttribute('aria-hidden', 'false');
+                window.__sfx?.open();
             }
 
             function close() {
                 body.classList.remove('dw-open');
                 dw.setAttribute('aria-hidden', 'true');
+                window.__sfx?.close();
             }
 
             // Click handlers — agents (delegated, works for injected entries too)
@@ -3585,6 +3674,7 @@
                 ];
                 idxMap['flow-watch'] = 0;
                 metaIdxMap['flow-watch'] = 0;
+                window.__sfx?.warn();
             }, 14000);
         })();
     </script>
