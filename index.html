@@ -548,44 +548,54 @@
             overflow: hidden;
         }
 
-        /* Warning action buttons (Send / Hide) */
+        /* Warning action buttons (Send / Hide) — stacked, two distinct colors */
         .warn-actions {
             display: flex;
-            gap: 6px;
-            margin-top: 8px;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 9px;
             overflow: hidden;
             animation: warn-actions-in 0.34s ease-out forwards;
         }
         @keyframes warn-actions-in {
             from { opacity: 0; transform: translateY(-4px); max-height: 0; }
-            to   { opacity: 1; transform: translateY(0); max-height: 60px; }
+            to   { opacity: 1; transform: translateY(0); max-height: 80px; }
         }
         .warn-btn {
             appearance: none;
-            border: 1px solid rgba(255, 181, 71, 0.45);
-            background: rgba(255, 181, 71, 0.08);
-            color: #ffd47a;
+            display: block;
+            width: 100%;
             font-family: inherit;
-            font-size: 9px;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            padding: 5px 9px;
+            font-size: 10px;
+            letter-spacing: 0.04em;
+            text-transform: none;
+            text-align: left;
+            padding: 6px 10px;
             cursor: pointer;
+            border: 1px solid;
             transition: border-color 0.2s, background 0.2s, color 0.2s;
         }
-        .warn-btn:hover {
-            border-color: #ffb547;
-            background: rgba(255, 181, 71, 0.18);
+        /* Send to agent — green resolution color */
+        .warn-btn.primary {
+            border-color: rgba(74, 222, 128, 0.5);
+            background: rgba(74, 222, 128, 0.10);
+            color: #c9f5d8;
+        }
+        .warn-btn.primary:hover {
+            border-color: #4ade80;
+            background: rgba(74, 222, 128, 0.20);
             color: #fff;
         }
+        /* Hide — neutral grey ghost */
         .warn-btn.ghost {
-            border-color: rgba(255, 181, 71, 0.25);
+            border-color: rgba(255, 255, 255, 0.14);
             background: transparent;
-            color: rgba(255, 181, 71, 0.65);
+            color: rgba(255, 255, 255, 0.5);
         }
         .warn-btn.ghost:hover {
-            color: #ffd47a;
-            border-color: rgba(255, 181, 71, 0.5);
+            color: rgba(255, 255, 255, 0.92);
+            border-color: rgba(255, 255, 255, 0.32);
+            background: rgba(255, 255, 255, 0.04);
         }
 
         /* Resolved (delegated) state — green accent */
@@ -3761,7 +3771,7 @@
                     const actions = document.createElement('div');
                     actions.className = 'warn-actions';
                     actions.innerHTML = `
-                        <button class="warn-btn" data-act="send" type="button">Send to its Agent</button>
+                        <button class="warn-btn primary" data-act="send" type="button">→ Send to its Agent</button>
                         <button class="warn-btn ghost" data-act="hide" type="button">Hide</button>
                     `;
                     li.querySelector('.agent-body').appendChild(actions);
