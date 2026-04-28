@@ -48,6 +48,21 @@ function getThread(id) {
   return state.threads[id];
 }
 
+function mostRecentVisitorThread() {
+  let bestId = null;
+  let bestTs = 0;
+  for (const [id, t] of Object.entries(state.threads)) {
+    for (let i = t.msgs.length - 1; i >= 0; i--) {
+      const m = t.msgs[i];
+      if (m.role === 'visitor') {
+        if (m.ts > bestTs) { bestTs = m.ts; bestId = id; }
+        break;
+      }
+    }
+  }
+  return bestId;
+}
+
 function appendMsg(threadId, role, text) {
   const t = getThread(threadId);
   const msg = { id: t.nextId++, role, text, ts: Date.now() };
@@ -82,12 +97,17 @@ async function tgGetUpdates() {
       // Skip Telegram /commands (start, help, etc.)
       if (text.startsWith('/')) continue;
       const replyId = msg.reply_to_message?.message_id;
-      // Route by reply_to mapping; fallback to most recently active thread
-      const threadId = (replyId && state.sentMap[replyId]) || state.lastActiveThread;
+      // Route by reply_to mapping; fallbacks: lastActiveThread, then any thread
+      // with a recent visitor message (handles state restarts).
+      const threadId =
+        (replyId && state.sentMap[replyId]) ||
+        state.lastActiveThread ||
+        mostRecentVisitorThread();
       if (!threadId) {
         console.log('roman msg with no thread context, dropping:', text.slice(0, 60));
         continue;
       }
+      state.lastActiveThread = threadId;
       console.log(`roman → thread ${threadId.slice(0,8)}: ${text.slice(0, 80)}`);
       appendMsg(threadId, 'roman', text);
     }
