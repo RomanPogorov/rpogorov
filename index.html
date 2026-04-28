@@ -4629,9 +4629,15 @@
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); navigate(-1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); navigate(1); }
             });
-            // Click outside frame closes
-            dw.addEventListener('click', (e) => {
-                if (e.target === dw) close();
+            // Click outside the frame (anywhere on the dimmed backdrop or
+            // the rest of the page) closes the detail window. Skip clicks on
+            // other agent / release items so they re-open with new content
+            // instead of close-then-reopen flickering.
+            document.addEventListener('click', (e) => {
+                if (!body.classList.contains('dw-open')) return;
+                if (!e.target.closest) return;
+                if (e.target.closest('.dw-frame, .agent-item, .release-item')) return;
+                close();
             });
 
             // ---- mouse parallax for the detail window ----
