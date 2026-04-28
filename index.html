@@ -4539,21 +4539,21 @@
             // Try silent autoplay (most browsers allow it muted).
             audio.play().catch(() => { });
 
+            // Once the user has explicitly used the audio toggle, they own the
+            // mute state — stop reacting to stray clicks on the page.
+            let userTookControl = false;
+
             // First user gesture anywhere on the page (except on the toggle
-            // button itself) unmutes and ensures audio is playing. The button
-            // has its own click handler — we skip it here so pointerdown
-            // doesn't race with click on the same element.
+            // button itself or on the audio gate) auto-unmutes once. After
+            // that, only the button or volumechange events drive state.
             const wake = (e) => {
+                if (userTookControl) return;
                 if (btn.contains(e.target)) return;
-                // The audio gate handles its own audio decision — never let
-                // a stray pointerdown on it unmute prematurely (pointerdown
-                // fires BEFORE the gate's click handler can set audio-silent).
                 if (e.target.closest('.audio-gate')) return;
                 if (document.body.classList.contains('pre-gate')) return;
                 if (document.body.classList.contains('audio-silent')) return;
                 if (!audio.muted) return;
                 audio.muted = false;
-                setupGraph();
                 if (audio.paused) audio.play().catch(() => { });
             };
             document.addEventListener('pointerdown', wake);
@@ -4561,6 +4561,7 @@
             // Toggle is mute/unmute (audio is always playing in background).
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                userTookControl = true;
                 audio.muted = !audio.muted;
                 if (!audio.muted && audio.paused) {
                     audio.play().catch(() => { });
