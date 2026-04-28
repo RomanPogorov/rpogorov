@@ -460,6 +460,105 @@
         .hud-right .corner.tr { transform: translateZ(20px); }
         .hud-right .corner.br { transform: translateZ(8px); }
 
+        /* ============ AGENTS LIVE FEED ============ */
+        .agents-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 240px;
+        }
+        .agents-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 2px;
+        }
+        .agents-clock {
+            color: var(--acc);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            opacity: 0.85;
+        }
+        .agents-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .agent-item {
+            display: flex;
+            gap: 9px;
+            padding: 6px 8px 6px 10px;
+            border-left: 2px solid rgba(var(--acc-rgb), 0.4);
+            background: linear-gradient(
+                90deg,
+                rgba(var(--acc-rgb), 0.06) 0%,
+                rgba(var(--acc-rgb), 0.0) 100%
+            );
+            transition: background 0.4s, border-color 0.4s;
+        }
+        .agent-item.flash {
+            border-left-color: var(--acc);
+            background: linear-gradient(
+                90deg,
+                rgba(var(--acc-rgb), 0.18) 0%,
+                rgba(var(--acc-rgb), 0.0) 100%
+            );
+        }
+        .agent-dot {
+            flex: 0 0 auto;
+            width: 6px;
+            height: 6px;
+            margin-top: 5px;
+            border-radius: 50%;
+            background: var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.8);
+            animation: agent-pulse 1.6s ease-in-out infinite;
+        }
+        @keyframes agent-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.4; transform: scale(0.7); }
+        }
+        .agent-body {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: left;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .agent-name {
+            color: var(--acc);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+        .agent-tag {
+            color: var(--dim);
+            font-weight: 400;
+            font-size: 9px;
+            margin-left: 4px;
+            opacity: 0.8;
+        }
+        .agent-task {
+            color: var(--ink);
+            font-size: 10.5px;
+            opacity: 0.85;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .agent-meta {
+            color: var(--dim);
+            font-size: 9.5px;
+            opacity: 0.65;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
         .hud .corner .label {
             color: var(--dim);
             display: block;
@@ -848,20 +947,21 @@
         /* ============ HOLOGRAPHIC PANEL — TRON ============ */
         .panel {
             position: fixed;
-            top: 6vh;
-            right: 3vw;
-            width: min(560px, 50vw);
-            height: 88vh;
+            top: 50%;
+            left: 50%;
+            width: min(1040px, 88vw);
+            height: min(720px, 88vh);
             z-index: 10;
             opacity: 0;
             pointer-events: none;
-            transform-origin: 100% 50%;
+            transform-origin: 50% 50%;
             transform:
-                perspective(1500px)
-                rotateY(-38deg)
-                translateZ(-220px)
+                translate(-50%, -50%)
+                perspective(1600px)
+                rotateY(-32deg)
+                translateZ(-260px)
                 scaleX(0.55)
-                scaleY(0.8);
+                scaleY(0.78);
             filter: blur(6px) brightness(1.6);
             transition:
                 transform 0.9s cubic-bezier(0.2, 0.9, 0.3, 1),
@@ -873,8 +973,9 @@
             opacity: 1;
             pointer-events: auto;
             transform:
-                perspective(1500px)
-                rotateY(var(--p-ry, -12deg))
+                translate(-50%, -50%)
+                perspective(1600px)
+                rotateY(var(--p-ry, 0deg))
                 rotateX(var(--p-rx, 0deg))
                 translateZ(0)
                 scaleX(1)
@@ -1977,9 +2078,53 @@
         <!-- Right-side panel: 3D perspective, tilts on mouse -->
         <div class="hud-right" id="hud-right">
             <div class="hud-right-stack" id="hud-right-stack">
-                <div class="corner tr">
-                    <span class="label">// session</span>
-                    <span class="tc" id="clock">00:00:00</span>
+                <div class="corner tr agents-feed">
+                    <div class="agents-head">
+                        <span class="label">// agents · live</span>
+                        <span class="agents-clock" id="clock">00:00:00</span>
+                    </div>
+                    <ul class="agents-list" id="agents-list">
+                        <li class="agent-item" data-id="figma">
+                            <span class="agent-dot"></span>
+                            <div class="agent-body">
+                                <div class="agent-name">FIGMA-SYNC <span class="agent-tag">// design</span></div>
+                                <div class="agent-task" data-task>syncing tokens · components 247/312</div>
+                                <div class="agent-meta" data-meta>last sync 12s ago · 0.4 MB/s</div>
+                            </div>
+                        </li>
+                        <li class="agent-item" data-id="proto">
+                            <span class="agent-dot"></span>
+                            <div class="agent-body">
+                                <div class="agent-name">PROTO-LAB <span class="agent-tag">// a/b</span></div>
+                                <div class="agent-task" data-task>4 variants live · v3 leading +18.2% conv</div>
+                                <div class="agent-meta" data-meta>2,148 sessions · 23m runtime</div>
+                            </div>
+                        </li>
+                        <li class="agent-item" data-id="audit">
+                            <span class="agent-dot"></span>
+                            <div class="agent-body">
+                                <div class="agent-name">UI-AUDIT <span class="agent-tag">// drift</span></div>
+                                <div class="agent-task" data-task>scanned 84 screens · 3 inconsistencies</div>
+                                <div class="agent-meta" data-meta>spacing · color · typography</div>
+                            </div>
+                        </li>
+                        <li class="agent-item" data-id="port">
+                            <span class="agent-dot"></span>
+                            <div class="agent-body">
+                                <div class="agent-name">MOBILE-PORT <span class="agent-tag">// ios/android</span></div>
+                                <div class="agent-task" data-task>porting buttons · 12/28 done</div>
+                                <div class="agent-meta" data-meta>compose ✓ · swiftui in progress</div>
+                            </div>
+                        </li>
+                        <li class="agent-item" data-id="motion">
+                            <span class="agent-dot"></span>
+                            <div class="agent-body">
+                                <div class="agent-name">MOTION-RUN <span class="agent-tag">// fx</span></div>
+                                <div class="agent-task" data-task>generating 6 transition variants</div>
+                                <div class="agent-meta" data-meta>spring · ease-out · cubic · sample</div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
                 <div class="corner br">
             <span class="label">// audio vibe</span>
@@ -2496,12 +2641,12 @@
             const body = document.body;
             if (!panel) return;
 
-            const baseRY = -12;
+            const baseRY = 0;
             const baseRX = 0;
-            const mouseAmpY = 6;
-            const mouseAmpX = 4;
-            const idleAmpY = 1.4;
-            const idleAmpX = 0.9;
+            const mouseAmpY = 5;
+            const mouseAmpX = 3.5;
+            const idleAmpY = 1.0;
+            const idleAmpX = 0.7;
             const lerp = 0.07;
 
             let targetRY = baseRY;
@@ -2530,6 +2675,112 @@
                 panel.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
             }
             requestAnimationFrame(tick);
+        })();
+    </script>
+
+    <!-- Agents live feed: rotating fake-real status updates -->
+    <script>
+        (() => {
+            const list = document.getElementById('agents-list');
+            if (!list) return;
+
+            const POOL = {
+                figma: [
+                    'syncing tokens · components 247/312',
+                    'syncing tokens · components 268/312',
+                    'syncing tokens · components 291/312',
+                    'pushing 18 updated icons → react',
+                    'reconciling color palette · 4 conflicts',
+                    'merging button variants → primitives',
+                ],
+                proto: [
+                    '4 variants live · v3 leading +18.2% conv',
+                    '4 variants live · v3 leading +21.4% conv',
+                    '4 variants live · v2 closing gap, +14.1%',
+                    'spinning up variant 5 (cta hierarchy)',
+                    'killed variant 1 · low signal',
+                ],
+                audit: [
+                    'scanned 84 screens · 3 inconsistencies',
+                    'scanned 91 screens · 2 inconsistencies',
+                    'flagged spacing drift on /settings',
+                    'auto-fix proposed for 11 typography hits',
+                    'rerun on staging · clean',
+                ],
+                port: [
+                    'porting buttons · 12/28 done',
+                    'porting buttons · 17/28 done',
+                    'porting forms · 4/14 done',
+                    'snapshot test passed on iOS 18',
+                    'pushing compose @ 1.7.0',
+                ],
+                motion: [
+                    'generating 6 transition variants',
+                    'rendering spring(0.85, 0.3) at 60fps',
+                    'sampled 240 motion combinations',
+                    'best fit: cubic-bezier(.2,.9,.3,1)',
+                    'exporting to lottie',
+                ],
+            };
+            const META_POOL = {
+                figma: [
+                    'last sync 12s ago · 0.4 MB/s',
+                    'last sync 4s ago · 0.6 MB/s',
+                    'last sync 1s ago · 0.9 MB/s',
+                    'pushing to design-system/main',
+                ],
+                proto: [
+                    '2,148 sessions · 23m runtime',
+                    '2,409 sessions · 25m runtime',
+                    '2,712 sessions · 27m runtime',
+                    'cohort: free-trial signups',
+                ],
+                audit: [
+                    'spacing · color · typography',
+                    'border-radius · shadows · grid',
+                    'a11y contrast · focus rings',
+                ],
+                port: [
+                    'compose ✓ · swiftui in progress',
+                    'compose ✓ · swiftui ✓ · qt 0%',
+                    'snapshot diff: 0 regressions',
+                ],
+                motion: [
+                    'spring · ease-out · cubic · sample',
+                    'cubic ✓ · spring 73% match',
+                    'lottie 1.4kb · 60fps',
+                ],
+            };
+
+            const items = Array.from(list.querySelectorAll('.agent-item'));
+            // Per-agent state: cycle through pool + META_POOL
+            const idxMap = Object.fromEntries(items.map(it => [it.dataset.id, 0]));
+            const metaIdxMap = Object.fromEntries(items.map(it => [it.dataset.id, 0]));
+
+            function tick() {
+                // Pick a random agent to update
+                const it = items[Math.floor(Math.random() * items.length)];
+                const id = it.dataset.id;
+                const taskEl = it.querySelector('[data-task]');
+                const metaEl = it.querySelector('[data-meta]');
+                if (taskEl && POOL[id]) {
+                    idxMap[id] = (idxMap[id] + 1) % POOL[id].length;
+                    taskEl.textContent = POOL[id][idxMap[id]];
+                }
+                // Sometimes also rotate meta
+                if (metaEl && META_POOL[id] && Math.random() < 0.6) {
+                    metaIdxMap[id] = (metaIdxMap[id] + 1) % META_POOL[id].length;
+                    metaEl.textContent = META_POOL[id][metaIdxMap[id]];
+                }
+                // Visual flash on the updated row
+                it.classList.add('flash');
+                setTimeout(() => it.classList.remove('flash'), 700);
+            }
+
+            // Random interval between updates: 1.4–3.2s
+            (function loop() {
+                setTimeout(() => { tick(); loop(); }, 1400 + Math.random() * 1800);
+            })();
         })();
     </script>
 
