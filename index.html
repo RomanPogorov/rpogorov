@@ -471,12 +471,31 @@
         body.pre-gate .noise,
         body.pre-gate .scanlines,
         body.pre-gate .vignette,
+        body.pre-gate .bottom-shade,
         body.pre-gate .hud,
         body.pre-gate .backdrop,
         body.pre-gate .panel,
         body.pre-gate .dw {
             opacity: 0 !important;
             pointer-events: none !important;
+        }
+
+        /* Soft bottom darkening for legibility of chat input, tabs, vibe-row,
+           release cards over the bright video bg */
+        .bottom-shade {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 38vh;
+            pointer-events: none;
+            z-index: 4;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(0, 0, 0, 0.35) 50%,
+                rgba(0, 0, 0, 0.7) 100%
+            );
         }
         /* Pause all background animations until consent — nothing should be
            working under the gate */
@@ -3115,6 +3134,7 @@
     <div class="noise"></div>
     <div class="scanlines"></div>
     <div class="vignette"></div>
+    <div class="bottom-shade"></div>
 
     <!-- Audio gate: requests permission for sound on entry -->
     <div class="audio-gate" id="audio-gate" role="dialog" aria-label="Audio permission">
