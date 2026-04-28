@@ -3656,7 +3656,13 @@
 
             function dismiss({ withSound }) {
                 if (withSound) {
-                    if (audio) audio.muted = false;
+                    if (audio) {
+                        audio.muted = false;
+                        // Browser may have denied even muted autoplay — kick
+                        // off play() now while we still have user activation.
+                        const p = audio.play();
+                        if (p && typeof p.catch === 'function') p.catch(() => {});
+                    }
                     // Resume audio context + play a confirmation chord
                     window.__sfx?.engage?.();
                 }
