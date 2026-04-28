@@ -1328,7 +1328,7 @@
         .chat-send:hover { background: var(--acc); color: var(--bg); }
         .chat-send:disabled { opacity: 0.4; cursor: wait; }
 
-        /* ============ CHAT FULLSCREEN MODE ============ */
+        /* ============ CHAT FULLSCREEN — HOLOGRAM IN AIR ============ */
         body.chat-fullscreen .chat-pane {
             position: fixed;
             top: 5vh;
@@ -1336,55 +1336,92 @@
             width: min(660px, 92vw);
             height: 90vh;
             z-index: 30;
-            padding: 22px 26px 20px;
-            background: linear-gradient(180deg,
-                rgba(var(--acc-rgb), 0.06) 0%,
-                rgba(2, 12, 22, 0.92) 30%,
-                rgba(2, 12, 22, 0.96) 100%);
-            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            padding: 22px 26px 22px;
+
+            /* Light, see-through hologram — no opaque modal panel */
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0,
+                    transparent 2px,
+                    rgba(var(--acc-rgb), 0.025) 2px,
+                    rgba(var(--acc-rgb), 0.025) 3px
+                ),
+                linear-gradient(180deg,
+                    rgba(var(--acc-rgb), 0.04) 0%,
+                    rgba(var(--acc-rgb), 0.015) 100%);
+            border: 1px solid rgba(var(--acc-rgb), 0.28);
             box-shadow:
-                0 0 60px rgba(var(--acc-rgb), 0.28),
+                0 0 80px rgba(var(--acc-rgb), 0.30),
                 0 0 200px rgba(var(--acc-rgb), 0.10),
-                inset 0 0 80px rgba(var(--acc-rgb), 0.06);
-            backdrop-filter: blur(18px) saturate(1.4);
-            -webkit-backdrop-filter: blur(18px) saturate(1.4);
+                inset 0 0 60px rgba(var(--acc-rgb), 0.05);
+
             transform-origin: 50% 50%;
+            transform: translate(-50%, 0)
+                       perspective(1500px)
+                       rotateY(var(--chat-fs-ry, 0deg))
+                       rotateX(var(--chat-fs-rx, 0deg));
+            transform-style: preserve-3d;
+            will-change: transform;
             animation: chat-fs-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
         @keyframes chat-fs-in {
-            0%   { opacity: 0; transform: translate(-50%, 30px) scale(0.94); filter: blur(8px); }
+            0%   {
+                opacity: 0;
+                transform: translate(-50%, 24px) perspective(1500px) rotateY(-14deg) scale(0.92);
+                filter: blur(6px);
+            }
             60%  { opacity: 1; }
-            100% { opacity: 1; transform: translate(-50%, 0) scale(1); filter: blur(0); }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, 0) perspective(1500px) rotateY(var(--chat-fs-ry, 0deg)) rotateX(var(--chat-fs-rx, 0deg));
+                filter: blur(0);
+            }
         }
-        /* Override flex translate of the centered pane while fullscreen */
-        body.chat-fullscreen .chat-pane:not(:hover) {
-            transform: translate(-50%, 0);
+
+        /* Holographic edge: faint vertical line on the LEFT, like the right HUD's */
+        body.chat-fullscreen .chat-pane::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            bottom: 18px;
+            left: -10px;
+            width: 1px;
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                rgba(var(--acc-rgb), 0.55) 25%,
+                rgba(var(--acc-rgb), 0.55) 75%,
+                transparent 100%);
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.45);
         }
-        body.chat-fullscreen .chat-pane {
-            transform: translate(-50%, 0);
+        body.chat-fullscreen .chat-pane::after {
+            /* Same vertical glow on the RIGHT side, mirror */
+            content: '';
+            position: absolute;
+            top: 18px;
+            bottom: 18px;
+            right: -10px;
+            width: 1px;
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                rgba(var(--acc-rgb), 0.55) 25%,
+                rgba(var(--acc-rgb), 0.55) 75%,
+                transparent 100%);
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.45);
         }
 
         /* Slide central prompt OUT to the left while chat is fullscreen */
         body.chat-fullscreen { --prompt-tx: -160%; }
-        body.chat-fullscreen .prompt {
-            opacity: 0.35;
-        }
+        body.chat-fullscreen .prompt { opacity: 0.35; }
 
-        /* Dim the right HUD column while chat owns the center */
+        /* Right HUD softly fades but stays visible (no big opaque overlay) */
         body.chat-fullscreen .hud-right {
-            opacity: 0.18;
+            opacity: 0.32;
             pointer-events: none;
             transition: opacity 0.5s ease;
         }
         body.chat-fullscreen .hud-bottom { display: none; }
-
-        /* Backdrop dim while in chat fullscreen */
-        body.chat-fullscreen .backdrop {
-            opacity: 1;
-            pointer-events: auto;
-            backdrop-filter: blur(4px) brightness(0.6);
-            -webkit-backdrop-filter: blur(4px) brightness(0.6);
-        }
+        /* No heavy backdrop — keep the world visible behind the hologram */
 
         /* ============ DETAIL HOLO-WINDOW ============ */
         .dw {
@@ -4299,8 +4336,55 @@
                 } else {
                     originalParent.appendChild(chatPane);
                 }
+                // Reset parallax vars so the next entry starts clean
+                chatPane.style.removeProperty('--chat-fs-ry');
+                chatPane.style.removeProperty('--chat-fs-rx');
                 window.__sfx?.disengage?.();
             }
+
+            // Soft mouse parallax for the fullscreen hologram chat —
+            // only inside the bounding rect, gentle deg amounts.
+            (() => {
+                const baseRY = 0, baseRX = 0;
+                const ampY = 3, ampX = 2;
+                const idleAmpY = 0.6, idleAmpX = 0.4;
+                const lerp = 0.07;
+                let targetRY = baseRY, targetRX = baseRX;
+                let curRY = baseRY, curRX = baseRX;
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!document.body.classList.contains('chat-fullscreen')) return;
+                    const r = chatPane.getBoundingClientRect();
+                    const inside =
+                        e.clientX >= r.left && e.clientX <= r.right &&
+                        e.clientY >= r.top  && e.clientY <= r.bottom;
+                    if (!inside) {
+                        targetRY = baseRY; targetRX = baseRX;
+                        return;
+                    }
+                    const nx = (e.clientX - r.left) / r.width - 0.5;
+                    const ny = (e.clientY - r.top)  / r.height - 0.5;
+                    targetRY = baseRY + nx * ampY * 2;
+                    targetRX = baseRX - ny * ampX * 2;
+                });
+
+                const start = performance.now();
+                function tick(t) {
+                    requestAnimationFrame(tick);
+                    if (!document.body.classList.contains('chat-fullscreen')) {
+                        curRY *= 0.92; curRX *= 0.92;
+                        return;
+                    }
+                    const dt = (t - start) / 1000;
+                    const idleY = Math.sin(dt * 0.4) * idleAmpY;
+                    const idleX = Math.cos(dt * 0.3) * idleAmpX;
+                    curRY += ((targetRY + idleY) - curRY) * lerp;
+                    curRX += ((targetRX + idleX) - curRX) * lerp;
+                    chatPane.style.setProperty('--chat-fs-ry', curRY.toFixed(2) + 'deg');
+                    chatPane.style.setProperty('--chat-fs-rx', curRX.toFixed(2) + 'deg');
+                }
+                requestAnimationFrame(tick);
+            })();
 
             if (fsBtn) {
                 fsBtn.addEventListener('click', (e) => {
