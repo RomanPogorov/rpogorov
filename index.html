@@ -3261,15 +3261,15 @@
 
             // Hover & click delegation — works on dynamically added nodes too
             const HOVER_SEL = '.agent-item, .release-item, .theme-dot, .ap-btn, .dw-close, .prompt, .tab';
-            const CLICK_SEL = '.agent-item, .release-item, .theme-dot, .ap-btn, .dw-close';
-            const TICK_SEL = '.tab';
+            const TICK_SEL  = '.tab, .agent-item, .release-item';   // soft minimalist tick
+            const CLICK_SEL = '.theme-dot, .ap-btn, .dw-close';     // punchier click for buttons
             document.addEventListener('pointerenter', (e) => {
                 if (e.target.closest && e.target.closest(HOVER_SEL)) SFX.hover();
             }, true);
             document.addEventListener('click', (e) => {
                 if (!e.target.closest) return;
-                if (e.target.closest(TICK_SEL)) { SFX.tick(); return; }
-                if (e.target.closest(CLICK_SEL)) SFX.click();
+                if (e.target.closest(TICK_SEL))  { SFX.tick();  return; }
+                if (e.target.closest(CLICK_SEL)) { SFX.click(); }
             }, true);
         })();
     </script>
