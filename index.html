@@ -4549,26 +4549,46 @@
                 }
             });
 
-            // Take-to-Telegram pickup
-            const BOT_USERNAME = 'clauderunnerstranger_bot';
+            // Take-to-Telegram pickup — sends transcript directly from Roman's
+            // user account to the visitor's @username. No /start required.
             const pickupBtn = document.getElementById('chat-pickup-btn');
             const pickupInput = document.getElementById('chat-pickup-username');
             const pickupStatus = document.getElementById('chat-pickup-status');
             if (pickupBtn) {
                 pickupBtn.addEventListener('click', async () => {
                     const username = pickupInput.value.trim().replace(/^@/, '').slice(0, 32);
+                    if (!username) {
+                        pickupStatus.textContent = '⚠ enter your @telegram first';
+                        pickupStatus.style.color = '#ffb547';
+                        pickupStatus.classList.add('show');
+                        return;
+                    }
+                    pickupStatus.textContent = 'sending…';
+                    pickupStatus.style.color = '';
+                    pickupStatus.classList.add('show');
+                    pickupBtn.disabled = true;
+                    window.__sfx?.click?.();
                     try {
-                        await fetch('api/chat/pickup', {
+                        const r = await fetch('api/chat/pickup', {
                             method: 'POST',
                             headers: { 'content-type': 'application/json' },
                             body: JSON.stringify({ thread, username }),
                         });
-                    } catch {}
-                    const url = `https://t.me/${BOT_USERNAME}?start=${encodeURIComponent(thread)}`;
-                    window.open(url, '_blank', 'noopener');
-                    pickupStatus.textContent = '→ open the bot, press Start. Roman\'s replies will land in your TG.';
-                    pickupStatus.classList.add('show');
-                    window.__sfx?.click?.();
+                        const data = await r.json().catch(() => ({}));
+                        if (r.ok && data.ok) {
+                            pickupStatus.textContent = `✓ sent to @${username}. check your Telegram.`;
+                            pickupStatus.style.color = '#4ade80';
+                            window.__sfx?.engage?.();
+                        } else {
+                            pickupStatus.textContent = `⚠ ${data.error || 'send failed'}`;
+                            pickupStatus.style.color = '#ffb547';
+                        }
+                    } catch (e) {
+                        pickupStatus.textContent = '⚠ network error';
+                        pickupStatus.style.color = '#ffb547';
+                    } finally {
+                        pickupBtn.disabled = false;
+                    }
                 });
             }
 

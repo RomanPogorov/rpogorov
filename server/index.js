@@ -17,6 +17,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
 const PORT = parseInt(process.env.PORT || '3055', 10);
 const TG_TOKEN = process.env.TG_BOT_TOKEN;
@@ -291,11 +292,44 @@ const server = http.createServer(async (req, res) => {
     let body;
     try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
     const thread = String(body.thread || '').slice(0, 64);
-    const username = String(body.username || '').slice(0, 32);
+    const username = String(body.username || '').slice(0, 32).replace(/^@/, '');
     if (!thread) return send(res, 400, { error: 'thread required' });
+    if (!username) return send(res, 400, { error: 'username required' });
+
+    const t = state.threads[thread];
+    if (!t || !t.msgs.length) return send(res, 404, { error: 'no conversation yet' });
+
     state.threadUsername[thread] = username;
     saveLater();
-    return send(res, 200, { ok: true });
+
+    // Build the transcript
+    const lines = t.msgs.map(m => {
+      const who = m.role === 'roman' ? 'Roman' : (m.role === 'visitor' ? 'You' : '·');
+      return `${who}: ${m.text}`;
+    });
+    const transcript =
+      `Conversation with Roman (rpogorov.com)\n\n` +
+      lines.join('\n\n') +
+      `\n\n— You can reply right here in Telegram, Roman will see it.`;
+
+    // Spawn the Telethon helper that sends from Roman's user account
+    const child = spawn('/usr/bin/python3', [path.join(__dirname, 'tg_send_transcript.py')], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    let out = '', err = '';
+    child.stdin.write(JSON.stringify({ username, text: transcript }));
+    child.stdin.end();
+    child.stdout.on('data', (d) => out += d);
+    child.stderr.on('data', (d) => err += d);
+    child.on('close', () => {
+      try {
+        const result = JSON.parse(out.trim().split('\n').pop() || '{}');
+        send(res, result.ok ? 200 : 400, result);
+      } catch (e) {
+        send(res, 500, { ok: false, error: 'helper crashed: ' + (err || out).slice(0, 200) });
+      }
+    });
+    return;
   }
 
   if (req.method === 'GET' && url.pathname === '/api/chat/health') {
