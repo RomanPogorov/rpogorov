@@ -642,7 +642,8 @@
             transform: translateZ(-8px);
         }
 
-        /* Section headers in the right HUD — bolder + slightly bigger, no blur */
+        /* Section headers in the right HUD — bolder + slightly bigger.
+           Tight dark drop-shadow (no blur) gives contrast on busy bg. */
         .hud-right .label {
             color: var(--acc);
             opacity: 1;
@@ -650,12 +651,36 @@
             font-weight: 700;
             letter-spacing: 0.16em;
             margin-bottom: 8px;
+            text-shadow:
+                0 1px 0 rgba(0, 0, 0, 0.85),
+                0 0 2px rgba(0, 0, 0, 0.7);
         }
         .hud-right .label.sub {
             font-size: 10px;
             font-weight: 600;
-            opacity: 0.85;
+            opacity: 0.9;
         }
+
+        /* Item-level text in the right HUD — outlined for legibility */
+        .hud-right .agent-name,
+        .hud-right .agent-task,
+        .hud-right .agent-meta,
+        .hud-right .agent-tag,
+        .hud-right .task-text,
+        .hud-right .task-date,
+        .hud-right .release-name,
+        .hud-right .release-summary,
+        .hud-right .release-version,
+        .hud-right .release-date {
+            text-shadow:
+                0 1px 0 rgba(0, 0, 0, 0.8),
+                0 0 2px rgba(0, 0, 0, 0.65);
+        }
+        .hud-right .agent-task   { opacity: 0.95; }
+        .hud-right .agent-meta   { opacity: 0.85; }
+        .hud-right .agent-tag    { opacity: 1;    }
+        .hud-right .release-summary { opacity: 0.92; }
+        .hud-right .task-text    { opacity: 0.95; }
 
         /* Override absolute positioning for corners inside the 3D stack */
         .hud-right .corner.tr,
