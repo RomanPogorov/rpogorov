@@ -1193,6 +1193,31 @@
             font-size: 9.5px;
             letter-spacing: 0.06em;
         }
+
+        .chat-fs-btn {
+            appearance: none;
+            margin-left: auto;
+            background: rgba(var(--acc-rgb), 0.05);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--ink);
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color .15s, background .15s, color .15s, transform .12s;
+        }
+        .chat-fs-btn:hover {
+            color: var(--acc);
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.12);
+        }
+        .chat-fs-btn:active { transform: scale(0.92); }
+        .chat-fs-btn .icon-collapse { display: none; }
+        body.chat-fullscreen .chat-fs-btn .icon-expand { display: none; }
+        body.chat-fullscreen .chat-fs-btn .icon-collapse { display: inline; }
+        .chat-fs-btn svg { width: 11px; height: 11px; }
         .chat-thread {
             flex: 1 1 0;
             min-height: 0;
@@ -1302,6 +1327,64 @@
         }
         .chat-send:hover { background: var(--acc); color: var(--bg); }
         .chat-send:disabled { opacity: 0.4; cursor: wait; }
+
+        /* ============ CHAT FULLSCREEN MODE ============ */
+        body.chat-fullscreen .chat-pane {
+            position: fixed;
+            top: 5vh;
+            left: 50%;
+            width: min(660px, 92vw);
+            height: 90vh;
+            z-index: 30;
+            padding: 22px 26px 20px;
+            background: linear-gradient(180deg,
+                rgba(var(--acc-rgb), 0.06) 0%,
+                rgba(2, 12, 22, 0.92) 30%,
+                rgba(2, 12, 22, 0.96) 100%);
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            box-shadow:
+                0 0 60px rgba(var(--acc-rgb), 0.28),
+                0 0 200px rgba(var(--acc-rgb), 0.10),
+                inset 0 0 80px rgba(var(--acc-rgb), 0.06);
+            backdrop-filter: blur(18px) saturate(1.4);
+            -webkit-backdrop-filter: blur(18px) saturate(1.4);
+            transform-origin: 50% 50%;
+            animation: chat-fs-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        @keyframes chat-fs-in {
+            0%   { opacity: 0; transform: translate(-50%, 30px) scale(0.94); filter: blur(8px); }
+            60%  { opacity: 1; }
+            100% { opacity: 1; transform: translate(-50%, 0) scale(1); filter: blur(0); }
+        }
+        /* Override flex translate of the centered pane while fullscreen */
+        body.chat-fullscreen .chat-pane:not(:hover) {
+            transform: translate(-50%, 0);
+        }
+        body.chat-fullscreen .chat-pane {
+            transform: translate(-50%, 0);
+        }
+
+        /* Slide central prompt OUT to the left while chat is fullscreen */
+        body.chat-fullscreen { --prompt-tx: -160%; }
+        body.chat-fullscreen .prompt {
+            opacity: 0.35;
+        }
+
+        /* Dim the right HUD column while chat owns the center */
+        body.chat-fullscreen .hud-right {
+            opacity: 0.18;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        body.chat-fullscreen .hud-bottom { display: none; }
+
+        /* Backdrop dim while in chat fullscreen */
+        body.chat-fullscreen .backdrop {
+            opacity: 1;
+            pointer-events: auto;
+            backdrop-filter: blur(4px) brightness(0.6);
+            -webkit-backdrop-filter: blur(4px) brightness(0.6);
+        }
 
         /* ============ DETAIL HOLO-WINDOW ============ */
         .dw {
@@ -1627,13 +1710,15 @@
             padding: 48px 60px;
             transform-origin: 50% 50%;
             transform:
-                translate(-50%, -50%)
+                translate(var(--prompt-tx, -50%), -50%)
                 perspective(1400px)
                 rotateY(var(--prompt-ry, 0deg))
                 rotateX(var(--prompt-rx, 0deg))
                 scale(var(--prompt-scale, 1));
             will-change: transform;
-            transition: opacity 0.5s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+            transition:
+                opacity 0.5s ease,
+                transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
 
         /* the tron frame: 4 light bars that form a rectangle */
@@ -3254,6 +3339,20 @@
                             <span class="online-dot"></span>
                             <span class="chat-online-text">Roman online</span>
                         </span>
+                        <button id="chat-fs-toggle" class="chat-fs-btn" type="button" aria-label="Fullscreen chat">
+                            <svg class="icon-expand" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="2,5 2,2 5,2"/>
+                                <polyline points="9,2 12,2 12,5"/>
+                                <polyline points="12,9 12,12 9,12"/>
+                                <polyline points="5,12 2,12 2,9"/>
+                            </svg>
+                            <svg class="icon-collapse" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="5,2 5,5 2,5"/>
+                                <polyline points="9,5 12,5 12,2"/>
+                                <polyline points="12,9 9,9 9,12"/>
+                                <polyline points="5,12 5,9 2,9"/>
+                            </svg>
+                        </button>
                     </div>
                     <div class="chat-thread" id="chat-thread">
                         <div class="chat-msg from-system">
@@ -4166,11 +4265,37 @@
                         chatPane.hidden = false;
                         document.getElementById('chat-input')?.focus();
                     } else {
+                        // Switching back to dashboard always exits fullscreen
+                        document.body.classList.remove('chat-fullscreen');
                         dashboard.hidden = false;
                         chatPane.hidden = true;
                     }
                 });
             });
+
+            // Fullscreen toggle for the chat pane
+            const fsBtn = document.getElementById('chat-fs-toggle');
+            if (fsBtn) {
+                fsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const wasFs = document.body.classList.toggle('chat-fullscreen');
+                    if (wasFs) {
+                        window.__sfx?.engage?.();
+                        document.getElementById('chat-input')?.focus();
+                    } else {
+                        window.__sfx?.disengage?.();
+                    }
+                });
+                // ESC exits fullscreen first (before any panel-close handlers below)
+                document.addEventListener('keydown', (e) => {
+                    if (e.key !== 'Escape') return;
+                    if (document.body.classList.contains('chat-fullscreen')) {
+                        document.body.classList.remove('chat-fullscreen');
+                        window.__sfx?.disengage?.();
+                        e.stopPropagation();
+                    }
+                }, true);   // capture phase so it runs before the panel/dw handlers
+            }
 
             // ---- chat ----
             const STORE = 'rpogorov_chat';
