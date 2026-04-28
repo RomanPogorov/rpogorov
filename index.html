@@ -934,6 +934,57 @@
             opacity: 0.8;
         }
 
+        /* ============ LATEST TASKS ============ */
+        .tasks-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .label.sub {
+            color: var(--dim);
+            opacity: 0.7;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+        }
+        .tasks-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .task-item {
+            display: flex;
+            gap: 10px;
+            padding: 3px 0 3px 8px;
+            border-left: 1px solid rgba(var(--acc-rgb), 0.18);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            line-height: 1.4;
+            text-transform: none;
+            letter-spacing: 0;
+            text-align: left;
+        }
+        .task-date {
+            color: var(--acc);
+            opacity: 0.75;
+            flex: 0 0 44px;
+            font-size: 9px;
+            padding-top: 1px;
+        }
+        .task-text {
+            color: var(--ink);
+            opacity: 0.85;
+        }
+
+        .projects-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
         /* ============ HUD TABS + CHAT PANE ============ */
         .hud-bottom {
             display: flex;
@@ -1015,9 +1066,8 @@
             letter-spacing: 0.06em;
         }
         .chat-thread {
-            flex: 1;
+            flex: 1 1 auto;
             min-height: 140px;
-            max-height: 50vh;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -2910,43 +2960,50 @@
             <div class="hud-right-stack" id="hud-right-stack">
                 <div class="corner tr agents-feed">
                     <div class="agents-head">
-                        <span class="label">// agents · live</span>
+                        <span class="label">// my activities · live</span>
                         <span class="agents-clock" id="clock">00:00:00</span>
                     </div>
-                    <ul class="agents-list" id="agents-list">
-                        <li class="agent-item" data-id="figma">
-                            <span class="agent-dot"></span>
-                            <div class="agent-body">
-                                <div class="agent-name">FIGMA-SYNC <span class="agent-tag">// design</span></div>
-                                <div class="agent-task" data-task>syncing tokens · components 247/312</div>
-                                <div class="agent-meta" data-meta>last sync 12s ago · 0.4 MB/s</div>
-                            </div>
-                        </li>
-                        <li class="agent-item" data-id="proto">
-                            <span class="agent-dot"></span>
-                            <div class="agent-body">
-                                <div class="agent-name">PROTO-LAB <span class="agent-tag">// a/b</span></div>
-                                <div class="agent-task" data-task>4 variants live · v3 leading +18.2% conv</div>
-                                <div class="agent-meta" data-meta>2,148 sessions · 23m runtime</div>
-                            </div>
-                        </li>
-                        <li class="agent-item" data-id="audit">
-                            <span class="agent-dot"></span>
-                            <div class="agent-body">
-                                <div class="agent-name">UI-AUDIT <span class="agent-tag">// drift</span></div>
-                                <div class="agent-task" data-task>scanned 84 screens · 3 inconsistencies</div>
-                                <div class="agent-meta" data-meta>spacing · color · typography</div>
-                            </div>
-                        </li>
-                        <li class="agent-item" data-id="port">
-                            <span class="agent-dot"></span>
-                            <div class="agent-body">
-                                <div class="agent-name">MOBILE-PORT <span class="agent-tag">// ios/android</span></div>
-                                <div class="agent-task" data-task>porting buttons · 12/28 done</div>
-                                <div class="agent-meta" data-meta>compose ✓ · swiftui in progress</div>
-                            </div>
-                        </li>
-                    </ul>
+
+                    <div class="tasks-block">
+                        <span class="label sub">// latest tasks</span>
+                        <ul class="tasks-list">
+                            <li class="task-item"><span class="task-date">28 Apr</span><span class="task-text">Wired portfolio chat to Telegram bot</span></li>
+                            <li class="task-item"><span class="task-date">28 Apr</span><span class="task-text">Audio consent gate with Silent mode</span></li>
+                            <li class="task-item"><span class="task-date">27 Apr</span><span class="task-text">Holographic detail window + agent dossiers</span></li>
+                            <li class="task-item"><span class="task-date">27 Apr</span><span class="task-text">3D right-side HUD with mouse parallax</span></li>
+                            <li class="task-item"><span class="task-date">27 Apr</span><span class="task-text">Cyberpunk landing skeleton on Astro</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="projects-block">
+                        <span class="label">// top 3 projects in work</span>
+                        <ul class="agents-list" id="agents-list">
+                            <li class="agent-item" data-id="figma">
+                                <span class="agent-dot"></span>
+                                <div class="agent-body">
+                                    <div class="agent-name">FIGMA-SYNC <span class="agent-tag">// design</span></div>
+                                    <div class="agent-task" data-task>syncing tokens · components 247/312</div>
+                                    <div class="agent-meta" data-meta>last sync 12s ago · 0.4 MB/s</div>
+                                </div>
+                            </li>
+                            <li class="agent-item" data-id="proto">
+                                <span class="agent-dot"></span>
+                                <div class="agent-body">
+                                    <div class="agent-name">PROTO-LAB <span class="agent-tag">// a/b</span></div>
+                                    <div class="agent-task" data-task>4 variants live · v3 leading +18.2% conv</div>
+                                    <div class="agent-meta" data-meta>2,148 sessions · 23m runtime</div>
+                                </div>
+                            </li>
+                            <li class="agent-item" data-id="port">
+                                <span class="agent-dot"></span>
+                                <div class="agent-body">
+                                    <div class="agent-name">MOBILE-PORT <span class="agent-tag">// ios/android</span></div>
+                                    <div class="agent-task" data-task>porting buttons · 12/28 done</div>
+                                    <div class="agent-meta" data-meta>compose ✓ · swiftui in progress</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
 
                     <div class="releases-block">
                         <span class="label">// recent releases</span>
@@ -3005,7 +3062,7 @@
 
                 <div class="hud-bottom">
                 <nav class="hud-tabs" role="tablist">
-                    <button type="button" class="hud-tab active" data-pane="dashboard">DASHBOARD</button>
+                    <button type="button" class="hud-tab active" data-pane="dashboard">MY ACTIVITIES</button>
                     <button type="button" class="hud-tab" data-pane="chat">CHAT</button>
                 </nav>
                 </div>
