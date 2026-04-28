@@ -657,12 +657,13 @@
             opacity: 0.9;
         }
 
-        /* Bump opacity on item descriptions for readability */
-        .hud-right .agent-task      { opacity: 0.95; }
-        .hud-right .agent-meta      { opacity: 0.85; }
-        .hud-right .agent-tag       { opacity: 1;    }
-        .hud-right .release-summary { opacity: 0.92; }
-        .hud-right .task-text       { opacity: 0.95; }
+        /* Item-level descriptions: white-ish (--ink) instead of low-contrast --dim */
+        .hud-right .agent-task      { color: var(--ink); opacity: 0.95; }
+        .hud-right .agent-meta      { color: var(--ink); opacity: 0.7; }
+        .hud-right .agent-tag       { color: var(--ink); opacity: 0.7; }
+        .hud-right .release-summary { color: var(--ink); opacity: 0.78; }
+        .hud-right .release-date    { color: var(--ink); opacity: 0.65; }
+        .hud-right .task-text       { color: var(--ink); opacity: 0.95; }
 
         /* Override absolute positioning for corners inside the 3D stack */
         .hud-right .corner.tr,
