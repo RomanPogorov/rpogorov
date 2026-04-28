@@ -1,0 +1,2560 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROMAN POGOROV / GRID</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============ CORE ============ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #02060a;
+            --ink: #eaf6ff;
+            --acc: #00e5ff;
+            /* tron cyan */
+            --acc-rgb: 0, 229, 255;
+            --acc2: #ff7a18;
+            /* warning orange (tron clu) */
+            --acc3: #6ee7ff;
+            --dim: #4a6478;
+            --panel: rgba(4, 12, 18, 0.55);
+            --grid: rgba(var(--acc-rgb), 0.09);
+            --glow: 0 0 12px rgba(var(--acc-rgb), 0.7), 0 0 32px rgba(var(--acc-rgb), 0.35);
+        }
+
+        /* MONO — white/grayscale */
+        body[data-theme="mono"] {
+            --ink: #ffffff;
+            --acc: #ffffff;
+            --acc-rgb: 255, 255, 255;
+            --acc2: #ff7a18;
+            --acc3: #d8e0e8;
+            --dim: #5a6470;
+            --grid: rgba(255, 255, 255, 0.07);
+            --glow: 0 0 12px rgba(255, 255, 255, 0.55), 0 0 32px rgba(255, 255, 255, 0.25);
+        }
+
+        /* CYAN — default tron */
+        body[data-theme="cyan"] {
+            --ink: #eaf6ff;
+            --acc: #00e5ff;
+            --acc-rgb: 0, 229, 255;
+            --acc2: #ff7a18;
+            --acc3: #6ee7ff;
+            --dim: #4a6478;
+            --grid: rgba(var(--acc-rgb), 0.09);
+            --glow: 0 0 12px rgba(var(--acc-rgb), 0.7), 0 0 32px rgba(var(--acc-rgb), 0.35);
+        }
+
+        /* GREEN — matrix / signal */
+        body[data-theme="green"] {
+            --ink: #e8fff0;
+            --acc: #00ff88;
+            --acc-rgb: 0, 255, 136;
+            --acc2: #ffcc00;
+            --acc3: #6effb0;
+            --dim: #4a7864;
+            --grid: rgba(0, 255, 136, 0.08);
+            --glow: 0 0 12px rgba(0, 255, 136, 0.65), 0 0 32px rgba(0, 255, 136, 0.32);
+        }
+
+        /* EMBER — fire-warm red/orange */
+        body[data-theme="ember"] {
+            --ink: #fff0e6;
+            --acc: #ff5722;
+            --acc-rgb: 255, 87, 34;
+            --acc2: #ffb547;
+            --acc3: #ff8a4a;
+            --dim: #785244;
+            --grid: rgba(255, 87, 34, 0.08);
+            --glow: 0 0 12px rgba(255, 87, 34, 0.7), 0 0 32px rgba(255, 87, 34, 0.4);
+        }
+
+        /* parallax: disabled — kept variables for future re-enable */
+        :root {
+            --mx: 0;
+            --my: 0;
+            --tilt: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        /* ============ VIDEO ============ */
+        .stage {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 0;
+            /* fallback gradient if video fails to load */
+            background:
+                radial-gradient(ellipse at 30% 20%, #0a3d2e 0%, transparent 50%),
+                linear-gradient(135deg, #050708 0%, #0a1410 100%);
+        }
+
+        .stage video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: contrast(1.15) saturate(1.0) brightness(0.8);
+            transition: filter 0.8s ease;
+        }
+
+        /* ============ NOISE / GRAIN ============ */
+        .noise {
+            position: fixed;
+            inset: -50%;
+            width: 200%;
+            height: 200%;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.18;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.2 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+            animation: noiseShift 0.6s steps(4) infinite;
+        }
+
+        @keyframes noiseShift {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            25% {
+                transform: translate(-3%, 2%);
+            }
+
+            50% {
+                transform: translate(2%, -1%);
+            }
+
+            75% {
+                transform: translate(-1%, 3%);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        /* CRT scanlines */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            background: repeating-linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0) 0px,
+                    rgba(0, 0, 0, 0) 2px,
+                    rgba(0, 0, 0, 0.18) 3px,
+                    rgba(0, 0, 0, 0) 4px);
+            mix-blend-mode: multiply;
+        }
+
+        /* slow rolling band */
+        .scanlines::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 255, 163, 0.06), transparent);
+            animation: roll 9s linear infinite;
+        }
+
+        @keyframes roll {
+            from {
+                top: -80px;
+            }
+
+            to {
+                top: 100%;
+            }
+        }
+
+        /* vignette */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 4;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.75) 100%);
+        }
+
+        /* tech grid overlay — TRON floor */
+        .grid {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 80px 80px;
+            mask-image: radial-gradient(ellipse at center, black 10%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 75%);
+            opacity: 0.7;
+            transition: opacity 0.8s ease, filter 0.8s ease;
+        }
+
+        /* horizon line — adds tron depth cue */
+        .horizon {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(var(--acc-rgb), 0) 20%,
+                    rgba(var(--acc-rgb), 0.5) 50%,
+                    rgba(var(--acc-rgb), 0) 80%,
+                    transparent 100%);
+            box-shadow: 0 0 20px rgba(var(--acc-rgb), 0.4);
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0;
+            animation: horizonIn 1.4s 0.4s ease-out forwards;
+        }
+
+        @keyframes horizonIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ============ THEME SWITCHER — segmented control ============ */
+        .theme-switch {
+            display: inline-flex;
+            align-items: stretch;
+            margin-top: 6px;
+            padding: 3px;
+            gap: 3px;
+            border: 1px solid rgba(var(--acc-rgb), 0.25);
+            background: rgba(2, 8, 14, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            transition: border-color 0.3s ease;
+        }
+
+        .theme-dot {
+            position: relative;
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+            background: transparent;
+            transition: transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* the colored square swatch */
+        .theme-dot::before {
+            content: '';
+            width: 100%;
+            height: 100%;
+            transition: all 0.25s ease;
+            opacity: 0.55;
+        }
+
+        .theme-dot[data-theme="cyan"]::before {
+            background: #00e5ff;
+        }
+
+        .theme-dot[data-theme="green"]::before {
+            background: #00ff88;
+        }
+
+        .theme-dot[data-theme="ember"]::before {
+            background: #ff5722;
+        }
+
+        .theme-dot[data-theme="mono"]::before {
+            background: #ffffff;
+        }
+
+        .theme-dot:hover::before {
+            opacity: 0.85;
+        }
+
+        /* active segment — full opacity + selection ring */
+        .theme-dot.active::before {
+            opacity: 1;
+        }
+
+        .theme-dot.active {
+            outline: 1px solid var(--acc);
+            outline-offset: 2px;
+        }
+
+        .theme-dot[data-theme="cyan"].active {
+            outline-color: #00e5ff;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.55);
+        }
+
+        .theme-dot[data-theme="green"].active {
+            outline-color: #00ff88;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.55);
+        }
+
+        .theme-dot[data-theme="ember"].active {
+            outline-color: #ff5722;
+            box-shadow: 0 0 8px rgba(255, 87, 34, 0.55);
+        }
+
+        .theme-dot[data-theme="mono"].active {
+            outline-color: #ffffff;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.55);
+        }
+
+        /* ============ HUD (chill state) ============ */
+        .hud {
+            position: fixed;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            color: var(--ink);
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .hud>* {
+            pointer-events: auto;
+        }
+
+        .hud .corner {
+            position: absolute;
+            color: var(--acc);
+            text-shadow: 0 0 8px rgba(0, 255, 163, 0.6);
+            opacity: 0.85;
+        }
+
+        .hud .tl {
+            top: 28px;
+            left: 32px;
+        }
+
+        .hud .tr {
+            top: 28px;
+            right: 32px;
+            text-align: right;
+        }
+
+        .hud .bl {
+            bottom: 28px;
+            left: 32px;
+        }
+
+        .hud .br {
+            bottom: 28px;
+            right: 32px;
+            text-align: right;
+        }
+
+        .hud .corner .label {
+            color: var(--dim);
+            display: block;
+            font-size: 9px;
+            margin-bottom: 4px;
+        }
+
+        .hud .blink::after {
+            content: '▮';
+            animation: blink 1s steps(1) infinite;
+            margin-left: 4px;
+            color: var(--acc);
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* center prompt — TRON identity disc */
+        .prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: auto;
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            width: min(640px, 88vw);
+            padding: 48px 60px;
+        }
+
+        /* the tron frame: 4 light bars that form a rectangle */
+        .prompt::before,
+        .prompt::after {
+            content: '';
+            position: absolute;
+            background: var(--acc);
+            box-shadow: var(--glow);
+            pointer-events: none;
+        }
+
+        /* top bar */
+        .prompt::before {
+            top: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            transform: translateX(-50%);
+            animation: barH 1.4s 0.2s ease-out forwards;
+        }
+
+        /* bottom bar */
+        .prompt::after {
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            transform: translateX(-50%);
+            animation: barH 1.4s 0.4s ease-out forwards;
+        }
+
+        @keyframes barH {
+            to {
+                width: 100%;
+            }
+        }
+
+        /* side bars via inner spans */
+        .prompt .v-bar {
+            position: absolute;
+            top: 50%;
+            width: 1px;
+            height: 0;
+            background: var(--acc);
+            box-shadow: var(--glow);
+            transform: translateY(-50%);
+            pointer-events: none;
+            animation: barV 1.4s 0.6s ease-out forwards;
+        }
+
+        .prompt .v-bar.l {
+            left: 0;
+        }
+
+        .prompt .v-bar.r {
+            right: 0;
+        }
+
+        @keyframes barV {
+            to {
+                height: 100%;
+            }
+        }
+
+        /* runner: a bright dot that travels around the frame */
+        .prompt .runner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow:
+                0 0 6px #fff,
+                0 0 12px var(--acc),
+                0 0 24px rgba(var(--acc-rgb), 0.6);
+            offset-path: rect(0% 100% 100% 0% round 0);
+            -webkit-offset-path: rect(0% 100% 100% 0% round 0);
+            offset-distance: 0%;
+            animation: runner 6s linear infinite 1.6s;
+            opacity: 0;
+        }
+
+        @keyframes runner {
+            0% {
+                offset-distance: 0%;
+                opacity: 1;
+            }
+
+            100% {
+                offset-distance: 100%;
+                opacity: 1;
+            }
+        }
+
+        /* corner ticks — like tron grid intersections */
+        .prompt .tick {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border: 1px solid var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
+            opacity: 0;
+            animation: tickIn 0.4s 1.6s ease-out forwards;
+        }
+
+        .prompt .tick.tl {
+            top: -3px;
+            left: -3px;
+        }
+
+        .prompt .tick.tr {
+            top: -3px;
+            right: -3px;
+        }
+
+        .prompt .tick.bl {
+            bottom: -3px;
+            left: -3px;
+        }
+
+        .prompt .tick.br {
+            bottom: -3px;
+            right: -3px;
+        }
+
+        @keyframes tickIn {
+            to {
+                opacity: 0.8;
+            }
+        }
+
+        .prompt .meta-top {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(234, 246, 255, 0.5);
+            margin-bottom: 28px;
+            opacity: 0;
+            animation: fadeUp 0.8s 1.2s ease-out forwards;
+        }
+
+        .prompt .meta-top .dot {
+            width: 5px;
+            height: 5px;
+            background: var(--acc);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--acc);
+            animation: pulse 2.4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.7);
+            }
+        }
+
+        .prompt .name {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 400;
+            font-size: 11px;
+            letter-spacing: 0.4em;
+            line-height: 1;
+            color: var(--acc);
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.4);
+            opacity: 0;
+            animation: fadeUp 0.9s 1.4s ease-out forwards;
+            padding-left: 0.4em;
+            margin-bottom: 18px;
+        }
+
+        .prompt .role-hero {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            font-size: clamp(32px, 4.5vw, 56px);
+            letter-spacing: 0.14em;
+            line-height: 1.05;
+            color: var(--ink);
+            text-transform: uppercase;
+            text-shadow: 0 0 14px rgba(var(--acc-rgb), 0.35);
+            opacity: 0;
+            margin: 0;
+            background: linear-gradient(90deg,
+                    var(--ink) 0%,
+                    var(--ink) 42%,
+                    #fff 50%,
+                    var(--ink) 58%,
+                    var(--ink) 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeUp 1s 1.5s ease-out forwards, sweep 7s 2.5s ease-in-out infinite;
+        }
+
+        @keyframes sweep {
+
+            0%,
+            100% {
+                background-position: 200% 0;
+            }
+
+            50% {
+                background-position: -100% 0;
+            }
+        }
+
+        /* slim personal slogan beneath the title */
+        .prompt .slogan {
+            margin-top: 22px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 300;
+            font-size: 11px;
+            line-height: 1.7;
+            letter-spacing: 0.05em;
+            color: rgba(234, 246, 255, 0.8);
+            max-width: 460px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            animation: fadeUp 0.9s 2s ease-out forwards;
+        }
+
+        .prompt .slogan em {
+            font-style: normal;
+            color: var(--acc);
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.4);
+        }
+
+        .prompt .slogan .slogan-end {
+            display: block;
+            margin-top: 4px;
+            margin-left: 0;
+            color: rgba(234, 246, 255, 0.85);
+        }
+
+        .prompt .cta {
+            margin-top: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.45em;
+            text-transform: uppercase;
+            color: rgba(234, 246, 255, 0.6);
+            transition: gap 0.3s, color 0.3s;
+            opacity: 0;
+            animation: fadeUp 0.9s 2.4s ease-out forwards;
+            padding-left: 0.45em;
+        }
+
+        .prompt .cta-line {
+            display: inline-block;
+            width: 22px;
+            height: 1px;
+            background: rgba(var(--acc-rgb), 0.5);
+            transition: width 0.4s ease, background 0.3s ease;
+        }
+
+        .prompt:hover .cta {
+            gap: 18px;
+            color: var(--acc);
+        }
+
+        .prompt:hover .cta-line {
+            width: 38px;
+            background: var(--acc);
+            box-shadow: 0 0 6px var(--acc);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        body.engaged .prompt {
+            opacity: 0;
+            transform: translate(-50%, -60%) scale(0.95);
+            pointer-events: none;
+        }
+
+        /* timecode */
+        .tc {
+            font-variant-numeric: tabular-nums;
+            color: var(--acc3);
+        }
+
+        /* ============ BACKDROP — pushed back when panel opens ============ */
+        .backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 8;
+            pointer-events: none;
+            opacity: 0;
+            background:
+                repeating-linear-gradient(to bottom,
+                    transparent 0,
+                    transparent 2px,
+                    rgba(var(--acc-rgb), 0.06) 3px,
+                    transparent 4px);
+            backdrop-filter: blur(8px) brightness(0.5);
+            -webkit-backdrop-filter: blur(8px) brightness(0.5);
+            transition: opacity 0.7s ease;
+        }
+
+        body.engaged .backdrop {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* push everything behind the backdrop further into depth (no scale on video — only blur/dim) */
+        body.engaged .stage video {
+            filter: contrast(1.3) saturate(0.95) brightness(0.45) blur(3px);
+        }
+
+        body.engaged .grid,
+        body.engaged .horizon,
+        body.engaged .hud {
+            opacity: 0.4;
+            filter: blur(2px);
+        }
+
+        .grid,
+        .horizon,
+        .hud {
+            transition: opacity 0.8s ease, filter 0.8s ease;
+        }
+
+        /* ============ HOLOGRAPHIC PANEL — TRON ============ */
+        .panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: min(880px, 94vw);
+            height: min(680px, 86vh);
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, calc(-50% + 60px)) scale(0.92);
+            transition:
+                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.6s ease;
+        }
+
+        body.engaged .panel {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .panel-frame {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(180deg,
+                    rgba(var(--acc-rgb), 0.04) 0%,
+                    rgba(2, 12, 22, 0.85) 30%,
+                    rgba(2, 12, 22, 0.92) 100%);
+            backdrop-filter: blur(20px) saturate(1.4);
+            -webkit-backdrop-filter: blur(20px) saturate(1.4);
+            box-shadow:
+                0 0 60px rgba(var(--acc-rgb), 0.25),
+                0 0 200px rgba(var(--acc-rgb), 0.12),
+                0 40px 120px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            /* bevel cuts: top-right and bottom-left corners */
+            clip-path: polygon(0 0,
+                    calc(100% - 28px) 0,
+                    100% 28px,
+                    100% 100%,
+                    28px 100%,
+                    0 calc(100% - 28px));
+        }
+
+        /* SVG-stroke overlay drawing the bevelled border ON TOP of clip-path.
+     Sits as a sibling of panel-frame so clip-path doesn't cut its stroke. */
+        .panel-border {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 11;
+        }
+
+        .panel-border path {
+            fill: none;
+            stroke: rgba(var(--acc-rgb), 0.7);
+            stroke-width: 1.5;
+            filter: drop-shadow(0 0 4px rgba(var(--acc-rgb), 0.8));
+        }
+
+        /* tron-style runner light around panel border */
+        .panel-frame>.perimeter {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .panel-frame>.perimeter::before,
+        .panel-frame>.perimeter::after {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--acc), #fff, var(--acc), transparent);
+            box-shadow: 0 0 16px var(--acc), 0 0 30px var(--acc);
+            top: 0;
+            animation: panelRunnerTop 3.5s linear infinite;
+        }
+
+        .panel-frame>.perimeter::after {
+            top: auto;
+            bottom: 0;
+            animation: panelRunnerBottom 3.5s linear infinite 1.75s;
+        }
+
+        @keyframes panelRunnerTop {
+            0% {
+                left: -120px;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes panelRunnerBottom {
+            0% {
+                right: -120px;
+                left: auto;
+            }
+
+            100% {
+                right: 100%;
+                left: auto;
+            }
+        }
+
+        /* corner ticks */
+        .panel-frame>.corner {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--acc);
+            box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.7);
+            pointer-events: none;
+            background: rgba(var(--acc-rgb), 0.05);
+        }
+
+        .panel-frame>.corner.tl {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .panel-frame>.corner.tr {
+            top: -1px;
+            right: -1px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .panel-frame>.corner.bl {
+            bottom: -1px;
+            left: -1px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .panel-frame>.corner.br {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* internal scanlines */
+        .panel-frame>.holo-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(to bottom,
+                    transparent 0,
+                    transparent 3px,
+                    rgba(var(--acc-rgb), 0.04) 4px,
+                    transparent 5px);
+            animation: linesShift 4s linear infinite;
+        }
+
+        @keyframes linesShift {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 0 80px;
+            }
+        }
+
+        /* materialize streak — appears on open */
+        .panel-frame>.streak {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--acc), #fff, var(--acc), transparent);
+            box-shadow: 0 0 20px var(--acc);
+            top: 0;
+            opacity: 0;
+        }
+
+        body.engaged .panel-frame>.streak {
+            animation: streakDown 0.8s 0.1s ease-out forwards;
+        }
+
+        @keyframes streakDown {
+            0% {
+                top: 0;
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* ============ PANEL LAYOUT ============ */
+        .panel-frame {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* header */
+        .panel-header {
+            padding: 22px 36px 18px;
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--acc);
+            flex-shrink: 0;
+        }
+
+        .panel-header .id {
+            color: var(--dim);
+            font-size: 9px;
+            letter-spacing: 0.25em;
+        }
+
+        .panel-header .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.25em;
+            text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.5);
+        }
+
+        .panel-header .panel-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--acc);
+            box-shadow: 0 0 8px var(--acc);
+            transform: rotate(45deg);
+        }
+
+        .panel-header .close {
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--dim);
+            padding: 6px 10px 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .panel-header .close::before {
+            content: '×';
+            font-size: 14px;
+            line-height: 1;
+            color: var(--acc);
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
+        }
+
+        .panel-header .close:hover {
+            border-color: var(--acc);
+            color: var(--ink);
+            background: rgba(var(--acc-rgb), 0.06);
+            box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.25);
+        }
+
+        .panel-header .close:hover::before {
+            color: #fff;
+            text-shadow: 0 0 10px var(--acc);
+        }
+
+        /* tabs as side-rail */
+        .panel-content {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 24px 0;
+            border-right: 1px solid rgba(var(--acc-rgb), 0.12);
+            background: linear-gradient(180deg, transparent, rgba(var(--acc-rgb), 0.025));
+        }
+
+        .tab {
+            padding: 16px 28px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--dim);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.25s;
+            background: none;
+            border: none;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tab .num {
+            color: rgba(var(--acc-rgb), 0.4);
+            font-size: 9px;
+            width: 24px;
+        }
+
+        .tab:hover {
+            color: var(--ink);
+            background: rgba(var(--acc-rgb), 0.04);
+        }
+
+        .tab:hover .num {
+            color: var(--acc);
+        }
+
+        .tab.active {
+            color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
+        }
+
+        .tab.active .num {
+            color: var(--acc);
+        }
+
+        .tab.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--acc);
+            box-shadow: 0 0 10px var(--acc);
+        }
+
+        .tab.active::after {
+            content: '▸';
+            position: absolute;
+            right: 16px;
+            color: var(--acc);
+            text-shadow: 0 0 8px var(--acc);
+            animation: tabPoint 1.5s ease-in-out infinite;
+        }
+
+        @keyframes tabPoint {
+
+            0%,
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translateX(4px);
+                opacity: 0.5;
+            }
+        }
+
+        /* panel body */
+        .panel-body {
+            padding: 32px 40px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--acc) transparent;
+        }
+
+        .panel-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .panel-body::-webkit-scrollbar-thumb {
+            background: var(--acc);
+            box-shadow: 0 0 6px var(--acc);
+        }
+
+        .panel-body::-webkit-scrollbar-track {
+            background: rgba(var(--acc-rgb), 0.05);
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: viewMaterialize 0.6s ease-out;
+        }
+
+        @keyframes viewMaterialize {
+            0% {
+                opacity: 0;
+                transform: translateX(20px);
+                filter: blur(4px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+                filter: blur(0);
+            }
+        }
+
+        .view-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed rgba(var(--acc-rgb), 0.2);
+        }
+
+        .view-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            font-size: 22px;
+            letter-spacing: 0.15em;
+            color: var(--ink);
+            text-transform: uppercase;
+            text-shadow: 0 0 14px rgba(var(--acc-rgb), 0.4);
+        }
+
+        .view-header .marker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--acc);
+            letter-spacing: 0.3em;
+        }
+
+        /* ABOUT */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 700px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            border: 1px solid rgba(var(--acc-rgb), 0.2);
+            padding: 18px 20px;
+            background: rgba(0, 30, 45, 0.3);
+            position: relative;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 24px;
+            height: 1px;
+            background: var(--acc);
+            box-shadow: 0 0 6px var(--acc);
+        }
+
+        .stat-card .k {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .v {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--ink);
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .v .accent {
+            color: var(--acc);
+            text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.5);
+        }
+
+        .bio {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 300;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #b8c9d4;
+        }
+
+        .bio em {
+            color: var(--acc);
+            font-style: normal;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.4);
+        }
+
+        /* WORK */
+        .project {
+            border: 1px solid rgba(var(--acc-rgb), 0.2);
+            padding: 20px 22px;
+            margin-bottom: 14px;
+            background: rgba(0, 30, 45, 0.25);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: var(--acc);
+            box-shadow: 0 0 12px var(--acc);
+            transition: width 0.3s;
+        }
+
+        .project:hover {
+            border-color: var(--acc);
+            background: rgba(0, 50, 75, 0.4);
+            transform: translateX(6px);
+            box-shadow: 0 0 30px rgba(var(--acc-rgb), 0.2);
+        }
+
+        .project:hover::before {
+            width: 3px;
+        }
+
+        .project-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .project-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            font-size: 15px;
+            color: var(--ink);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .project-year {
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.25em;
+        }
+
+        .project-desc {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 300;
+            font-size: 12px;
+            color: #9eafb9;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .project-tags span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.2em;
+            color: var(--acc);
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            padding: 4px 8px;
+            text-transform: uppercase;
+            background: rgba(var(--acc-rgb), 0.04);
+        }
+
+        /* SKILLS */
+        .skill-group {
+            margin-bottom: 26px;
+        }
+
+        .skill-group h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.4em;
+            color: var(--acc);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-group h3::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(var(--acc-rgb), 0.3), transparent);
+        }
+
+        .skill-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 7px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .skill-row .name {
+            width: 130px;
+            color: var(--ink);
+            font-weight: 300;
+        }
+
+        .skill-row .bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(var(--acc-rgb), 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-row .bar i {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--acc), #fff);
+            box-shadow: 0 0 10px var(--acc), 0 0 20px var(--acc);
+            width: 0;
+            animation: fillBar 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fillBar {
+            to {
+                width: var(--w);
+            }
+        }
+
+        .skill-row .pct {
+            width: 36px;
+            text-align: right;
+            color: var(--acc);
+            font-size: 10px;
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.4);
+        }
+
+        /* CONTACT */
+        .channel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px dashed rgba(var(--acc-rgb), 0.15);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            transition: padding 0.2s;
+        }
+
+        .channel:hover {
+            padding-left: 8px;
+        }
+
+        .channel .ch {
+            color: var(--dim);
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .channel .ch::before {
+            content: '▸';
+            color: var(--acc);
+        }
+
+        .channel a {
+            color: var(--acc);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--acc);
+            transition: all 0.2s;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.3);
+        }
+
+        .channel a:hover {
+            color: #fff;
+            border-bottom-color: #fff;
+            text-shadow: 0 0 12px var(--acc);
+        }
+
+        /* ============ CAREER TIMELINE ============ */
+        .timeline {
+            position: relative;
+            padding-left: 22px;
+            margin-top: 4px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            bottom: 4px;
+            width: 1px;
+            background: linear-gradient(to bottom,
+                    var(--acc),
+                    rgba(var(--acc-rgb), 0.3) 70%,
+                    transparent);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
+        }
+
+        .tl-item {
+            position: relative;
+            padding: 0 0 22px 0;
+        }
+
+        .tl-item:last-child {
+            padding-bottom: 4px;
+        }
+
+        .tl-item::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 7px;
+            width: 9px;
+            height: 9px;
+            border: 1px solid var(--acc);
+            background: rgba(2, 12, 22, 1);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
+            transform: rotate(45deg);
+        }
+
+        .tl-item::after {
+            content: '';
+            position: absolute;
+            left: -19px;
+            top: 10px;
+            width: 3px;
+            height: 3px;
+            background: var(--acc);
+            box-shadow: 0 0 4px var(--acc);
+            border-radius: 50%;
+        }
+
+        .tl-item.current::before {
+            background: var(--acc);
+            box-shadow: 0 0 10px var(--acc), 0 0 18px rgba(var(--acc-rgb), 0.45);
+        }
+
+        .tl-item.current::after {
+            display: none;
+        }
+
+        .tl-period {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--acc);
+            margin-bottom: 4px;
+        }
+
+        .tl-period .pin {
+            color: var(--dim);
+            margin-left: 8px;
+            letter-spacing: 0.15em;
+        }
+
+        .tl-role {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--ink);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .tl-company {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 400;
+            font-size: 12px;
+            color: var(--acc);
+            margin-bottom: 8px;
+        }
+
+        .tl-summary {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 300;
+            font-size: 11.5px;
+            color: #9eafb9;
+            line-height: 1.55;
+            margin-bottom: 8px;
+        }
+
+        .tl-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .tl-tags span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8.5px;
+            letter-spacing: 0.18em;
+            color: var(--acc);
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            padding: 3px 6px;
+            text-transform: uppercase;
+            background: rgba(var(--acc-rgb), 0.04);
+        }
+
+        /* download CV button */
+        .cv-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            background: linear-gradient(135deg,
+                    rgba(var(--acc-rgb), 0.06),
+                    rgba(var(--acc-rgb), 0.02));
+            text-decoration: none;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cv-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(var(--acc-rgb), 0.15),
+                    transparent);
+            transition: left 0.6s ease;
+        }
+
+        .cv-action:hover {
+            border-color: var(--acc);
+            background: linear-gradient(135deg,
+                    rgba(var(--acc-rgb), 0.12),
+                    rgba(var(--acc-rgb), 0.05));
+            box-shadow: 0 0 24px rgba(var(--acc-rgb), 0.25);
+        }
+
+        .cv-action:hover::before {
+            left: 100%;
+        }
+
+        .cv-action .cv-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .cv-action .cv-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.35em;
+            color: var(--dim);
+            text-transform: uppercase;
+        }
+
+        .cv-action .cv-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--ink);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .cv-action .cv-arrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            color: var(--acc);
+            text-transform: uppercase;
+            transition: gap 0.25s ease;
+        }
+
+        .cv-action:hover .cv-arrow {
+            gap: 14px;
+        }
+
+        .cv-action .cv-arrow .ico {
+            width: 22px;
+            height: 22px;
+            border: 1px solid var(--acc);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.4);
+        }
+
+        /* mobile */
+        @media (max-width: 700px) {
+            .panel {
+                width: 96vw;
+                height: 88vh;
+            }
+
+            .panel-content {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 0;
+                border-right: none;
+                border-bottom: 1px solid rgba(var(--acc-rgb), 0.12);
+            }
+
+            .tab {
+                padding: 14px 16px;
+                flex-shrink: 0;
+            }
+
+            .tab.active::before {
+                left: 0;
+                right: 0;
+                top: auto;
+                bottom: 0;
+                width: 100%;
+                height: 2px;
+            }
+
+            .tab.active::after {
+                display: none;
+            }
+
+            .panel-header {
+                padding: 16px 20px;
+            }
+
+            .panel-body {
+                padding: 20px;
+            }
+
+            .hud .corner {
+                font-size: 9px;
+            }
+
+            .hud .tl {
+                top: 16px;
+                left: 16px;
+            }
+
+            .hud .tr {
+                top: 16px;
+                right: 16px;
+            }
+
+            .hud .bl {
+                bottom: 16px;
+                left: 16px;
+            }
+
+            .hud .br {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        /* glitch on engage — only filter shifts, never transform (would break centering) */
+        @keyframes glitchOnce {
+
+            0%,
+            100% {
+                filter: contrast(1.15) saturate(1.0) brightness(0.8) hue-rotate(0);
+            }
+
+            20% {
+                filter: contrast(1.4) saturate(1.2) brightness(0.9) hue-rotate(15deg);
+            }
+
+            40% {
+                filter: contrast(1.5) saturate(0.7) brightness(0.7) hue-rotate(-20deg);
+            }
+
+            60% {
+                filter: contrast(1.2) saturate(1.1) brightness(0.85) hue-rotate(8deg);
+            }
+
+            80% {
+                filter: contrast(1.3) saturate(0.9) brightness(0.75);
+            }
+        }
+
+        body.glitching .stage video {
+            animation: glitchOnce 0.35s steps(3);
+        }
+    </style>
+</head>
+
+<body data-theme="green">
+
+    <!-- Layered background -->
+    <div class="stage">
+        <video id="bg" autoplay muted loop playsinline preload="auto">
+            <source
+                src="bg.mp4"
+                type="video/mp4">
+        </video>
+    </div>
+    <div class="grid"></div>
+    <div class="horizon"></div>
+    <div class="noise"></div>
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <!-- HUD -->
+    <div class="hud">
+        <div class="corner tl">
+            <span class="label">// signal</span>
+            <span class="blink">LIVE FEED</span>
+        </div>
+        <div class="corner tr">
+            <span class="label">// session</span>
+            <span class="tc" id="clock">00:00:00</span>
+        </div>
+        <div class="corner bl">
+            <span class="label">// color vibe</span>
+            <div class="theme-switch" id="theme-switch">
+                <button class="theme-dot active" data-theme="green" aria-label="Green"></button>
+                <button class="theme-dot" data-theme="cyan" aria-label="Cyan"></button>
+                <button class="theme-dot" data-theme="ember" aria-label="Ember"></button>
+                <button class="theme-dot" data-theme="mono" aria-label="Mono"></button>
+            </div>
+        </div>
+        <div class="corner br">
+            <span class="label">// audio vibe</span>
+            <div class="ap-group">
+                <button id="ap-toggle" class="ap-btn ap-grunge" type="button" aria-label="Unmute">
+                    <svg class="icon-unmuted" viewBox="0 0 14 12" aria-hidden="true">
+                        <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
+                        <path d="M9 3.5 Q11 6 9 8.5" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+                        <path d="M10.5 2 Q13.5 6 10.5 10" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+                    </svg>
+                    <svg class="icon-muted" viewBox="0 0 14 12" aria-hidden="true">
+                        <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
+                        <line x1="9" y1="3.5" x2="13" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+                        <line x1="13" y1="3.5" x2="9" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+                    </svg>
+                </button>
+                <canvas id="ap-viz" class="ap-viz" aria-hidden="true"></canvas>
+            </div>
+            <audio id="ap-audio" loop preload="auto"></audio>
+        </div>
+
+        <!-- center prompt -->
+        <div class="prompt" id="prompt">
+            <span class="v-bar l"></span>
+            <span class="v-bar r"></span>
+            <span class="tick tl"></span>
+            <span class="tick tr"></span>
+            <span class="tick bl"></span>
+            <span class="tick br"></span>
+            <span class="runner"></span>
+            <div class="meta-top">
+                <span class="dot"></span>
+                <span>Grid · 2026</span>
+            </div>
+            <div class="name">Roman Pogorov</div>
+            <h1 class="role-hero">Product Shipper</h1>
+            <div class="slogan">never the best at <em>one thing</em> — always <em>good enough</em> at many. <span
+                    class="slogan-end">it feels like my time has come.</span></div>
+            <div class="cta">
+                <span class="cta-line"></span>
+                <span class="cta-text">enter</span>
+                <span class="cta-line"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backdrop with scanlines blur — appears when panel opens -->
+    <div class="backdrop"></div>
+
+    <!-- Holographic Panel -->
+    <aside class="panel" id="panel" aria-hidden="true">
+        <div class="panel-frame">
+            <span class="perimeter"></span>
+            <span class="streak"></span>
+            <div class="holo-lines"></div>
+
+            <header class="panel-header">
+                <span class="panel-title">ROMAN.POGOROV / OS</span>
+                <span class="id">SESSION · <span id="panel-id">0xA3F4-9C</span></span>
+                <button class="close" id="close">ESC</button>
+            </header>
+
+            <div class="panel-content">
+                <nav class="tabs" role="tablist">
+                    <button class="tab active" data-view="about"><span class="num">01</span>About</button>
+                    <button class="tab" data-view="career"><span class="num">02</span>Career</button>
+                    <button class="tab" data-view="work"><span class="num">03</span>Work</button>
+                    <button class="tab" data-view="skills"><span class="num">04</span>Stack</button>
+                    <button class="tab" data-view="contact"><span class="num">05</span>Contact</button>
+                </nav>
+
+                <div class="panel-body">
+
+                    <!-- ABOUT -->
+                    <section class="view active" data-view="about">
+                        <div class="view-header">
+                            <h2>Identity</h2>
+                            <span class="marker">// 01 · profile</span>
+                        </div>
+
+                        <div class="about-grid">
+                            <div class="stat-card">
+                                <div class="k">Operator</div>
+                                <div class="v"><span class="accent">Roman</span> Pogorov</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="k">Class</div>
+                                <div class="v">Product Shipper</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="k">Node</div>
+                                <div class="v">Washington · DC</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="k">Status</div>
+                                <div class="v"><span class="accent">▸ Active</span></div>
+                            </div>
+                        </div>
+
+                        <p class="bio">
+                            I ship products. <em>Fast iteration, sharp focus, no theater.</em> Currently building at the
+                            intersection
+                            of design and engineering — the kind of work where every commit lands in production by
+                            Friday.
+                            <br><br>
+                            Approach: <em>narrow scope, brutal prioritization, then velocity.</em> Bias toward shipping
+                            over
+                            polishing, learning over planning. Comfortable across the full stack — from systems
+                            architecture down to
+                            pixel-level UI motion.
+                        </p>
+                    </section>
+
+                    <!-- CAREER -->
+                    <section class="view" data-view="career">
+                        <div class="view-header">
+                            <h2>Career Track</h2>
+                            <span class="marker">// 02 · 10+ years</span>
+                        </div>
+
+                        <div class="timeline">
+                            <div class="tl-item current">
+                                <div class="tl-period">2024 — present <span class="pin">Los Angeles</span></div>
+                                <div class="tl-role">Lead Product Designer</div>
+                                <div class="tl-company">@ Americor · FinTech</div>
+                                <div class="tl-summary">Next-gen FinTech platform for debt relief. Growing
+                                    retention/MAU/NPS, redesigned
+                                    web + mobile (iOS, Android), built design systems across 3 platforms. NPS +25%, T2M
+                                    cut ~30%.</div>
+                                <div class="tl-tags">
+                                    <span>FinTech</span><span>DS</span><span>Mobile</span><span>Leadership</span></div>
+                            </div>
+
+                            <div class="tl-item current">
+                                <div class="tl-period">2023 — present <span class="pin">Lisbon</span></div>
+                                <div class="tl-role">Designer-Developer</div>
+                                <div class="tl-company">@ Health-Samurai</div>
+                                <div class="tl-summary">Healthcare IT since 2004. Building AI-generated design systems
+                                    and UI generators
+                                    (Landing AI, Presentation AI). Claude Skills for building different UIs. Shipped to
+                                    production.</div>
+                                <div class="tl-tags"><span>Healthcare</span><span>AI</span><span>Automation</span></div>
+                            </div>
+
+                            <div class="tl-item">
+                                <div class="tl-period">2020 — 2023 <span class="pin">SPb · Moscow · Astana ·
+                                        Minsk</span></div>
+                                <div class="tl-role">Lead Product Designer</div>
+                                <div class="tl-company">@ Helix (Medindex)</div>
+                                <div class="tl-summary">One of Eurasia's largest medical labs. Built design team from
+                                    scratch,
+                                    modernized legacy desktop apps to web. Released 3 new applications + mobile app,
+                                    design system with
+                                    token theming.</div>
+                                <div class="tl-tags">
+                                    <span>MedTech</span><span>Legacy</span><span>DS</span><span>Mobile</span></div>
+                            </div>
+
+                            <div class="tl-item">
+                                <div class="tl-period">2016 — 2020 <span class="pin">SPb · Miami</span></div>
+                                <div class="tl-role">UX/UI Designer</div>
+                                <div class="tl-company">@ goTRG</div>
+                                <div class="tl-summary">SaaS, Supply Chain & ReCommerce platform. Design audit of legacy
+                                    ERP, design
+                                    system from scratch with legacy support. Launched new ERP based on the system. CSS
+                                    refactoring, React
+                                    component layouting.</div>
+                                <div class="tl-tags"><span>SaaS</span><span>ERP</span><span>React</span><span>DS</span>
+                                </div>
+                            </div>
+
+                            <div class="tl-item">
+                                <div class="tl-period">2014 — 2016 <span class="pin">Moscow</span></div>
+                                <div class="tl-role">UX/UI Designer / Developer</div>
+                                <div class="tl-company">@ Project Practice</div>
+                                <div class="tl-summary">PM system redesign × 4. JS, LESS, CSS, HTML, C# templates. Built
+                                    theming engine,
+                                    refactored hundreds of CSS files into a single LESS with variables (80% coverage).
+                                </div>
+                                <div class="tl-tags"><span>PM Tools</span><span>Theming</span><span>Refactor</span>
+                                </div>
+                            </div>
+
+                            <div class="tl-item">
+                                <div class="tl-period">2012 — 2014 <span class="pin">Moscow</span></div>
+                                <div class="tl-role">Designer / Founder</div>
+                                <div class="tl-company">@ Jettap</div>
+                                <div class="tl-summary">Own studio. Managed team of 6. Web projects, mobile apps,
+                                    full-stack coding (JS,
+                                    CSS, HTML, PHP, AS2/3).</div>
+                                <div class="tl-tags"><span>Studio</span><span>Founder</span></div>
+                            </div>
+
+                            <div class="tl-item">
+                                <div class="tl-period">2010 — 2013 <span class="pin">Krasnodar</span></div>
+                                <div class="tl-role">Designer</div>
+                                <div class="tl-company">@ Two Pilots / Brand Master</div>
+                                <div class="tl-summary">Web projects, landings, branding, polygraphy, banners, flash.
+                                    Where it all
+                                    started.</div>
+                                <div class="tl-tags"><span>Branding</span><span>Web</span></div>
+                            </div>
+                        </div>
+
+                        <a href="cv.pdf"
+                            download class="cv-action">
+                            <div class="cv-meta">
+                                <span class="cv-label">// full document</span>
+                                <span class="cv-title">Download CV · PDF</span>
+                            </div>
+                            <div class="cv-arrow">
+                                <span>get</span>
+                                <span class="ico">↓</span>
+                            </div>
+                        </a>
+                    </section>
+
+                    <!-- WORK -->
+                    <section class="view" data-view="work">
+                        <div class="view-header">
+                            <h2>Operations</h2>
+                            <span class="marker">// 03 · projects</span>
+                        </div>
+
+                        <div class="project">
+                            <div class="project-head">
+                                <span class="project-title">Project Aurora</span>
+                                <span class="project-year">2025</span>
+                            </div>
+                            <p class="project-desc">Real-time generative dashboard for atmospheric data. Custom WebGL
+                                pipeline
+                                rendering 40k particles synced to live weather feeds.</p>
+                            <div class="project-tags">
+                                <span>WebGL</span><span>Three.js</span><span>D3</span><span>API</span></div>
+                        </div>
+
+                        <div class="project">
+                            <div class="project-head">
+                                <span class="project-title">Signal / Noise</span>
+                                <span class="project-year">2024</span>
+                            </div>
+                            <p class="project-desc">Audio-reactive identity system for a Berlin music label. Logo morphs
+                                in real time
+                                to incoming sound — every press release looks different.</p>
+                            <div class="project-tags"><span>Web Audio</span><span>Canvas</span><span>Brand</span></div>
+                        </div>
+
+                        <div class="project">
+                            <div class="project-head">
+                                <span class="project-title">Holo · OS</span>
+                                <span class="project-year">2024</span>
+                            </div>
+                            <p class="project-desc">Cyberpunk-inspired desktop environment. Window manager, terminal,
+                                and creative
+                                tools — all glass, scanlines, and chromatic aberration.</p>
+                            <div class="project-tags"><span>Electron</span><span>React</span><span>GLSL</span></div>
+                        </div>
+
+                        <div class="project">
+                            <div class="project-head">
+                                <span class="project-title">Slow Web</span>
+                                <span class="project-year">2023</span>
+                            </div>
+                            <p class="project-desc">Interactive essay site about pace and ritual. No frameworks, no
+                                analytics — just
+                                HTML, CSS and a single 4kb JS file.</p>
+                            <div class="project-tags"><span>HTML</span><span>CSS</span><span>Writing</span></div>
+                        </div>
+
+                        <div class="project">
+                            <div class="project-head">
+                                <span class="project-title">Field Notes</span>
+                                <span class="project-year">ongoing</span>
+                            </div>
+                            <p class="project-desc">Monthly experiments — shaders, micro-tools, visual poems. A studio
+                                practice in
+                                public.</p>
+                            <div class="project-tags"><span>Lab</span><span>Various</span></div>
+                        </div>
+                    </section>
+
+                    <!-- SKILLS -->
+                    <section class="view" data-view="skills">
+                        <div class="view-header">
+                            <h2>Stack</h2>
+                            <span class="marker">// 04 · capabilities</span>
+                        </div>
+
+                        <div class="skill-group">
+                            <h3>Product</h3>
+                            <div class="skill-row"><span class="name">Strategy</span><span class="bar"><i
+                                        style="--w:92%"></i></span><span class="pct">92</span></div>
+                            <div class="skill-row"><span class="name">Shipping</span><span class="bar"><i
+                                        style="--w:96%"></i></span><span class="pct">96</span></div>
+                            <div class="skill-row"><span class="name">UX / UI</span><span class="bar"><i
+                                        style="--w:88%"></i></span><span class="pct">88</span></div>
+                        </div>
+                        <div class="skill-group">
+                            <h3>Engineering</h3>
+                            <div class="skill-row"><span class="name">JavaScript / TS</span><span class="bar"><i
+                                        style="--w:90%"></i></span><span class="pct">90</span></div>
+                            <div class="skill-row"><span class="name">React / Next</span><span class="bar"><i
+                                        style="--w:86%"></i></span><span class="pct">86</span></div>
+                            <div class="skill-row"><span class="name">CSS / Motion</span><span class="bar"><i
+                                        style="--w:95%"></i></span><span class="pct">95</span></div>
+                            <div class="skill-row"><span class="name">Node / Backend</span><span class="bar"><i
+                                        style="--w:74%"></i></span><span class="pct">74</span></div>
+                        </div>
+                        <div class="skill-group">
+                            <h3>Tools</h3>
+                            <div class="skill-row"><span class="name">Figma</span><span class="bar"><i
+                                        style="--w:96%"></i></span><span class="pct">96</span></div>
+                            <div class="skill-row"><span class="name">Linear</span><span class="bar"><i
+                                        style="--w:90%"></i></span><span class="pct">90</span></div>
+                            <div class="skill-row"><span class="name">After Effects</span><span class="bar"><i
+                                        style="--w:78%"></i></span><span class="pct">78</span></div>
+                        </div>
+                    </section>
+
+                    <!-- CONTACT -->
+                    <section class="view" data-view="contact">
+                        <div class="view-header">
+                            <h2>Channels</h2>
+                            <span class="marker">// 05 · transmission</span>
+                        </div>
+
+                        <p class="bio" style="margin-bottom: 24px;">
+                            ▸ open channels for inbound transmissions. response within <em>48h earth time</em>.
+                        </p>
+
+                        <div class="channel"><span class="ch">Email</span><a
+                                href="mailto:hello@romanpogorov.com">hello@romanpogorov.com</a></div>
+                        <div class="channel"><span class="ch">Telegram</span><a href="https://t.me/handle"
+                                target="_blank">@handle</a></div>
+                        <div class="channel"><span class="ch">GitHub</span><a href="https://github.com/handle"
+                                target="_blank">github.com/handle</a></div>
+                        <div class="channel"><span class="ch">X</span><a href="https://x.com/handle"
+                                target="_blank">@handle</a>
+                        </div>
+                        <div class="channel"><span class="ch">LinkedIn</span><a href="#"
+                                target="_blank">linkedin.com/in/handle</a>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+        <!-- bevelled border overlay — sibling of panel-frame so clip-path doesn't cut it -->
+        <svg class="panel-border" xmlns="http://www.w3.org/2000/svg">
+            <path id="border-path" d="" />
+        </svg>
+    </aside>
+
+    <script>
+        // ===== theme switcher =====
+        const themeDots = document.querySelectorAll('.theme-dot');
+        themeDots.forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation(); // don't trigger engage when clicking the switcher
+                const theme = dot.dataset.theme;
+                body.setAttribute('data-theme', theme);
+                themeDots.forEach(d => d.classList.toggle('active', d === dot));
+                // brief flicker on theme change
+                body.classList.add('glitching');
+                setTimeout(() => body.classList.remove('glitching'), 250);
+            });
+        });
+        // also stop click propagation on the switch container itself
+        document.getElementById('theme-switch').addEventListener('click', (e) => e.stopPropagation());
+
+        // ===== mouse parallax tracker — DISABLED =====
+        // (kept commented for easy re-enable later)
+        /*
+        (function() {
+          const root = document.documentElement;
+          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (reduce) { root.style.setProperty('--tilt', '0'); return; }
+          let targetX = 0, targetY = 0, currentX = 0, currentY = 0, raf = null;
+          function animate() {
+            currentX += (targetX - currentX) * 0.08;
+            currentY += (targetY - currentY) * 0.08;
+            root.style.setProperty('--mx', currentX.toFixed(4));
+            root.style.setProperty('--my', currentY.toFixed(4));
+            if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
+              raf = requestAnimationFrame(animate);
+            } else { raf = null; }
+          }
+          function setTarget(x, y) {
+            targetX = (x / window.innerWidth - 0.5) * 2;
+            targetY = (y / window.innerHeight - 0.5) * 2;
+            if (!raf) raf = requestAnimationFrame(animate);
+          }
+          window.addEventListener('mousemove', (e) => setTarget(e.clientX, e.clientY), { passive: true });
+        })();
+        */
+
+        // ===== timecode =====
+        const clock = document.getElementById('clock');
+        const start = Date.now();
+        function tick() {
+            const t = Math.floor((Date.now() - start) / 1000);
+            const h = String(Math.floor(t / 3600)).padStart(2, '0');
+            const m = String(Math.floor((t % 3600) / 60)).padStart(2, '0');
+            const s = String(t % 60).padStart(2, '0');
+            clock.textContent = `${h}:${m}:${s}`;
+        }
+        setInterval(tick, 1000);
+
+        // ===== engage / disengage =====
+        const body = document.body;
+        const status = document.getElementById('status');
+        const prompt = document.getElementById('prompt');
+        const panel = document.getElementById('panel');
+        const closeBtn = document.getElementById('close');
+
+        function engage() {
+            if (body.classList.contains('engaged')) return;
+            body.classList.add('glitching');
+            setTimeout(() => body.classList.remove('glitching'), 400);
+            body.classList.add('engaged');
+            if (status) status.textContent = 'INTERFACE · ACTIVE';
+            panel.setAttribute('aria-hidden', 'false');
+        }
+
+        function disengage() {
+            body.classList.remove('engaged');
+            if (status) status.textContent = 'STANDBY · CHILL MODE';
+            panel.setAttribute('aria-hidden', 'true');
+        }
+
+        prompt.addEventListener('click', engage);
+        document.querySelector('.stage').addEventListener('click', engage);
+        document.querySelector('.grid').addEventListener('click', engage);
+
+        closeBtn.addEventListener('click', (e) => { e.stopPropagation(); disengage(); });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') disengage();
+            if (e.key === 'Enter' && !body.classList.contains('engaged')) engage();
+        });
+
+        // ===== tabs =====
+        const tabs = document.querySelectorAll('.tab');
+        const views = document.querySelectorAll('.view');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.view;
+                tabs.forEach(t => t.classList.toggle('active', t === tab));
+                views.forEach(v => v.classList.toggle('active', v.dataset.view === target));
+
+                // brief glitch on tab change
+                body.classList.add('glitching');
+                setTimeout(() => body.classList.remove('glitching'), 250);
+            });
+        });
+
+        // ===== draw bevelled border that matches the clip-path =====
+        const borderPath = document.getElementById('border-path');
+        const borderSvg = document.querySelector('.panel-border');
+        const BEVEL = 28; // must match clip-path bevel in CSS
+
+        function drawBorder() {
+            // offsetWidth/Height ignore CSS transforms, so we get the panel's true layout size
+            const w = panel.offsetWidth;
+            const h = panel.offsetHeight;
+            if (!w || !h) return;
+            borderSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+            const I = 0.75;
+            const d = `M ${I} ${I}
+               L ${w - BEVEL} ${I}
+               L ${w - I} ${BEVEL}
+               L ${w - I} ${h - I}
+               L ${BEVEL} ${h - I}
+               L ${I} ${h - BEVEL}
+               Z`;
+            borderPath.setAttribute('d', d);
+        }
+
+        drawBorder();
+        window.addEventListener('resize', drawBorder);
+        setTimeout(drawBorder, 100);
+        // also redraw on engage, after layout settles
+        setTimeout(drawBorder, 1000);
+
+        // ===== ensure video plays (autoplay quirks) =====
+        const video = document.getElementById('bg');
+        const statusEl = document.getElementById('status');
+
+        video.addEventListener('error', () => {
+            if (statusEl) {
+                statusEl.textContent = 'VIDEO · MISSING (bg.mp4)';
+                statusEl.style.color = '#ff2d6f';
+            }
+        });
+
+        video.addEventListener('loadeddata', () => {
+            console.log('[bg] video loaded ok');
+        });
+
+        video.play().catch(() => {
+            // if blocked, start on first interaction
+            document.addEventListener('click', () => video.play(), { once: true });
+        });
+    </script>
+
+
+    <!-- Audio buttons -->
+    <style>
+        .hud .corner.br .ap-group {
+            display: inline-flex;
+            gap: 6px;
+            margin-top: 2px;
+            justify-content: flex-end;
+        }
+
+        .hud .corner.br .ap-btn {
+            appearance: none;
+            background: rgba(var(--acc-rgb, 0, 229, 255), 0.05);
+            border: 1px solid rgba(var(--acc-rgb, 0, 229, 255), 0.35);
+            color: var(--ink, #eaf6ff);
+            font: inherit;
+            letter-spacing: 0.1em;
+            padding: 4px 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            line-height: 1;
+            transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+        }
+
+        .hud .corner.br .ap-btn svg {
+            width: 8px;
+            height: 8px;
+            fill: currentColor;
+            flex: 0 0 auto;
+        }
+
+        .hud .corner.br .ap-btn:hover {
+            color: var(--acc, #00e5ff);
+            border-color: rgba(var(--acc-rgb, 0, 229, 255), 0.7);
+            background: rgba(var(--acc-rgb, 0, 229, 255), 0.1);
+        }
+
+        .hud .corner.br .ap-btn.active {
+            color: var(--acc, #00e5ff);
+            border-color: var(--acc, #00e5ff);
+            background: rgba(var(--acc-rgb, 0, 229, 255), 0.15);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb, 0, 229, 255), 0.5),
+                inset 0 0 8px rgba(var(--acc-rgb, 0, 229, 255), 0.15);
+        }
+
+        .hud .corner.br .ap-btn .icon-pause { display: none; }
+        .hud .corner.br .ap-btn.playing .icon-play { display: none; }
+        .hud .corner.br .ap-btn.playing .icon-pause { display: inline; }
+
+        .hud .corner.br .ap-btn .icon-unmuted { display: none; }
+        .hud .corner.br .ap-btn.unmuted .icon-unmuted { display: inline; }
+        .hud .corner.br .ap-btn.unmuted .icon-muted { display: none; }
+
+        .hud .corner.br .ap-btn.ap-grunge {
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            justify-content: center;
+            gap: 0;
+            border-width: 1px;
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(var(--acc-rgb, 0, 229, 255), 0.06) 0 1px,
+                    transparent 1px 3px
+                ),
+                rgba(var(--acc-rgb, 0, 229, 255), 0.04);
+            clip-path: polygon(
+                22% 0, 78% 0, 100% 22%, 100% 78%,
+                78% 100%, 22% 100%, 0 78%, 0 22%
+            );
+            position: relative;
+            opacity: 0.7;
+            transition: opacity .15s, filter .15s;
+        }
+        .hud .corner.br .ap-btn.ap-grunge svg {
+            width: 9px;
+            height: 9px;
+        }
+        .hud .corner.br .ap-btn.ap-grunge:hover {
+            opacity: 1;
+            filter: drop-shadow(0 0 4px rgba(var(--acc-rgb, 0, 229, 255), 0.6));
+        }
+        .hud .corner.br .ap-btn.ap-grunge.unmuted {
+            opacity: 1;
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    rgba(var(--acc-rgb, 0, 229, 255), 0.12) 0 1px,
+                    transparent 1px 3px
+                ),
+                rgba(var(--acc-rgb, 0, 229, 255), 0.08);
+            filter: drop-shadow(0 0 6px rgba(var(--acc-rgb, 0, 229, 255), 0.5));
+        }
+
+        .hud .corner.br .ap-viz {
+            display: inline-block;
+            vertical-align: middle;
+            width: 64px;
+            height: 14px;
+            image-rendering: pixelated;
+        }
+    </style>
+    <script>
+        (() => {
+            const audio = document.getElementById('ap-audio');
+            const btn = document.getElementById('ap-toggle');
+            const canvas = document.getElementById('ap-viz');
+            const cx = canvas.getContext('2d');
+
+            audio.src = 'audio.opus';
+            audio.volume = 0.4;
+            audio.muted = true;
+
+            const setUI = () => {
+                const unmuted = !audio.muted;
+                btn.classList.toggle('unmuted', unmuted);
+                btn.classList.toggle('active', unmuted);
+                btn.setAttribute('aria-label', unmuted ? 'Mute' : 'Unmute');
+            };
+
+            setUI();
+            audio.addEventListener('volumechange', setUI);
+
+            // ---------- Audio analysis graph ----------
+            let audioCtx, analyser, dataArr;
+            const setupGraph = () => {
+                if (audioCtx) { try { audioCtx.resume(); } catch {} return; }
+                try {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    audioCtx = new AC();
+                    const src = audioCtx.createMediaElementSource(audio);
+                    analyser = audioCtx.createAnalyser();
+                    analyser.fftSize = 64;
+                    src.connect(analyser);
+                    analyser.connect(audioCtx.destination);
+                    dataArr = new Uint8Array(analyser.frequencyBinCount);
+                } catch (e) { /* visualization will idle */ }
+            };
+
+            // Try silent autoplay (most browsers allow it muted).
+            audio.play().catch(() => { });
+
+            // First user gesture anywhere on the page (except on the toggle
+            // button itself) unmutes and ensures audio is playing. The button
+            // has its own click handler — we skip it here so pointerdown
+            // doesn't race with click on the same element.
+            const wake = (e) => {
+                if (btn.contains(e.target)) return;
+                if (!audio.muted) return;
+                audio.muted = false;
+                setupGraph();
+                if (audio.paused) audio.play().catch(() => { });
+            };
+            document.addEventListener('pointerdown', wake);
+
+            // Toggle is mute/unmute (audio is always playing in background).
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setupGraph();
+                audio.muted = !audio.muted;
+                if (!audio.muted && audio.paused) {
+                    audio.play().catch(() => { });
+                }
+            });
+
+            // ---------- Histogram drawing loop ----------
+            const BARS = 14;
+            const resizeCanvas = () => {
+                const dpr = window.devicePixelRatio || 1;
+                const cssW = canvas.clientWidth || 64;
+                const cssH = canvas.clientHeight || 14;
+                canvas.width = Math.round(cssW * dpr);
+                canvas.height = Math.round(cssH * dpr);
+            };
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            const accent = () => (getComputedStyle(document.body).getPropertyValue('--acc') || '#00e5ff').trim();
+
+            let phase = 0;
+            const draw = () => {
+                requestAnimationFrame(draw);
+                const w = canvas.width, h = canvas.height;
+                cx.clearRect(0, 0, w, h);
+                cx.fillStyle = accent();
+                const bw = Math.max(1, Math.floor(w / BARS) - 1);
+
+                if (analyser && !audio.paused && !audio.muted) {
+                    analyser.getByteFrequencyData(dataArr);
+                    for (let i = 0; i < BARS; i++) {
+                        const idx = Math.floor((i + 1) * (dataArr.length / (BARS + 2)));
+                        const v = dataArr[idx] / 255;
+                        const bh = Math.max(1, Math.round(v * h));
+                        cx.fillRect(i * (bw + 1), h - bh, bw, bh);
+                    }
+                } else {
+                    // idle: gentle sine pulse so it doesn't look dead
+                    phase += 0.02;
+                    for (let i = 0; i < BARS; i++) {
+                        const v = (Math.sin(phase + i * 0.4) + 1) * 0.08 + 0.06;
+                        const bh = Math.max(1, Math.round(v * h));
+                        cx.fillRect(i * (bw + 1), h - bh, bw, bh);
+                    }
+                }
+            };
+            draw();
+        })();
+    </script>
+
+</body>
+
+</html>
