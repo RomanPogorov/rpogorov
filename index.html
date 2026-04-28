@@ -1338,21 +1338,23 @@
             z-index: 30;
             padding: 22px 26px 22px;
 
-            /* Light, see-through hologram — no opaque modal panel */
+            /* Frosted-white interior so video behind doesn't ripple through */
             background:
                 repeating-linear-gradient(
                     to bottom,
                     transparent 0,
                     transparent 2px,
-                    rgba(var(--acc-rgb), 0.025) 2px,
-                    rgba(var(--acc-rgb), 0.025) 3px
+                    rgba(var(--acc-rgb), 0.04) 2px,
+                    rgba(var(--acc-rgb), 0.04) 3px
                 ),
                 linear-gradient(180deg,
-                    rgba(var(--acc-rgb), 0.04) 0%,
-                    rgba(var(--acc-rgb), 0.015) 100%);
-            border: 1px solid rgba(var(--acc-rgb), 0.28);
+                    rgba(255, 255, 255, 0.10) 0%,
+                    rgba(255, 255, 255, 0.06) 100%);
+            backdrop-filter: blur(20px) saturate(1.2);
+            -webkit-backdrop-filter: blur(20px) saturate(1.2);
+            border: 1px solid rgba(var(--acc-rgb), 0.30);
             box-shadow:
-                0 0 80px rgba(var(--acc-rgb), 0.30),
+                0 0 80px rgba(var(--acc-rgb), 0.28),
                 0 0 200px rgba(var(--acc-rgb), 0.10),
                 inset 0 0 60px rgba(var(--acc-rgb), 0.05);
 
@@ -1365,6 +1367,8 @@
             will-change: transform;
             animation: chat-fs-in 0.55s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
+        /* Hide the // chat label inside fullscreen — frame is enough */
+        body.chat-fullscreen .chat-pane .chat-head .label { display: none; }
         @keyframes chat-fs-in {
             0%   {
                 opacity: 0;
