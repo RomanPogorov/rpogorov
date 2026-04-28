@@ -1481,9 +1481,6 @@
             will-change: transform;
             transition: opacity 0.5s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
-        .prompt:hover {
-            --prompt-scale: 1.03;
-        }
 
         /* the tron frame: 4 light bars that form a rectangle */
         .prompt::before,
@@ -3644,7 +3641,7 @@
     </script>
 
 
-    <!-- Center prompt: subtle 3D parallax — only when cursor is over the prompt -->
+    <!-- Center prompt: subtle 3D parallax + proximity-aware hover scale -->
     <script>
         (() => {
             const prompt = document.getElementById('prompt');
@@ -3658,34 +3655,60 @@
             const idleAmpX = 0.4;
             const lerp = 0.06;
 
+            // Proximity scale: starts engaging when cursor enters this radius
+            // around the prompt, full effect when cursor is inside.
+            const PROXIMITY = 220;          // px from nearest edge
+            const SCALE_INSIDE = 1.035;      // when cursor is over the prompt
+            const SCALE_BASE   = 1.0;
+            const scaleLerp    = 0.12;
+
             let targetRY = baseRY, targetRX = baseRX;
             let curRY = baseRY, curRX = baseRX;
+            let targetScale = SCALE_BASE;
+            let curScale = SCALE_BASE;
 
             document.addEventListener('mousemove', (e) => {
-                if (body.classList.contains('engaged')) return;
-                const r = prompt.getBoundingClientRect();
-                const inside =
-                    e.clientX >= r.left && e.clientX <= r.right &&
-                    e.clientY >= r.top  && e.clientY <= r.bottom;
-                if (!inside) {
-                    targetRY = baseRY;
-                    targetRX = baseRX;
+                if (body.classList.contains('engaged') ||
+                    body.classList.contains('dw-open') ||
+                    body.classList.contains('pre-gate')) {
+                    targetRY = baseRY; targetRX = baseRX;
+                    targetScale = SCALE_BASE;
                     return;
                 }
-                const nx = (e.clientX - r.left) / r.width - 0.5;
-                const ny = (e.clientY - r.top)  / r.height - 0.5;
-                targetRY = baseRY + nx * mouseAmpY * 2;
-                targetRX = baseRX - ny * mouseAmpX * 2;
+                const r = prompt.getBoundingClientRect();
+                const x = e.clientX, y = e.clientY;
+                const inside =
+                    x >= r.left && x <= r.right &&
+                    y >= r.top  && y <= r.bottom;
+
+                if (inside) {
+                    const nx = (x - r.left) / r.width - 0.5;
+                    const ny = (y - r.top)  / r.height - 0.5;
+                    targetRY = baseRY + nx * mouseAmpY * 2;
+                    targetRX = baseRX - ny * mouseAmpX * 2;
+                    targetScale = SCALE_INSIDE;
+                } else {
+                    targetRY = baseRY;
+                    targetRX = baseRX;
+                    // Distance from cursor to nearest edge of the rect
+                    const dx = Math.max(r.left - x, 0, x - r.right);
+                    const dy = Math.max(r.top  - y, 0, y - r.bottom);
+                    const d  = Math.hypot(dx, dy);
+                    const t  = Math.max(0, 1 - d / PROXIMITY);
+                    targetScale = SCALE_BASE + (SCALE_INSIDE - SCALE_BASE) * t;
+                }
             });
 
             const start = performance.now();
             function tick(t) {
                 requestAnimationFrame(tick);
-                if (body.classList.contains('engaged')) {
+                if (body.classList.contains('engaged') ||
+                    body.classList.contains('dw-open') ||
+                    body.classList.contains('pre-gate')) {
                     curRY *= 0.9;
                     curRX *= 0.9;
-                    targetRY = 0;
-                    targetRX = 0;
+                    targetRY = 0; targetRX = 0;
+                    targetScale = SCALE_BASE;
                 } else {
                     const dt = (t - start) / 1000;
                     const idleY = Math.sin(dt * 0.42) * idleAmpY;
@@ -3693,8 +3716,10 @@
                     curRY += ((targetRY + idleY) - curRY) * lerp;
                     curRX += ((targetRX + idleX) - curRX) * lerp;
                 }
+                curScale += (targetScale - curScale) * scaleLerp;
                 prompt.style.setProperty('--prompt-ry', curRY.toFixed(2) + 'deg');
                 prompt.style.setProperty('--prompt-rx', curRX.toFixed(2) + 'deg');
+                prompt.style.setProperty('--prompt-scale', curScale.toFixed(4));
             }
             requestAnimationFrame(tick);
         })();
