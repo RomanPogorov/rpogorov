@@ -7321,13 +7321,15 @@
                     pinAnchor = { x: insideAnyTab.x, y: insideAnyTab.y };
                 }
 
-                // Compute target position with reluctant-drift while pinned
+                // Compute target position with reluctant-drift while pinned. While in tabs context,
+                // lock Y to the anchor's Y so the dot glides strictly left-right between tabs (no
+                // 2D arcs / springy Y-bounce when transitioning).
                 let tx = mx, ty = my;
                 if (pinKey && pinAnchor) {
                     const dist  = Math.hypot(pinAnchor.x - mx, pinAnchor.y - my);
                     const w = Math.min(1, dist / RELEASE_DIST) * 0.22;
                     tx = pinAnchor.x * (1 - w) + mx * w;
-                    ty = pinAnchor.y * (1 - w) + my * w;
+                    ty = pinAnchor.y;
                 }
 
                 // Pin-state SFX on transitions only — never tab-to-tab directly
@@ -7336,14 +7338,20 @@
                     lastSnapKey = pinKey;
                 }
 
-                // Spring physics — much heavier when pinned (the dot really lingers and resists),
-                // brisk when free so the dot snaps right back under the cursor once it escapes.
+                // Spring physics — heavier when pinned (the dot lingers and resists),
+                // brisk when free. While pinned the Y axis is locked to the anchor — the dot moves
+                // strictly along the tab row, no 2D arcs.
                 const k = pinKey ? 0.09 : 0.45;
                 const f = pinKey ? 0.78 : 0.50;
                 vx = vx * f + (tx - dx) * k;
-                vy = vy * f + (ty - dy) * k;
                 dx += vx;
-                dy += vy;
+                if (pinKey) {
+                    dy = ty;
+                    vy = 0;
+                } else {
+                    vy = vy * f + (ty - dy) * k;
+                    dy += vy;
+                }
 
                 // Plain translate — stays a regular round dot, no 3D geometry distortion
                 dot.style.transform  = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
