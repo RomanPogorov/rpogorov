@@ -6012,7 +6012,7 @@
                 <span class="dot"></span>
                 <span>Roman Pogorov Portfolio 2026</span>
             </div>
-            <div class="name" id="prompt-roles">Designer <span class="name-sep">•</span> Vibe Shipper</div>
+            <div class="name" id="prompt-roles">Designer</div>
             <h1 class="role-hero">Claude Runner</h1>
             <div class="slogan">never the best at <em>one thing</em> — always <em>good enough</em> at many. <span
                     class="slogan-end">it feels like my time has come.</span></div>
@@ -9500,30 +9500,28 @@ See also: Health Samurai Lab: Game of Pools.`,
             down.addEventListener('click', () => { apply(cur - STEP); window.__sfx?.tick?.(); });
             up.addEventListener('click',   () => { apply(cur + STEP); window.__sfx?.tick?.(); });
 
-            // Central prompt role line — cycles every 7s with a Matrix-style decode animation.
+            // Central prompt role line — single label centered, cycles every 7s with decode animation.
             (() => {
                 const ROLES = [
-                    'Designer • Vibe Shipper',
-                    'Designer • Claude Runner',
-                    'Designer • Code Whisperer',
-                    'Designer • System Builder',
-                    'Designer • AI Tooling',
-                    'Designer • Pixel Hacker',
+                    'Designer',
+                    'Vibe Shipper',
+                    'Claude Runner',
+                    'Code Whisperer',
+                    'System Builder',
+                    'AI Tooling',
+                    'Pixel Hacker',
                 ];
                 const SCRAMBLE = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789·/-_';
-                const STEADY = new Set([' ', '•', '↔', '·', '/']);
+                const STEADY = new Set([' ', '·', '/', '↔']);
                 const target = document.getElementById('prompt-roles');
                 if (!target) return;
 
-                function format(text) {
-                    return text.replace(/•/g, '<span class="name-sep">•</span>');
-                }
                 function decode(el, newText, duration = 720) {
                     const start = performance.now();
                     function frame(now) {
                         const t = now - start;
                         if (t >= duration) {
-                            el.innerHTML = format(newText);
+                            el.textContent = newText;
                             return;
                         }
                         let out = '';
