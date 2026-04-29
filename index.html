@@ -5436,6 +5436,41 @@
         }
         .skel-text-bar.short { width: 70%; }
 
+        /* Ghost of the real "× HIDE" pill at the top-right of the panel — gives
+           the user a hint of where the close lives once expanded. */
+        .skel-hide-btn {
+            position: absolute;
+            top: -2px;
+            right: 4px;
+            height: 22px;
+            padding: 0 10px;
+            border: 1px solid rgba(var(--acc-rgb), 0.45);
+            background: rgba(var(--acc-rgb), 0.06);
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: rgba(var(--acc-rgb), 0.65);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.5625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            line-height: 1;
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.2);
+        }
+        .skel-hide-btn::before {
+            content: '×';
+            font-size: 0.8125rem;
+            line-height: 1;
+            margin-top: -1px;
+            color: rgba(var(--acc-rgb), 0.85);
+        }
+        /* Skeleton list needs a bit of top padding so it doesn't overlap the
+           ghost hide-pill — mirrors the .hl-pane padding-top: 48 on real. */
+        .htl-skeleton {
+            padding-top: 34px;
+        }
+
         /* Random glitch on the collapsed left tab strip — fires at irregular intervals via JS. */
         @keyframes htl-glitch {
             0%   { filter: none;                                       transform: none; }
@@ -5835,6 +5870,7 @@
                     <span class="ray ray-5"></span>
                     <span class="ray ray-6"></span>
                     <div class="htl-skeleton" aria-hidden="true">
+                        <span class="skel-hide-btn">Hide</span>
                         <div class="skel-card">
                             <span class="skel-meta-row">
                                 <span class="skel-meta-bar"></span>
