@@ -5122,6 +5122,45 @@
             to   { opacity: 1; transform: translateX(0); }
         }
 
+        /* Holographic "drawing" rays — appear below the collapsed tab strip suggesting the panel
+           can expand into this space. Fade in/out cyclically, slight vertical travel. Hide once
+           the panel is open. */
+        .htl-rays {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            width: 100%;
+            height: 320px;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        body.left-pane-open .htl-rays { opacity: 0; }
+        .htl-rays .ray {
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg,
+                rgba(var(--acc-rgb), 0.65) 0%,
+                rgba(var(--acc-rgb), 0.4)  20%,
+                rgba(var(--acc-rgb), 0.15) 60%,
+                rgba(var(--acc-rgb), 0)    100%);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.5);
+            opacity: 0;
+            transform-origin: top center;
+            animation: htl-ray-pulse 3.4s ease-in-out infinite;
+        }
+        .htl-rays .ray-1 { left: 26px;  animation-delay: 0s;     }
+        .htl-rays .ray-2 { left: 78px;  animation-delay: 0.65s;  }
+        .htl-rays .ray-3 { left: 130px; animation-delay: 1.3s;   }
+        .htl-rays .ray-4 { left: 184px; animation-delay: 1.95s;  }
+        @keyframes htl-ray-pulse {
+            0%   { opacity: 0;    transform: translateY(-20px) scaleY(0.3); }
+            18%  { opacity: 0.7;  transform: translateY(0)     scaleY(1);   }
+            55%  { opacity: 0.5; }
+            100% { opacity: 0;    transform: translateY(10px)  scaleY(1);   }
+        }
+
         /* First panel-open: drop down + cascade items in */
         .hl-pane.first-open {
             animation: hl-pane-drop 0.42s cubic-bezier(0.2, 0.9, 0.3, 1) backwards;
@@ -5491,6 +5530,13 @@
                         <span class="htl-prefix">//</span>
                         <span class="htl-name">cases</span>
                     </button>
+                </div>
+                <!-- Holographic "drawing" rays under the collapsed tab strip — hint that panel can expand here. -->
+                <div class="htl-rays" id="htl-rays" aria-hidden="true">
+                    <span class="ray ray-1"></span>
+                    <span class="ray ray-2"></span>
+                    <span class="ray ray-3"></span>
+                    <span class="ray ray-4"></span>
                 </div>
                 <div class="hl-pane" id="hl-pane" hidden>
                     <ul class="articles-list" id="articles-list" role="list" hidden></ul>
@@ -8830,6 +8876,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             }
             function openPanel(p) {
                 pane.hidden = false;
+                body.classList.add('left-pane-open');
                 setActiveTab(p);
                 setVisibleList(p);
                 if (firstOpen) {
