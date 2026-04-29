@@ -3338,6 +3338,10 @@
         }
 
         /* ============ BACKDROP — pushed back when panel opens ============ */
+        /* perf: was `backdrop-filter: blur(8px) brightness(0.5)` over a full-viewport overlay —
+           every frame the compositor reblurred everything beneath while video kept playing.
+           Replaced with a solid dark layer (rgba 0, 0.55) — same dimming effect, zero per-frame work.
+           Subtle scanline pattern kept on top. */
         .backdrop {
             position: fixed;
             inset: 0;
@@ -3349,9 +3353,8 @@
                     transparent 0,
                     transparent 2px,
                     rgba(var(--acc-rgb), 0.06) 3px,
-                    transparent 4px);
-            backdrop-filter: blur(8px) brightness(0.5);
-            -webkit-backdrop-filter: blur(8px) brightness(0.5);
+                    transparent 4px),
+                rgba(0, 0, 0, 0.55);
             transition: opacity 0.7s ease;
         }
 
@@ -3360,11 +3363,16 @@
             opacity: 1;
             pointer-events: auto;
         }
-        /* Detail window: lighter backdrop (less blur, less darkening) than the
-           full OS panel so the right HUD list stays readable while browsing */
+        /* Detail window: lighter backdrop (less darkening) than the full OS panel
+           so the right HUD list stays readable while browsing */
         body.dw-open .backdrop {
-            backdrop-filter: blur(3px) brightness(0.7);
-            -webkit-backdrop-filter: blur(3px) brightness(0.7);
+            background:
+                repeating-linear-gradient(to bottom,
+                    transparent 0,
+                    transparent 2px,
+                    rgba(var(--acc-rgb), 0.06) 3px,
+                    transparent 4px),
+                rgba(0, 0, 0, 0.32);
         }
 
         /* Hide the center prompt while a detail window is open — its frame
@@ -3375,16 +3383,19 @@
             transition: opacity 0.35s ease;
         }
 
-        /* push everything behind the backdrop further into depth (no scale on video — only blur/dim) */
+        /* perf: was `filter: contrast(1.3) saturate(0.95) brightness(0.45) blur(3px)` — blur applied
+           to a CONTINUOUSLY PLAYING video frame-by-frame is enormously expensive. The .backdrop
+           solid dim layer above already darkens the scene; video can stay sharp underneath. */
         body.engaged .stage video {
-            filter: contrast(1.3) saturate(0.95) brightness(0.45) blur(3px);
+            filter: brightness(0.55);
         }
 
+        /* perf: dropped `filter: blur(2px)`. Kept opacity dim — visual recede effect remains, the
+           expensive blur pass is gone. */
         body.engaged .grid,
         body.engaged .horizon,
         body.engaged .hud {
             opacity: 0.4;
-            filter: blur(2px);
         }
 
         .grid,
@@ -3443,15 +3454,7 @@
             animation-play-state: paused !important;
         }
 
-        /* PERF DIAGNOSTIC: pause every infinite animation INSIDE the panel + freeze parallax tick.
-           If CPU calms with this on, we know the work is in those animations / per-frame transform
-           updates — then we can re-enable them one by one to find the actual culprit. */
-        body.engaged .panel-frame > .perimeter::before,
-        body.engaged .panel-frame > .perimeter::after,
-        body.engaged .panel-frame > .holo-lines,
-        body.engaged .panel-frame .tab.active::after {
-            animation-play-state: paused !important;
-        }
+        /* (diagnostic freeze on panel internals removed — they were not the cost) */
 
         /* Projector flicker — runs once at engage */
         @keyframes projector-flicker {
@@ -3511,9 +3514,9 @@
                look doesn't reveal the video clearly: top 0.04 → 0.20, mid kept opaque enough. */
             background:
                 linear-gradient(180deg,
-                    rgba(2, 12, 22, 0.78) 0%,
-                    rgba(2, 12, 22, 0.92) 30%,
-                    rgba(2, 12, 22, 0.96) 100%);
+                    rgba(2, 12, 22, 0.94) 0%,
+                    rgba(2, 12, 22, 0.97) 30%,
+                    rgba(2, 12, 22, 0.98) 100%);
             box-shadow:
                 0 0 60px rgba(var(--acc-rgb), 0.25),
                 0 0 200px rgba(var(--acc-rgb), 0.12),
@@ -5937,12 +5940,9 @@
                 targetRX = baseRX - ny * mouseAmpX * 2;
             });
 
-            // PERF DIAGNOSTIC: parallax tick disabled while we hunt the panel-open CPU cost.
-            // To restore: drop the early `return;` on line below.
             const start = performance.now();
             function tick(t) {
                 requestAnimationFrame(tick);
-                return; // diagnostic freeze
                 if (!body.classList.contains('engaged')) return;
                 const dt = (t - start) / 1000;
                 const idleY = Math.sin(dt * 0.35) * idleAmpY;
