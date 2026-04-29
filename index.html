@@ -7279,30 +7279,63 @@
             // Spring-physics state for the dot (separate from raw mouse) — light magnetic anchoring.
             let dx = mx, dy = my, vx = 0, vy = 0;
             const SNAP_SEL = '.htl-item';
+            // Sticky-pin thresholds (the asymmetry is the point):
+            //   GRAB — cursor must be within this of a tab's anchor to grab a NEW pin.
+            //   RELEASE — current pin only releases when cursor moves further than this from its anchor.
+            // Effect: pinned to A, even after cursor enters tab B, the dot keeps clinging to A until
+            // cursor reaches the center of B (within GRAB) — it resists the swap.
+            const GRAB_DIST    = 22;
+            const RELEASE_DIST = 80;
             let lastSnapKey = null;
+            let pinKey = null;
+            let pinAnchor = null;   // {x, y}
 
             function tick() {
                 requestAnimationFrame(tick);
                 rx += (mx - rx) * lerp;
                 ry += (my - ry) * lerp;
 
-                // Pin only when the cursor is literally over a tab (elementFromPoint hit).
-                // While inside the tab, target blends between the tab's top-center anchor and the cursor
-                // for the "reluctant follow" feel. Outside any tab → no pin, dot follows cursor freely.
-                let pinKey = null;
-                let tx = mx, ty = my;
-                const el = document.elementFromPoint(mx, my);
-                const snapEl = el && el.closest ? el.closest(SNAP_SEL) : null;
-                if (snapEl) {
-                    const r  = snapEl.getBoundingClientRect();
+                // Walk all tabs once: distance to current pin's anchor + nearest tab to the cursor
+                let stillNearCurrent = false;
+                let bestNew = null;
+                let bestNewDist = Infinity;
+                document.querySelectorAll(SNAP_SEL).forEach(t => {
+                    const r  = t.getBoundingClientRect();
                     const cx = r.left + r.width / 2;
                     const cy = r.top;
-                    const reach = Math.hypot(r.width / 2, r.height / 2) || 1;
-                    const dist  = Math.hypot(cx - mx, cy - my);
-                    const w = Math.min(1, dist / reach) * 0.22;
-                    tx = cx * (1 - w) + mx * w;
-                    ty = cy * (1 - w) + my * w;
-                    pinKey = snapEl.dataset.pane || 'snap';
+                    const d  = Math.hypot(cx - mx, cy - my);
+                    const k  = t.dataset.pane || 'snap';
+                    if (k === pinKey) {
+                        // Re-anchor in case the layout shifted
+                        pinAnchor = { x: cx, y: cy };
+                        if (d <= RELEASE_DIST) stillNearCurrent = true;
+                    }
+                    if (d < bestNewDist) { bestNewDist = d; bestNew = { x: cx, y: cy, key: k, d }; }
+                });
+
+                if (pinKey) {
+                    // Switch pin only if the cursor reaches another tab's center (GRAB radius)
+                    if (bestNew && bestNew.key !== pinKey && bestNew.d <= GRAB_DIST) {
+                        pinKey = bestNew.key;
+                        pinAnchor = { x: bestNew.x, y: bestNew.y };
+                    } else if (!stillNearCurrent) {
+                        // Cursor cleared the release zone of the current tab — drop the pin
+                        pinKey = null;
+                        pinAnchor = null;
+                    }
+                } else if (bestNew && bestNew.d <= GRAB_DIST) {
+                    // Free → grab a new pin only when cursor reaches a tab's center
+                    pinKey = bestNew.key;
+                    pinAnchor = { x: bestNew.x, y: bestNew.y };
+                }
+
+                // Compute target position with reluctant-drift while pinned
+                let tx = mx, ty = my;
+                if (pinKey && pinAnchor) {
+                    const dist  = Math.hypot(pinAnchor.x - mx, pinAnchor.y - my);
+                    const w = Math.min(1, dist / RELEASE_DIST) * 0.22;
+                    tx = pinAnchor.x * (1 - w) + mx * w;
+                    ty = pinAnchor.y * (1 - w) + my * w;
                 }
 
                 // Pin-state SFX on transitions only — never tab-to-tab directly
