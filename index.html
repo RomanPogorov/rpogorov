@@ -1929,8 +1929,12 @@
             top: auto;
             right: auto;
             bottom: auto;
-            text-align: right;
+            text-align: left;
             pointer-events: auto;
+        }
+        /* Breathing room from the left edge so content doesn't kiss the panel border */
+        .hud-right .agents-feed {
+            padding-left: 8px;
         }
         /* All stack children must catch clicks (parent .hud-right is none) */
         .hud-right .hud-right-stack > * {
