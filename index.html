@@ -4970,7 +4970,6 @@
             filter: blur(0) brightness(1);
             pointer-events: auto;
         }
-        body.engaged .hud-left-articles,
         body.dw-open .hud-left-articles,
         body.chat-fullscreen .hud-left-articles,
         body.case-open .hud-left-articles,
@@ -4979,8 +4978,10 @@
             pointer-events: none;
             transition: opacity 0.3s ease, filter 0.3s ease;
         }
-        /* Reader open: keep the left panel visible behind the overlay (just block clicks through) */
-        body.reader-open .hud-left-articles {
+        /* Reader and OS-panel open: keep the left panel visible behind the overlay
+           (just block clicks through) so the tabs stay readable through the dim. */
+        body.reader-open .hud-left-articles,
+        body.engaged .hud-left-articles {
             pointer-events: none;
         }
         .hud-left-stack {
