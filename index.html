@@ -142,11 +142,15 @@
         }
         .cur-dot, .cur-ring { display: none !important; }
         @media (hover: hover) and (pointer: fine) {
-            body { cursor: auto !important; }
-            a, button, [role="button"], .cta, .agent-item, .release-item,
-            .chat-fs-btn, .ap-btn, .case-open-btn, .cp-tl-item, .cp-slide-arrow,
-            .cases-arrow, .cases-dot, .showcase-cue, .cp-close, [data-cp-close],
-            .cp-gallery-tile, .timeline-period { cursor: pointer !important; }
+            html, body, html *, body * { cursor: auto !important; }
+            a, button, [role="button"], a *, button *, .cta, .cta *,
+            .agent-item, .agent-item *, .release-item, .release-item *,
+            .chat-fs-btn, .ap-btn, .case-open-btn, .case-open-btn *,
+            .cp-tl-item, .cp-tl-item *, .cp-slide-arrow,
+            .cases-arrow, .cases-dot, .showcase-cue, .showcase-cue *,
+            .cp-close, .cp-close *, [data-cp-close], [data-cp-close] *,
+            .cp-gallery-tile { cursor: pointer !important; }
+            input, textarea, [contenteditable="true"] { cursor: text !important; }
         }
         /* ============ END PERF EXPERIMENT ============ */
 
