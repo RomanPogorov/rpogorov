@@ -486,19 +486,22 @@
            is the device shell (bezel + body), inner .showcase-inner is the
            screen where the cases carousel lives. */
         :root {
-            --sheet-side: 36px;
             --sheet-top: 56px;
             --sheet-radius: 32px;        /* outer device corner */
             --device-bezel: 14px;        /* bezel thickness around the screen */
             --screen-radius: 18px;       /* inner screen corner */
+            --screen-width: 920px;       /* portrait tablet inner content width */
         }
         .showcase {
             position: fixed;
             /* Slide up from below: collapsed top is just past viewport bottom
                so nothing of the device peeks above. */
             top: calc(100vh + 40px);
-            left: var(--sheet-side);
-            right: var(--sheet-side);
+            /* Portrait tablet: narrow + centered. Inner content area is
+               --screen-width; outer device adds 2× bezel on the sides. */
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(calc(var(--screen-width) + 2 * var(--device-bezel)), calc(100vw - 64px));
             /* Tablet extends ALL the way down to viewport bottom (and a bit
                beyond, so the bottom edge is clipped horizontally by the viewport
                instead of showing rounded corners — feels like the device goes
@@ -652,11 +655,10 @@
         /* Floating intro tag, top-left of basement */
         .showcase-intro {
             position: absolute;
-            top: 22px;
-            left: 5vw;
-            right: 5vw;
+            top: 18px;
+            left: 32px;
+            right: 32px;
             z-index: 5;
-            max-width: 70vw;
             pointer-events: none;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
@@ -709,17 +711,20 @@
         }
         .cases::-webkit-scrollbar { display: none; }
         .case {
-            flex: 0 0 100vw;
+            flex: 0 0 100%;
             height: 100%;
             scroll-snap-align: start;
             scroll-snap-stop: always;
             display: grid;
-            grid-template-columns: 1.15fr 1fr;
-            gap: 5vw;
-            padding: 8vh 7vw 110px;
+            /* Portrait tablet: stack image on top, body below */
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto;
+            gap: 28px;
+            padding: 48px 56px 140px;
             position: relative;
             box-sizing: border-box;
-            align-items: center;
+            align-items: start;
+            align-content: start;
         }
         /* Faint grid behind every case — same vibe as the hero's .grid */
         .case::before {
