@@ -3965,10 +3965,18 @@
             opacity: 0.4;
         }
 
+        /* Combined transition — must list every property that animates between
+           hero ↔ showcase-open states. Otherwise transform/clip-path snap
+           instantly and the back-card scale-down looks like a binary jump. */
         .grid,
         .horizon,
         .hud {
-            transition: opacity 0.8s ease, filter 0.8s ease;
+            transition:
+                transform 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
+                clip-path 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
+                -webkit-clip-path 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
+                opacity 1.4s cubic-bezier(0.62, 0.02, 0.18, 1),
+                filter 1.4s cubic-bezier(0.62, 0.02, 0.18, 1);
         }
 
         /* ============ HOLOGRAPHIC PANEL — TRON ============ */
@@ -8168,8 +8176,24 @@
             }, { passive: true });
 
             document.addEventListener('keydown', (e) => {
-                if (!document.body.classList.contains('showcase-open')) return;
-                if (document.body.classList.contains('case-open')) return; // case-page handles its own ESC
+                const body = document.body;
+                // Main page (not engaged into a panel, no showcase, no case): ↓
+                // opens the showcase. Mirror of the showcase-cue button.
+                if (e.key === 'ArrowDown'
+                    && !body.classList.contains('showcase-open')
+                    && !body.classList.contains('case-open')
+                    && !body.classList.contains('engaged')
+                    && !body.classList.contains('dw-open')
+                    && !body.classList.contains('chat-fullscreen')
+                    && !body.classList.contains('reader-open')) {
+                    const tag = e.target?.tagName;
+                    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
+                    e.preventDefault();
+                    open();
+                    return;
+                }
+                if (!body.classList.contains('showcase-open')) return;
+                if (body.classList.contains('case-open')) return; // case-page handles its own ESC
                 if (e.key === 'Escape') { close(); return; }
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
