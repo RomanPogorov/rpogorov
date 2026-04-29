@@ -3443,6 +3443,16 @@
             animation-play-state: paused !important;
         }
 
+        /* PERF DIAGNOSTIC: pause every infinite animation INSIDE the panel + freeze parallax tick.
+           If CPU calms with this on, we know the work is in those animations / per-frame transform
+           updates — then we can re-enable them one by one to find the actual culprit. */
+        body.engaged .panel-frame > .perimeter::before,
+        body.engaged .panel-frame > .perimeter::after,
+        body.engaged .panel-frame > .holo-lines,
+        body.engaged .panel-frame .tab.active::after {
+            animation-play-state: paused !important;
+        }
+
         /* Projector flicker — runs once at engage */
         @keyframes projector-flicker {
             0%   { opacity: 0; }
@@ -5927,9 +5937,12 @@
                 targetRX = baseRX - ny * mouseAmpX * 2;
             });
 
+            // PERF DIAGNOSTIC: parallax tick disabled while we hunt the panel-open CPU cost.
+            // To restore: drop the early `return;` on line below.
             const start = performance.now();
             function tick(t) {
                 requestAnimationFrame(tick);
+                return; // diagnostic freeze
                 if (!body.classList.contains('engaged')) return;
                 const dt = (t - start) / 1000;
                 const idleY = Math.sin(dt * 0.35) * idleAmpY;
