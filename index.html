@@ -123,41 +123,16 @@
             height: auto;
             transform: translate(-50%, -50%);
             object-fit: cover;
-            /* grading baked into bg.mp4 (contrast 1.15, sat 1.0, brightness 0.8) — no per-frame filter */
+            filter: contrast(1.15) saturate(1.0) brightness(0.8);
             opacity: 0;
-            transition: opacity 1.2s ease;
+            transition: opacity 1.2s ease, filter 0.8s ease;
         }
         body.video-revealed .stage video {
             opacity: 1;
         }
 
-        /* ============ PERF EXPERIMENT — disable suspected hotspots in one place ============
-           Revert: drop this whole block. Tag perf-baseline-2026-04-29 holds the original. */
-        .scanlines { display: none !important; }
-        .chat-pane,
-        .panel-frame,
-        .dw-frame {
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-        }
-        .cur-dot, .cur-ring { display: none !important; }
-        @media (hover: hover) and (pointer: fine) {
-            html, body, html *, body * { cursor: auto !important; }
-            a, button, [role="button"], a *, button *, .cta, .cta *,
-            .agent-item, .agent-item *, .release-item, .release-item *,
-            .chat-fs-btn, .ap-btn, .case-open-btn, .case-open-btn *,
-            .cp-tl-item, .cp-tl-item *, .cp-slide-arrow,
-            .cases-arrow, .cases-dot, .showcase-cue, .showcase-cue *,
-            .cp-close, .cp-close *, [data-cp-close], [data-cp-close] *,
-            .cp-gallery-tile { cursor: pointer !important; }
-            input, textarea, [contenteditable="true"] { cursor: text !important; }
-        }
-        /* ============ END PERF EXPERIMENT ============ */
-
         /* ============ NOISE / GRAIN ============ */
-        /* perf-experiment: noise overlay disabled to A/B test CPU. To bring back: drop display:none. */
         .noise {
-            display: none;
             position: fixed;
             inset: -50%;
             width: 200%;
@@ -166,10 +141,8 @@
             z-index: 2;
             opacity: 0.18;
             mix-blend-mode: overlay;
-            background-image: url("noise.png?v=2");
-            background-size: 256px 256px;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.2 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
             animation: noiseShift 0.6s steps(4) infinite;
-            will-change: transform;
         }
 
         @keyframes noiseShift {
@@ -4525,7 +4498,7 @@
     <div class="stage">
         <video id="bg" autoplay muted loop playsinline preload="auto">
             <source
-                src="bg.mp4?v=2"
+                src="bg.mp4"
                 type="video/mp4">
         </video>
     </div>
