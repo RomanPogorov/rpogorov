@@ -1287,47 +1287,42 @@
         }
         .cases-dot:hover { transform: scale(1.25); }
 
+        /* ESC pill — identical to the OS-panel header close so the visual
+           language of "close" stays consistent across the site. */
         .showcase-back {
             position: relative;
             flex-shrink: 0;
-            appearance: none;
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(var(--acc-rgb), 0.45);
-            color: var(--acc);
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
             font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-size: 0.875rem;
-            line-height: 1;
-            padding: 0 12px;
-            height: 36px;
+            font-size: 0.5625rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--dim);
+            padding: 6px 10px 6px 14px;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.5);
-            transition: color .15s, border-color .15s, background .15s, box-shadow .18s, transform .15s;
+            gap: 8px;
+            transition: all 0.2s ease;
             pointer-events: auto;
         }
         .showcase-back::before {
             content: '×';
-            font-size: 1.125rem;
+            font-size: 0.875rem;
             line-height: 1;
-            margin-top: -1px;
-        }
-        .showcase-back .esc-hint {
-            font-size: 0.5625rem;
-            font-weight: 700;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            opacity: 0.7;
-            border-left: 1px solid rgba(var(--acc-rgb), 0.32);
-            padding-left: 10px;
+            color: var(--acc);
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
         }
         .showcase-back:hover {
-            color: #fff;
             border-color: var(--acc);
-            background: rgba(var(--acc-rgb), 0.18);
-            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.4);
+            color: var(--ink);
+            background: rgba(var(--acc-rgb), 0.06);
+            box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.25);
+        }
+        .showcase-back:hover::before {
+            color: #fff;
+            text-shadow: 0 0 10px var(--acc);
         }
 
         /* ============ CASE PAGE — full-page case detail (Inter, b/w/blue) ============ */
@@ -6679,7 +6674,7 @@
                     <span class="strip-counter" id="strip-counter">1 of 5</span>
                     <button class="strip-nav strip-next" id="strip-next" type="button" aria-label="Next case">→</button>
                 </div>
-                <button class="showcase-back" id="showcase-back" type="button" aria-label="Close showcase"><span class="esc-hint">Esc</span></button>
+                <button class="showcase-back" id="showcase-back" type="button" aria-label="Close showcase">ESC</button>
             </div>
 
             <div class="cases" id="cases">
