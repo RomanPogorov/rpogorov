@@ -524,10 +524,17 @@
             );
             clip-path: var(--shape);
             -webkit-clip-path: var(--shape);
+            /* Bright 1px accent silhouette + soft outer glow + dark drop. The
+               four-direction 1px shadows stack to a sharp outline that follows
+               the notch and bevels exactly. */
             filter:
-                drop-shadow(0 0 1px rgba(var(--acc-rgb), 0.95))
-                drop-shadow(0 0 18px rgba(var(--acc-rgb), 0.32))
-                drop-shadow(0 12px 40px rgba(0, 0, 0, 0.6));
+                drop-shadow(0 -1px 0 rgba(var(--acc-rgb), 1))
+                drop-shadow(0 1px 0 rgba(var(--acc-rgb), 1))
+                drop-shadow(-1px 0 0 rgba(var(--acc-rgb), 1))
+                drop-shadow(1px 0 0 rgba(var(--acc-rgb), 1))
+                drop-shadow(0 0 12px rgba(var(--acc-rgb), 0.45))
+                drop-shadow(0 0 28px rgba(var(--acc-rgb), 0.18))
+                drop-shadow(0 16px 50px rgba(0, 0, 0, 0.7));
         }
         body.showcase-open .showcase {
             top: var(--showcase-top-strip);
@@ -1108,6 +1115,14 @@
                 12px 100%,
                 0 calc(100% - 12px)
             );
+            /* Same crisp accent edge + halo so the device frame keeps glowing
+               around the case. */
+            filter:
+                drop-shadow(0 -1px 0 rgba(var(--acc-rgb), 1))
+                drop-shadow(0 1px 0 rgba(var(--acc-rgb), 1))
+                drop-shadow(-1px 0 0 rgba(var(--acc-rgb), 1))
+                drop-shadow(1px 0 0 rgba(var(--acc-rgb), 1))
+                drop-shadow(0 0 14px rgba(var(--acc-rgb), 0.5));
         }
         body.case-open .case-page.open {
             transform: translateY(0);
@@ -8302,18 +8317,23 @@
             function fakeLoad(page, dir) {
                 if (!page) return;
                 const step = Math.round(page.clientHeight * 0.78) * dir;
-                page.scrollBy({ top: step, behavior: 'smooth' });
+                // Loader & dim show INSTANTLY, then the page begins scrolling
+                // a beat later so the user sees the preloader appear before
+                // anything moves.
                 const el = ensureLoader();
                 el.classList.add('on');
                 page.classList.add('cp-fake-loading', 'cp-blur-tail');
                 clearTimeout(loaderTimer);
+                setTimeout(() => {
+                    page.scrollBy({ top: step, behavior: 'smooth' });
+                }, 140);
                 loaderTimer = setTimeout(() => {
                     page.classList.remove('cp-blur-tail');
-                }, 380);
+                }, 520);
                 setTimeout(() => {
                     el.classList.remove('on');
                     page.classList.remove('cp-fake-loading');
-                }, 720);
+                }, 860);
             }
             document.addEventListener('keydown', (e) => {
                 if (!body.classList.contains('case-open')) return;
