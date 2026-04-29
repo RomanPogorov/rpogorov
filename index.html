@@ -2294,139 +2294,6 @@
             max-width: 80%;
         }
 
-        /* ============ AMERICOR CASE — LIGHT THEME OVERRIDES ============ */
-        .case-page.cp-light .am-case {
-            color: #0f1115;
-        }
-        .case-page.cp-light .am-case h2.am-h2 {
-            color: var(--acc);
-            text-shadow: none;
-        }
-        .case-page.cp-light .am-case h3.am-h3 {
-            color: var(--acc);
-        }
-        .case-page.cp-light .am-case strong { color: #0a0a0a; }
-        .case-page.cp-light .am-case em { color: var(--acc); font-style: italic; }
-        .case-page.cp-light .am-case p { color: rgba(15, 17, 21, 0.82); }
-        .case-page.cp-light .am-case ul li,
-        .case-page.cp-light .am-case ol li { color: rgba(15, 17, 21, 0.82); }
-
-        .case-page.cp-light .am-eyebrow { color: rgba(0, 0, 0, 0.55); }
-        .case-page.cp-light .am-eyebrow b { color: var(--acc); }
-        .case-page.cp-light .am-title { color: #0a0a0a; }
-        .case-page.cp-light .am-subtitle { color: rgba(0, 0, 0, 0.62); }
-
-        /* BeforeAfter on light */
-        .case-page.cp-light .am-ba-tabs {
-            background: rgba(0, 0, 0, 0.04);
-            border-color: rgba(0, 0, 0, 0.12);
-        }
-        .case-page.cp-light .am-ba-tab { color: rgba(0, 0, 0, 0.55); }
-        .case-page.cp-light .am-ba-tab:hover { color: #0a0a0a; }
-        .case-page.cp-light .am-ba-tab.active {
-            background: rgba(var(--acc-rgb), 0.12);
-            color: var(--acc);
-            text-shadow: none;
-        }
-        .case-page.cp-light .am-ba-stage {
-            background: #f4f6f9;
-            border-color: rgba(0, 0, 0, 0.12);
-            box-shadow:
-                0 8px 30px rgba(0, 0, 0, 0.08),
-                0 0 0 1px rgba(0, 0, 0, 0.04);
-        }
-        .case-page.cp-light .am-ba-handle {
-            background: #fff;
-            border-color: var(--acc);
-            color: var(--acc);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18),
-                        0 0 0 1px rgba(var(--acc-rgb), 0.15);
-        }
-        .case-page.cp-light .am-ba-label.before {
-            color: rgba(0, 0, 0, 0.7);
-            background: rgba(255, 255, 255, 0.92);
-            border-color: rgba(0, 0, 0, 0.16);
-        }
-        .case-page.cp-light .am-ba-label.after {
-            color: var(--acc);
-            background: rgba(255, 255, 255, 0.92);
-            border-color: rgba(var(--acc-rgb), 0.4);
-        }
-
-        /* TL;DR + metrics light */
-        .case-page.cp-light .am-tldr-block {
-            border-color: rgba(0, 0, 0, 0.1);
-            border-left: 2px solid var(--acc);
-            background:
-                linear-gradient(135deg, rgba(var(--acc-rgb), 0.05), rgba(var(--acc-rgb), 0) 60%),
-                #fafbfd;
-        }
-        .case-page.cp-light .am-tldr-label { color: var(--acc); }
-        .case-page.cp-light .am-metric {
-            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.05) 0%, rgba(var(--acc-rgb), 0) 100%), #fff;
-            border-color: rgba(0, 0, 0, 0.08);
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
-        }
-        .case-page.cp-light .am-metric-label { color: rgba(0, 0, 0, 0.5); }
-        .case-page.cp-light .am-metric-was { color: rgba(0, 0, 0, 0.4); }
-        .case-page.cp-light .am-metric-now { color: var(--acc); text-shadow: none; }
-        .case-page.cp-light .am-metric-now.txt { color: #0a0a0a; }
-
-        /* MediaBlock + frame on light */
-        .case-page.cp-light .am-media-frame {
-            background: #fff;
-            border-color: rgba(0, 0, 0, 0.1);
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
-        }
-        .case-page.cp-light .am-media-frame:hover {
-            border-color: rgba(var(--acc-rgb), 0.4);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        }
-        .case-page.cp-light .am-media-caption { color: rgba(0, 0, 0, 0.6); }
-        .case-page.cp-light .am-media-caption b { color: var(--acc); }
-        .case-page.cp-light .am-media-stub {
-            color: rgba(var(--acc-rgb), 0.6);
-            background:
-                linear-gradient(135deg, rgba(var(--acc-rgb), 0.04) 0%, rgba(var(--acc-rgb), 0) 100%),
-                repeating-linear-gradient(45deg, transparent 0, transparent 14px,
-                    rgba(0, 0, 0, 0.03) 14px, rgba(0, 0, 0, 0.03) 15px);
-        }
-        .case-page.cp-light .am-media-play::before {
-            background: rgba(255, 255, 255, 0.92);
-        }
-
-        /* DeepCaseLink on light */
-        .case-page.cp-light .am-deeplink {
-            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.04), rgba(var(--acc-rgb), 0)), #fff;
-            border-color: rgba(0, 0, 0, 0.08);
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
-        }
-        .case-page.cp-light .am-deeplink:hover {
-            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.08), rgba(var(--acc-rgb), 0.02)), #fff;
-            border-color: rgba(var(--acc-rgb), 0.5);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        }
-        .case-page.cp-light .am-deeplink-num { color: var(--acc); }
-        .case-page.cp-light .am-deeplink-title { color: #0a0a0a; }
-        .case-page.cp-light .am-deeplink-desc { color: rgba(0, 0, 0, 0.6); }
-
-        /* CaseStudyDemo + Todo on light */
-        .case-page.cp-light .am-demo {
-            background: rgba(0, 0, 0, 0.02);
-            border-color: rgba(var(--acc-rgb), 0.3);
-        }
-        .case-page.cp-light .am-demo-tag {
-            background: #fff;
-            color: var(--acc);
-            border-color: rgba(var(--acc-rgb), 0.4);
-        }
-        .case-page.cp-light .am-todo {
-            background: rgba(255, 200, 0, 0.08);
-            color: #7a5a00;
-            border-color: rgba(180, 140, 0, 0.4);
-        }
-        .case-page.cp-light .am-todo-label { color: #6a4a00; }
-
         /* ============ CASE PAGE — LIGHT VARIANT (white bg, blue accent) ============ */
         .case-page.cp-light {
             background: #ffffff;
@@ -7443,7 +7310,7 @@
     </section>
 
     <!-- Case page: full-page detail for cs01 (Americor overall) -->
-    <section class="case-page cp-light" id="case-page-cs01" data-case-page="cs01" aria-label="Americor case study">
+    <section class="case-page" id="case-page-cs01" data-case-page="cs01" aria-label="Americor case study">
         <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
             <span class="cp-close-arrow" aria-hidden="true">↑</span>
             <span>back to showcase</span>
