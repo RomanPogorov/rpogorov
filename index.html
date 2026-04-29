@@ -232,6 +232,27 @@
             -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 75%);
             opacity: 0.7;
             transition: opacity 0.8s ease, filter 0.8s ease;
+            /* Slow drift — subtle wandering of the grid plane to make the bg feel alive. Pure transform, GPU-only. */
+            animation: grid-drift 28s ease-in-out infinite;
+            will-change: transform;
+        }
+        @keyframes grid-drift {
+            0%, 100% { transform: translate(0, 0)      scale(1.005); }
+            25%      { transform: translate(7px, -4px) scale(1.008); }
+            50%      { transform: translate(-2px, 6px) scale(1.006); }
+            75%      { transform: translate(-6px, -3px) scale(1.01);  }
+        }
+        /* Brief glitch on the grid — fired by JS at irregular intervals */
+        @keyframes grid-glitch {
+            0%   { filter: none;                                                 transform: translate(0, 0); }
+            18%  { filter: hue-rotate(35deg) brightness(1.5) contrast(1.25);     transform: translate(6px, 2px)  skewX(2deg); }
+            38%  { filter: hue-rotate(-30deg) brightness(0.7) saturate(1.6);     transform: translate(-9px, -3px) skewX(-2deg); }
+            58%  { filter: brightness(1.25) contrast(1.15);                       transform: translate(3px, 0); }
+            78%  { filter: hue-rotate(10deg);                                     transform: translate(-2px, 1px); }
+            100% { filter: none;                                                 transform: translate(0, 0); }
+        }
+        .grid.glitching {
+            animation: grid-glitch 0.42s steps(7) 1, grid-drift 28s ease-in-out infinite;
         }
 
         /* horizon line — adds tron depth cue */
@@ -9004,6 +9025,29 @@ See also: Health Samurai Lab: Game of Pools.`,
                 collapsePanel();
                 window.__sfx?.tick?.();
             });
+
+            // Random glitch on the bg grid plane — independent of the tab strip glitcher.
+            const gridEl = document.querySelector('.grid');
+            if (gridEl) {
+                let gridStarted = false;
+                function scheduleGridGlitch() {
+                    const delay = 12000 + Math.random() * 24000; // 12 – 36s
+                    setTimeout(() => {
+                        if (!body.classList.contains('pre-gate')) {
+                            gridEl.classList.remove('glitching');
+                            void gridEl.offsetWidth;
+                            gridEl.classList.add('glitching');
+                            setTimeout(() => gridEl.classList.remove('glitching'), 460);
+                        }
+                        scheduleGridGlitch();
+                    }, delay);
+                }
+                document.addEventListener('app:start', () => {
+                    if (gridStarted) return;
+                    gridStarted = true;
+                    scheduleGridGlitch();
+                }, { once: true });
+            }
 
             // Random stylish glitch on the collapsed tab strip — fires only while the panel is closed
             // and only after the audio gate has been dismissed (so it doesn't run on the gate).
