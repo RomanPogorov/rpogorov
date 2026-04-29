@@ -5225,8 +5225,8 @@
                 rgba(var(--acc-rgb), 0.05) 50%,
                 transparent 88%);
             filter: blur(10px);
-            /* JS lerps --color-strength: 0.3 (cursor far) → 1.0 (cursor on tab) */
-            opacity: var(--color-strength, 0.3);
+            /* JS lerps --color-strength: 0.4 (cursor far) → 1.0 (cursor on tab) */
+            opacity: var(--color-strength, 0.4);
         }
         /* Six thin accent rays — randomly pulsing opacity ('roaming rays' from the original version).
            filter: opacity(--color-strength) multiplies the keyframe-driven opacity by the same
@@ -5243,7 +5243,7 @@
             box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.18);
             opacity: 0;
             animation: htl-ray-pulse 4s ease-in-out infinite;
-            filter: opacity(var(--color-strength, 0.3));
+            filter: opacity(var(--color-strength, 0.4));
         }
         @keyframes htl-ray-pulse {
             0%, 100% { opacity: 0;    transform: translateY(-14px) scaleY(0.5); }
@@ -7300,7 +7300,7 @@
             // Effect: pinned to A, even after cursor enters tab B, the dot keeps clinging to A until
             // cursor reaches the center of B (within GRAB) — it resists the swap.
             const GRAB_DIST    = 22;
-            const RELEASE_DIST = 80;
+            const RELEASE_DIST = 50;
             let lastSnapKey = null;
             let pinKey = null;
             let pinAnchor = null;   // {x, y}
@@ -9315,7 +9315,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 // Color strength: --color-strength scales the radial-gradient opacity from 0.5 → 1.0.
                 const MIN_EXT = 22;
                 const MAX_EXT = 85;
-                const MIN_STR = 0.3;
+                const MIN_STR = 0.4;
                 const MAX_STR = 1.0;
                 let skelTarget = 0;
                 let prox = 0;
@@ -9503,13 +9503,12 @@ See also: Health Samurai Lab: Game of Pools.`,
             down.addEventListener('click', () => { apply(cur - STEP); window.__sfx?.tick?.(); });
             up.addEventListener('click',   () => { apply(cur + STEP); window.__sfx?.tick?.(); });
 
-            // Central prompt role line — single label centered, cycles every 7s with decode animation.
+            // Central prompt role line — single label centered, cycles every 7s.
+            // Each transition uses a different effect from the EFFECTS pool, in rotation.
             (() => {
                 const ROLES = [
                     'Designer',
                     'Vibe Shipper',
-                    'Claude Runner',
-                    'Code Whisperer',
                     'System Builder',
                     'AI Tooling',
                     'Pixel Hacker',
@@ -9519,23 +9518,18 @@ See also: Health Samurai Lab: Game of Pools.`,
                 const target = document.getElementById('prompt-roles');
                 if (!target) return;
 
+                // Effect 1 — Matrix decode (chars scramble through tech glyphs left-to-right)
                 function decode(el, newText, duration = 720) {
                     const start = performance.now();
                     function frame(now) {
                         const t = now - start;
-                        if (t >= duration) {
-                            el.textContent = newText;
-                            return;
-                        }
+                        if (t >= duration) { el.textContent = newText; return; }
                         let out = '';
                         for (let i = 0; i < newText.length; i++) {
                             const ch = newText[i];
                             const stableAt = (i / newText.length) * duration * 0.78 + 40;
-                            if (t >= stableAt || STEADY.has(ch)) {
-                                out += ch;
-                            } else {
-                                out += SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)];
-                            }
+                            if (t >= stableAt || STEADY.has(ch)) out += ch;
+                            else out += SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)];
                         }
                         el.textContent = out;
                         requestAnimationFrame(frame);
@@ -9543,10 +9537,74 @@ See also: Health Samurai Lab: Game of Pools.`,
                     requestAnimationFrame(frame);
                 }
 
-                let idx = 0;
+                // Effect 2 — Glitch swap: RGB-split text-shadow flickers, text swaps mid-flicker
+                function glitch(el, newText, duration = 520) {
+                    const start = performance.now();
+                    let swapped = false;
+                    function frame(now) {
+                        const t = now - start;
+                        if (t >= duration) {
+                            el.textContent = newText;
+                            el.style.textShadow = '';
+                            return;
+                        }
+                        if (!swapped && t > duration * 0.45) { el.textContent = newText; swapped = true; }
+                        const off = 1.5 + Math.random() * 3;
+                        el.style.textShadow =
+                            `${off.toFixed(1)}px 0 rgba(255, 0, 110, 0.55), ` +
+                            `${(-off).toFixed(1)}px 0 rgba(0, 220, 255, 0.5)`;
+                        requestAnimationFrame(frame);
+                    }
+                    requestAnimationFrame(frame);
+                }
+
+                // Effect 3 — Blur fade: blur+opacity out, swap, blur+opacity in
+                function blurFade(el, newText, duration = 600) {
+                    el.style.transition = 'filter 0.28s ease, opacity 0.28s ease';
+                    el.style.filter = 'blur(7px)';
+                    el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.textContent = newText;
+                        el.style.filter = 'blur(0)';
+                        el.style.opacity = '1';
+                        setTimeout(() => {
+                            el.style.transition = '';
+                            el.style.filter = '';
+                            el.style.opacity = '';
+                        }, 320);
+                    }, 280);
+                }
+
+                // Effect 4 — Slide ticker: old slides up + fades out, new slides up from below
+                function slideTicker(el, newText, duration = 480) {
+                    el.style.transition = 'transform 0.22s ease-in, opacity 0.22s ease-in';
+                    el.style.transform = 'translateY(-12px)';
+                    el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.textContent = newText;
+                        el.style.transition = 'none';
+                        el.style.transform = 'translateY(12px)';
+                        // force reflow then animate in
+                        void el.offsetWidth;
+                        el.style.transition = 'transform 0.24s ease-out, opacity 0.24s ease-out';
+                        el.style.transform = 'translateY(0)';
+                        el.style.opacity = '1';
+                        setTimeout(() => {
+                            el.style.transition = '';
+                            el.style.transform = '';
+                            el.style.opacity = '';
+                        }, 260);
+                    }, 220);
+                }
+
+                const EFFECTS = [decode, glitch, blurFade, slideTicker];
+                let roleIdx = 0;
+                let fxIdx = 0;
                 setInterval(() => {
-                    idx = (idx + 1) % ROLES.length;
-                    decode(target, ROLES[idx]);
+                    roleIdx = (roleIdx + 1) % ROLES.length;
+                    const fx = EFFECTS[fxIdx];
+                    fxIdx = (fxIdx + 1) % EFFECTS.length;
+                    fx(target, ROLES[roleIdx]);
                 }, 7000);
             })();
 
