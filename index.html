@@ -799,49 +799,107 @@
             color: var(--acc);
         }
 
-        /* ============ CARROUSEL: ONE CASE PER VIEWPORT ============ */
+        /* ============ CASES: GRID (default) + DETAIL (focused) ============
+           Default mode: 2-column grid of case cards inside the tablet, vertical
+           scroll. Click a card → detail mode (only that case shown, cover +
+           inline article). ←/→ in detail switches case, Esc returns to grid. */
         .cases {
             position: absolute;
             inset: 0;
-            display: flex;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-            z-index: 2;
-        }
-        .cases::-webkit-scrollbar { display: none; }
-        .case {
-            flex: 0 0 100%;
-            height: 100%;
-            scroll-snap-align: start;
-            scroll-snap-stop: always;
-            position: relative;
-            box-sizing: border-box;
-            /* Each case scrolls vertically: cover sits at the top (full visible
-               area), the article is rendered right below it. Read by scrolling
-               down — no modal transition. */
-            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            padding: 88px 22px 28px;
             overflow-x: hidden;
+            overflow-y: auto;
+            scroll-behavior: smooth;
             scrollbar-width: thin;
             scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
+            z-index: 2;
         }
-        .case::-webkit-scrollbar { width: 4px; }
-        .case::-webkit-scrollbar-thumb { background: rgba(var(--acc-rgb), 0.4); }
-        /* Cover = the photo + title block sized to fill the visible tablet area
-           on first sight, so user can either scroll down or hit ↓ to start
-           reading the article that's already mounted below. */
+        .cases::-webkit-scrollbar { width: 4px; }
+        .cases::-webkit-scrollbar-thumb { background: rgba(var(--acc-rgb), 0.4); }
+        .case {
+            position: relative;
+            box-sizing: border-box;
+            cursor: pointer;
+            display: block;
+            overflow: hidden;
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.04), rgba(var(--acc-rgb), 0) 60%),
+                        rgba(0, 0, 0, 0.2);
+            transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+                        border-color 0.18s, box-shadow 0.18s;
+        }
+        .case:hover {
+            border-color: rgba(var(--acc-rgb), 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35),
+                        0 0 18px rgba(var(--acc-rgb), 0.15);
+        }
+        /* Inline article hidden inside grid cards — only shows when detail */
+        .case > .case-page.case-article-mode { display: none; }
+        /* Card cover layout — compact, doesn't fill the whole tablet */
         .case-cover {
-            min-height: calc(100vh - var(--sheet-top) - var(--device-bezel) - 40px);
             display: grid;
             grid-template-columns: 1fr;
             grid-template-rows: auto auto;
-            gap: 22px;
-            padding: 88px 56px 32px;          /* clear of the 64px terminal bar */
+            gap: 14px;
+            padding: 16px 16px 20px;
             box-sizing: border-box;
             align-items: start;
             align-content: start;
+        }
+        .cases:not(.detail-mode) .case-title { font-size: clamp(1.0625rem, 1.6vw, 1.3125rem); margin: 6px 0 0; }
+        .cases:not(.detail-mode) .case-desc  { font-size: 0.875rem; line-height: 1.5; max-width: none; }
+        .cases:not(.detail-mode) .case-tags li { font-size: 0.5625rem; padding: 4px 8px; }
+        .cases:not(.detail-mode) .case-meta   { font-size: 0.5625rem; }
+        .cases:not(.detail-mode) .case-media  { max-height: 220px; aspect-ratio: 16 / 10; }
+        .cases:not(.detail-mode) .case-media-open-cue { display: none; }
+
+        /* DETAIL MODE — only the active case is shown full-size */
+        .cases.detail-mode {
+            display: block;
+            padding: 0;
+        }
+        .cases.detail-mode > .case { display: none; }
+        .cases.detail-mode > .case.is-detail-active {
+            display: block;
+            cursor: default;
+            border: none;
+            background: transparent;
+            transform: none;
+            box-shadow: none;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: absolute;
+            inset: 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
+            scroll-padding-top: 64px;
+        }
+        .cases.detail-mode > .case.is-detail-active::-webkit-scrollbar { width: 4px; }
+        .cases.detail-mode > .case.is-detail-active::-webkit-scrollbar-thumb { background: rgba(var(--acc-rgb), 0.4); }
+        .cases.detail-mode > .case.is-detail-active:hover {
+            transform: none;
+            box-shadow: none;
+            border: none;
+        }
+        .cases.detail-mode > .case.is-detail-active > .case-page.case-article-mode { display: block; }
+        .cases.detail-mode > .case.is-detail-active .case-cover {
+            min-height: calc(100vh - var(--sheet-top) - var(--device-bezel) - 40px);
+            padding: 88px 56px 32px;
+            gap: 22px;
+        }
+        .cases.detail-mode > .case.is-detail-active .case-cover .case-title { font-size: clamp(1.5rem, 2.2vw, 2.125rem); margin: 8px 0 0; }
+        .cases.detail-mode > .case.is-detail-active .case-cover .case-desc { font-size: clamp(0.875rem, 1.05vw, 1rem); line-height: 1.6; max-width: 56ch; }
+        .cases.detail-mode > .case.is-detail-active .case-cover .case-tags li { font-size: 0.625rem; padding: 6px 10px; }
+        .cases.detail-mode > .case.is-detail-active .case-cover .case-meta { font-size: 0.625rem; }
+        .cases.detail-mode > .case.is-detail-active .case-media-open-cue { display: flex; }
+        .cases.detail-mode > .case.is-detail-active .case-media { max-height: 48vh; aspect-ratio: 16 / 10; }
+
+        @media (max-width: 720px) {
+            .cases { grid-template-columns: 1fr; }
         }
         /* Inline case article (was .case-page modal). The case-page DOM is
            moved into its matching .case at startup via JS — these overrides
@@ -9214,14 +9272,18 @@
             cue.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
             });
-            back.addEventListener('click', close);
-            // Click anywhere outside the showcase tile → close.
+            // Close button is context-aware: in detail → return to grid, in
+            // grid → close the showcase. Same for click-outside.
+            back.addEventListener('click', () => {
+                if (mode === 'detail') exitDetail();
+                else close();
+            });
             const showcase = document.getElementById('showcase');
             document.addEventListener('mousedown', (e) => {
                 if (!document.body.classList.contains('showcase-open')) return;
-                if (document.body.classList.contains('case-open')) return;
                 if (showcase && showcase.contains(e.target)) return;
-                close();
+                if (mode === 'detail') exitDetail();
+                else close();
             });
 
             // IntersectionObserver: which case is in viewport → .active for entry anim
@@ -9241,40 +9303,67 @@
             }, { root: cases, threshold: [0.5, 0.75] });
             items.forEach((el) => io.observe(el));
 
-            function currentIndex() {
-                const sl = cases.scrollLeft;
-                const w = cases.clientWidth;
-                let bestIdx = 0, bestDist = Infinity;
-                items.forEach((el, i) => {
-                    const elCenter = el.offsetLeft + el.offsetWidth / 2;
-                    const viewCenter = sl + w / 2;
-                    const d = Math.abs(elCenter - viewCenter);
-                    if (d < bestDist) { bestDist = d; bestIdx = i; }
-                });
-                return bestIdx;
+            // ============ MODE STATE ============
+            // 'grid'   — list of case cards (default when showcase opens)
+            // 'detail' — one case is opened, content scrolls vertically inside
+            let mode = 'grid';
+            let detailIdx = -1;
+
+            function enterDetail(idx) {
+                idx = Math.max(0, Math.min(items.length - 1, idx));
+                mode = 'detail';
+                detailIdx = idx;
+                items.forEach((el, i) => el.classList.toggle('is-detail-active', i === idx));
+                cases.classList.add('detail-mode');
+                // reset both the case's own scroll and the cases container
+                items[idx].scrollTop = 0;
+                updateStripState();
+                window.__sfx?.engage?.();
             }
-            function scrollTo(idx) {
-                const el = items[Math.max(0, Math.min(items.length - 1, idx))];
-                if (!el) return;
-                const target = el.offsetLeft - (cases.clientWidth - el.offsetWidth) / 2;
-                cases.scrollTo({ left: target, behavior: 'smooth' });
-                // Reset every case's vertical scroll so navigation between
-                // cases always lands on the cover, not mid-article.
-                items.forEach(item => { item.scrollTop = 0; });
+            function exitDetail() {
+                mode = 'grid';
+                detailIdx = -1;
+                items.forEach(el => el.classList.remove('is-detail-active'));
+                cases.classList.remove('detail-mode');
+                updateStripState();
+                window.__sfx?.disengage?.();
+            }
+            function gotoCase(idx) {
+                idx = Math.max(0, Math.min(items.length - 1, idx));
+                if (mode === 'detail') {
+                    enterDetail(idx);
+                } else {
+                    // grid mode — scroll the card into view
+                    const el = items[idx];
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
                 window.__sfx?.tick?.();
             }
+            function currentIndex() {
+                if (mode === 'detail') return detailIdx;
+                return 0;
+            }
 
-            prev.addEventListener('click', () => scrollTo(currentIndex() - 1));
-            next.addEventListener('click', () => scrollTo(currentIndex() + 1));
+            // Card click → enter detail
+            items.forEach((card, i) => {
+                card.addEventListener('click', (e) => {
+                    if (mode === 'detail') return;
+                    e.preventDefault();
+                    enterDetail(i);
+                });
+            });
 
-            // Strip terminal-bar nav (mirrors the outside arrows + animates on
-            // keyboard press for visual feedback).
+            // Outside arrows
+            prev.addEventListener('click', () => gotoCase(currentIndex() - 1));
+            next.addEventListener('click', () => gotoCase(currentIndex() + 1));
+
+            // Strip arrows + counter + title
             const stripPrev = document.getElementById('strip-prev');
             const stripNext = document.getElementById('strip-next');
             const stripTitleText = document.querySelector('#showcase-title-now .title-text');
             const stripCounter = document.getElementById('strip-counter');
-            stripPrev?.addEventListener('click', () => scrollTo(currentIndex() - 1));
-            stripNext?.addEventListener('click', () => scrollTo(currentIndex() + 1));
+            stripPrev?.addEventListener('click', () => gotoCase(currentIndex() - 1));
+            stripNext?.addEventListener('click', () => gotoCase(currentIndex() + 1));
 
             function flashStripNav(btn) {
                 if (!btn) return;
@@ -9282,34 +9371,28 @@
                 setTimeout(() => btn.classList.remove('pressed'), 220);
             }
 
-            function updateStripTitle(idx) {
-                const slide = items[idx];
-                if (!slide || !stripTitleText) return;
-                const titleEl = slide.querySelector('.case-title');
-                const title = titleEl ? titleEl.textContent.trim().replace(/\s+/g, ' ') : '';
-                stripTitleText.textContent = title;
-                if (stripCounter) {
-                    stripCounter.innerHTML = `<b>${idx + 1}</b> of ${items.length}`;
+            function updateStripState() {
+                if (mode === 'grid') {
+                    if (stripTitleText) stripTitleText.textContent = 'Selected works';
+                    if (stripCounter) stripCounter.innerHTML = `<b>${items.length}</b> cases`;
+                    [prev, next, stripPrev, stripNext].forEach(b => { if (b) b.disabled = true; });
+                    Array.from(dotsList.children).forEach(d => d.classList.remove('active'));
+                } else {
+                    const idx = detailIdx;
+                    const titleEl = items[idx]?.querySelector('.case-title');
+                    if (stripTitleText) stripTitleText.textContent = titleEl ? titleEl.textContent.trim().replace(/\s+/g, ' ') : '';
+                    if (stripCounter) stripCounter.innerHTML = `<b>${idx + 1}</b> of ${items.length}`;
+                    [prev, stripPrev].forEach(b => { if (b) b.disabled = idx === 0; });
+                    [next, stripNext].forEach(b => { if (b) b.disabled = idx === items.length - 1; });
+                    Array.from(dotsList.children).forEach((d, i) => d.classList.toggle('active', i === idx));
                 }
             }
-
-            cases.addEventListener('scroll', () => {
-                const idx = currentIndex();
-                Array.from(dotsList.children).forEach((d, i) => d.classList.toggle('active', i === idx));
-                prev.disabled = idx === 0;
-                next.disabled = idx === items.length - 1;
-                if (stripPrev) stripPrev.disabled = idx === 0;
-                if (stripNext) stripNext.disabled = idx === items.length - 1;
-                updateStripTitle(idx);
-            }, { passive: true });
-
-            // Initial title (in case the browser has already restored scroll)
-            updateStripTitle(currentIndex());
+            // Boot
+            updateStripState();
 
             document.addEventListener('keydown', (e) => {
                 const body = document.body;
-                // Main page (not engaged into a panel, no showcase, no case): ↓
-                // opens the showcase. Mirror of the showcase-cue button.
+                // Main page → ↓ opens showcase (grid first)
                 if (e.key === 'ArrowDown'
                     && !body.classList.contains('showcase-open')
                     && !body.classList.contains('case-open')
@@ -9324,26 +9407,31 @@
                     return;
                 }
                 if (!body.classList.contains('showcase-open')) return;
-                if (e.key === 'Escape') { close(); return; }
+                if (e.key === 'Escape') {
+                    if (mode === 'detail') { exitDetail(); return; }
+                    close();
+                    return;
+                }
+                // Arrow nav: in detail switches case, in grid does nothing (avoid
+                // accidental case-jumps). Vertical arrows scroll the active case
+                // when in detail mode.
+                if (mode !== 'detail') return;
                 if (e.key === 'ArrowLeft')  {
                     e.preventDefault();
                     flashStripNav(stripPrev);
-                    scrollTo(currentIndex() - 1);
+                    gotoCase(detailIdx - 1);
                 }
                 if (e.key === 'ArrowRight') {
                     e.preventDefault();
                     flashStripNav(stripNext);
-                    scrollTo(currentIndex() + 1);
+                    gotoCase(detailIdx + 1);
                 }
                 if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                    const active = items[currentIndex()];
+                    const active = items[detailIdx];
                     if (!active) return;
                     e.preventDefault();
                     if (e.key === 'ArrowDown') {
                         const article = active.querySelector('.case-page.case-article-mode');
-                        // First ↓ from the cover lands directly on the article's
-                        // first line (skips the cover's empty bottom). Subsequent
-                        // ↓ presses scroll by ~85% of viewport.
                         if (article && active.scrollTop < article.offsetTop - 40) {
                             article.scrollIntoView({ behavior: 'smooth', block: 'start' });
                             return;
@@ -9397,14 +9485,18 @@
                 });
             });
 
-            // [data-open-case] (cover image, button) now scrolls the slide down
-            // to start of the article instead of opening a modal.
+            // [data-open-case] (cover image, button) scrolls into the article
+            // — but only when already in detail mode. In grid mode the case
+            // card click handler enters detail; we don't want to double-fire
+            // a scrollIntoView while the case is still display:none.
             const openButtons = document.querySelectorAll('[data-open-case]');
             openButtons.forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
                     const slide = btn.closest('.case');
                     if (!slide) return;
+                    const inDetail = slide.classList.contains('is-detail-active');
+                    if (!inDetail) return;        // grid click is handled upstream
+                    e.stopPropagation();
                     const article = slide.querySelector('.case-page.case-article-mode');
                     if (!article) return;
                     article.scrollIntoView({ behavior: 'smooth', block: 'start' });
