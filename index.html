@@ -482,20 +482,76 @@
             pointer-events: none;
         }
 
-        /* The basement section itself — black, full viewport, slides up into view */
+        /* The basement section itself — black, slides up into view but stops short
+           of the top so a strip of the dimmed/blurred hero stays visible. Clicking
+           that strip collapses the showcase back. */
+        :root { --showcase-top-strip: 84px; }
         .showcase {
             position: fixed;
             top: 100vh;             /* off-screen below the hero */
             left: 0;
             right: 0;
-            height: 100vh;
+            height: calc(100vh - var(--showcase-top-strip));
             background: #050608;
             z-index: 7;
             overflow: hidden;
             transition: top 0.85s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
         body.showcase-open .showcase {
+            top: var(--showcase-top-strip);
+        }
+        /* Top strip — sits over the dim/blur hero, intercepts clicks to collapse */
+        .showcase-top-handle {
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
+            height: var(--showcase-top-strip);
+            z-index: 8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.45s ease;
+            background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0.32) 0%,
+                rgba(0, 0, 0, 0.12) 100%);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        body.showcase-open .showcase-top-handle {
+            opacity: 1;
+            pointer-events: auto;
+            transition-delay: 0.25s;
+        }
+        body.case-open .showcase-top-handle {
+            opacity: 0;
+            pointer-events: none;
+            transition-delay: 0s;
+        }
+        .showcase-top-handle .hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--ink);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            opacity: 0.55;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.4);
+            transition: opacity 0.18s, color 0.18s;
+        }
+        .showcase-top-handle .hint .arrow {
+            color: var(--acc);
+            font-size: 0.875rem;
+            line-height: 1;
+        }
+        .showcase-top-handle:hover .hint {
+            opacity: 1;
+            color: var(--acc);
         }
         /* And reciprocally push the hero off the top, like sliding to a basement */
         .stage,
@@ -6116,6 +6172,9 @@
         <span class="showcase-cue-arrow" aria-hidden="true">↓</span>
     </div>
 
+    <button type="button" class="showcase-top-handle" id="showcase-top-handle" aria-label="Collapse showcase">
+        <span class="hint"><span class="arrow">↑</span><span>Click to collapse</span></span>
+    </button>
     <section class="showcase" id="showcase" aria-label="Recent works">
         <div class="showcase-inner">
             <div class="showcase-intro">
@@ -7932,6 +7991,8 @@
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
             });
             back.addEventListener('click', close);
+            const topHandle = document.getElementById('showcase-top-handle');
+            if (topHandle) topHandle.addEventListener('click', close);
 
             // IntersectionObserver: which case is in viewport → .active for entry anim
             const intro = document.querySelector('.showcase-intro');
