@@ -4538,8 +4538,8 @@
 
 <body class="pre-gate" data-theme="green">
 
-    <!-- Perf HUD: always visible while we debug. Hide later by removing this div + the script. -->
-    <div class="perf-hud" id="perf-hud">
+    <!-- Perf HUD: hidden by default, enable with ?perf=1 in URL (e.g. clauderunner.com/rpogorov/?perf=1). -->
+    <div class="perf-hud" id="perf-hud" hidden>
         <span class="perf-fps">— fps</span>
         <span class="perf-jank">jank: 0</span>
     </div>
@@ -6668,11 +6668,14 @@
         })();
     </script>
 
-    <!-- Perf HUD: live FPS + jank counter. Always-on while we debug. -->
+    <!-- Perf HUD: live FPS + jank counter. Enable with ?perf=1 in the URL. -->
     <script>
         (() => {
+            const params = new URLSearchParams(location.search);
+            if (!params.has('perf')) return;
             const hud = document.getElementById('perf-hud');
             if (!hud) return;
+            hud.hidden = false;
             const fpsEl = hud.querySelector('.perf-fps');
             const jankEl = hud.querySelector('.perf-jank');
 
