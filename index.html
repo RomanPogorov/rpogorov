@@ -5834,6 +5834,10 @@
                             <button type="button" class="text-scale-btn" id="text-scale-up" aria-label="Increase text size">A+</button>
                         </div>
                     </div>
+                    <div class="settings-row">
+                        <span class="settings-row-label">// text shadow</span>
+                        <button type="button" class="text-scale-btn shadow-toggle-btn" id="shadow-toggle" aria-pressed="true">ON</button>
+                    </div>
                 </div>
             </div>
             <audio id="ap-audio" loop preload="auto"></audio>
@@ -8823,6 +8827,24 @@
             cursor: default;
             border-color: rgba(var(--acc-rgb), 0.2);
         }
+        /* Wider button for ON / OFF labels */
+        .shadow-toggle-btn {
+            width: auto;
+            min-width: 38px;
+            padding: 0 8px;
+            font-size: 0.5625rem;
+            letter-spacing: 0.18em;
+        }
+        .shadow-toggle-btn[aria-pressed="false"] {
+            color: var(--dim);
+            border-color: rgba(var(--acc-rgb), 0.2);
+        }
+
+        /* Global kill-switch for text-shadow when the user toggles shadow OFF */
+        body.no-text-shadow,
+        body.no-text-shadow * {
+            text-shadow: none !important;
+        }
 
         .ap-btn {
             appearance: none;
@@ -9462,6 +9484,19 @@ See also: Health Samurai Lab: Game of Pools.`,
             apply(cur);
             down.addEventListener('click', () => { apply(cur - STEP); window.__sfx?.tick?.(); });
             up.addEventListener('click',   () => { apply(cur + STEP); window.__sfx?.tick?.(); });
+
+            // Text-shadow on/off toggle (also non-persistent — resets to ON each load)
+            const shadowBtn = document.getElementById('shadow-toggle');
+            if (shadowBtn) {
+                let on = true;
+                shadowBtn.addEventListener('click', () => {
+                    on = !on;
+                    document.body.classList.toggle('no-text-shadow', !on);
+                    shadowBtn.textContent = on ? 'ON' : 'OFF';
+                    shadowBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                    window.__sfx?.tick?.();
+                });
+            }
         })();
     </script>
 
