@@ -3417,7 +3417,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-weight: 400;
             font-size: 11px;
-            letter-spacing: 0.4em;
+            letter-spacing: 0.32em;
             line-height: 1;
             color: var(--acc);
             text-transform: uppercase;
@@ -3426,6 +3426,12 @@
             animation: fadeUp 0.9s 1.4s ease-out forwards;
             padding-left: 0.4em;
             margin-bottom: 18px;
+            white-space: nowrap;
+        }
+        .prompt .name-sep {
+            color: var(--acc);
+            opacity: 0.45;
+            margin: 0 0.4em;
         }
 
         .prompt .role-hero {
@@ -4990,7 +4996,7 @@
                 <span class="dot"></span>
                 <span>Grid · 2026</span>
             </div>
-            <div class="name">Roman Pogorov</div>
+            <div class="name">Roman Pogorov <span class="name-sep">•</span> Designer <span class="name-sep">•</span> Vibe Shipper</div>
             <h1 class="role-hero">Claude Runner</h1>
             <div class="slogan">never the best at <em>one thing</em> — always <em>good enough</em> at many. <span
                     class="slogan-end">it feels like my time has come.</span></div>
