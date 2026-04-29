@@ -487,10 +487,10 @@
            screen where the cases carousel lives. */
         :root {
             --sheet-top: 56px;
+            --sheet-radius: 32px;        /* outer device corner */
             --device-bezel: 14px;        /* bezel thickness around the screen */
+            --screen-radius: 18px;       /* inner screen corner */
             --screen-width: 920px;       /* portrait tablet inner content width */
-            --tablet-bevel: 28px;        /* outer chamfer on the device corners */
-            --screen-bevel: 14px;        /* inner chamfer matching the screen */
         }
         .showcase {
             position: fixed;
@@ -518,60 +518,20 @@
                     rgba(10, 12, 14, 1) 100%);
             z-index: 7;
             overflow: visible;
-            /* Top corners CHAMFERED, bottom flat — clipped by viewport. */
-            clip-path: polygon(
-                0 var(--tablet-bevel),
-                var(--tablet-bevel) 0,
-                calc(100% - var(--tablet-bevel)) 0,
-                100% var(--tablet-bevel),
-                100% 100%,
-                0 100%
-            );
-            -webkit-clip-path: polygon(
-                0 var(--tablet-bevel),
-                var(--tablet-bevel) 0,
-                calc(100% - var(--tablet-bevel)) 0,
-                100% var(--tablet-bevel),
-                100% 100%,
-                0 100%
-            );
-            border-radius: 0;
-            /* Insets stay (visible inside clip), outer ring + halo move to a
-               filter stack so they follow the chamfered silhouette. */
+            /* Top corners rounded, bottom flat — bottom is clipped by viewport. */
+            border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
             box-shadow:
+                /* inner bezel highlight + accent ring (sides + top only) */
                 inset 0 1px 0 rgba(255, 255, 255, 0.06),
-                inset 0 0 0 1px rgba(var(--acc-rgb), 0.18);
-            filter:
-                drop-shadow(0 -1px 0 rgba(var(--acc-rgb), 1))
-                drop-shadow(-1px 0 0 rgba(var(--acc-rgb), 1))
-                drop-shadow(1px 0 0 rgba(var(--acc-rgb), 1))
-                drop-shadow(0 0 18px rgba(var(--acc-rgb), 0.42))
-                drop-shadow(0 0 36px rgba(var(--acc-rgb), 0.18))
-                drop-shadow(0 24px 50px rgba(0, 0, 0, 0.55));
+                inset 1px 0 0 rgba(var(--acc-rgb), 0.18),
+                inset -1px 0 0 rgba(var(--acc-rgb), 0.18),
+                inset 0 1px 0 rgba(var(--acc-rgb), 0.18),
+                /* outer accent halo around top + sides */
+                0 -2px 0 rgba(var(--acc-rgb), 0.55),
+                0 0 22px rgba(var(--acc-rgb), 0.28),
+                0 -28px 60px rgba(0, 0, 0, 0.5);
             transition: top 0.78s cubic-bezier(0.32, 0.72, 0, 1),
                         bottom 0.78s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        /* Slow accent sheen sweeping across the bezel — gives the device a
-           "live" feel. Sits behind everything inside the tablet. */
-        .showcase::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            background: linear-gradient(115deg,
-                transparent 30%,
-                rgba(var(--acc-rgb), 0.16) 48%,
-                rgba(var(--acc-rgb), 0.04) 52%,
-                transparent 70%);
-            mix-blend-mode: screen;
-            transform: translateX(-110%);
-            animation: showcase-sheen 9s ease-in-out 1.6s infinite;
-        }
-        @keyframes showcase-sheen {
-            0%   { transform: translateX(-110%); }
-            55%  { transform: translateX(110%); }
-            100% { transform: translateX(110%); }
         }
         body.showcase-open .showcase {
             top: var(--sheet-top);
@@ -629,33 +589,16 @@
             0%, 60%, 100% { opacity: 0.95; }
             70%, 80%      { opacity: 0.25; }
         }
-        /* Inner screen — holds the case carousel and reads as 'the display'.
-           Chamfered window matching the outer silhouette. */
+        /* Inner screen — holds the case carousel and reads as 'the display'. */
         .showcase-inner {
             position: relative;
             height: 100%;
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
+            border-radius: var(--screen-radius);
             overflow: hidden;
             background: #050608;
-            border-radius: 0;
-            clip-path: polygon(
-                0 var(--screen-bevel),
-                var(--screen-bevel) 0,
-                calc(100% - var(--screen-bevel)) 0,
-                100% var(--screen-bevel),
-                100% 100%,
-                0 100%
-            );
-            -webkit-clip-path: polygon(
-                0 var(--screen-bevel),
-                var(--screen-bevel) 0,
-                calc(100% - var(--screen-bevel)) 0,
-                100% var(--screen-bevel),
-                100% 100%,
-                0 100%
-            );
             box-shadow:
                 inset 0 0 0 1px rgba(var(--acc-rgb), 0.10),
                 inset 0 0 30px rgba(var(--acc-rgb), 0.04);
