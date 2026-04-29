@@ -5436,34 +5436,36 @@
         }
         .skel-text-bar.short { width: 70%; }
 
-        /* Ghost of the real "× HIDE" pill at the top-right of the panel — gives
-           the user a hint of where the close lives once expanded. */
+        /* Ghost of the real "× HIDE" pill at the top-right of the panel — pure
+           skeleton shape, no text. Two thin bars inside hint at the icon + label. */
         .skel-hide-btn {
             position: absolute;
             top: -2px;
             right: 4px;
+            width: 64px;
             height: 22px;
-            padding: 0 10px;
-            border: 1px solid rgba(var(--acc-rgb), 0.45);
-            background: rgba(var(--acc-rgb), 0.06);
-            display: inline-flex;
+            padding: 0 8px;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            background: rgba(var(--acc-rgb), 0.05);
+            display: flex;
             align-items: center;
-            gap: 7px;
-            color: rgba(var(--acc-rgb), 0.65);
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-size: 0.5625rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            line-height: 1;
-            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.2);
+            gap: 6px;
         }
         .skel-hide-btn::before {
-            content: '×';
-            font-size: 0.8125rem;
-            line-height: 1;
-            margin-top: -1px;
-            color: rgba(var(--acc-rgb), 0.85);
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: rgba(var(--acc-rgb), 0.55);
+            border-radius: 1px;
+        }
+        .skel-hide-btn::after {
+            content: '';
+            flex: 1;
+            height: 5px;
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0.45) 0%,
+                rgba(var(--acc-rgb), 0.18) 100%);
+            border-radius: 1px;
         }
         /* Skeleton list needs a bit of top padding so it doesn't overlap the
            ghost hide-pill — mirrors the .hl-pane padding-top: 48 on real. */
@@ -5870,7 +5872,7 @@
                     <span class="ray ray-5"></span>
                     <span class="ray ray-6"></span>
                     <div class="htl-skeleton" aria-hidden="true">
-                        <span class="skel-hide-btn">Hide</span>
+                        <span class="skel-hide-btn"></span>
                         <div class="skel-card">
                             <span class="skel-meta-row">
                                 <span class="skel-meta-bar"></span>
