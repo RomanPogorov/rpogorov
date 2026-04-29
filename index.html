@@ -5214,13 +5214,9 @@
                 rgba(var(--acc-rgb), 0.05) 50%,
                 transparent 88%);
             filter: blur(10px);
-            animation: htl-glow-breathe 4.2s ease-in-out infinite;
+            opacity: 1;
         }
-        @keyframes htl-glow-breathe {
-            0%, 100% { opacity: 0.6;  transform: translateY(-2px) scaleY(0.94); }
-            50%      { opacity: 1;    transform: translateY(0)    scaleY(1);    }
-        }
-        /* Six thin accent rays of varied heights / phases for organic feel */
+        /* Six thin accent rays — static opacity, fixed pixel heights */
         .htl-rays .ray {
             position: absolute;
             top: 0;
@@ -5231,22 +5227,14 @@
                 rgba(var(--acc-rgb), 0.03) 70%,
                 rgba(var(--acc-rgb), 0)    100%);
             box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.16);
-            opacity: 0;
-            transform-origin: top center;
-            animation: htl-ray-pulse 4s ease-in-out infinite;
+            opacity: 0.25;
         }
-        /* Fixed pixel ray heights — independent of the parent's animated mask height */
-        .htl-rays .ray-1 { left: 12%; height: 330px; animation-delay: 0s;    animation-duration: 4.0s; }
-        .htl-rays .ray-2 { left: 28%; height: 420px; animation-delay: 1.4s;  animation-duration: 4.6s; }
-        .htl-rays .ray-3 { left: 44%; height: 280px; animation-delay: 0.7s;  animation-duration: 3.8s; }
-        .htl-rays .ray-4 { left: 60%; height: 460px; animation-delay: 2.2s;  animation-duration: 5.0s; }
-        .htl-rays .ray-5 { left: 76%; height: 370px; animation-delay: 1.8s;  animation-duration: 4.2s; }
-        .htl-rays .ray-6 { left: 90%; height: 250px; animation-delay: 3.0s;  animation-duration: 4.8s; }
-        @keyframes htl-ray-pulse {
-            0%, 100% { opacity: 0;    transform: translateY(-18px) scaleY(0.4); }
-            42%      { opacity: 0.25; transform: translateY(0)     scaleY(1);   }
-            68%      { opacity: 0.16; transform: translateY(4px)   scaleY(1);   }
-        }
+        .htl-rays .ray-1 { left: 12%; height: 330px; }
+        .htl-rays .ray-2 { left: 28%; height: 420px; }
+        .htl-rays .ray-3 { left: 44%; height: 280px; }
+        .htl-rays .ray-4 { left: 60%; height: 460px; }
+        .htl-rays .ray-5 { left: 76%; height: 370px; }
+        .htl-rays .ray-6 { left: 90%; height: 250px; }
         /* When the panel opens, only the skeleton hides. The rays gradient stays behind the panel
            so the same hologram lighting carries through into the expanded state. */
         body.left-pane-open .htl-skeleton { opacity: 0 !important; }
@@ -7297,8 +7285,9 @@
                 rx += (mx - rx) * lerp;
                 ry += (my - ry) * lerp;
 
-                // Walk all tabs once: distance to current pin's anchor + nearest tab to the cursor
+                // Walk all tabs once: distance + rect-containment for current pin & nearest tab.
                 let stillNearCurrent = false;
+                let insideAnyTab = null;       // tab whose rect contains the cursor (any Y)
                 let bestNew = null;
                 let bestNewDist = Infinity;
                 document.querySelectorAll(SNAP_SEL).forEach(t => {
@@ -7307,30 +7296,29 @@
                     const cy = r.top;
                     const d  = Math.hypot(cx - mx, cy - my);
                     const k  = t.dataset.pane || 'snap';
+                    const inside = mx >= r.left && mx <= r.right && my >= r.top && my <= r.bottom;
+                    if (inside) insideAnyTab = { x: cx, y: cy, key: k };
                     if (k === pinKey) {
                         pinAnchor = { x: cx, y: cy };
-                        // Stay pinned if cursor is inside the tab's rect (any Y position works) OR
-                        // within the lateral RELEASE buffer around the anchor.
-                        const inside = mx >= r.left && mx <= r.right && my >= r.top && my <= r.bottom;
                         if (inside || d <= RELEASE_DIST) stillNearCurrent = true;
                     }
                     if (d < bestNewDist) { bestNewDist = d; bestNew = { x: cx, y: cy, key: k, d }; }
                 });
 
                 if (pinKey) {
-                    // Switch pin only if the cursor reaches another tab's center (GRAB radius)
+                    // While pinned: only swap to another tab when cursor reaches its CENTER (GRAB).
+                    // This is the "sticky" feel — the dot resists leaving until the new tab's centroid.
                     if (bestNew && bestNew.key !== pinKey && bestNew.d <= GRAB_DIST) {
                         pinKey = bestNew.key;
                         pinAnchor = { x: bestNew.x, y: bestNew.y };
                     } else if (!stillNearCurrent) {
-                        // Cursor cleared the release zone of the current tab — drop the pin
                         pinKey = null;
                         pinAnchor = null;
                     }
-                } else if (bestNew && bestNew.d <= GRAB_DIST) {
-                    // Free → grab a new pin only when cursor reaches a tab's center
-                    pinKey = bestNew.key;
-                    pinAnchor = { x: bestNew.x, y: bestNew.y };
+                } else if (insideAnyTab) {
+                    // Free → grab the moment the cursor enters a tab anywhere (any Y, any X)
+                    pinKey = insideAnyTab.key;
+                    pinAnchor = { x: insideAnyTab.x, y: insideAnyTab.y };
                 }
 
                 // Compute target position with reluctant-drift while pinned
