@@ -7276,7 +7276,6 @@
             // Spring-physics state for the dot (separate from raw mouse) — light magnetic anchoring.
             let dx = mx, dy = my, vx = 0, vy = 0;
             const SNAP_SEL = '.htl-item';
-            const SNAP_RADIUS = 70;   // px from a tab's top-center — within this, dot pins to it
             let lastSnapKey = null;
 
             function tick() {
@@ -7284,29 +7283,23 @@
                 rx += (mx - rx) * lerp;
                 ry += (my - ry) * lerp;
 
-                // Find the nearest tab anchor (top-border center) and decide whether to pin
+                // Pin only when the cursor is literally over a tab (elementFromPoint hit).
+                // While inside the tab, target blends between the tab's top-center anchor and the cursor
+                // for the "reluctant follow" feel. Outside any tab → no pin, dot follows cursor freely.
                 let pinKey = null;
                 let tx = mx, ty = my;
-                let nearest = null;
-                let nearestDist = Infinity;
-                document.querySelectorAll(SNAP_SEL).forEach(t => {
-                    const r = t.getBoundingClientRect();
+                const el = document.elementFromPoint(mx, my);
+                const snapEl = el && el.closest ? el.closest(SNAP_SEL) : null;
+                if (snapEl) {
+                    const r  = snapEl.getBoundingClientRect();
                     const cx = r.left + r.width / 2;
                     const cy = r.top;
-                    const d  = Math.hypot(cx - mx, cy - my);
-                    if (d < nearestDist) {
-                        nearestDist = d;
-                        nearest = { x: cx, y: cy, key: t.dataset.pane };
-                    }
-                });
-                if (nearest && nearestDist < SNAP_RADIUS) {
-                    // Blend the pin target toward the cursor as it pulls away within the snap radius.
-                    // Stays close to the anchor for most of the travel; only drifts ~22% at the edge —
-                    // the dot really doesn't want to leave until the cursor finally clears the zone.
-                    const w = (nearestDist / SNAP_RADIUS) * 0.22;
-                    tx = nearest.x * (1 - w) + mx * w;
-                    ty = nearest.y * (1 - w) + my * w;
-                    pinKey = nearest.key || 'snap';
+                    const reach = Math.hypot(r.width / 2, r.height / 2) || 1;
+                    const dist  = Math.hypot(cx - mx, cy - my);
+                    const w = Math.min(1, dist / reach) * 0.22;
+                    tx = cx * (1 - w) + mx * w;
+                    ty = cy * (1 - w) + my * w;
+                    pinKey = snapEl.dataset.pane || 'snap';
                 }
 
                 // Pin-state SFX on transitions only — never tab-to-tab directly
