@@ -1060,6 +1060,65 @@
 
         /* hero */
         .cp-hero { padding-bottom: 56px; }
+        /* Case-page intro thumbnail — small echo of the showcase image so the
+           user knows they're inside the same case they just clicked. */
+        .cp-thumb-strip {
+            position: relative;
+            margin-bottom: 32px;
+            overflow: hidden;
+            height: 200px;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            background: #0a0d10;
+            box-shadow:
+                0 0 30px rgba(var(--acc-rgb), 0.15),
+                inset 0 0 40px rgba(var(--acc-rgb), 0.04);
+        }
+        .cp-thumb-strip::before, .cp-thumb-strip::after {
+            content: '';
+            position: absolute;
+            width: 14px; height: 14px;
+            border: 1px solid var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
+            z-index: 2;
+        }
+        .cp-thumb-strip::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .cp-thumb-strip::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+        .cp-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            filter: contrast(1.05) saturate(0.95);
+        }
+        .cp-thumb-tag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 3;
+            padding: 4px 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--acc);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.45);
+        }
+        .cp-light .cp-thumb-strip {
+            border-color: rgba(0, 0, 0, 0.12);
+            background: #f4f4f4;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+        .cp-light .cp-thumb-strip::before, .cp-light .cp-thumb-strip::after {
+            border-color: var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.4);
+        }
+        .cp-light .cp-thumb-tag {
+            background: rgba(255, 255, 255, 0.78);
+            border-color: rgba(var(--acc-rgb), 0.4);
+            color: var(--acc);
+        }
         .cp-meta {
             font-size: 0.6875rem;
             letter-spacing: 0.22em;
@@ -6332,6 +6391,10 @@
             <span>back to showcase</span>
         </button>
         <div class="cp-inner">
+            <div class="cp-thumb-strip" aria-hidden="true">
+                <span class="cp-thumb-tag">CS/01 · Cover</span>
+                <img class="cp-thumb" src="showcase/cases/cs01-americor.png" alt="">
+            </div>
             <header class="cp-hero">
                 <div class="cp-meta">
                     <span class="cp-meta-no">CS/01</span>
@@ -6479,6 +6542,10 @@
             <span>back to showcase</span>
         </button>
         <div class="cp-inner">
+            <div class="cp-thumb-strip" aria-hidden="true">
+                <span class="cp-thumb-tag">CS/02 · Cover</span>
+                <img class="cp-thumb" src="showcase/cases/cs02-aidbox.png" alt="">
+            </div>
             <header class="cp-hero">
                 <div class="cp-meta">
                     <span class="cp-meta-no">CS/02</span>
