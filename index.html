@@ -9558,46 +9558,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                     requestAnimationFrame(frame);
                 }
 
-                // Effect 3 — Blur fade: blur+opacity out, swap, blur+opacity in
-                function blurFade(el, newText, duration = 600) {
-                    el.style.transition = 'filter 0.28s ease, opacity 0.28s ease';
-                    el.style.filter = 'blur(7px)';
-                    el.style.opacity = '0';
-                    setTimeout(() => {
-                        el.textContent = newText;
-                        el.style.filter = 'blur(0)';
-                        el.style.opacity = '1';
-                        setTimeout(() => {
-                            el.style.transition = '';
-                            el.style.filter = '';
-                            el.style.opacity = '';
-                        }, 320);
-                    }, 280);
-                }
-
-                // Effect 4 — Slide ticker: old slides up + fades out, new slides up from below
-                function slideTicker(el, newText, duration = 480) {
-                    el.style.transition = 'transform 0.22s ease-in, opacity 0.22s ease-in';
-                    el.style.transform = 'translateY(-12px)';
-                    el.style.opacity = '0';
-                    setTimeout(() => {
-                        el.textContent = newText;
-                        el.style.transition = 'none';
-                        el.style.transform = 'translateY(12px)';
-                        // force reflow then animate in
-                        void el.offsetWidth;
-                        el.style.transition = 'transform 0.24s ease-out, opacity 0.24s ease-out';
-                        el.style.transform = 'translateY(0)';
-                        el.style.opacity = '1';
-                        setTimeout(() => {
-                            el.style.transition = '';
-                            el.style.transform = '';
-                            el.style.opacity = '';
-                        }, 260);
-                    }, 220);
-                }
-
-                const EFFECTS = [decode, glitch, blurFade, slideTicker];
+                const EFFECTS = [decode, glitch];
                 let roleIdx = 0;
                 let fxIdx = 0;
                 setInterval(() => {
@@ -9605,7 +9566,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                     const fx = EFFECTS[fxIdx];
                     fxIdx = (fxIdx + 1) % EFFECTS.length;
                     fx(target, ROLES[roleIdx]);
-                }, 7000);
+                }, 4500);
             })();
 
             // Text-shadow on/off toggle (also non-persistent — resets to ON each load)
