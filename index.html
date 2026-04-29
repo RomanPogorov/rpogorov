@@ -2003,6 +2003,32 @@
         .am-media-frame[data-aspect="16-9"]  { aspect-ratio: 16 / 9; }
         .am-media-frame[data-aspect="4-3"]   { aspect-ratio: 4 / 3; }
         .am-media-frame[data-aspect="auto"]  { aspect-ratio: auto; }
+        /* Scroll-within: image stretches to full natural size; frame scrolls
+           horizontally. Used for wide diagrams that should be readable inside
+           the case without shrinking. */
+        .am-media-frame.scroll-x {
+            aspect-ratio: auto;
+            height: clamp(360px, 52vh, 560px);
+            overflow-x: auto;
+            overflow-y: hidden;
+            cursor: grab;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
+        }
+        .am-media-frame.scroll-x:active { cursor: grabbing; }
+        .am-media-frame.scroll-x::-webkit-scrollbar { height: 6px; }
+        .am-media-frame.scroll-x::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, rgba(var(--acc-rgb), 0.55), rgba(var(--acc-rgb), 0.22));
+            border-radius: 4px;
+        }
+        .am-media-frame.scroll-x > img,
+        .am-media-frame.scroll-x > video {
+            width: auto;
+            min-width: 100%;
+            height: 100%;
+            max-width: none;
+            object-fit: cover;
+        }
         .am-media-frame img,
         .am-media-frame video {
             width: 100%;
@@ -7390,10 +7416,10 @@
                 <p>Поскольку документации не было, я начал с интервью — с аналитиками, бизнесом, разработчиками. Восстанавливал логику продукта по кускам.</p>
                 <p>Чтобы валидировать своё понимание, собрал <strong>Product Flow Diagram</strong> — end-to-end карту продукта со всеми ключевыми флоу, ветвлениями по бизнес-правилам (например, разделение клиентов по сумме долга — Primary Flow для долгов &gt;$7500 и Secondary Flow для меньших) и состояниями пользователя на каждом этапе. Это стало <em>первым в компании единым источником правды</em> о том, как устроен продукт.</p>
                 <figure class="am-media" data-media data-kind="image" data-src="showcase/cs01/high-level.png" data-stub="high-level.png" data-caption="High-level Product Flow — end-to-end карта продукта Americor со всеми флоу и ветвлениями">
-                    <div class="am-media-frame" data-aspect="16-9">
-                        <img src="showcase/cs01/high-level.png" alt="Product Flow Diagram — end-to-end карта продукта" loading="lazy" style="object-fit:contain;background:#f6f8fb;">
+                    <div class="am-media-frame scroll-x" data-scroll-x>
+                        <img src="showcase/cs01/high-level.png" alt="Product Flow Diagram — end-to-end карта продукта" loading="lazy" style="background:#f6f8fb;">
                     </div>
-                    <div class="am-media-caption"><b>↑</b> end-to-end карта продукта со всеми флоу и ветвлениями. Клик — fullscreen.</div>
+                    <div class="am-media-caption"><b>↔</b> Тянуть мышью / drag — диаграмма скроллится в полную ширину. Клик не по диаграмме — lightbox на весь экран.</div>
                 </figure>
 
                 <h3 class="am-h3">2. Аудит существующих макетов и работающего продукта</h3>
@@ -11166,8 +11192,32 @@ See also: Health Samurai Lab: Game of Pools.`,
 
             tiles.forEach((tile, i) => {
                 const trigger = tile.querySelector('.am-media-frame') || tile;
-                trigger.addEventListener('click', () => open(i));
-                trigger.style.cursor = 'zoom-in';
+                // Frames with scroll-x become drag-to-pan + click-to-lightbox
+                // (only fire lightbox if the user didn't actually drag).
+                if (trigger.classList.contains('scroll-x')) {
+                    let down = false, dragged = false, startX = 0, startScroll = 0;
+                    trigger.addEventListener('mousedown', (e) => {
+                        down = true; dragged = false;
+                        startX = e.pageX;
+                        startScroll = trigger.scrollLeft;
+                    });
+                    trigger.addEventListener('mousemove', (e) => {
+                        if (!down) return;
+                        const dx = e.pageX - startX;
+                        if (Math.abs(dx) > 4) dragged = true;
+                        trigger.scrollLeft = startScroll - dx;
+                    });
+                    const stop = () => { down = false; };
+                    trigger.addEventListener('mouseup', stop);
+                    trigger.addEventListener('mouseleave', stop);
+                    trigger.addEventListener('click', (e) => {
+                        if (dragged) { e.preventDefault(); e.stopPropagation(); return; }
+                        open(i);
+                    });
+                } else {
+                    trigger.addEventListener('click', () => open(i));
+                    trigger.style.cursor = 'zoom-in';
+                }
             });
 
             closeBtn.addEventListener('click', close);
