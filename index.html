@@ -1584,6 +1584,19 @@
             background: var(--acc);
             border-radius: 50%;
             box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.9);
+            transition: width 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
+                        height 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
+                        margin 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
+                        box-shadow 0.18s ease;
+        }
+        /* Cursor magnet-snap state — dot grows + glows when anchored to a tab */
+        body.cur-snap .cur-dot {
+            width: 8px;
+            height: 8px;
+            margin: -4px 0 0 -4px;
+            box-shadow:
+                0 0 10px rgba(var(--acc-rgb), 0.9),
+                0 0 22px rgba(var(--acc-rgb), 0.55);
         }
         .cur-ring {
             width: 24px;
@@ -7272,11 +7285,45 @@
             document.addEventListener('mouseenter', show);
 
             const lerp = 0.22;
+            // Spring-physics state for the dot (separate from raw mouse), used for the magnetic snap effect.
+            let dx = mx, dy = my, vx = 0, vy = 0;
+            // Selectors that the dot snaps to. Currently: the left tab strip items (Articles / Cases).
+            const SNAP_SEL = '.htl-item';
+            let lastSnapKey = null;
+
             function tick() {
                 requestAnimationFrame(tick);
                 rx += (mx - rx) * lerp;
                 ry += (my - ry) * lerp;
-                dot.style.transform  = `translate(${mx}px, ${my}px)`;
+
+                // Find a snap target under the cursor (tab item) — pull dot to its center
+                let snapEl = null;
+                const el = document.elementFromPoint(mx, my);
+                if (el && el.closest) snapEl = el.closest(SNAP_SEL);
+
+                let tx = mx, ty = my;
+                if (snapEl) {
+                    const r = snapEl.getBoundingClientRect();
+                    tx = r.left + r.width  / 2;
+                    ty = r.top  + r.height / 2;
+                }
+                // Snap-state class for visual feedback + minimalist sound on transition
+                const snapKey = snapEl ? (snapEl.dataset.pane || 'snap') : null;
+                if (snapKey !== lastSnapKey) {
+                    if (snapKey !== null) window.__sfx?.snap?.();
+                    document.body.classList.toggle('cur-snap', !!snapKey);
+                    lastSnapKey = snapKey;
+                }
+
+                // Spring physics — softer + more friction when snapped (clearly anchors), stiffer when free
+                const k = snapEl ? 0.18 : 0.42;     // stiffness
+                const f = snapEl ? 0.62 : 0.55;     // damping (kept velocity)
+                vx = vx * f + (tx - dx) * k;
+                vy = vy * f + (ty - dy) * k;
+                dx += vx;
+                dy += vy;
+
+                dot.style.transform  = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
                 ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
             }
             requestAnimationFrame(tick);
@@ -7385,6 +7432,11 @@
             const SFX = {
                 hover:    gate(() => tone({ freq: 1500, dur: 0.04, type: 'triangle', gain: 0.025 })),
                 tick:     gate(() => tone({ freq: 3200, dur: 0.018, type: 'sine', gain: 0.03 })),
+                /* tiny double-ping for cursor snap to a tab — minimalist, attention-light */
+                snap:     gate(() => {
+                    tone({ freq: 1800, dur: 0.022, type: 'sine', gain: 0.030, attack: 0.001 });
+                    setTimeout(() => tone({ freq: 2600, dur: 0.018, type: 'sine', gain: 0.020, attack: 0.001 }), 28);
+                }),
                 click:    gate(() => { tone({ freq: 2400, dur: 0.03, type: 'square', gain: 0.04 }); noiseBurst({ dur: 0.025, gain: 0.025 }); }),
                 open:     gate(() => sweep({ f1: 380, f2: 1900, dur: 0.32, type: 'sine', gain: 0.07 })),
                 close:    gate(() => sweep({ f1: 1700, f2: 320, dur: 0.22, type: 'sine', gain: 0.05 })),
