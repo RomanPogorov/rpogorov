@@ -9261,22 +9261,21 @@ See also: Health Samurai Lab: Game of Pools.`,
                 const RAYS_MIN    = 80;
                 const RAYS_MAX    = 460;
                 let skelTarget = 0;
-                let prox = 0;              // 0..1, distance-driven multiplier for rays max height
+                let prox = 0;              // 0..1 cursor-proximity factor
                 let skelCur = 0;
-                const PERIOD = 5.5;
-                const start = performance.now();
+                let raysCur = RAYS_MIN;
 
-                function tick(now) {
+                function tick() {
                     requestAnimationFrame(tick);
                     // Skeleton opacity lerps toward target
                     skelCur += (skelTarget - skelCur) * 0.2;
                     skelEl.style.opacity = skelCur.toFixed(3);
-                    // Rays height: sine-breathing scaled by proximity
-                    const t = ((now - start) / 1000) * (Math.PI * 2 / PERIOD);
-                    const breath = (Math.sin(t) + 1) / 2;     // 0..1
-                    const span = (RAYS_MAX - RAYS_MIN) * prox; // 0 when far, full at tabs
-                    const h = RAYS_MIN + span * breath;
-                    raysEl.style.height = h.toFixed(0) + 'px';
+                    // Rays mask height: monotonic — only grows (never shrinks back).
+                    const targetH = RAYS_MIN + (RAYS_MAX - RAYS_MIN) * prox;
+                    if (targetH > raysCur) {
+                        raysCur += (targetH - raysCur) * 0.18;
+                        raysEl.style.height = raysCur.toFixed(0) + 'px';
+                    }
                 }
                 requestAnimationFrame(tick);
 
