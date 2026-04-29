@@ -494,13 +494,18 @@
         }
         .showcase {
             position: fixed;
-            /* Start fully off-screen + 40px below the viewport so the top of
-               the device (bezel + glow) doesn't peek above the bottom edge. */
+            /* Slide up from below: collapsed top is just past viewport bottom
+               so nothing of the device peeks above. */
             top: calc(100vh + 40px);
             left: var(--sheet-side);
             right: var(--sheet-side);
-            height: calc(100vh - var(--sheet-top) - var(--sheet-side));
-            padding: var(--device-bezel);
+            /* Tablet extends ALL the way down to viewport bottom (and a bit
+               beyond, so the bottom edge is clipped horizontally by the viewport
+               instead of showing rounded corners — feels like the device goes
+               off-screen at the bottom). */
+            bottom: -40px;
+            height: auto;
+            padding: var(--device-bezel) var(--device-bezel) 0 var(--device-bezel);
             box-sizing: border-box;
             /* Brushed-metal-ish bezel: dark with a faint sheen and accent edge. */
             background:
@@ -509,17 +514,21 @@
                     rgba(14, 16, 18, 1) 24%,
                     rgba(10, 12, 14, 1) 100%);
             z-index: 7;
-            overflow: visible;            /* allow camera dot / side detail */
-            border-radius: var(--sheet-radius);
+            overflow: visible;
+            /* Top corners rounded, bottom flat — bottom is clipped by viewport. */
+            border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
             box-shadow:
-                /* inner bezel highlight + accent ring */
+                /* inner bezel highlight + accent ring (sides + top only) */
                 inset 0 1px 0 rgba(255, 255, 255, 0.06),
-                inset 0 0 0 1px rgba(var(--acc-rgb), 0.18),
-                /* outer 1px accent ring + halo + drop shadow */
-                0 0 0 1px rgba(var(--acc-rgb), 0.55),
+                inset 1px 0 0 rgba(var(--acc-rgb), 0.18),
+                inset -1px 0 0 rgba(var(--acc-rgb), 0.18),
+                inset 0 1px 0 rgba(var(--acc-rgb), 0.18),
+                /* outer accent halo around top + sides */
+                0 -2px 0 rgba(var(--acc-rgb), 0.55),
                 0 0 22px rgba(var(--acc-rgb), 0.28),
-                0 28px 60px rgba(0, 0, 0, 0.65);
-            transition: top 0.78s cubic-bezier(0.32, 0.72, 0, 1);
+                0 -28px 60px rgba(0, 0, 0, 0.5);
+            transition: top 0.78s cubic-bezier(0.32, 0.72, 0, 1),
+                        bottom 0.78s cubic-bezier(0.32, 0.72, 0, 1);
         }
         body.showcase-open .showcase {
             top: var(--sheet-top);
@@ -946,12 +955,14 @@
             .case-media { min-height: 38vh; }
         }
 
-        /* Carousel nav — floating at bottom of basement */
+        /* Carousel nav — floats inside the screen, clear of the off-screen
+           bottom cutoff (showcase extends 40px below the viewport so we lift
+           the nav 96px above the inner bottom). */
         .cases-nav {
             position: absolute;
             left: 0;
             right: 0;
-            bottom: 44px;
+            bottom: 96px;
             display: flex;
             align-items: center;
             justify-content: center;
