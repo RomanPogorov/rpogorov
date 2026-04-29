@@ -718,13 +718,14 @@
             display: grid;
             /* Portrait tablet: stack image on top, body below */
             grid-template-columns: 1fr;
-            grid-template-rows: auto auto;
-            gap: 28px;
-            padding: 48px 56px 140px;
+            grid-template-rows: auto 1fr;
+            gap: 22px;
+            padding: 56px 56px 132px;
             position: relative;
             box-sizing: border-box;
             align-items: start;
             align-content: start;
+            overflow: hidden;
         }
         /* Faint grid behind every case — same vibe as the hero's .grid */
         .case::before {
@@ -749,11 +750,12 @@
             align-items: center;
             justify-content: center;
             /* Fixed 16:10 frame — every case media reads the same regardless of
-               viewport orientation or the underlying image's aspect ratio. */
+               viewport orientation or the underlying image's aspect ratio.
+               Capped vertically so case-body has room below. */
             aspect-ratio: 16 / 10;
             width: 100%;
             height: auto;
-            max-height: 76vh;
+            max-height: 48vh;
             min-height: 0;
             box-shadow:
                 0 0 60px rgba(var(--acc-rgb), 0.18),
@@ -770,6 +772,19 @@
             transform: translateY(0) scale(1);
             opacity: 1;
             filter: blur(0) brightness(1);
+        }
+        /* Dark gradient at the top of the image where the intro tag floats —
+           so the white-on-image text stays legible without being covered. */
+        .case-media .case-media-top-gradient {
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 64px;
+            z-index: 2;
+            background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0.7) 0%,
+                rgba(0, 0, 0, 0.3) 60%,
+                transparent 100%);
+            pointer-events: none;
         }
         /* Corner ticks on media frame */
         .case-media::before, .case-media::after {
@@ -905,10 +920,10 @@
         .case-no::before { content: '◆ '; opacity: 0.7; }
         .case-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.75rem, 3.2vw, 3rem);
+            font-size: clamp(1.5rem, 2.2vw, 2.125rem);
             font-weight: 700;
-            margin: 14px 0 0;
-            line-height: 1.1;
+            margin: 8px 0 0;
+            line-height: 1.15;
             color: var(--ink);
             letter-spacing: 0.01em;
         }
@@ -960,10 +975,24 @@
             .case-media { min-height: 38vh; }
         }
 
-        /* Carousel nav — floats inside the screen, clear of the off-screen
-           bottom cutoff (showcase extends 40px below the viewport so we lift
-           the nav 96px above the inner bottom). */
+        /* Carousel arrows hug the left/right sides of the tablet, dots sit at
+           the bottom centre. Clicking an arrow doesn't escape the tablet so
+           click-outside-to-close still works. */
         .cases-nav {
+            position: absolute;
+            inset: 0;
+            display: contents;            /* let arrows + dots position themselves */
+            z-index: 5;
+        }
+        .cases-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+        }
+        #cases-prev { left: 14px; }
+        #cases-next { right: 14px; }
+        .cases-dots {
             position: absolute;
             left: 0;
             right: 0;
@@ -971,26 +1000,43 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 18px;
+            gap: 8px;
             z-index: 5;
+            margin: 0;
+            padding: 0;
+            list-style: none;
         }
         .cases-arrow {
             appearance: none;
-            background: transparent;
-            border: 1px solid rgba(var(--acc-rgb), 0.4);
-            color: var(--ink);
-            font-size: 0.875rem;
-            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(var(--acc-rgb), 0.35);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9375rem;
+            line-height: 1;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
             cursor: pointer;
-            transition: border-color .15s, color .15s, background .15s, transform .12s;
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55);
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.45),
+                0 0 12px rgba(var(--acc-rgb), 0.18);
+            transition: border-color .18s, color .18s, background .18s, transform .15s, box-shadow .18s;
         }
         .cases-arrow:hover {
             border-color: var(--acc);
-            color: var(--acc);
-            background: rgba(var(--acc-rgb), 0.08);
+            color: #fff;
+            background: rgba(var(--acc-rgb), 0.18);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 18px rgba(var(--acc-rgb), 0.45);
         }
-        .cases-arrow:active { transform: scale(0.92); }
-        .cases-arrow:disabled { opacity: 0.35; cursor: default; }
+        .cases-arrow:active { transform: translateY(-50%) scale(0.92); }
+        .cases-arrow:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
         .cases-dots {
             list-style: none;
             margin: 0;
@@ -6377,6 +6423,7 @@
                 <article class="case" data-case="cs01">
                     <div class="case-media is-openable" data-open-case="cs01" role="button" tabindex="0" aria-label="Open Americor case study">
                         <img src="showcase/cases/cs01-americor.png" alt="Americor multi-brand design system">
+                        <div class="case-media-top-gradient" aria-hidden="true"></div>
                         <div class="case-media-open-cue" aria-hidden="true">
                             <span>Press</span>
                             <kbd class="case-key">↓</kbd>
@@ -6400,6 +6447,7 @@
                 <article class="case" data-case="cs02">
                     <div class="case-media is-openable" data-open-case="cs02" role="button" tabindex="0" aria-label="Open Health Samurai case study">
                         <img src="showcase/cases/cs02-aidbox.png" alt="Health Samurai design system">
+                        <div class="case-media-top-gradient" aria-hidden="true"></div>
                         <div class="case-media-open-cue" aria-hidden="true">
                             <span>Press</span>
                             <kbd class="case-key">↓</kbd>
