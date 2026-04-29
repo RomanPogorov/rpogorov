@@ -491,7 +491,9 @@
         }
         .showcase {
             position: fixed;
-            top: 100vh;
+            /* Start fully off-screen + 32px below the viewport so the top edge
+               (border + glow + shadow) doesn't peek out behind the hero. */
+            top: calc(100vh + 32px);
             left: var(--sheet-side);
             right: var(--sheet-side);
             height: calc(100vh - var(--sheet-top) - var(--sheet-side));
@@ -536,10 +538,11 @@
         body.showcase-open .scanlines,
         body.showcase-open .vignette,
         body.showcase-open .hud {
+            transform: scale(0.92) translateY(-1.6vh);
             opacity: 0.62;
             filter: blur(1px);
-            clip-path: inset(var(--sheet-side) var(--sheet-side) var(--sheet-side) var(--sheet-side) round var(--sheet-radius));
-            -webkit-clip-path: inset(var(--sheet-side) var(--sheet-side) var(--sheet-side) var(--sheet-side) round var(--sheet-radius));
+            clip-path: inset(0 0 0 0 round var(--sheet-radius));
+            -webkit-clip-path: inset(0 0 0 0 round var(--sheet-radius));
             pointer-events: none;
         }
         body.showcase-open .prompt {
