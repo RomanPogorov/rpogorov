@@ -482,22 +482,36 @@
             pointer-events: none;
         }
 
-        /* The basement section itself — black, full viewport, slides up into view */
+        /* iOS-style sheet stack: when the showcase opens, the hero clips to a
+           rounded inset card and the showcase rises as another rounded card. */
+        :root {
+            --sheet-side: 24px;
+            --sheet-top: 48px;
+            --sheet-radius: 22px;
+        }
         .showcase {
             position: fixed;
-            top: 100vh;             /* off-screen below the hero */
-            left: 0;
-            right: 0;
-            height: 100vh;
+            top: 100vh;
+            left: var(--sheet-side);
+            right: var(--sheet-side);
+            height: calc(100vh - var(--sheet-top) - var(--sheet-side));
             background: #050608;
             z-index: 7;
             overflow: hidden;
+            border-radius: var(--sheet-radius);
+            box-shadow:
+                0 -2px 0 rgba(var(--acc-rgb), 0.45),
+                0 -18px 60px rgba(0, 0, 0, 0.55),
+                0 0 0 1px rgba(var(--acc-rgb), 0.35);
             transition: top 0.85s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
         body.showcase-open .showcase {
-            top: 0;
+            top: var(--sheet-top);
         }
-        /* And reciprocally push the hero off the top, like sliding to a basement */
+        /* Hero layers clip to a rounded inset rectangle in showcase mode — the
+           old page reads as a tile with visible edges behind the rising sheet.
+           Base clip-path: inset(0) so both states share the same shape and the
+           browser can animate clip-path interpolation. */
         .stage,
         .grid,
         .horizon,
@@ -506,7 +520,14 @@
         .vignette,
         .hud,
         .prompt {
-            transition: transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease, filter 0.6s ease;
+            clip-path: inset(0 0 0 0 round 0);
+            -webkit-clip-path: inset(0 0 0 0 round 0);
+            transition:
+                transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1),
+                clip-path 0.85s cubic-bezier(0.2, 0.9, 0.3, 1),
+                -webkit-clip-path 0.85s cubic-bezier(0.2, 0.9, 0.3, 1),
+                opacity 0.5s ease,
+                filter 0.6s ease;
         }
         body.showcase-open .stage,
         body.showcase-open .grid,
@@ -515,9 +536,10 @@
         body.showcase-open .scanlines,
         body.showcase-open .vignette,
         body.showcase-open .hud {
-            transform: translateY(-12vh) scale(0.96);
-            opacity: 0.3;
-            filter: blur(6px);
+            opacity: 0.62;
+            filter: blur(1px);
+            clip-path: inset(var(--sheet-side) var(--sheet-side) var(--sheet-side) var(--sheet-side) round var(--sheet-radius));
+            -webkit-clip-path: inset(var(--sheet-side) var(--sheet-side) var(--sheet-side) var(--sheet-side) round var(--sheet-radius));
             pointer-events: none;
         }
         body.showcase-open .prompt {
