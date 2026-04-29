@@ -5255,7 +5255,9 @@
             gap: 8px;
             padding: 0 6px;
             pointer-events: none;
-            opacity: 0.1;
+            /* Opacity is driven by JS proximity tracker (cursor distance to tab strip).
+               Starts invisible — only the rays gradient is shown by default. */
+            opacity: 0;
             mask-image: linear-gradient(180deg,
                 rgba(0, 0, 0, 0.95) 0%,
                 rgba(0, 0, 0, 0.55) 35%,
@@ -5266,9 +5268,7 @@
                 rgba(0, 0, 0, 0.55) 35%,
                 rgba(0, 0, 0, 0.18) 70%,
                 transparent 100%);
-            transition: opacity 0.35s ease;
         }
-        .htl-tabs:hover .htl-skeleton { opacity: 0.4; }
         .skel-card {
             position: relative;
             height: 56px;
@@ -9092,6 +9092,50 @@ See also: Health Samurai Lab: Game of Pools.`,
             });
 
             // (removed grid glitch scheduler per Roman's request — drift continues, glitch is gone)
+
+            // Skeleton-preview proximity reveal — when cursor approaches the tab strip, the placeholder
+            // cards fade in. Far away = invisible (only the rays gradient shows). Mapped via distance.
+            const skelEl = document.querySelector('.htl-skeleton');
+            const tabsBox = document.querySelector('.htl-tabs');
+            if (skelEl && tabsBox) {
+                const NEAR = 80;   // within this distance — full target opacity
+                const FAR  = 360;  // beyond this — invisible
+                const PEAK = 0.45;
+                let target = 0;
+                let cur = 0;
+                let raf = null;
+                function animate() {
+                    cur += (target - cur) * 0.18;
+                    if (Math.abs(target - cur) < 0.005) {
+                        cur = target;
+                        skelEl.style.opacity = cur.toFixed(3);
+                        raf = null;
+                        return;
+                    }
+                    skelEl.style.opacity = cur.toFixed(3);
+                    raf = requestAnimationFrame(animate);
+                }
+                document.addEventListener('mousemove', (e) => {
+                    if (body.classList.contains('left-pane-open') ||
+                        body.classList.contains('engaged') ||
+                        body.classList.contains('dw-open') ||
+                        body.classList.contains('reader-open')) {
+                        target = 0;
+                    } else {
+                        const r = tabsBox.getBoundingClientRect();
+                        // Distance from cursor to nearest edge of the tab strip (clamped >=0)
+                        const dx = Math.max(0, Math.max(r.left - e.clientX, e.clientX - r.right));
+                        const dy = Math.max(0, Math.max(r.top  - e.clientY, e.clientY - r.bottom));
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist <= NEAR) target = PEAK;
+                        else if (dist >= FAR) target = 0;
+                        else target = PEAK * (1 - (dist - NEAR) / (FAR - NEAR));
+                    }
+                    if (!raf) raf = requestAnimationFrame(animate);
+                });
+                // Reset to 0 when leaving the window so skeleton doesn't get stuck visible
+                document.addEventListener('mouseleave', () => { target = 0; if (!raf) raf = requestAnimationFrame(animate); });
+            }
 
             // Random stylish glitch on the collapsed tab strip — fires only while the panel is closed
             // and only after the audio gate has been dismissed (so it doesn't run on the gate).
