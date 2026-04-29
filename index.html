@@ -1149,14 +1149,21 @@
             background: rgba(var(--acc-rgb), 0.18);
         }
 
+        /* Case page lives INSIDE the tablet's screen area now — same width as
+           the screen, slides up from the bottom of the tablet, scrolls within
+           its own bounds. No more fullscreen modal. */
         .case-page {
             position: fixed;
-            inset: 0;
+            top: calc(var(--sheet-top) + var(--device-bezel));
+            left: 50%;
+            bottom: 0;
+            width: min(var(--screen-width), calc(100vw - 64px - 2 * var(--device-bezel)));
+            transform: translate(-50%, 100%);
             z-index: 35;
             background: #050505;
             color: #ffffff;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            transform: translateY(100%);
+            border-radius: var(--screen-radius) var(--screen-radius) 0 0;
             transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
             overflow: hidden;
             pointer-events: none;
@@ -1164,7 +1171,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
         body.case-open .case-page.open {
-            transform: translateY(0);
+            transform: translate(-50%, 0);
             pointer-events: auto;
             overflow-y: auto;
             overflow-x: hidden;
@@ -1178,9 +1185,9 @@
         }
 
         .cp-close {
-            position: fixed;
-            top: 22px;
-            right: 24px;
+            position: absolute;
+            top: 18px;
+            right: 18px;
             z-index: 50;
             appearance: none;
             background: rgba(5,5,5,0.6);
