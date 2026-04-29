@@ -4840,9 +4840,10 @@
         /* Left panel — mirror of .hud-right */
         .hud-left-articles {
             position: fixed;
-            top: 0;
+            /* Leave clearance for // signal at top and // vibe settings at bottom of the existing left HUD */
+            top: 88px;
             left: 0;
-            bottom: 0;
+            bottom: 88px;
             width: clamp(300px, 30vw, 460px);
             perspective: 1100px;
             perspective-origin: -10% 50%;
@@ -4859,7 +4860,7 @@
         }
         .hud-left-stack {
             position: absolute;
-            inset: 28px 28px 28px 32px;
+            inset: 16px 28px 16px 32px;
             display: flex;
             flex-direction: column;
             transform-origin: 0 50%;
