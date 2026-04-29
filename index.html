@@ -653,20 +653,32 @@
         }
 
         /* Floating intro tag, top-left of basement */
+        /* Terminal bar — pinned to the top of the tablet's screen, content
+           scrolls UNDER it. Dark backdrop + accent bottom border. */
         .showcase-intro {
             position: absolute;
-            top: 18px;
-            left: 32px;
-            right: 32px;
-            z-index: 5;
+            top: 0;
+            left: 0;
+            right: 0;
+            min-height: 64px;
+            padding: 12px 130px 10px 26px;     /* right pad clears Close button */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 12;
             pointer-events: none;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            background: linear-gradient(to bottom,
+                rgba(6, 8, 10, 0.95) 0%,
+                rgba(6, 8, 10, 0.85) 78%,
+                rgba(6, 8, 10, 0) 100%);
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.32);
+            box-shadow: 0 1px 0 rgba(var(--acc-rgb), 0.18),
+                        0 6px 14px rgba(0, 0, 0, 0.35);
+            transition: opacity 0.5s ease;
         }
-        /* Intro stays readable on every case — was fading to 0.18 from cs02 on. */
-        .showcase-intro.faded {
-            opacity: 0.85;
-            transform: none;
-        }
+        /* Intro never fades anymore — it's the persistent terminal strip. */
+        .showcase-intro.faded { opacity: 1; }
         .showcase-tag {
             color: var(--acc);
             font-family: 'JetBrains Mono', monospace;
@@ -736,7 +748,7 @@
             grid-template-columns: 1fr;
             grid-template-rows: auto 1fr;
             gap: 22px;
-            padding: 56px 56px 132px;
+            padding: 88px 56px 132px;        /* clear of the 64px terminal bar */
             box-sizing: border-box;
             align-items: start;
             align-content: start;
@@ -755,9 +767,16 @@
             background: transparent;
         }
         .case-page.case-article-mode > .cp-close { display: none; }
+        /* Cover already shows the case image in the slide above — drop the
+           duplicate thumb strip from the inline article. */
+        .case-page.case-article-mode .cp-thumb-strip { display: none; }
         .case-page.case-article-mode .cp-inner {
             padding: 36px 40px 96px;
         }
+        /* When user hits ↓ to start reading, the article should land with its
+           first line tucked just under the persistent terminal strip (~64px). */
+        .case { scroll-padding-top: 64px; }
+        .case-page.case-article-mode { scroll-margin-top: 64px; }
         /* Light variant inside the dark tablet — make its background fill the
            inline case so it reads as a clear visual break from the cover. */
         .case-page.case-article-mode.cp-light {
@@ -1012,23 +1031,39 @@
             .case-media { min-height: 38vh; }
         }
 
-        /* Carousel arrows hug the left/right sides of the tablet, dots sit at
-           the bottom centre. Clicking an arrow doesn't escape the tablet so
-           click-outside-to-close still works. */
+        /* Carousel arrows live OUTSIDE the tablet, in the gutter between the
+           tablet and the viewport edges. Dots stay inside, bottom centre. */
         .cases-nav {
             position: absolute;
             inset: 0;
-            display: contents;            /* let arrows + dots position themselves */
+            display: contents;
             z-index: 5;
         }
         .cases-arrow {
-            position: absolute;
+            position: fixed;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 5;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
         }
-        #cases-prev { left: 14px; }
-        #cases-next { right: 14px; }
+        body.showcase-open .cases-arrow {
+            opacity: 1;
+            pointer-events: auto;
+            transition-delay: 0.45s;
+        }
+        /* Halfway between viewport edge and tablet edge. Tablet width is
+           min(--screen-width + 2*bezel, 100vw - 64). Half of that is the
+           horizontal radius from screen center. */
+        #cases-prev {
+            right: calc(50% + min((var(--screen-width) + 2 * var(--device-bezel)) / 2, 50vw - 32px) + 18px);
+            left: auto;
+        }
+        #cases-next {
+            left: calc(50% + min((var(--screen-width) + 2 * var(--device-bezel)) / 2, 50vw - 32px) + 18px);
+            right: auto;
+        }
         .cases-dots {
             position: absolute;
             left: 0;
@@ -1099,24 +1134,46 @@
 
         .showcase-back {
             position: absolute;
-            top: 18px;
-            right: 22px;
+            top: 12px;
+            right: 14px;
+            z-index: 13;
             appearance: none;
-            background: transparent;
-            border: 1px solid rgba(var(--acc-rgb), 0.4);
-            color: var(--ink);
-            font-family: inherit;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(var(--acc-rgb), 0.45);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
             font-size: 0.6875rem;
             letter-spacing: 0.2em;
-            padding: 6px 12px;
-            cursor: pointer;
             text-transform: uppercase;
-            transition: color .15s, border-color .15s, background .15s;
+            padding: 0 14px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.5);
+            transition: color .15s, border-color .15s, background .15s, box-shadow .18s;
+            pointer-events: auto;
+        }
+        .showcase-back::before {
+            content: '×';
+            font-size: 1rem;
+            line-height: 1;
+            margin-top: -1px;
+        }
+        .showcase-back .esc-hint {
+            font-size: 0.5625rem;
+            opacity: 0.6;
+            letter-spacing: 0.18em;
+            border-left: 1px solid rgba(var(--acc-rgb), 0.3);
+            padding-left: 10px;
         }
         .showcase-back:hover {
-            color: var(--acc);
+            color: #fff;
             border-color: var(--acc);
-            background: rgba(var(--acc-rgb), 0.08);
+            background: rgba(var(--acc-rgb), 0.18);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.4);
         }
 
         /* ============ CASE PAGE — full-page case detail (Inter, b/w/blue) ============ */
@@ -6583,7 +6640,7 @@
                 <button class="cases-arrow" id="cases-next" type="button" aria-label="Next case">→</button>
             </nav>
 
-            <button class="showcase-back" id="showcase-back" type="button" aria-label="Back to top">↑ back</button>
+            <button class="showcase-back" id="showcase-back" type="button" aria-label="Close showcase"><span>Close</span><span class="esc-hint">Esc</span></button>
         </div>
     </section>
 
