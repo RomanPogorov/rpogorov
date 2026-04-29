@@ -7304,8 +7304,8 @@
                 let tx = mx, ty = my;
                 if (snapEl) {
                     const r = snapEl.getBoundingClientRect();
-                    tx = r.left + r.width  / 2;
-                    ty = r.top  + r.height / 2;
+                    tx = r.left + r.width / 2;
+                    ty = r.top;        // top border, horizontal center
                 }
                 // Snap-state class for visual feedback + minimalist sound on transition
                 const snapKey = snapEl ? (snapEl.dataset.pane || 'snap') : null;
