@@ -573,9 +573,10 @@
             pointer-events: none;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
+        /* Intro stays readable on every case — was fading to 0.18 from cs02 on. */
         .showcase-intro.faded {
-            opacity: 0.18;
-            transform: translateY(-4px);
+            opacity: 0.85;
+            transform: none;
         }
         .showcase-tag {
             color: var(--acc);
