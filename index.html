@@ -824,6 +824,7 @@
             inset: 0;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
+            grid-auto-rows: max-content;        /* row height = content, no equal-fr split */
             gap: 18px;
             padding: 88px 22px 28px;
             overflow-x: hidden;
@@ -1008,10 +1009,24 @@
             transform: none;
             opacity: 1;
             filter: none;
-            max-height: 220px;
-            aspect-ratio: 16 / 10;
+            aspect-ratio: auto;
+            height: 200px;
+            max-height: 200px;
+            min-height: 200px;
+            width: 100%;
+            box-shadow: none;
         }
         .cases:not(.detail-mode) .case .case-media .case-media-open-cue { display: none; }
+        /* Body children get an entry animation tied to .active. In grid mode
+           we don't toggle .active, so the animation never plays — and with
+           fill-mode: backwards each child stayed at opacity:0 (invisible).
+           Force-reset them in grid mode. */
+        .cases:not(.detail-mode) .case .case-body > * {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+            filter: none !important;
+        }
         /* Dark gradient at the top of the image where the intro tag floats —
            so the white-on-image text stays legible without being covered. */
         .case-media .case-media-top-gradient {
