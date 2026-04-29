@@ -7300,8 +7300,12 @@
                     }
                 });
                 if (nearest && nearestDist < SNAP_RADIUS) {
-                    tx = nearest.x;
-                    ty = nearest.y;
+                    // Blend the pin target toward the cursor as it pulls away within the snap radius.
+                    // At nearestDist≈0 the dot is glued to the anchor; at the edge it has visibly drifted
+                    // ~35% toward the cursor — gives the "reluctant follow" feel before the snap breaks.
+                    const w = (nearestDist / SNAP_RADIUS) * 0.35;
+                    tx = nearest.x * (1 - w) + mx * w;
+                    ty = nearest.y * (1 - w) + my * w;
                     pinKey = nearest.key || 'snap';
                 }
 
