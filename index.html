@@ -715,17 +715,54 @@
             height: 100%;
             scroll-snap-align: start;
             scroll-snap-stop: always;
+            position: relative;
+            box-sizing: border-box;
+            /* Each case scrolls vertically: cover sits at the top (full visible
+               area), the article is rendered right below it. Read by scrolling
+               down — no modal transition. */
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
+        }
+        .case::-webkit-scrollbar { width: 4px; }
+        .case::-webkit-scrollbar-thumb { background: rgba(var(--acc-rgb), 0.4); }
+        /* Cover = the photo + title block sized to fill the visible tablet area
+           on first sight, so user can either scroll down or hit ↓ to start
+           reading the article that's already mounted below. */
+        .case-cover {
+            min-height: calc(100vh - var(--sheet-top) - var(--device-bezel) - 40px);
             display: grid;
-            /* Portrait tablet: stack image on top, body below */
             grid-template-columns: 1fr;
             grid-template-rows: auto 1fr;
             gap: 22px;
             padding: 56px 56px 132px;
-            position: relative;
             box-sizing: border-box;
             align-items: start;
             align-content: start;
-            overflow: hidden;
+        }
+        /* Inline case article (was .case-page modal). The case-page DOM is
+           moved into its matching .case at startup via JS — these overrides
+           reset the original fixed/translate positioning so it flows inline. */
+        .case-page.case-article-mode {
+            position: static;
+            transform: none;
+            width: auto;
+            left: auto; right: auto; top: auto; bottom: auto;
+            pointer-events: auto;
+            overflow: visible;
+            border-radius: 0;
+            background: transparent;
+        }
+        .case-page.case-article-mode > .cp-close { display: none; }
+        .case-page.case-article-mode .cp-inner {
+            padding: 36px 40px 96px;
+        }
+        /* Light variant inside the dark tablet — make its background fill the
+           inline case so it reads as a clear visual break from the cover. */
+        .case-page.case-article-mode.cp-light {
+            background: #ffffff;
+            color: #0a0a0a;
         }
         /* Faint grid behind every case — same vibe as the hero's .grid */
         .case::before {
@@ -6428,104 +6465,114 @@
 
             <div class="cases" id="cases">
                 <article class="case" data-case="cs01">
-                    <div class="case-media is-openable" data-open-case="cs01" role="button" tabindex="0" aria-label="Open Americor case study">
-                        <img src="showcase/cases/cs01-americor.png" alt="Americor multi-brand design system">
-                        <div class="case-media-top-gradient" aria-hidden="true"></div>
-                        <div class="case-media-open-cue" aria-hidden="true">
-                            <span>Press</span>
-                            <kbd class="case-key">↓</kbd>
-                            <span>to open case</span>
+                    <div class="case-cover">
+                        <div class="case-media is-openable" data-open-case="cs01" role="button" tabindex="0" aria-label="Scroll to read Americor case">
+                            <img src="showcase/cases/cs01-americor.png" alt="Americor multi-brand design system">
+                            <div class="case-media-top-gradient" aria-hidden="true"></div>
+                            <div class="case-media-open-cue" aria-hidden="true">
+                                <span>Press</span>
+                                <kbd class="case-key">↓</kbd>
+                                <span>to start reading</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="case-body">
-                        <div class="case-head">
-                            <span class="case-no">CS/01</span>
-                            <span class="case-role">Designer</span>
+                        <div class="case-body">
+                            <div class="case-head">
+                                <span class="case-no">CS/01</span>
+                                <span class="case-role">Designer</span>
+                            </div>
+                            <h3 class="case-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h3>
+                            <p class="case-desc">Audited three platforms, unpacked a ghost design system that never existed as components, and shipped a 4-layer token architecture: root → semantic → brand → platform. Every screen now speaks one language across iOS, Android and web.</p>
+                            <ul class="case-tags">
+                                <li>tokens</li><li>multi-brand</li><li>information arch</li><li>figma ↔ code</li>
+                            </ul>
+                            <div class="case-meta">Americor · Lead PD · 2024</div>
                         </div>
-                        <h3 class="case-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h3>
-                        <p class="case-desc">Audited three platforms, unpacked a ghost design system that never existed as components, and shipped a 4-layer token architecture: root → semantic → brand → platform. Every screen now speaks one language across iOS, Android and web.</p>
-                        <ul class="case-tags">
-                            <li>tokens</li><li>multi-brand</li><li>information arch</li><li>figma ↔ code</li>
-                        </ul>
-                        <div class="case-meta">Americor · Lead PD · 2024</div>
                     </div>
                 </article>
 
                 <article class="case" data-case="cs02">
-                    <div class="case-media is-openable" data-open-case="cs02" role="button" tabindex="0" aria-label="Open Health Samurai case study">
-                        <img src="showcase/cases/cs02-aidbox.png" alt="Health Samurai design system">
-                        <div class="case-media-top-gradient" aria-hidden="true"></div>
-                        <div class="case-media-open-cue" aria-hidden="true">
-                            <span>Press</span>
-                            <kbd class="case-key">↓</kbd>
-                            <span>to open case</span>
+                    <div class="case-cover">
+                        <div class="case-media is-openable" data-open-case="cs02" role="button" tabindex="0" aria-label="Scroll to read Health Samurai case">
+                            <img src="showcase/cases/cs02-aidbox.png" alt="Health Samurai design system">
+                            <div class="case-media-top-gradient" aria-hidden="true"></div>
+                            <div class="case-media-open-cue" aria-hidden="true">
+                                <span>Press</span>
+                                <kbd class="case-key">↓</kbd>
+                                <span>to start reading</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="case-body">
-                        <div class="case-head">
-                            <span class="case-no">CS/02</span>
-                            <span class="case-role">Designer</span>
+                        <div class="case-body">
+                            <div class="case-head">
+                                <span class="case-no">CS/02</span>
+                                <span class="case-role">Designer</span>
+                            </div>
+                            <h3 class="case-title">A design system for <em>five healthcare products</em>, half of it generated by AI.</h3>
+                            <p class="case-desc">Designed in Figma, shipped in code, synced both ways. Wrote a Claude skill to pull components from Figma back when that pattern didn't exist yet. Every component ships through Storybook review.</p>
+                            <ul class="case-tags">
+                                <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>bi-directional sync</li>
+                            </ul>
+                            <div class="case-meta">Health Samurai · Senior PD · 2023</div>
                         </div>
-                        <h3 class="case-title">A design system for <em>five healthcare products</em>, half of it generated by AI.</h3>
-                        <p class="case-desc">Designed in Figma, shipped in code, synced both ways. Wrote a Claude skill to pull components from Figma back when that pattern didn't exist yet. Every component ships through Storybook review.</p>
-                        <ul class="case-tags">
-                            <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>bi-directional sync</li>
-                        </ul>
-                        <div class="case-meta">Health Samurai · Senior PD · 2023</div>
                     </div>
                 </article>
 
                 <article class="case" data-case="cs03">
-                    <div class="case-media">
-                        <img src="showcase/cases/cs03-landings.jpg" alt="Landing page pipeline">
-                    </div>
-                    <div class="case-body">
-                        <div class="case-head">
-                            <span class="case-no">CS/03</span>
-                            <span class="case-role">Designer</span>
+                    <div class="case-cover">
+                        <div class="case-media">
+                            <img src="showcase/cases/cs03-landings.jpg" alt="Landing page pipeline">
                         </div>
-                        <h3 class="case-title">From 1.5 months to <em>4 days</em> — the landing page pipeline.</h3>
-                        <p class="case-desc">C-level was drafting landings by hand. Rebuilt the system around Markdown + a block library non-designers could assemble. Owners edit live in the DOM via an MCP chat. A designer polishes and ships.</p>
-                        <ul class="case-tags">
-                            <li>markdown-first</li><li>block library</li><li>mcp</li><li>dogfooded brand</li>
-                        </ul>
-                        <div class="case-meta">Health Samurai · 2023 — 2025</div>
+                        <div class="case-body">
+                            <div class="case-head">
+                                <span class="case-no">CS/03</span>
+                                <span class="case-role">Designer</span>
+                            </div>
+                            <h3 class="case-title">From 1.5 months to <em>4 days</em> — the landing page pipeline.</h3>
+                            <p class="case-desc">C-level was drafting landings by hand. Rebuilt the system around Markdown + a block library non-designers could assemble. Owners edit live in the DOM via an MCP chat. A designer polishes and ships.</p>
+                            <ul class="case-tags">
+                                <li>markdown-first</li><li>block library</li><li>mcp</li><li>dogfooded brand</li>
+                            </ul>
+                            <div class="case-meta">Health Samurai · 2023 — 2025</div>
+                        </div>
                     </div>
                 </article>
 
                 <article class="case" data-case="cs04">
-                    <div class="case-media">
-                        <img src="showcase/cases/cs04-creditor.png" alt="Creditor card lifecycle">
-                    </div>
-                    <div class="case-body">
-                        <div class="case-head">
-                            <span class="case-no">CS/04</span>
-                            <span class="case-role">Designer</span>
+                    <div class="case-cover">
+                        <div class="case-media">
+                            <img src="showcase/cases/cs04-creditor.png" alt="Creditor card lifecycle">
                         </div>
-                        <h3 class="case-title">The creditor card &amp; its <em>lifecycle</em>.</h3>
-                        <p class="case-desc">The central object in the user's universe. Designed 11 states, 5 transitions, and an animated timeline that turns abstract "program progress" into something tangible — without overwhelming first-time users.</p>
-                        <ul class="case-tags">
-                            <li>state design</li><li>micro-interactions</li><li>empty states</li><li>motion</li>
-                        </ul>
-                        <div class="case-meta">Americor · UX · 2024</div>
+                        <div class="case-body">
+                            <div class="case-head">
+                                <span class="case-no">CS/04</span>
+                                <span class="case-role">Designer</span>
+                            </div>
+                            <h3 class="case-title">The creditor card &amp; its <em>lifecycle</em>.</h3>
+                            <p class="case-desc">The central object in the user's universe. Designed 11 states, 5 transitions, and an animated timeline that turns abstract "program progress" into something tangible — without overwhelming first-time users.</p>
+                            <ul class="case-tags">
+                                <li>state design</li><li>micro-interactions</li><li>empty states</li><li>motion</li>
+                            </ul>
+                            <div class="case-meta">Americor · UX · 2024</div>
+                        </div>
                     </div>
                 </article>
 
                 <article class="case" data-case="cs05">
-                    <div class="case-media">
-                        <img src="showcase/cases/cs05-databricks.png" alt="Databricks UX exploration">
-                    </div>
-                    <div class="case-body">
-                        <div class="case-head">
-                            <span class="case-no">CS/05</span>
-                            <span class="case-role">Consulting</span>
+                    <div class="case-cover">
+                        <div class="case-media">
+                            <img src="showcase/cases/cs05-databricks.png" alt="Databricks UX exploration">
                         </div>
-                        <h3 class="case-title">Databricks — taming the <em>data-platform UX</em>.</h3>
-                        <p class="case-desc">An exploration of how a power-user analytics platform can stay readable for newcomers without losing its density. Reorganized the navigation around what users come to do, not where engineering keeps the code.</p>
-                        <ul class="case-tags">
-                            <li>information density</li><li>onboarding</li><li>nav restructure</li><li>data viz</li>
-                        </ul>
-                        <div class="case-meta">Databricks · Consulting · 2022</div>
+                        <div class="case-body">
+                            <div class="case-head">
+                                <span class="case-no">CS/05</span>
+                                <span class="case-role">Consulting</span>
+                            </div>
+                            <h3 class="case-title">Databricks — taming the <em>data-platform UX</em>.</h3>
+                            <p class="case-desc">An exploration of how a power-user analytics platform can stay readable for newcomers without losing its density. Reorganized the navigation around what users come to do, not where engineering keeps the code.</p>
+                            <ul class="case-tags">
+                                <li>information density</li><li>onboarding</li><li>nav restructure</li><li>data viz</li>
+                            </ul>
+                            <div class="case-meta">Databricks · Consulting · 2022</div>
+                        </div>
                     </div>
                 </article>
             </div>
@@ -8282,6 +8329,9 @@
                 if (!el) return;
                 const target = el.offsetLeft - (cases.clientWidth - el.offsetWidth) / 2;
                 cases.scrollTo({ left: target, behavior: 'smooth' });
+                // Reset every case's vertical scroll so navigation between
+                // cases always lands on the cover, not mid-article.
+                items.forEach(item => { item.scrollTop = 0; });
                 window.__sfx?.tick?.();
             }
 
@@ -8314,16 +8364,15 @@
                     return;
                 }
                 if (!body.classList.contains('showcase-open')) return;
-                if (body.classList.contains('case-open')) return; // case-page handles its own ESC
                 if (e.key === 'Escape') { close(); return; }
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
-                if (e.key === 'ArrowDown') {
+                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                     const active = items[currentIndex()];
-                    const id = active?.dataset.case;
-                    if (!id) return;
-                    const trigger = document.querySelector(`[data-open-case="${id}"]`);
-                    if (trigger) { e.preventDefault(); trigger.click(); }
+                    if (!active) return;
+                    e.preventDefault();
+                    const dir = e.key === 'ArrowDown' ? 1 : -1;
+                    active.scrollBy({ top: active.clientHeight * 0.85 * dir, behavior: 'smooth' });
                 }
             });
 
@@ -8347,62 +8396,59 @@
         })();
     </script>
 
-    <!-- Case page: open/close + sticky timeline navigation -->
+    <!-- Case page: inlined into the corresponding .case slide so the article
+         lives inside the tablet from the start. Reading happens via vertical
+         scroll within the case — no modal transition. -->
     <script>
         (() => {
-            const body = document.body;
-            const openButtons = document.querySelectorAll('[data-open-case]');
             const pages = document.querySelectorAll('.case-page');
-            if (!openButtons.length || !pages.length) return;
+            if (!pages.length) return;
             const initialized = new WeakSet();
 
-            function openCase(id) {
-                const page = document.querySelector(`.case-page[data-case-page="${id}"]`);
-                if (!page) return;
-                pages.forEach(p => p.classList.toggle('open', p === page));
-                page.scrollTop = 0;
-                body.classList.add('case-open');
-                window.__sfx?.engage?.();
+            // Move each case-page into its matching .case slide as inline article
+            pages.forEach(page => {
+                const id = page.dataset.casePage;
+                const slide = document.querySelector(`.case[data-case="${id}"]`);
+                if (!slide) return;
+                page.classList.add('case-article-mode');
+                slide.appendChild(page);
                 requestAnimationFrame(() => {
                     initTimeline(page);
                     page.querySelectorAll('.cp-slideshow').forEach(initSlideshow);
                 });
-            }
+            });
 
-            function closeCase() {
-                body.classList.remove('case-open');
-                pages.forEach(p => p.classList.remove('open'));
-                window.__sfx?.disengage?.();
-            }
-
+            // [data-open-case] (cover image, button) now scrolls the slide down
+            // to start of the article instead of opening a modal.
+            const openButtons = document.querySelectorAll('[data-open-case]');
             openButtons.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    openCase(btn.dataset.openCase);
+                    const slide = btn.closest('.case');
+                    if (!slide) return;
+                    const article = slide.querySelector('.case-page.case-article-mode');
+                    if (!article) return;
+                    article.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    window.__sfx?.engage?.();
                 });
-                // Keyboard support for non-button elements (e.g. clickable .case-media)
                 if (btn.tagName !== 'BUTTON') {
                     btn.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
-                            openCase(btn.dataset.openCase);
+                            btn.click();
                         }
                     });
                 }
             });
 
+            // [data-cp-close] no longer used since there's no modal — left as
+            // a no-op for any inline back-to-top button.
             document.querySelectorAll('[data-cp-close]').forEach(btn => {
-                btn.addEventListener('click', closeCase);
+                btn.addEventListener('click', (e) => {
+                    const slide = btn.closest('.case');
+                    if (slide) slide.scrollTo({ top: 0, behavior: 'smooth' });
+                });
             });
-
-            // ESC closes case-page first; capture-phase so it runs before the showcase handler
-            document.addEventListener('keydown', (e) => {
-                if (!body.classList.contains('case-open')) return;
-                if (e.key === 'Escape') {
-                    e.stopPropagation();
-                    closeCase();
-                }
-            }, true);
 
             function initTimeline(page) {
                 if (initialized.has(page)) return;
