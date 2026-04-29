@@ -520,6 +520,26 @@
             filter: blur(6px);
             pointer-events: none;
         }
+        /* Doors-open effect — the side HUDs slide out to the screen edges as
+           the showcase rises, then slide back when it collapses. */
+        .hud-right {
+            transition:
+                opacity 0.7s ease,
+                filter 0.8s ease,
+                transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        body.showcase-open .hud-right {
+            transform: translateX(120%);
+            transition: transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1),
+                        opacity 0.5s ease;
+        }
+        body.showcase-open .hud-left-articles {
+            transform: translateX(-120%);
+            opacity: 1;
+            filter: blur(0);
+            transition: transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1),
+                        opacity 0.5s ease;
+        }
         body.showcase-open .prompt {
             transform: translate(-50%, calc(-50% - 14vh)) perspective(1400px)
                        rotateY(var(--prompt-ry, 0deg))
@@ -5162,11 +5182,15 @@
         }
         body.dw-open .hud-left-articles,
         body.chat-fullscreen .hud-left-articles,
-        body.case-open .hud-left-articles,
-        body.showcase-open .hud-left-articles {
+        body.case-open .hud-left-articles {
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease, filter 0.3s ease;
+        }
+        /* Showcase: the left panel slides out to the left, doesn't fade — see
+           the doors-open block near the showcase styles. */
+        body.showcase-open .hud-left-articles {
+            pointer-events: none;
         }
         /* Reader and OS-panel open: keep the left panel visible behind the overlay
            (just block clicks through) so the tabs stay readable through the dim. */
