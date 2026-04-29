@@ -5194,7 +5194,7 @@
             top: 64px;     /* below the tab strip + the 12px stack gap */
             left: 0;
             right: 0;
-            height: 520px; /* fixed — gradient extent stays the same; the mask reveals more of it */
+            height: 620px; /* fixed — gradient extent stays the same; the mask reveals more of it */
             pointer-events: none;
             overflow: hidden;
             transition: opacity 0.4s ease;
@@ -5218,14 +5218,15 @@
             top: 0;
             left: -14%;
             right: -14%;
-            height: 520px;
+            height: 620px;
             background: radial-gradient(140% 100% at 50% 0%,
                 rgba(var(--acc-rgb), 0.26) 0%,
                 rgba(var(--acc-rgb), 0.13) 22%,
                 rgba(var(--acc-rgb), 0.05) 50%,
                 transparent 88%);
             filter: blur(10px);
-            opacity: 1;
+            /* JS lerps --color-strength: 0.5 (cursor far) → 1.0 (cursor on tab) */
+            opacity: var(--color-strength, 0.5);
         }
         /* Six thin accent rays — randomly pulsing opacity ('roaming rays' from the original version) */
         .htl-rays .ray {
@@ -9306,22 +9307,29 @@ See also: Health Samurai Lab: Game of Pools.`,
                 const FAINT_NEAR  = 0.16;  // cursor near the strip
                 const FAR         = 320;   // beyond this — proximity = 0
                 // Mask reveal: --mask-end goes from MIN_EXT (small color zone, mostly faded out) when
-                // cursor is far → MAX_EXT (most of the 400px gradient visible, falloff still keeps
-                // the bottom soft) when cursor is on a tab.
+                // cursor is far → MAX_EXT (most of the gradient visible, falloff still keeps the
+                // bottom soft) when cursor is on a tab.
+                // Color strength: --color-strength scales the radial-gradient opacity from 0.5 → 1.0.
                 const MIN_EXT = 22;
                 const MAX_EXT = 85;
+                const MIN_STR = 0.5;
+                const MAX_STR = 1.0;
                 let skelTarget = 0;
                 let prox = 0;
                 let skelCur = 0;
                 let extCur = MIN_EXT;
+                let strCur = MIN_STR;
 
                 function tick() {
                     requestAnimationFrame(tick);
                     skelCur += (skelTarget - skelCur) * 0.2;
                     skelEl.style.opacity = skelCur.toFixed(3);
-                    const target = MIN_EXT + (MAX_EXT - MIN_EXT) * prox;
-                    extCur += (target - extCur) * 0.18;
+                    const tgtExt = MIN_EXT + (MAX_EXT - MIN_EXT) * prox;
+                    extCur += (tgtExt - extCur) * 0.18;
                     raysEl.style.setProperty('--mask-end', extCur.toFixed(2) + '%');
+                    const tgtStr = MIN_STR + (MAX_STR - MIN_STR) * prox;
+                    strCur += (tgtStr - strCur) * 0.18;
+                    raysEl.style.setProperty('--color-strength', strCur.toFixed(3));
                 }
                 requestAnimationFrame(tick);
 
