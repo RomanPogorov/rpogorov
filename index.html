@@ -5185,16 +5185,24 @@
         /* Holographic hint under the collapsed tab strip — softer, longer descending glow with more
            accent rays of varied heights / opacities for a less uniform "drawing space" effect. */
         .htl-tabs { position: relative; }
-        /* Sit in the same area where the real .hl-pane expands — full panel-area width */
+        /* Sit in the same area where the real .hl-pane expands — full panel-area width.
+           The vertical extent itself breathes (height pulse, anchored at the top under the tabs):
+           it shrinks down to 80px and stretches back to ~460px — independent of the inner rays
+           pulse + glow breathe. */
         .htl-rays {
             position: absolute;
             top: 64px;     /* below the tab strip + the 12px stack gap */
             left: 0;
             right: 0;
-            bottom: 0;
+            height: 80px;  /* min — animated up to ~460 by htl-rays-grow */
             pointer-events: none;
             overflow: hidden;
             transition: opacity 0.4s ease;
+            animation: htl-rays-grow 5.5s ease-in-out infinite;
+        }
+        @keyframes htl-rays-grow {
+            0%, 100% { height: 80px;  }
+            50%      { height: 460px; }
         }
         /* Soft elongated cone of light — much more transparent base, taller fall-off */
         .htl-rays::before {
