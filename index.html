@@ -4914,11 +4914,14 @@
         body.dw-open .hud-left-articles,
         body.chat-fullscreen .hud-left-articles,
         body.case-open .hud-left-articles,
-        body.reader-open .hud-left-articles,
         body.showcase-open .hud-left-articles {
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease, filter 0.3s ease;
+        }
+        /* Reader open: keep the left panel visible behind the overlay (just block clicks through) */
+        body.reader-open .hud-left-articles {
+            pointer-events: none;
         }
         .hud-left-stack {
             position: absolute;
@@ -5134,6 +5137,28 @@
         body.console-revealed .hud-left-articles .article-item:nth-child(5),
         body.console-revealed .hud-left-articles .case-item:nth-child(5) { animation: articles-item-in 0.5s ease-out 1.00s forwards; }
         body.console-revealed .hud-left-articles .article-item:nth-child(6) { animation: articles-item-in 0.5s ease-out 1.15s forwards; }
+
+        /* Fast re-fade when the user swaps tabs (articles ↔ cases). Triggered by a transient
+           `.tab-fresh` class on the newly-shown list. Total cascade ~0.20s — feels snappy. */
+        .articles-list.tab-fresh > .article-item,
+        .cases-list.tab-fresh > .case-item {
+            animation: articles-tab-in 0.22s ease-out backwards;
+        }
+        @keyframes articles-tab-in {
+            from { opacity: 0; transform: translateX(10px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        .articles-list.tab-fresh > .article-item:nth-child(1),
+        .cases-list.tab-fresh > .case-item:nth-child(1) { animation-delay: 0.00s; }
+        .articles-list.tab-fresh > .article-item:nth-child(2),
+        .cases-list.tab-fresh > .case-item:nth-child(2) { animation-delay: 0.03s; }
+        .articles-list.tab-fresh > .article-item:nth-child(3),
+        .cases-list.tab-fresh > .case-item:nth-child(3) { animation-delay: 0.06s; }
+        .articles-list.tab-fresh > .article-item:nth-child(4),
+        .cases-list.tab-fresh > .case-item:nth-child(4) { animation-delay: 0.09s; }
+        .articles-list.tab-fresh > .article-item:nth-child(5),
+        .cases-list.tab-fresh > .case-item:nth-child(5) { animation-delay: 0.12s; }
+        .articles-list.tab-fresh > .article-item:nth-child(6) { animation-delay: 0.15s; }
 
         /* Reader modal — long-form article reading window */
         .reader {
@@ -8789,7 +8814,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             // Which pane is currently displayed
             let active = 'articles';
 
-            function showPane(pane) {
+            function showPane(pane, replay) {
                 articlesList.hidden = pane !== 'articles';
                 casesList.hidden = pane !== 'cases';
                 tabs.forEach(t => {
@@ -8797,16 +8822,22 @@ See also: Health Samurai Lab: Game of Pools.`,
                     t.classList.toggle('active', on);
                     t.setAttribute('aria-selected', on ? 'true' : 'false');
                 });
+                if (replay) {
+                    const list = pane === 'articles' ? articlesList : casesList;
+                    list.classList.remove('tab-fresh');
+                    void list.offsetWidth; // reflow restarts the animation
+                    list.classList.add('tab-fresh');
+                    setTimeout(() => list.classList.remove('tab-fresh'), 400);
+                }
             }
-            // The left console is always visible after console-revealed (mirror of right HUD).
-            // Tabs only swap which pane is shown; no panel open/close toggle.
-            showPane(active);
+            // Initial render — no replay, items already have their console-revealed entry animation
+            showPane(active, false);
             tabs.forEach(t => {
                 t.addEventListener('click', () => {
                     const pane = t.dataset.pane;
                     if (active === pane) return;
                     active = pane;
-                    showPane(pane);
+                    showPane(pane, true);
                     window.__sfx?.tick?.();
                 });
             });
