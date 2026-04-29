@@ -1390,6 +1390,66 @@
             transition: opacity 0.3s ease;
         }
 
+        /* ============ CASE PAGE — fake-load progress strip ============
+           Triggered by ArrowDown/ArrowUp inside a case page. A thin progress bar
+           sweeps across the bottom while the page smooth-scrolls one screen. */
+        .cp-loader {
+            position: fixed;
+            left: 50%;
+            bottom: 22px;
+            transform: translateX(-50%);
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 14px 8px 14px;
+            border: 1px solid rgba(var(--acc-rgb), 0.45);
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--acc);
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.55);
+            box-shadow: 0 0 20px rgba(var(--acc-rgb), 0.32);
+            opacity: 0;
+            transition: opacity 0.18s ease;
+            pointer-events: none;
+        }
+        .cp-loader.on { opacity: 1; }
+        .cp-loader .label { white-space: nowrap; }
+        .cp-loader .bar {
+            position: relative;
+            width: 140px;
+            height: 4px;
+            background: rgba(var(--acc-rgb), 0.12);
+            overflow: hidden;
+        }
+        .cp-loader .bar i {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--acc) 50%,
+                transparent 100%);
+            box-shadow: 0 0 10px var(--acc);
+            transform: translateX(-100%);
+            animation: cp-loader-sweep 0.6s linear infinite;
+        }
+        @keyframes cp-loader-sweep {
+            from { transform: translateX(-100%); }
+            to   { transform: translateX(140%); }
+        }
+        /* Brief brightness/saturation pulse on the page while the loader runs */
+        .case-page.cp-fake-loading {
+            transition: filter 0.18s ease;
+        }
+        .case-page.cp-fake-loading.cp-blur-tail {
+            filter: brightness(0.92) saturate(0.85);
+        }
+
         /* ============ CASE PAGE — LIGHT VARIANT (white bg, blue accent) ============ */
         .case-page.cp-light {
             background: #ffffff;
@@ -8192,6 +8252,46 @@
                     closeCase();
                 }
             }, true);
+
+            // ArrowDown / ArrowUp inside a case-page: smooth-scroll one screen
+            // with a fake "loading" strip + soft blur on the next region for
+            // a few hundred ms.
+            let loaderEl = null;
+            let loaderTimer = null;
+            function ensureLoader() {
+                if (loaderEl) return loaderEl;
+                loaderEl = document.createElement('div');
+                loaderEl.className = 'cp-loader';
+                loaderEl.innerHTML =
+                    '<span class="label">▸ Loading section</span>' +
+                    '<span class="bar"><i></i></span>';
+                document.body.appendChild(loaderEl);
+                return loaderEl;
+            }
+            function fakeLoad(page, dir) {
+                if (!page) return;
+                const step = Math.round(page.clientHeight * 0.78) * dir;
+                page.scrollBy({ top: step, behavior: 'smooth' });
+                const el = ensureLoader();
+                el.classList.add('on');
+                page.classList.add('cp-fake-loading', 'cp-blur-tail');
+                clearTimeout(loaderTimer);
+                loaderTimer = setTimeout(() => {
+                    page.classList.remove('cp-blur-tail');
+                }, 380);
+                setTimeout(() => {
+                    el.classList.remove('on');
+                    page.classList.remove('cp-fake-loading');
+                }, 720);
+            }
+            document.addEventListener('keydown', (e) => {
+                if (!body.classList.contains('case-open')) return;
+                if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+                const activePage = document.querySelector('.case-page.open');
+                if (!activePage) return;
+                e.preventDefault();
+                fakeLoad(activePage, e.key === 'ArrowDown' ? 1 : -1);
+            });
 
             function initTimeline(page) {
                 if (initialized.has(page)) return;
