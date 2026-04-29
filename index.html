@@ -5177,16 +5177,16 @@
             right: -14%;
             height: 100%;
             background: radial-gradient(140% 100% at 50% 0%,
-                rgba(var(--acc-rgb), 0.16) 0%,
-                rgba(var(--acc-rgb), 0.08) 22%,
-                rgba(var(--acc-rgb), 0.03) 50%,
+                rgba(var(--acc-rgb), 0.26) 0%,
+                rgba(var(--acc-rgb), 0.13) 22%,
+                rgba(var(--acc-rgb), 0.05) 50%,
                 transparent 88%);
             filter: blur(10px);
             animation: htl-glow-breathe 4.2s ease-in-out infinite;
         }
         @keyframes htl-glow-breathe {
-            0%, 100% { opacity: 0.45; transform: translateY(-2px) scaleY(0.94); }
-            50%      { opacity: 0.85; transform: translateY(0)    scaleY(1);    }
+            0%, 100% { opacity: 0.6;  transform: translateY(-2px) scaleY(0.94); }
+            50%      { opacity: 1;    transform: translateY(0)    scaleY(1);    }
         }
         /* Six thin accent rays of varied heights / phases for organic feel */
         .htl-rays .ray {
@@ -5194,11 +5194,11 @@
             top: 0;
             width: 1px;
             background: linear-gradient(180deg,
-                rgba(var(--acc-rgb), 0.4)  0%,
-                rgba(var(--acc-rgb), 0.18) 35%,
-                rgba(var(--acc-rgb), 0.05) 70%,
+                rgba(var(--acc-rgb), 0.22) 0%,
+                rgba(var(--acc-rgb), 0.10) 35%,
+                rgba(var(--acc-rgb), 0.03) 70%,
                 rgba(var(--acc-rgb), 0)    100%);
-            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.28);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.16);
             opacity: 0;
             transform-origin: top center;
             animation: htl-ray-pulse 4s ease-in-out infinite;
@@ -5211,8 +5211,8 @@
         .htl-rays .ray-6 { left: 90%; height: 55%; animation-delay: 3.0s;  animation-duration: 4.8s; }
         @keyframes htl-ray-pulse {
             0%, 100% { opacity: 0;    transform: translateY(-18px) scaleY(0.4); }
-            42%      { opacity: 0.42; transform: translateY(0)     scaleY(1);   }
-            68%      { opacity: 0.28; transform: translateY(4px)   scaleY(1);   }
+            42%      { opacity: 0.25; transform: translateY(0)     scaleY(1);   }
+            68%      { opacity: 0.16; transform: translateY(4px)   scaleY(1);   }
         }
         body.left-pane-open .htl-rays { opacity: 0; }
 
@@ -5577,13 +5577,11 @@
             <div class="corner tl articles-feed">
                 <div class="htl-tabs" role="tablist">
                     <button type="button" class="htl-item" data-pane="articles" role="tab" aria-selected="false">
-                        <span class="htl-prefix">// my</span>
-                        <span class="htl-name">articles</span>
+                        <span class="htl-name">Articles</span>
                     </button>
                     <span class="htl-sep" aria-hidden="true"></span>
                     <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
-                        <span class="htl-prefix">//</span>
-                        <span class="htl-name">cases</span>
+                        <span class="htl-name">Cases</span>
                     </button>
                     <!-- Hint glow + rays under collapsed tabs (sibling so it inherits tab-strip width) -->
                     <div class="htl-rays" id="htl-rays" aria-hidden="true">
