@@ -11176,12 +11176,27 @@ See also: Health Samurai Lab: Game of Pools.`,
             lb.addEventListener('click', (e) => {
                 if (e.target === lb) close();
             });
+            // Capture-phase: lightbox owns Escape and arrow keys whenever it's
+            // open, so the showcase ESC handler doesn't fire underneath it.
             document.addEventListener('keydown', (e) => {
                 if (!lb.classList.contains('open')) return;
-                if (e.key === 'Escape') { e.stopPropagation(); close(); }
-                if (e.key === 'ArrowLeft')  render(idx - 1);
-                if (e.key === 'ArrowRight') render(idx + 1);
-            });
+                if (e.key === 'Escape') {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    close();
+                    return;
+                }
+                if (e.key === 'ArrowLeft')  {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    render(idx - 1);
+                }
+                if (e.key === 'ArrowRight') {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    render(idx + 1);
+                }
+            }, true);
 
             // -------- 3. Strip dev-only TODO blocks in production --------
             // Heuristic: hide on host clauderunner.com (production), show on localhost / dev
