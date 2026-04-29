@@ -23,6 +23,9 @@
         }
 
         :root {
+            /* User-controlled font scaling — A− / A+ buttons in the settings popover.
+               NOT persisted; resets to 1 on every page load (per Roman's spec). */
+            --text-scale: 1;
             --bg: #02060a;
             --ink: #eaf6ff;
             --acc: #00e5ff;
@@ -92,6 +95,11 @@
             --tilt: 0;
         }
 
+        html {
+            /* Base for `rem` units. Multiplied by --text-scale so A− / A+ buttons resize
+               typography proportionally across the whole page. */
+            font-size: calc(16px * var(--text-scale, 1));
+        }
         html,
         body {
             width: 100%;
@@ -346,7 +354,7 @@
             z-index: 5;
             pointer-events: none;
             color: var(--ink);
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
         }
@@ -402,7 +410,7 @@
             padding: 10px 18px;
             color: var(--ink);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             cursor: pointer;
@@ -434,7 +442,7 @@
         .showcase-cue-arrow {
             display: inline-block;
             color: var(--acc);
-            font-size: 13px;
+            font-size: 0.8125rem;
             line-height: 1;
             animation: showcase-arrow-bounce 1.6s ease-in-out infinite;
         }
@@ -549,7 +557,7 @@
         .showcase-tag {
             color: var(--acc);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             margin-bottom: 8px;
@@ -564,7 +572,7 @@
         .showcase-sub {
             color: var(--dim);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.14em;
             margin: 4px 0 0;
             opacity: 0.65;
@@ -688,7 +696,7 @@
             display: flex;
             justify-content: space-between;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.22em;
             color: var(--acc);
             opacity: 0.95;
@@ -707,7 +715,7 @@
         .case-no::before { content: '◆ '; opacity: 0.7; }
         .case-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(28px, 3.2vw, 48px);
+            font-size: clamp(1.75rem, 3.2vw, 3rem);
             font-weight: 700;
             margin: 14px 0 0;
             line-height: 1.1;
@@ -724,7 +732,7 @@
         .case-desc {
             color: var(--ink);
             opacity: 0.82;
-            font-size: clamp(14px, 1.05vw, 16px);
+            font-size: clamp(0.875rem, 1.05vw, 1rem);
             line-height: 1.6;
             margin: 0;
             max-width: 56ch;
@@ -739,7 +747,7 @@
         }
         .case-tags li {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             padding: 6px 10px;
@@ -750,7 +758,7 @@
         .case-meta {
             margin-top: 6px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.22em;
             color: var(--dim);
             text-transform: uppercase;
@@ -779,7 +787,7 @@
             background: transparent;
             border: 1px solid rgba(var(--acc-rgb), 0.4);
             color: var(--ink);
-            font-size: 14px;
+            font-size: 0.875rem;
             padding: 8px 12px;
             cursor: pointer;
             transition: border-color .15s, color .15s, background .15s, transform .12s;
@@ -823,7 +831,7 @@
             border: 1px solid rgba(var(--acc-rgb), 0.4);
             color: var(--ink);
             font-family: inherit;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.2em;
             padding: 6px 12px;
             cursor: pointer;
@@ -844,7 +852,7 @@
             border: 1px solid rgba(var(--acc-rgb), 0.55);
             color: var(--acc);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             padding: 9px 18px;
@@ -910,7 +918,7 @@
             border: 1px solid rgba(255,255,255,0.18);
             color: #fff;
             font-family: 'Inter', sans-serif;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             padding: 9px 16px;
@@ -926,12 +934,12 @@
             background: rgba(77,158,255,0.12);
             color: #4d9eff;
         }
-        .cp-close-arrow { font-size: 13px; line-height: 1; }
+        .cp-close-arrow { font-size: 0.8125rem; line-height: 1; }
 
         /* hero */
         .cp-hero { padding-bottom: 56px; }
         .cp-meta {
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: rgba(255,255,255,0.55);
@@ -944,7 +952,7 @@
         .cp-meta-no { color: #4d9eff; font-weight: 600; }
         .cp-meta-divider { width: 24px; height: 1px; background: rgba(255,255,255,0.22); }
         .cp-title {
-            font-size: clamp(36px, 5.4vw, 64px);
+            font-size: clamp(2.25rem, 5.4vw, 4rem);
             line-height: 1.04;
             font-weight: 600;
             letter-spacing: -0.025em;
@@ -953,7 +961,7 @@
         .cp-title em { color: #4d9eff; font-style: normal; font-weight: 600; }
         .cp-sub {
             margin-top: 26px;
-            font-size: 18px;
+            font-size: 1.125rem;
             color: rgba(255,255,255,0.7);
             max-width: 60ch;
             line-height: 1.55;
@@ -968,7 +976,7 @@
             border-left: 2px solid #4d9eff;
         }
         .cp-tldr-label {
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.32em;
             text-transform: uppercase;
             color: #4d9eff;
@@ -977,7 +985,7 @@
         }
         .cp-tldr ul { list-style: none; padding: 0; margin: 0; }
         .cp-tldr li {
-            font-size: 16px;
+            font-size: 1rem;
             line-height: 1.55;
             padding: 7px 0 7px 26px;
             position: relative;
@@ -1039,13 +1047,13 @@
         }
         .cp-tl-num {
             display: block;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.25em;
             opacity: 0.65;
             margin-bottom: 4px;
             font-weight: 500;
         }
-        .cp-tl-name { font-size: 13px; font-weight: 500; }
+        .cp-tl-name { font-size: 0.8125rem; font-weight: 500; }
 
         /* Sections */
         .cp-section {
@@ -1055,7 +1063,7 @@
         }
         .cp-section:last-of-type { border-bottom: none; }
         .cp-sec-num {
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.32em;
             color: #4d9eff;
             text-transform: uppercase;
@@ -1063,7 +1071,7 @@
             margin-bottom: 14px;
         }
         .cp-sec-title {
-            font-size: clamp(26px, 3vw, 36px);
+            font-size: clamp(1.625rem, 3vw, 2.25rem);
             font-weight: 600;
             letter-spacing: -0.015em;
             margin-bottom: 26px;
@@ -1071,7 +1079,7 @@
             max-width: 22ch;
         }
         .cp-sec-body {
-            font-size: 16px;
+            font-size: 1rem;
             line-height: 1.65;
             color: rgba(255,255,255,0.82);
             max-width: 65ch;
@@ -1110,13 +1118,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             font-weight: 500;
         }
         .cp-figure-cap {
-            font-size: 12px;
+            font-size: 0.75rem;
             color: rgba(255,255,255,0.45);
             margin-top: 10px;
             letter-spacing: 0.04em;
@@ -1134,7 +1142,7 @@
             margin: 0 auto 32px;
         }
         .cp-gallery-label {
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.32em;
             color: #4d9eff;
             text-transform: uppercase;
@@ -1142,14 +1150,14 @@
             margin-bottom: 12px;
         }
         .cp-gallery-title {
-            font-size: 22px;
+            font-size: 1.375rem;
             font-weight: 600;
             letter-spacing: -0.01em;
             color: #fff;
             margin-bottom: 6px;
         }
         .cp-gallery-hint {
-            font-size: 13px;
+            font-size: 0.8125rem;
             color: rgba(255,255,255,0.5);
             line-height: 1.5;
             max-width: 60ch;
@@ -1169,7 +1177,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
         }
@@ -1282,7 +1290,7 @@
         /* Layout primitives for varied composition */
         .cp-kicker {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.28em;
             text-transform: uppercase;
             color: #2962ff;
@@ -1297,7 +1305,7 @@
             border-top: 1px solid rgba(0,0,0,0.08);
             border-bottom: 1px solid rgba(0,0,0,0.08);
             font-family: 'Inter', sans-serif;
-            font-size: clamp(22px, 2.4vw, 30px);
+            font-size: clamp(1.375rem, 2.4vw, 1.875rem);
             font-weight: 500;
             line-height: 1.32;
             letter-spacing: -0.015em;
@@ -1332,7 +1340,7 @@
             background: rgba(41,98,255,0.03);
         }
         .cp-stat-num {
-            font-size: clamp(34px, 4vw, 48px);
+            font-size: clamp(2.125rem, 4vw, 3rem);
             font-weight: 600;
             color: #2962ff;
             letter-spacing: -0.025em;
@@ -1342,7 +1350,7 @@
         .cp-stat-num small { font-size: 0.55em; opacity: 0.7; font-weight: 500; }
         .cp-stat-num .cp-stat-arrow { color: rgba(0,0,0,0.4); margin: 0 12px; font-weight: 400; }
         .cp-stat-label {
-            font-size: 13px;
+            font-size: 0.8125rem;
             letter-spacing: 0.04em;
             color: rgba(0,0,0,0.55);
             line-height: 1.45;
@@ -1369,13 +1377,13 @@
             font-family: 'Inter', sans-serif;
             font-weight: 600;
             margin-bottom: 8px;
-            font-size: 15px;
+            font-size: 0.9375rem;
             color: #0a0a0a;
             letter-spacing: -0.005em;
         }
-        .cp-product-name::before { content: '◆'; color: #2962ff; margin-right: 8px; font-size: 9px; vertical-align: 2px; }
+        .cp-product-name::before { content: '◆'; color: #2962ff; margin-right: 8px; font-size: 0.5625rem; vertical-align: 2px; }
         .cp-product-blurb {
-            font-size: 13px;
+            font-size: 0.8125rem;
             color: rgba(0,0,0,0.6);
             line-height: 1.5;
         }
@@ -1398,14 +1406,14 @@
         }
         .cp-aside-card-label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.28em;
             text-transform: uppercase;
             color: #2962ff;
             font-weight: 500;
             margin-bottom: 10px;
         }
-        .cp-aside-card p { font-size: 14px; line-height: 1.55; color: rgba(0,0,0,0.72); }
+        .cp-aside-card p { font-size: 0.875rem; line-height: 1.55; color: rgba(0,0,0,0.72); }
 
         /* Full-bleed slideshow */
         .cp-slideshow {
@@ -1428,7 +1436,7 @@
         }
         .cp-slideshow-tag {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.28em;
             text-transform: uppercase;
             color: #2962ff;
@@ -1436,7 +1444,7 @@
         }
         .cp-slideshow-counter {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             color: rgba(0,0,0,0.5);
             letter-spacing: 0.18em;
         }
@@ -1465,7 +1473,7 @@
             align-items: center;
             justify-content: center;
             color: rgba(41,98,255,0.55);
-            font-size: 12px;
+            font-size: 0.75rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             text-align: center;
@@ -1488,7 +1496,7 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             color: #0a0a0a;
-            font-size: 22px;
+            font-size: 1.375rem;
             font-family: 'Inter', sans-serif;
             cursor: pointer;
             display: flex;
@@ -1514,7 +1522,7 @@
             gap: 18px;
         }
         .cp-slideshow-cap {
-            font-size: 13px;
+            font-size: 0.8125rem;
             color: rgba(0,0,0,0.55);
             line-height: 1.5;
             max-width: 60ch;
@@ -1539,7 +1547,7 @@
 
         @media (max-width: 700px) {
             .cp-slideshow { padding: 28px 22px 24px; }
-            .cp-slide-arrow { width: 38px; height: 38px; font-size: 18px; }
+            .cp-slide-arrow { width: 38px; height: 38px; font-size: 1.125rem; }
             .cp-slide-prev { left: 8px; }
             .cp-slide-next { right: 8px; }
             .cp-stat-row { gap: 10px; }
@@ -1716,14 +1724,14 @@
         .audio-gate-corner.br { bottom: -1px; right: -1px; border-bottom: 1px solid var(--acc); border-right: 1px solid var(--acc); }
         .audio-gate-label {
             color: var(--dim);
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             margin-bottom: 10px;
         }
         .audio-gate-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: 0.16em;
             color: var(--acc);
@@ -1734,7 +1742,7 @@
             color: var(--ink);
             opacity: 0.7;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             margin-bottom: 22px;
         }
         .audio-gate-actions {
@@ -1746,7 +1754,7 @@
         .audio-gate-btn {
             appearance: none;
             font-family: inherit;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             padding: 10px 18px;
@@ -1776,7 +1784,7 @@
         }
         .audio-gate-note {
             color: var(--dim);
-            font-size: 9px;
+            font-size: 0.5625rem;
             font-family: 'JetBrains Mono', monospace;
             opacity: 0.55;
             letter-spacing: 0.05em;
@@ -1904,13 +1912,13 @@
         .hud-right .label {
             color: var(--acc);
             opacity: 1;
-            font-size: 11px;
+            font-size: 0.6875rem;
             font-weight: 700;
             letter-spacing: 0.16em;
             margin-bottom: 8px;
         }
         .hud-right .label.sub {
-            font-size: 10px;
+            font-size: 0.625rem;
             font-weight: 600;
             opacity: 0.9;
         }
@@ -2029,7 +2037,7 @@
         }
         .welcome-block .label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--acc);
@@ -2038,7 +2046,7 @@
         .welcome-block .welcome-text {
             margin-top: 8px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
+            font-size: 0.6562rem;
             line-height: 1.55;
             color: rgba(234, 246, 255, 0.78);
             text-align: left;
@@ -2057,7 +2065,7 @@
         }
         .experience-block .label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--acc);
@@ -2076,7 +2084,7 @@
         }
         .exp-stat-k {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8px;
+            font-size: 0.5rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--dim);
@@ -2084,7 +2092,7 @@
         }
         .exp-stat-v {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             color: var(--acc);
             white-space: nowrap;
             overflow: hidden;
@@ -2092,7 +2100,7 @@
         }
         .exp-blurb {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             line-height: 1.5;
             color: rgba(234, 246, 255, 0.6);
             margin: 0;
@@ -2140,14 +2148,14 @@
         }
         .showcase-tip-label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
+            font-size: 0.5938rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: rgb(255, 200, 60);
         }
         .showcase-tip-text {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
+            font-size: 0.6562rem;
             line-height: 1.5;
             color: rgba(234, 246, 255, 0.85);
         }
@@ -2163,7 +2171,7 @@
             color: var(--acc);
             text-decoration: none;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
             border-bottom: 1px solid rgba(var(--acc-rgb), 0.4);
@@ -2184,7 +2192,7 @@
         }
         .agents-clock {
             color: var(--acc);
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.18em;
             opacity: 0.85;
         }
@@ -2296,7 +2304,7 @@
             display: block;
             width: 100%;
             font-family: inherit;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.04em;
             text-transform: none;
             text-align: left;
@@ -2443,7 +2451,7 @@
             display: flex;
             justify-content: space-between;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             margin-bottom: 4px;
         }
         .release-version {
@@ -2456,14 +2464,14 @@
         }
         .release-name {
             color: var(--ink);
-            font-size: 11px;
+            font-size: 0.6875rem;
             font-weight: 600;
             letter-spacing: 0.06em;
             margin-bottom: 3px;
         }
         .release-summary {
             color: var(--dim);
-            font-size: 10px;
+            font-size: 0.625rem;
             font-family: 'JetBrains Mono', monospace;
             line-height: 1.35;
             opacity: 0.8;
@@ -2479,7 +2487,7 @@
         .label.sub {
             color: var(--dim);
             opacity: 0.7;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.2em;
         }
         .tasks-list {
@@ -2496,7 +2504,7 @@
             padding: 3px 0 3px 8px;
             border-left: 1px solid rgba(var(--acc-rgb), 0.18);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             line-height: 1.4;
             text-transform: none;
             letter-spacing: 0;
@@ -2506,7 +2514,7 @@
             color: var(--acc);
             opacity: 0.75;
             flex: 0 0 44px;
-            font-size: 9px;
+            font-size: 0.5625rem;
             padding-top: 1px;
         }
         .task-text {
@@ -2539,7 +2547,7 @@
             border: none;
             color: var(--dim);
             font-family: inherit;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.2em;
             padding: 8px 6px;
             cursor: pointer;
@@ -2582,7 +2590,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 10px;
+            font-size: 0.625rem;
             color: var(--ink);
             opacity: 0.75;
         }
@@ -2597,7 +2605,7 @@
         .chat-online-text {
             color: #b6f5cb;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
+            font-size: 0.5938rem;
             letter-spacing: 0.06em;
         }
 
@@ -2645,7 +2653,7 @@
         }
         .chat-msg {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             line-height: 1.45;
             padding: 7px 10px;
             max-width: 90%;
@@ -2685,7 +2693,7 @@
         .chat-sug-btn {
             appearance: none;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             color: var(--ink);
             background: rgba(var(--acc-rgb), 0.05);
             border: 1px solid rgba(var(--acc-rgb), 0.45);
@@ -2712,7 +2720,7 @@
             border: 1px solid rgba(var(--acc-rgb), 0.25);
             color: var(--ink);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             padding: 8px 10px;
             outline: none;
             transition: border-color 0.15s, background 0.15s;
@@ -2727,7 +2735,7 @@
             background: rgba(var(--acc-rgb), 0.1);
             border: 1px solid var(--acc);
             color: var(--acc);
-            font-size: 14px;
+            font-size: 0.875rem;
             padding: 4px 14px;
             cursor: pointer;
             transition: background 0.15s, color 0.15s;
@@ -2748,7 +2756,7 @@
             color: var(--ink);
             opacity: 0.45;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.04em;
             padding: 4px 0;
             cursor: pointer;
@@ -2786,7 +2794,7 @@
             border: none;
             color: var(--ink);
             opacity: 0.55;
-            font-size: 16px;
+            font-size: 1rem;
             line-height: 1;
             padding: 2px 6px;
             cursor: pointer;
@@ -2806,7 +2814,7 @@
             border: 1px solid rgba(var(--acc-rgb), 0.22);
             color: var(--ink);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
+            font-size: 0.6562rem;
             padding: 6px 8px;
             outline: none;
         }
@@ -2818,7 +2826,7 @@
         .chat-pickup-btn {
             appearance: none;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             color: var(--acc);
             background: rgba(var(--acc-rgb), 0.06);
             border: 1px solid rgba(var(--acc-rgb), 0.45);
@@ -2835,7 +2843,7 @@
         .chat-pickup-status {
             color: #4ade80;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9.5px;
+            font-size: 0.5938rem;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -3032,7 +3040,7 @@
         }
         .dw-tag {
             color: var(--dim);
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
             display: block;
@@ -3041,7 +3049,7 @@
         .dw-title {
             color: var(--acc);
             font-family: 'Orbitron', sans-serif;
-            font-size: 22px;
+            font-size: 1.375rem;
             font-weight: 700;
             letter-spacing: 0.06em;
             text-transform: uppercase;
@@ -3060,7 +3068,7 @@
             color: var(--ink);
             padding: 6px 10px;
             font-family: inherit;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.18em;
             cursor: pointer;
             transition:
@@ -3083,7 +3091,7 @@
             box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.45);
         }
         .dw-nav { padding: 6px 9px; min-width: 28px; }
-        .dw-nav-key { font-size: 13px; line-height: 1; display: inline-flex; align-items: center; }
+        .dw-nav-key { font-size: 0.8125rem; line-height: 1; display: inline-flex; align-items: center; }
         .dw-nav:disabled { opacity: 0.3; cursor: default; }
         .dw-nav.flash {
             border-color: var(--acc);
@@ -3135,7 +3143,7 @@
             overflow-y: auto;
             padding: 22px 28px 28px;
             color: var(--ink);
-            font-size: 13px;
+            font-size: 0.8125rem;
             line-height: 1.55;
             scrollbar-width: thin;
             scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
@@ -3158,7 +3166,7 @@
         .dw-section { margin-bottom: 22px; }
         .dw-section h3 {
             color: var(--acc);
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
             margin: 0 0 10px;
@@ -3177,7 +3185,7 @@
         }
         .dw-stat-k {
             color: var(--dim);
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
             margin-bottom: 4px;
@@ -3185,7 +3193,7 @@
         .dw-stat-v {
             color: var(--acc);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 18px;
+            font-size: 1.125rem;
             font-weight: 600;
         }
         .dw-list { list-style: none; padding: 0; margin: 0; }
@@ -3193,7 +3201,7 @@
             padding: 6px 0 6px 14px;
             position: relative;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11.5px;
+            font-size: 0.7188rem;
             color: var(--ink);
             opacity: 0.85;
             border-bottom: 1px dashed rgba(var(--acc-rgb), 0.08);
@@ -3230,7 +3238,7 @@
         }
         .agent-name {
             color: var(--acc);
-            font-size: 10px;
+            font-size: 0.625rem;
             font-weight: 600;
             letter-spacing: 0.14em;
             text-transform: uppercase;
@@ -3238,19 +3246,19 @@
         .agent-tag {
             color: var(--dim);
             font-weight: 400;
-            font-size: 9px;
+            font-size: 0.5625rem;
             margin-left: 4px;
             opacity: 0.8;
         }
         .agent-task {
             color: var(--ink);
-            font-size: 10.5px;
+            font-size: 0.6562rem;
             opacity: 0.85;
             font-family: 'JetBrains Mono', monospace;
         }
         .agent-meta {
             color: var(--dim);
-            font-size: 9.5px;
+            font-size: 0.5938rem;
             opacity: 0.65;
             font-family: 'JetBrains Mono', monospace;
         }
@@ -3258,7 +3266,7 @@
         .hud .corner .label {
             color: var(--dim);
             display: block;
-            font-size: 9px;
+            font-size: 0.5625rem;
             margin-bottom: 4px;
         }
 
@@ -3436,7 +3444,7 @@
             align-items: center;
             gap: 10px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.35em;
             text-transform: uppercase;
             color: rgba(234, 246, 255, 0.5);
@@ -3471,7 +3479,7 @@
         .prompt .name {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 400;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.32em;
             line-height: 1;
             color: var(--acc);
@@ -3492,6 +3500,7 @@
         .prompt .role-hero {
             font-family: 'Orbitron', sans-serif;
             font-weight: 500;
+            /* Excluded from --text-scale (kept in px) — Claude Runner is the visual anchor of the page */
             font-size: clamp(32px, 4.5vw, 56px);
             letter-spacing: 0.14em;
             line-height: 1.05;
@@ -3530,7 +3539,7 @@
             margin-top: 22px;
             font-family: 'JetBrains Mono', monospace;
             font-weight: 300;
-            font-size: 11px;
+            font-size: 0.6875rem;
             line-height: 1.7;
             letter-spacing: 0.05em;
             color: rgba(234, 246, 255, 0.8);
@@ -3561,7 +3570,7 @@
             align-items: center;
             gap: 12px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.45em;
             text-transform: uppercase;
             color: rgba(234, 246, 255, 0.6);
@@ -3975,7 +3984,7 @@
             justify-content: space-between;
             align-items: center;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             color: var(--acc);
@@ -3984,7 +3993,7 @@
 
         .panel-header .id {
             color: var(--dim);
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.25em;
         }
 
@@ -4013,7 +4022,7 @@
             background: transparent;
             border: 1px solid rgba(var(--acc-rgb), 0.3);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.35em;
             text-transform: uppercase;
             color: var(--dim);
@@ -4026,7 +4035,7 @@
 
         .panel-header .close::before {
             content: '×';
-            font-size: 14px;
+            font-size: 0.875rem;
             line-height: 1;
             color: var(--acc);
             text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
@@ -4064,7 +4073,7 @@
         .tab {
             padding: 16px 28px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;
             color: var(--dim);
@@ -4081,7 +4090,7 @@
 
         .tab .num {
             color: rgba(var(--acc-rgb), 0.4);
-            font-size: 9px;
+            font-size: 0.5625rem;
             width: 24px;
         }
 
@@ -4193,7 +4202,7 @@
         .view-header h2 {
             font-family: 'Orbitron', sans-serif;
             font-weight: 600;
-            font-size: 22px;
+            font-size: 1.375rem;
             letter-spacing: 0.15em;
             color: var(--ink);
             text-transform: uppercase;
@@ -4202,7 +4211,7 @@
 
         .view-header .marker {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             color: var(--acc);
             letter-spacing: 0.3em;
         }
@@ -4241,7 +4250,7 @@
 
         .stat-card .k {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             color: var(--dim);
@@ -4250,7 +4259,7 @@
 
         .stat-card .v {
             font-family: 'Orbitron', sans-serif;
-            font-size: 18px;
+            font-size: 1.125rem;
             font-weight: 500;
             color: var(--ink);
             letter-spacing: 0.05em;
@@ -4264,7 +4273,7 @@
         .bio {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 300;
-            font-size: 13px;
+            font-size: 0.8125rem;
             line-height: 1.8;
             color: #b8c9d4;
         }
@@ -4320,7 +4329,7 @@
         .project-title {
             font-family: 'Orbitron', sans-serif;
             font-weight: 500;
-            font-size: 15px;
+            font-size: 0.9375rem;
             color: var(--ink);
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -4329,14 +4338,14 @@
         .project-year {
             color: var(--acc);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.25em;
         }
 
         .project-desc {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 300;
-            font-size: 12px;
+            font-size: 0.75rem;
             color: #9eafb9;
             line-height: 1.6;
             margin-bottom: 12px;
@@ -4350,7 +4359,7 @@
 
         .project-tags span {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.2em;
             color: var(--acc);
             border: 1px solid rgba(var(--acc-rgb), 0.3);
@@ -4366,7 +4375,7 @@
 
         .skill-group h3 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.4em;
             color: var(--acc);
             margin-bottom: 14px;
@@ -4389,7 +4398,7 @@
             gap: 14px;
             padding: 7px 0;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 0.75rem;
         }
 
         .skill-row .name {
@@ -4425,7 +4434,7 @@
             width: 36px;
             text-align: right;
             color: var(--acc);
-            font-size: 10px;
+            font-size: 0.625rem;
             text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.4);
         }
 
@@ -4437,7 +4446,7 @@
             padding: 18px 0;
             border-bottom: 1px dashed rgba(var(--acc-rgb), 0.15);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
+            font-size: 0.8125rem;
             transition: padding 0.2s;
         }
 
@@ -4447,7 +4456,7 @@
 
         .channel .ch {
             color: var(--dim);
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             display: flex;
@@ -4540,7 +4549,7 @@
 
         .tl-period {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.25em;
             text-transform: uppercase;
             color: var(--acc);
@@ -4556,7 +4565,7 @@
         .tl-role {
             font-family: 'Orbitron', sans-serif;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 0.875rem;
             color: var(--ink);
             letter-spacing: 0.06em;
             text-transform: uppercase;
@@ -4566,7 +4575,7 @@
         .tl-company {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 400;
-            font-size: 12px;
+            font-size: 0.75rem;
             color: var(--acc);
             margin-bottom: 8px;
         }
@@ -4574,7 +4583,7 @@
         .tl-summary {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 300;
-            font-size: 11.5px;
+            font-size: 0.7188rem;
             color: #9eafb9;
             line-height: 1.55;
             margin-bottom: 8px;
@@ -4588,7 +4597,7 @@
 
         .tl-tags span {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8.5px;
+            font-size: 0.5312rem;
             letter-spacing: 0.18em;
             color: var(--acc);
             border: 1px solid rgba(var(--acc-rgb), 0.3);
@@ -4648,7 +4657,7 @@
 
         .cv-action .cv-label {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.35em;
             color: var(--dim);
             text-transform: uppercase;
@@ -4657,7 +4666,7 @@
         .cv-action .cv-title {
             font-family: 'Orbitron', sans-serif;
             font-weight: 500;
-            font-size: 13px;
+            font-size: 0.8125rem;
             color: var(--ink);
             letter-spacing: 0.08em;
             text-transform: uppercase;
@@ -4668,7 +4677,7 @@
             align-items: center;
             gap: 10px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.3em;
             color: var(--acc);
             text-transform: uppercase;
@@ -4686,7 +4695,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 0.6875rem;
             box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.4);
         }
 
@@ -4736,7 +4745,7 @@
             }
 
             .hud .corner {
-                font-size: 9px;
+                font-size: 0.5625rem;
             }
 
             .hud .tl {
@@ -4956,7 +4965,7 @@
         }
         .articles-head .label {
             color: var(--acc);
-            font-size: 11px;
+            font-size: 0.6875rem;
             font-weight: 700;
             letter-spacing: 0.18em;
             text-transform: uppercase;
@@ -4967,7 +4976,7 @@
             border: 1px solid rgba(var(--acc-rgb), 0.3);
             color: var(--dim);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             padding: 6px 10px 6px 14px;
@@ -4979,7 +4988,7 @@
         }
         .articles-close::before {
             content: '×';
-            font-size: 14px;
+            font-size: 0.875rem;
             line-height: 1;
             color: var(--acc);
             text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
@@ -5178,7 +5187,7 @@
             align-items: center;
             gap: 14px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             flex-wrap: wrap;
@@ -5190,7 +5199,7 @@
         .reader-title {
             font-family: 'Orbitron', sans-serif;
             font-weight: 600;
-            font-size: clamp(20px, 2.4vw, 28px);
+            font-size: clamp(1.25rem, 2.4vw, 1.75rem);
             line-height: 1.18;
             letter-spacing: 0.04em;
             color: var(--ink);
@@ -5199,7 +5208,7 @@
         }
         .reader-author {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
+            font-size: 0.6562rem;
             color: var(--dim);
             letter-spacing: 0.16em;
         }
@@ -5213,7 +5222,7 @@
         }
         .reader-tag {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: var(--acc);
@@ -5230,7 +5239,7 @@
             border: 1px solid rgba(var(--acc-rgb), 0.3);
             color: var(--dim);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            font-size: 0.5625rem;
             letter-spacing: 0.32em;
             text-transform: uppercase;
             padding: 6px 10px 6px 14px;
@@ -5243,7 +5252,7 @@
         }
         .reader-close::before {
             content: '×';
-            font-size: 14px;
+            font-size: 0.875rem;
             line-height: 1;
             color: var(--acc);
             text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
@@ -5260,7 +5269,7 @@
             padding: 28px 40px 44px;
             color: var(--ink);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 13.5px;
+            font-size: 0.8438rem;
             line-height: 1.65;
             scrollbar-width: thin;
             scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
@@ -5277,7 +5286,7 @@
         .reader-content h2 {
             font-family: 'Orbitron', sans-serif;
             font-weight: 600;
-            font-size: 18px;
+            font-size: 1.125rem;
             color: var(--acc);
             text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.3);
             letter-spacing: 0.06em;
@@ -5287,7 +5296,7 @@
         .reader-content h3 {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 0.8125rem;
             color: var(--acc);
             letter-spacing: 0.16em;
             text-transform: uppercase;
@@ -5321,7 +5330,7 @@
         .reader-content blockquote p { margin: 0; }
         .reader-content code {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
+            font-size: 0.75rem;
             background: rgba(var(--acc-rgb), 0.08);
             color: var(--acc);
             padding: 2px 6px;
@@ -5339,13 +5348,13 @@
             border: none;
             padding: 0;
             color: var(--ink);
-            font-size: 12px;
+            font-size: 0.75rem;
         }
         .reader-content table {
             width: 100%;
             border-collapse: collapse;
             margin: 18px 0;
-            font-size: 12px;
+            font-size: 0.75rem;
         }
         .reader-content th,
         .reader-content td {
@@ -5358,7 +5367,7 @@
             color: var(--acc);
             font-weight: 700;
             letter-spacing: 0.04em;
-            font-size: 11px;
+            font-size: 0.6875rem;
             text-transform: uppercase;
         }
         .reader-content td { color: var(--ink); opacity: 0.92; }
@@ -5374,7 +5383,7 @@
             align-items: center;
             justify-content: center;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
+            font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
         }
@@ -5386,7 +5395,7 @@
             right: 8px;
             z-index: 99999;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 0.625rem;
             letter-spacing: 0.12em;
             color: var(--acc, #66ff99);
             background: rgba(0, 0, 0, 0.7);
@@ -5471,25 +5480,46 @@
     <!-- HUD -->
     <div class="hud">
         <div class="corner bl">
-            <span class="label">// vibe settings</span>
-            <div class="vibe-row">
-                <button id="ap-toggle" class="ap-btn ap-grunge" type="button" aria-label="Unmute">
-                    <svg class="icon-unmuted" viewBox="0 0 14 12" aria-hidden="true">
-                        <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
-                        <path d="M9 3.5 Q11 6 9 8.5" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
-                        <path d="M10.5 2 Q13.5 6 10.5 10" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
-                    </svg>
-                    <svg class="icon-muted" viewBox="0 0 14 12" aria-hidden="true">
-                        <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
-                        <line x1="9" y1="3.5" x2="13" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
-                        <line x1="13" y1="3.5" x2="9" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+            <!-- Settings hide behind a single cog button. Click expands a popover with mute toggle,
+                 theme dots and A− / A+ text-size controls. -->
+            <div class="settings-cog">
+                <button type="button" class="settings-cog-btn" id="settings-cog-btn" aria-label="Settings" aria-expanded="false">
+                    <svg class="cog-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6h.09A1.65 1.65 0 0 0 10 3.09V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                     </svg>
                 </button>
-                <div class="theme-switch" id="theme-switch">
-                    <button class="theme-dot active" data-theme="green" aria-label="Green"></button>
-                    <button class="theme-dot" data-theme="cyan" aria-label="Cyan"></button>
-                    <button class="theme-dot" data-theme="ember" aria-label="Ember"></button>
-                    <button class="theme-dot" data-theme="mono" aria-label="Mono"></button>
+                <div class="settings-popover" id="settings-popover" hidden>
+                    <div class="settings-row">
+                        <span class="settings-row-label">// vibe</span>
+                        <div class="vibe-row">
+                            <button id="ap-toggle" class="ap-btn ap-grunge" type="button" aria-label="Unmute">
+                                <svg class="icon-unmuted" viewBox="0 0 14 12" aria-hidden="true">
+                                    <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
+                                    <path d="M9 3.5 Q11 6 9 8.5" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+                                    <path d="M10.5 2 Q13.5 6 10.5 10" fill="none" stroke="currentColor" stroke-width="0.9" stroke-linecap="round" />
+                                </svg>
+                                <svg class="icon-muted" viewBox="0 0 14 12" aria-hidden="true">
+                                    <path d="M1.5 4 H4 L7 1.5 V10.5 L4 8 H1.5 Z" />
+                                    <line x1="9" y1="3.5" x2="13" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+                                    <line x1="13" y1="3.5" x2="9" y2="8.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" />
+                                </svg>
+                            </button>
+                            <div class="theme-switch" id="theme-switch">
+                                <button class="theme-dot active" data-theme="green" aria-label="Green"></button>
+                                <button class="theme-dot" data-theme="cyan" aria-label="Cyan"></button>
+                                <button class="theme-dot" data-theme="ember" aria-label="Ember"></button>
+                                <button class="theme-dot" data-theme="mono" aria-label="Mono"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-row">
+                        <span class="settings-row-label">// text size</span>
+                        <div class="text-scale-controls" role="group" aria-label="Text size">
+                            <button type="button" class="text-scale-btn" id="text-scale-down" aria-label="Decrease text size">A−</button>
+                            <button type="button" class="text-scale-btn" id="text-scale-up" aria-label="Increase text size">A+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <audio id="ap-audio" loop preload="auto"></audio>
@@ -8255,14 +8285,139 @@
 
     <!-- Audio buttons -->
     <style>
-        /* Vibe-row: theme dots + audio button side by side in bottom-left */
-        .corner.bl .vibe-row {
+        /* Settings cog — single icon button in bottom-left; expands a popover above with all controls */
+        .settings-cog {
+            position: relative;
+            display: inline-block;
+        }
+        .settings-cog-btn {
+            appearance: none;
+            background: rgba(var(--acc-rgb), 0.05);
+            border: 1px solid rgba(var(--acc-rgb), 0.35);
+            color: var(--ink);
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: border-color 0.18s, color 0.18s, background 0.18s, transform 0.4s ease;
+        }
+        .settings-cog-btn .cog-icon {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.4s ease;
+        }
+        .settings-cog-btn:hover {
+            color: var(--acc);
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.1);
+        }
+        .settings-cog-btn:hover .cog-icon { transform: rotate(60deg); }
+        .settings-cog-btn[aria-expanded="true"] {
+            color: var(--acc);
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.12);
+        }
+        .settings-cog-btn[aria-expanded="true"] .cog-icon { transform: rotate(120deg); }
+        .settings-cog-btn:focus { outline: none; }
+        .settings-cog-btn:focus-visible {
+            outline: none;
+            border-color: var(--acc);
+            box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.55), 0 0 16px rgba(var(--acc-rgb), 0.4);
+        }
+
+        .settings-popover {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 0;
+            background: linear-gradient(180deg,
+                rgba(2, 12, 22, 0.94) 0%,
+                rgba(2, 12, 22, 0.82) 100%);
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            box-shadow:
+                0 0 24px rgba(var(--acc-rgb), 0.18),
+                0 8px 24px rgba(0, 0, 0, 0.5),
+                0 0 18px rgba(var(--acc-rgb), 0.14) inset;
+            padding: 12px 14px 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 10;
+            min-width: 200px;
+            transform-origin: 0 100%;
+            transform: scale(0.92);
+            opacity: 0;
+            transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1);
+            pointer-events: none;
+        }
+        .settings-popover:not([hidden]) {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        .settings-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .settings-row-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.32em;
+            color: var(--acc);
+            opacity: 0.85;
+            text-transform: uppercase;
+        }
+
+        /* Vibe-row inside the popover keeps the original inline layout */
+        .settings-popover .vibe-row {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .corner.bl .vibe-row .theme-switch {
-            margin-top: 0;   /* override stand-alone offset for in-row layout */
+        .settings-popover .theme-switch { margin-top: 0; }
+
+        /* Text-size A− / A+ controls (in the popover) — same visual language as theme dots */
+        .text-scale-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .text-scale-btn {
+            appearance: none;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--acc);
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: border-color 0.18s, color 0.18s, background 0.18s, transform 0.12s;
+        }
+        .text-scale-btn:hover {
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.1);
+        }
+        .text-scale-btn:active { transform: scale(0.92); }
+        .text-scale-btn:focus { outline: none; }
+        .text-scale-btn:focus-visible {
+            outline: none;
+            border-color: var(--acc);
+            box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.55), 0 0 12px rgba(var(--acc-rgb), 0.4);
+        }
+        .text-scale-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+            border-color: rgba(var(--acc-rgb), 0.2);
         }
 
         .ap-btn {
@@ -8712,6 +8867,56 @@ See also: Health Samurai Lab: Game of Pools.`,
                     closeReader();
                 }
             }, true);
+        })();
+    </script>
+
+    <!-- Settings cog popover toggle + A− / A+ text scale (no persistence) -->
+    <script>
+        (() => {
+            const cogBtn = document.getElementById('settings-cog-btn');
+            const popover = document.getElementById('settings-popover');
+            if (!cogBtn || !popover) return;
+
+            function open() {
+                popover.hidden = false;
+                cogBtn.setAttribute('aria-expanded', 'true');
+            }
+            function close() {
+                popover.hidden = true;
+                cogBtn.setAttribute('aria-expanded', 'false');
+            }
+            cogBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (popover.hidden) { open(); window.__sfx?.tick?.(); }
+                else                { close(); window.__sfx?.tick?.(); }
+            });
+            // Click outside closes
+            document.addEventListener('click', (e) => {
+                if (popover.hidden) return;
+                if (!popover.contains(e.target) && !cogBtn.contains(e.target)) close();
+            });
+            // ESC closes
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !popover.hidden) close();
+            });
+
+            // Text-scale A− / A+ — no persistence; resets to 1 on every page load
+            const MIN = 1.0, MAX = 1.5, STEP = 0.1;
+            const root = document.documentElement;
+            const down = document.getElementById('text-scale-down');
+            const up   = document.getElementById('text-scale-up');
+            if (!down || !up) return;
+            let cur = 1;
+            function clamp(v) { return Math.min(MAX, Math.max(MIN, Math.round(v * 100) / 100)); }
+            function apply(v) {
+                cur = clamp(v);
+                root.style.setProperty('--text-scale', cur.toFixed(2));
+                down.disabled = cur <= MIN + 0.001;
+                up.disabled   = cur >= MAX - 0.001;
+            }
+            apply(cur);
+            down.addEventListener('click', () => { apply(cur - STEP); window.__sfx?.tick?.(); });
+            up.addEventListener('click',   () => { apply(cur + STEP); window.__sfx?.tick?.(); });
         })();
     </script>
 
