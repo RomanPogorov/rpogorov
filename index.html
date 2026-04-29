@@ -5199,14 +5199,15 @@
             overflow: hidden;
             transition: opacity 0.4s ease;
         }
-        /* Soft elongated cone of light — much more transparent base, taller fall-off */
+        /* Soft elongated cone of light — fixed 460px tall regardless of parent's clipped height,
+           so the cone shape stays the same; the parent's overflow:hidden + animated height is the mask. */
         .htl-rays::before {
             content: '';
             position: absolute;
             top: 0;
             left: -14%;
             right: -14%;
-            height: 100%;
+            height: 460px;
             background: radial-gradient(140% 100% at 50% 0%,
                 rgba(var(--acc-rgb), 0.26) 0%,
                 rgba(var(--acc-rgb), 0.13) 22%,
@@ -5234,12 +5235,13 @@
             transform-origin: top center;
             animation: htl-ray-pulse 4s ease-in-out infinite;
         }
-        .htl-rays .ray-1 { left: 12%; height: 72%; animation-delay: 0s;    animation-duration: 4.0s; }
-        .htl-rays .ray-2 { left: 28%; height: 92%; animation-delay: 1.4s;  animation-duration: 4.6s; }
-        .htl-rays .ray-3 { left: 44%; height: 60%; animation-delay: 0.7s;  animation-duration: 3.8s; }
-        .htl-rays .ray-4 { left: 60%; height: 100%;animation-delay: 2.2s;  animation-duration: 5.0s; }
-        .htl-rays .ray-5 { left: 76%; height: 80%; animation-delay: 1.8s;  animation-duration: 4.2s; }
-        .htl-rays .ray-6 { left: 90%; height: 55%; animation-delay: 3.0s;  animation-duration: 4.8s; }
+        /* Fixed pixel ray heights — independent of the parent's animated mask height */
+        .htl-rays .ray-1 { left: 12%; height: 330px; animation-delay: 0s;    animation-duration: 4.0s; }
+        .htl-rays .ray-2 { left: 28%; height: 420px; animation-delay: 1.4s;  animation-duration: 4.6s; }
+        .htl-rays .ray-3 { left: 44%; height: 280px; animation-delay: 0.7s;  animation-duration: 3.8s; }
+        .htl-rays .ray-4 { left: 60%; height: 460px; animation-delay: 2.2s;  animation-duration: 5.0s; }
+        .htl-rays .ray-5 { left: 76%; height: 370px; animation-delay: 1.8s;  animation-duration: 4.2s; }
+        .htl-rays .ray-6 { left: 90%; height: 250px; animation-delay: 3.0s;  animation-duration: 4.8s; }
         @keyframes htl-ray-pulse {
             0%, 100% { opacity: 0;    transform: translateY(-18px) scaleY(0.4); }
             42%      { opacity: 0.25; transform: translateY(0)     scaleY(1);   }
@@ -7306,9 +7308,11 @@
                     const d  = Math.hypot(cx - mx, cy - my);
                     const k  = t.dataset.pane || 'snap';
                     if (k === pinKey) {
-                        // Re-anchor in case the layout shifted
                         pinAnchor = { x: cx, y: cy };
-                        if (d <= RELEASE_DIST) stillNearCurrent = true;
+                        // Stay pinned if cursor is inside the tab's rect (any Y position works) OR
+                        // within the lateral RELEASE buffer around the anchor.
+                        const inside = mx >= r.left && mx <= r.right && my >= r.top && my <= r.bottom;
+                        if (inside || d <= RELEASE_DIST) stillNearCurrent = true;
                     }
                     if (d < bestNewDist) { bestNewDist = d; bestNew = { x: cx, y: cy, key: k, d }; }
                 });
