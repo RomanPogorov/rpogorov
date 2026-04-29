@@ -6012,7 +6012,7 @@
                 <span class="dot"></span>
                 <span>Roman Pogorov Portfolio 2026</span>
             </div>
-            <div class="name">Designer <span class="name-sep">•</span> Vibe Shipper</div>
+            <div class="name" id="prompt-roles">Designer <span class="name-sep">•</span> Vibe Shipper</div>
             <h1 class="role-hero">Claude Runner</h1>
             <div class="slogan">never the best at <em>one thing</em> — always <em>good enough</em> at many. <span
                     class="slogan-end">it feels like my time has come.</span></div>
@@ -9499,6 +9499,55 @@ See also: Health Samurai Lab: Game of Pools.`,
             apply(cur);
             down.addEventListener('click', () => { apply(cur - STEP); window.__sfx?.tick?.(); });
             up.addEventListener('click',   () => { apply(cur + STEP); window.__sfx?.tick?.(); });
+
+            // Central prompt role line — cycles every 7s with a Matrix-style decode animation.
+            (() => {
+                const ROLES = [
+                    'Designer • Vibe Shipper',
+                    'Designer • Claude Runner',
+                    'Designer • Code Whisperer',
+                    'Designer • System Builder',
+                    'Designer • AI Tooling',
+                    'Designer • Pixel Hacker',
+                ];
+                const SCRAMBLE = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789·/-_';
+                const STEADY = new Set([' ', '•', '↔', '·', '/']);
+                const target = document.getElementById('prompt-roles');
+                if (!target) return;
+
+                function format(text) {
+                    return text.replace(/•/g, '<span class="name-sep">•</span>');
+                }
+                function decode(el, newText, duration = 720) {
+                    const start = performance.now();
+                    function frame(now) {
+                        const t = now - start;
+                        if (t >= duration) {
+                            el.innerHTML = format(newText);
+                            return;
+                        }
+                        let out = '';
+                        for (let i = 0; i < newText.length; i++) {
+                            const ch = newText[i];
+                            const stableAt = (i / newText.length) * duration * 0.78 + 40;
+                            if (t >= stableAt || STEADY.has(ch)) {
+                                out += ch;
+                            } else {
+                                out += SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)];
+                            }
+                        }
+                        el.textContent = out;
+                        requestAnimationFrame(frame);
+                    }
+                    requestAnimationFrame(frame);
+                }
+
+                let idx = 0;
+                setInterval(() => {
+                    idx = (idx + 1) % ROLES.length;
+                    decode(target, ROLES[idx]);
+                }, 7000);
+            })();
 
             // Text-shadow on/off toggle (also non-persistent — resets to ON each load)
             const shadowBtn = document.getElementById('shadow-toggle');
