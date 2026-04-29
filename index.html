@@ -3742,30 +3742,49 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 8px;
+            counter-reset: pitch;
         }
         .task-item {
-            display: flex;
+            display: grid;
+            grid-template-columns: 22px 1fr;
             gap: 10px;
-            padding: 3px 0 3px 8px;
-            border-left: 1px solid rgba(var(--acc-rgb), 0.18);
+            padding: 9px 11px 9px 12px;
+            border: 1px solid rgba(var(--acc-rgb), 0.16);
+            border-left: 2px solid rgba(var(--acc-rgb), 0.45);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.05), rgba(var(--acc-rgb), 0) 70%);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.625rem;
-            line-height: 1.4;
+            font-size: 0.6875rem;
+            line-height: 1.5;
             text-transform: none;
             letter-spacing: 0;
             text-align: left;
+            cursor: default;
+            position: relative;
+            transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
         }
-        .task-date {
+        .task-item::before {
+            counter-increment: pitch;
+            content: counter(pitch, decimal-leading-zero);
             color: var(--acc);
-            opacity: 0.75;
-            flex: 0 0 44px;
-            font-size: 0.5625rem;
-            padding-top: 1px;
+            font-size: 0.5rem;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            opacity: 0.85;
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55);
+            line-height: 1.5;
         }
+        .task-item:hover {
+            border-color: rgba(var(--acc-rgb), 0.5);
+            border-left-color: var(--acc);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.12), rgba(var(--acc-rgb), 0.02) 70%);
+            transform: translateX(3px);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.18);
+        }
+        .task-item .task-date { display: none; }      /* legacy markup: ignored */
         .task-text {
             color: var(--ink);
-            opacity: 0.85;
+            opacity: 0.92;
         }
 
         .projects-block {
