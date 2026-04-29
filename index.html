@@ -4871,15 +4871,13 @@
         /* Left panel — mirror of .hud-right */
         .hud-left-articles {
             position: fixed;
-            /* Flush with the tabs above — panel feels like the same hologram that started up there */
-            top: 88px;
-            /* Match tabs' left edge (32px) instead of starting at 0 */
-            left: 32px;
+            /* Sits below the holographic tabs (top:24 + ~58px tab height = ~82) and above // vibe settings */
+            top: 92px;
+            left: 0;
             bottom: 88px;
-            width: clamp(280px, 28vw, 420px);
-            /* SAME 3D system as the tabs above so they read as one continuous hologram */
-            perspective: 700px;
-            perspective-origin: -20% 50%;
+            width: clamp(300px, 30vw, 460px);
+            perspective: 1100px;
+            perspective-origin: -10% 0%;
             pointer-events: none;
             opacity: 0;
             transform-origin: top left;
@@ -4925,14 +4923,12 @@
         }
         .hud-left-stack {
             position: absolute;
-            /* Pulled in to 0 left — outer .hud-left-articles is already offset 32 from the viewport edge */
-            inset: 16px 22px 16px 0;
+            inset: 16px 28px 16px 32px;
             display: flex;
             flex-direction: column;
             transform-origin: 0 50%;
             transform-style: preserve-3d;
-            /* Match the tabs' 20deg rotation + push slightly back for shared 3D plane */
-            transform: rotateY(20deg) translateZ(-18px);
+            transform: rotateY(14deg) translateZ(0);
             will-change: transform;
         }
         .hud-left-stack > * { pointer-events: auto; }
