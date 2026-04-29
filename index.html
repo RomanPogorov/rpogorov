@@ -7974,6 +7974,13 @@
                 if (e.key === 'Escape') { close(); return; }
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
+                if (e.key === 'ArrowDown') {
+                    const active = items[currentIndex()];
+                    const id = active?.dataset.case;
+                    if (!id) return;
+                    const trigger = document.querySelector(`[data-open-case="${id}"]`);
+                    if (trigger) { e.preventDefault(); trigger.click(); }
+                }
             });
 
             // Yellow tip in the right HUD opens the showcase
