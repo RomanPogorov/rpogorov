@@ -111,6 +111,19 @@
             cursor: crosshair;
         }
 
+        /* ============ FOCUS — sitewide ============
+           Browser default focus ring is blue, which fights the theme accent.
+           Strip the default outline and replace with a theme-coloured ring +
+           glow on focus-visible only (so click focus stays clean). Specific
+           components can still override these (and many already do). */
+        :focus { outline: none; }
+        :focus-visible {
+            outline: 1px solid var(--acc);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.35),
+                        0 0 14px rgba(var(--acc-rgb), 0.45);
+        }
+
         /* ============ VIDEO ============ */
         .stage {
             position: fixed;
