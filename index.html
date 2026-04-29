@@ -4747,8 +4747,10 @@
             top: 28px;
             left: 32px;
             z-index: 7;
-            perspective: 1100px;
-            perspective-origin: 0 50%;
+            /* Mirror the right-HUD perspective on the left side. Closer perspective + origin tightly off
+               the left edge makes the rotateY actually read on a small surface like the tab strip. */
+            perspective: 700px;
+            perspective-origin: -20% 50%;
             pointer-events: none;
             /* Idle float — same vibe as the right HUD's parallax */
             animation: htl-float 5s ease-in-out infinite;
@@ -4763,7 +4765,9 @@
             display: inline-flex;
             align-items: stretch;
             transform-origin: 0 50%;
-            transform: rotateY(14deg);
+            /* Stronger angle than the panel because the strip is short and 14deg barely reads at this size.
+               translateZ pushes the frame slightly back so the perspective foreshortening is obvious. */
+            transform: rotateY(20deg) translateZ(-18px);
             transform-style: preserve-3d;
             background:
                 /* soft diagonal scanlines inside the frame */
