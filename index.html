@@ -510,10 +510,7 @@
         body.showcase-open .showcase {
             top: var(--sheet-top);
         }
-        /* Hero layers clip to a rounded inset rectangle in showcase mode — the
-           old page reads as a tile with visible edges behind the rising sheet.
-           Base clip-path: inset(0) so both states share the same shape and the
-           browser can animate clip-path interpolation. */
+        /* Hero stays put — just a soft dim while the showcase is over it. */
         .stage,
         .grid,
         .horizon,
@@ -522,17 +519,7 @@
         .vignette,
         .hud,
         .prompt {
-            clip-path: inset(0 0 0 0 round 0);
-            -webkit-clip-path: inset(0 0 0 0 round 0);
-            /* Back-card animation: slow ease-in/ease-out so it doesn't snap.
-               The S-curve (0.62, 0.02, 0.18, 1) starts gently, picks up, then
-               decelerates and settles — feels like the page is rolling back. */
-            transition:
-                transform 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
-                clip-path 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
-                -webkit-clip-path 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
-                opacity 1.4s cubic-bezier(0.62, 0.02, 0.18, 1),
-                filter 1.4s cubic-bezier(0.62, 0.02, 0.18, 1);
+            transition: opacity 0.5s ease;
         }
         body.showcase-open .stage,
         body.showcase-open .grid,
@@ -541,11 +528,7 @@
         body.showcase-open .scanlines,
         body.showcase-open .vignette,
         body.showcase-open .hud {
-            transform: scale(0.92) translateY(-1.6vh);
-            opacity: 0.62;
-            filter: blur(1px);
-            clip-path: inset(0 0 0 0 round var(--sheet-radius));
-            -webkit-clip-path: inset(0 0 0 0 round var(--sheet-radius));
+            opacity: 0.45;
             pointer-events: none;
         }
         body.showcase-open .prompt {
@@ -3965,18 +3948,10 @@
             opacity: 0.4;
         }
 
-        /* Combined transition — must list every property that animates between
-           hero ↔ showcase-open states. Otherwise transform/clip-path snap
-           instantly and the back-card scale-down looks like a binary jump. */
         .grid,
         .horizon,
         .hud {
-            transition:
-                transform 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
-                clip-path 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
-                -webkit-clip-path 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
-                opacity 1.4s cubic-bezier(0.62, 0.02, 0.18, 1),
-                filter 1.4s cubic-bezier(0.62, 0.02, 0.18, 1);
+            transition: opacity 0.8s ease, filter 0.8s ease;
         }
 
         /* ============ HOLOGRAPHIC PANEL — TRON ============ */
@@ -8126,6 +8101,14 @@
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
             });
             back.addEventListener('click', close);
+            // Click anywhere outside the showcase tile → close.
+            const showcase = document.getElementById('showcase');
+            document.addEventListener('mousedown', (e) => {
+                if (!document.body.classList.contains('showcase-open')) return;
+                if (document.body.classList.contains('case-open')) return;
+                if (showcase && showcase.contains(e.target)) return;
+                close();
+            });
 
             // IntersectionObserver: which case is in viewport → .active for entry anim
             const intro = document.querySelector('.showcase-intro');
