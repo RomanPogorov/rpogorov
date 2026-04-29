@@ -524,15 +524,15 @@
         .prompt {
             clip-path: inset(0 0 0 0 round 0);
             -webkit-clip-path: inset(0 0 0 0 round 0);
-            /* Back-card animation: slow, elegant ease so the hero feels like it
-               settles back behind the sheet rather than snapping to its smaller
-               state. Apple-ish quartic-out curve. */
+            /* Back-card animation: slow ease-in/ease-out so it doesn't snap.
+               The S-curve (0.62, 0.02, 0.18, 1) starts gently, picks up, then
+               decelerates and settles — feels like the page is rolling back. */
             transition:
-                transform 1.3s cubic-bezier(0.22, 0.95, 0.18, 1),
-                clip-path 1.3s cubic-bezier(0.22, 0.95, 0.18, 1),
-                -webkit-clip-path 1.3s cubic-bezier(0.22, 0.95, 0.18, 1),
-                opacity 1.05s cubic-bezier(0.22, 0.95, 0.18, 1),
-                filter 1.05s cubic-bezier(0.22, 0.95, 0.18, 1);
+                transform 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
+                clip-path 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
+                -webkit-clip-path 1.7s cubic-bezier(0.62, 0.02, 0.18, 1),
+                opacity 1.4s cubic-bezier(0.62, 0.02, 0.18, 1),
+                filter 1.4s cubic-bezier(0.62, 0.02, 0.18, 1);
         }
         body.showcase-open .stage,
         body.showcase-open .grid,
