@@ -123,9 +123,9 @@
             height: auto;
             transform: translate(-50%, -50%);
             object-fit: cover;
-            filter: contrast(1.15) saturate(1.0) brightness(0.8);
+            /* grading baked into bg.mp4 (contrast 1.15, sat 1.0, brightness 0.8) — no per-frame filter */
             opacity: 0;
-            transition: opacity 1.2s ease, filter 0.8s ease;
+            transition: opacity 1.2s ease;
         }
         body.video-revealed .stage video {
             opacity: 1;
@@ -4498,7 +4498,7 @@
     <div class="stage">
         <video id="bg" autoplay muted loop playsinline preload="auto">
             <source
-                src="bg.mp4"
+                src="bg.mp4?v=2"
                 type="video/mp4">
         </video>
     </div>
