@@ -5155,62 +5155,64 @@
             to   { opacity: 1; transform: translateX(0); }
         }
 
-        /* Holographic hint under the collapsed tab strip — soft descending glow + thin ray streaks
-           inside it. Reads as "light spilling down trying to draw the panel space". */
+        /* Holographic hint under the collapsed tab strip — softer, longer descending glow with more
+           accent rays of varied heights / opacities for a less uniform "drawing space" effect. */
         .htl-tabs { position: relative; }
         .htl-rays {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            height: 320px;
+            height: 480px;
             pointer-events: none;
             overflow: hidden;
             transition: opacity 0.4s ease;
         }
-        /* Soft cone of light — wide vertical glow that fades down. The blur softens the edges. */
+        /* Soft elongated cone of light — much more transparent base, taller fall-off */
         .htl-rays::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -10%;
-            right: -10%;
+            left: -14%;
+            right: -14%;
             height: 100%;
-            background: radial-gradient(120% 90% at 50% 0%,
-                rgba(var(--acc-rgb), 0.32) 0%,
-                rgba(var(--acc-rgb), 0.16) 25%,
-                rgba(var(--acc-rgb), 0.05) 55%,
-                transparent 90%);
-            filter: blur(6px);
-            animation: htl-glow-breathe 3.6s ease-in-out infinite;
+            background: radial-gradient(140% 100% at 50% 0%,
+                rgba(var(--acc-rgb), 0.16) 0%,
+                rgba(var(--acc-rgb), 0.08) 22%,
+                rgba(var(--acc-rgb), 0.03) 50%,
+                transparent 88%);
+            filter: blur(10px);
+            animation: htl-glow-breathe 4.2s ease-in-out infinite;
         }
         @keyframes htl-glow-breathe {
-            0%, 100% { opacity: 0.55; transform: translateY(-2px) scaleY(0.96); }
-            50%      { opacity: 1;    transform: translateY(0)    scaleY(1);    }
+            0%, 100% { opacity: 0.45; transform: translateY(-2px) scaleY(0.94); }
+            50%      { opacity: 0.85; transform: translateY(0)    scaleY(1);    }
         }
-        /* Three thin accent rays riding inside the glow */
+        /* Six thin accent rays of varied heights / phases for organic feel */
         .htl-rays .ray {
             position: absolute;
             top: 0;
             width: 1px;
-            height: 100%;
             background: linear-gradient(180deg,
-                rgba(var(--acc-rgb), 0.55) 0%,
-                rgba(var(--acc-rgb), 0.28) 25%,
-                rgba(var(--acc-rgb), 0.08) 60%,
+                rgba(var(--acc-rgb), 0.4)  0%,
+                rgba(var(--acc-rgb), 0.18) 35%,
+                rgba(var(--acc-rgb), 0.05) 70%,
                 rgba(var(--acc-rgb), 0)    100%);
-            box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.4);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.28);
             opacity: 0;
             transform-origin: top center;
-            animation: htl-ray-pulse 3.6s ease-in-out infinite;
+            animation: htl-ray-pulse 4s ease-in-out infinite;
         }
-        .htl-rays .ray-1 { left: 25%; animation-delay: 0s;    }
-        .htl-rays .ray-2 { left: 50%; animation-delay: 1.1s;  }
-        .htl-rays .ray-3 { left: 75%; animation-delay: 2.2s;  }
+        .htl-rays .ray-1 { left: 12%; height: 72%; animation-delay: 0s;    animation-duration: 4.0s; }
+        .htl-rays .ray-2 { left: 28%; height: 92%; animation-delay: 1.4s;  animation-duration: 4.6s; }
+        .htl-rays .ray-3 { left: 44%; height: 60%; animation-delay: 0.7s;  animation-duration: 3.8s; }
+        .htl-rays .ray-4 { left: 60%; height: 100%;animation-delay: 2.2s;  animation-duration: 5.0s; }
+        .htl-rays .ray-5 { left: 76%; height: 80%; animation-delay: 1.8s;  animation-duration: 4.2s; }
+        .htl-rays .ray-6 { left: 90%; height: 55%; animation-delay: 3.0s;  animation-duration: 4.8s; }
         @keyframes htl-ray-pulse {
-            0%, 100% { opacity: 0;   transform: translateY(-12px) scaleY(0.5); }
-            45%      { opacity: 0.65; transform: translateY(0)    scaleY(1);   }
-            65%      { opacity: 0.45; transform: translateY(2px)  scaleY(1);   }
+            0%, 100% { opacity: 0;    transform: translateY(-18px) scaleY(0.4); }
+            42%      { opacity: 0.42; transform: translateY(0)     scaleY(1);   }
+            68%      { opacity: 0.28; transform: translateY(4px)   scaleY(1);   }
         }
         body.left-pane-open .htl-rays { opacity: 0; }
 
@@ -5588,6 +5590,9 @@
                         <span class="ray ray-1"></span>
                         <span class="ray ray-2"></span>
                         <span class="ray ray-3"></span>
+                        <span class="ray ray-4"></span>
+                        <span class="ray ray-5"></span>
+                        <span class="ray ray-6"></span>
                     </div>
                 </div>
                 <div class="hl-pane" id="hl-pane" hidden>
