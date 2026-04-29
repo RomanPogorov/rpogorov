@@ -5186,23 +5186,18 @@
            accent rays of varied heights / opacities for a less uniform "drawing space" effect. */
         .htl-tabs { position: relative; }
         /* Sit in the same area where the real .hl-pane expands — full panel-area width.
-           The vertical extent itself breathes (height pulse, anchored at the top under the tabs):
-           it shrinks down to 80px and stretches back to ~460px — independent of the inner rays
-           pulse + glow breathe. */
+           Height is JS-driven: combines a 5.5s sine-wave breathing pulse with a cursor-proximity
+           multiplier — far from tabs the gradient stays at the 80px baseline; near the tabs it
+           breathes between 80px and ~460px. Anchored at the top under the tab strip. */
         .htl-rays {
             position: absolute;
             top: 64px;     /* below the tab strip + the 12px stack gap */
             left: 0;
             right: 0;
-            height: 80px;  /* min — animated up to ~460 by htl-rays-grow */
+            height: 80px;  /* baseline; JS overrides via inline style */
             pointer-events: none;
             overflow: hidden;
             transition: opacity 0.4s ease;
-            animation: htl-rays-grow 5.5s ease-in-out infinite;
-        }
-        @keyframes htl-rays-grow {
-            0%, 100% { height: 80px;  }
-            50%      { height: 460px; }
         }
         /* Soft elongated cone of light — much more transparent base, taller fall-off */
         .htl-rays::before {
@@ -9227,53 +9222,71 @@ See also: Health Samurai Lab: Game of Pools.`,
 
             // (removed grid glitch scheduler per Roman's request — drift continues, glitch is gone)
 
-            // Skeleton-preview proximity reveal — when cursor approaches the tab strip, the placeholder
-            // cards fade in. Far away = invisible (only the rays gradient shows). Mapped via distance.
+            // Cursor-proximity tracker — drives both the skeleton card preview and the rays gradient
+            // height. Far from tabs: skeleton invisible, rays stay at the 80px baseline. Approaching:
+            // skeleton fades in faintly + rays breathe wider (5.5s sine, 80 → up to 460). On a tab:
+            // skeleton at full preview opacity, rays breathe at maximum amplitude.
             const skelEl = document.querySelector('.htl-skeleton');
             const tabsBox = document.querySelector('.htl-tabs');
-            if (skelEl && tabsBox) {
-                const PEAK_ON     = 0.6;   // cursor literally over a tab — full reveal
-                const FAINT_NEAR  = 0.16;  // cursor near the strip — faint hint
-                const FAR         = 280;   // beyond this — fully invisible
-                let target = 0;
-                let cur = 0;
-                let raf = null;
-                function animate() {
-                    cur += (target - cur) * 0.2;
-                    if (Math.abs(target - cur) < 0.005) {
-                        cur = target;
-                        skelEl.style.opacity = cur.toFixed(3);
-                        raf = null;
+            const raysEl = document.querySelector('.htl-rays');
+            if (skelEl && tabsBox && raysEl) {
+                const PEAK_ON     = 0.6;   // cursor literally over a tab
+                const FAINT_NEAR  = 0.16;  // cursor near the strip
+                const FAR         = 320;   // beyond this — proximity = 0
+                const RAYS_MIN    = 80;
+                const RAYS_MAX    = 460;
+                let skelTarget = 0;
+                let prox = 0;              // 0..1, distance-driven multiplier for rays max height
+                let skelCur = 0;
+                const PERIOD = 5.5;
+                const start = performance.now();
+
+                function tick(now) {
+                    requestAnimationFrame(tick);
+                    // Skeleton opacity lerps toward target
+                    skelCur += (skelTarget - skelCur) * 0.2;
+                    skelEl.style.opacity = skelCur.toFixed(3);
+                    // Rays height: sine-breathing scaled by proximity
+                    const t = ((now - start) / 1000) * (Math.PI * 2 / PERIOD);
+                    const breath = (Math.sin(t) + 1) / 2;     // 0..1
+                    const span = (RAYS_MAX - RAYS_MIN) * prox; // 0 when far, full at tabs
+                    const h = RAYS_MIN + span * breath;
+                    raysEl.style.height = h.toFixed(0) + 'px';
+                }
+                requestAnimationFrame(tick);
+
+                function update(e) {
+                    if (body.classList.contains('engaged') ||
+                        body.classList.contains('dw-open') ||
+                        body.classList.contains('reader-open') ||
+                        body.classList.contains('case-open') ||
+                        body.classList.contains('showcase-open')) {
+                        skelTarget = 0;
+                        prox = 0;
                         return;
                     }
-                    skelEl.style.opacity = cur.toFixed(3);
-                    raf = requestAnimationFrame(animate);
-                }
-                document.addEventListener('mousemove', (e) => {
-                    if (body.classList.contains('left-pane-open') ||
-                        body.classList.contains('engaged') ||
-                        body.classList.contains('dw-open') ||
-                        body.classList.contains('reader-open')) {
-                        target = 0;
-                    } else {
-                        const r = tabsBox.getBoundingClientRect();
-                        const dx = Math.max(0, Math.max(r.left - e.clientX, e.clientX - r.right));
-                        const dy = Math.max(0, Math.max(r.top  - e.clientY, e.clientY - r.bottom));
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist === 0) {
-                            // Cursor is literally on the tab strip — full reveal
-                            target = PEAK_ON;
-                        } else if (dist >= FAR) {
-                            target = 0;
-                        } else {
-                            // Faint hint that decays smoothly to 0 as cursor moves away
-                            target = FAINT_NEAR * (1 - dist / FAR);
-                        }
+                    if (body.classList.contains('left-pane-open')) {
+                        skelTarget = 0;     // skeleton hidden by CSS too
+                        prox = 1;           // panel is open — keep gradient at full envelope
+                        return;
                     }
-                    if (!raf) raf = requestAnimationFrame(animate);
-                });
-                // Reset to 0 when leaving the window so skeleton doesn't get stuck visible
-                document.addEventListener('mouseleave', () => { target = 0; if (!raf) raf = requestAnimationFrame(animate); });
+                    const r = tabsBox.getBoundingClientRect();
+                    const dx = Math.max(0, Math.max(r.left - e.clientX, e.clientX - r.right));
+                    const dy = Math.max(0, Math.max(r.top  - e.clientY, e.clientY - r.bottom));
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist === 0) {
+                        skelTarget = PEAK_ON;
+                        prox = 1;
+                    } else if (dist >= FAR) {
+                        skelTarget = 0;
+                        prox = 0;
+                    } else {
+                        skelTarget = FAINT_NEAR * (1 - dist / FAR);
+                        prox = 1 - dist / FAR;
+                    }
+                }
+                document.addEventListener('mousemove', update);
+                document.addEventListener('mouseleave', () => { skelTarget = 0; prox = 0; });
             }
 
             // Random stylish glitch on the collapsed tab strip — fires only while the panel is closed
