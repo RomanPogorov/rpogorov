@@ -7004,7 +7004,7 @@
                     </button>
                     <span class="htl-sep" aria-hidden="true"></span>
                     <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
-                        <span class="htl-name">Cases</span>
+                        <span class="htl-name">Vibed Cases</span>
                     </button>
                 </div>
                 <!-- Hint glow + rays + skeleton preview — sibling of .htl-tabs / .hl-pane so they occupy
@@ -7128,11 +7128,11 @@
 
                     <div class="tasks-block">
                         <span class="label sub">// you need me if</span>
-                        <ul class="tasks-list">
-                            <li class="task-item"><span class="task-date">▸</span><span class="task-text">You don't know what to do with AI — everyone hyping, nothing's clear.</span></li>
-                            <li class="task-item"><span class="task-date">▸</span><span class="task-text">Engineers and designers don't speak the same language.</span></li>
-                            <li class="task-item"><span class="task-date">▸</span><span class="task-text">Every designer has their own prototype no one else uses.</span></li>
-                            <li class="task-item"><span class="task-date">▸</span><span class="task-text">Everyone loves talking about AI — nobody's actually shipping it.</span></li>
+                        <ul class="tasks-list" id="tasks-list">
+                            <li class="task-item" data-id="pain-ai-paralysis" tabindex="0"><span class="task-text">You don't know what to do with AI — everyone hyping, nothing's clear.</span></li>
+                            <li class="task-item" data-id="pain-language-gap" tabindex="0"><span class="task-text">Engineers and designers don't speak the same language.</span></li>
+                            <li class="task-item" data-id="pain-orphan-prototypes" tabindex="0"><span class="task-text">Every designer has their own prototype no one else uses.</span></li>
+                            <li class="task-item" data-id="pain-talk-no-ship" tabindex="0"><span class="task-text">Everyone loves talking about AI — nobody's actually shipping it.</span></li>
                         </ul>
                     </div>
 
@@ -9013,8 +9013,8 @@
             window.__sfx = SFX;
 
             // Hover & click delegation — works on dynamically added nodes too
-            const HOVER_SEL = '.agent-item, .release-item, .theme-dot, .ap-btn, .dw-close, .prompt, .tab';
-            const TICK_SEL  = '.tab, .agent-item, .release-item';   // soft minimalist tick
+            const HOVER_SEL = '.agent-item, .release-item, .task-item[data-id], .theme-dot, .ap-btn, .dw-close, .prompt, .tab';
+            const TICK_SEL  = '.tab, .agent-item, .release-item, .task-item[data-id]';   // soft minimalist tick
             const CLICK_SEL = '.theme-dot, .ap-btn, .dw-close';     // punchier click for buttons
             document.addEventListener('pointerenter', (e) => {
                 if (e.target.closest && e.target.closest(HOVER_SEL)) SFX.hover();
@@ -9752,6 +9752,200 @@
             let currentId = null;
 
             const DETAIL = {
+                // ====== Pain points (you need me if) ======
+                'pain-ai-paralysis': {
+                    tag: '// pain · ai paralysis',
+                    title: 'NOT SURE WHERE TO START WITH AI',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Time saved</div><div class="dw-stat-v">~30%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Skills shipped</div><div class="dw-stat-v">12+</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Onboarded</div><div class="dw-stat-v">2 teams</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">First win</div><div class="dw-stat-v">~1 week</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// what i bring</h3>
+                            <ul class="dw-list">
+                                <li>Map your team's actual pain points to concrete AI use cases — no one-size-fits-all stack.</li>
+                                <li>Build the first 2–3 production-grade <em>Claude skills</em> that earn their keep within a sprint.</li>
+                                <li>Show the team how to extend them — so adoption isn't bottlenecked on me.</li>
+                                <li>Set up the feedback loop: what works, what doesn't, what to drop.</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// proven on</h3>
+                            <ul class="dw-list">
+                                <li><strong>Health Samurai</strong> — AI-driven design system, landing platform, presentation generator. Cycle time landed from 1.5mo → 3–4 days.</li>
+                                <li><strong>Americor</strong> — Facebook community analyzer (80k+ messages, sentiment + topic), NSF shortfall simulator.</li>
+                            </ul>
+                        </div>`,
+                },
+                'pain-language-gap': {
+                    tag: '// pain · alignment',
+                    title: 'ENGINEERS AND DESIGNERS TALKING PAST EACH OTHER',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Roles bridged</div><div class="dw-stat-v">design ↔ eng</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">DS coverage</div><div class="dw-stat-v">~50–60%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Handoff drift</div><div class="dw-stat-v">≈ 0</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Cycle hits</div><div class="dw-stat-v">3 platforms</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// how i fix it</h3>
+                            <ul class="dw-list">
+                                <li>Single source of truth: components in code (Storybook), tokens in Figma — bidirectional sync.</li>
+                                <li>I commit and push myself: no «designer threw a Figma over the wall».</li>
+                                <li>Living prototypes replace static mockups in reviews — both sides see the same thing.</li>
+                                <li>Code reviews include design feedback, design reviews include eng feedback.</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// proven on</h3>
+                            <ul class="dw-list">
+                                <li><strong>Americor</strong> — 4-layer DS (root → semantic → brand → platform) shipped to iOS, Android, Web. NPS 45 → 78, CSAT 3.6 → 4.5.</li>
+                                <li><strong>Health Samurai</strong> — Figma ↔ shadcn pipeline via Claude skill. Engineers stopped asking where the source was.</li>
+                            </ul>
+                        </div>`,
+                },
+                'pain-orphan-prototypes': {
+                    tag: '// pain · orphan prototypes',
+                    title: 'EVERY DESIGNER HAS A PROTOTYPE NO ONE USES',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Prototypes</div><div class="dw-stat-v">production-grade</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Stack</div><div class="dw-stat-v">React + Storybook</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Adoption</div><div class="dw-stat-v">team-wide</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Decay</div><div class="dw-stat-v">≈ 0</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// the shift</h3>
+                            <ul class="dw-list">
+                                <li>Prototype lives in the production repo, not in a designer's drawer.</li>
+                                <li>Hypotheses are switches inside the prototype — the team can compare side-by-side, not in slides.</li>
+                                <li>When a hypothesis lands, it ships — same code, same tokens, same components.</li>
+                                <li>Reverse pipeline: I generate Figma components from the working code for handoff and QA.</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// proven on</h3>
+                            <ul class="dw-list">
+                                <li><strong>Americor — Community section</strong>. Built from scratch in code, hypotheses toggled live via gear icon, shipped in production with zero handoff drift.</li>
+                                <li><strong>Health Samurai — BOF Application, JSON Parser concept</strong>. Code-first prototypes that were demoed to clients and rolled into the product.</li>
+                            </ul>
+                        </div>`,
+                },
+                'pain-talk-no-ship': {
+                    tag: '// pain · all talk no ship',
+                    title: 'AI TALK > AI SHIPPING',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Shipped tools</div><div class="dw-stat-v">8+</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">In daily use</div><div class="dw-stat-v">5</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Lead time</div><div class="dw-stat-v">days, not quarters</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Owners</div><div class="dw-stat-v">non-technical too</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// my style</h3>
+                            <ul class="dw-list">
+                                <li>Pick the smallest valuable problem, ship something that runs by Friday.</li>
+                                <li>Don't fight existing tools — bolt onto them (Figma, Storybook, Slack, TG, etc.).</li>
+                                <li>Build for non-technical owners — designers, support, salespeople use it without me.</li>
+                                <li>Replace meetings with prototypes; replace decks with working flows.</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// shipped at HS / Americor</h3>
+                            <ul class="dw-list">
+                                <li><strong>Landing platform</strong> — MD → live page, MCP chat for product owners. 1.5mo → 3–4 days.</li>
+                                <li><strong>Presentation generator</strong> — anyone can drop an MD and get a deck in brand style.</li>
+                                <li><strong>Kudos image generator</strong> — neural net trained on company mascot, plugged into TG bot.</li>
+                                <li><strong>FB community analyzer</strong> — 80k+ messages → topic + sentiment, fed redesign decisions.</li>
+                            </ul>
+                        </div>`,
+                },
+
+                // ====== Strengths (i'm strong at) ======
+                hypotheses: {
+                    tag: '// strength',
+                    title: 'CODE × DESIGN = MANY HYPOTHESES → BEST UX',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Iterations</div><div class="dw-stat-v">live</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Decision basis</div><div class="dw-stat-v">data + flow</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">From idea</div><div class="dw-stat-v">to demo · 1 day</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Conv lift</div><div class="dw-stat-v">+18% (Americor)</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// how it works</h3>
+                            <ul class="dw-list">
+                                <li>Sketch a hypothesis in code, toggleable next to the baseline. No wait, no debate — the team just clicks.</li>
+                                <li>Wire metrics in: micro-A/B, click maps, qualitative through TG / chat overlay.</li>
+                                <li>Kill losers fast, double down on the leader, iterate inside the same prototype.</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// recent wins</h3>
+                            <ul class="dw-list">
+                                <li>Americor pre-IPO redesign: 4 variants live, v3 (adaptive flow) shipped at +18.2% conversion.</li>
+                                <li>Health Samurai landing platform: hypothesis loop for blocks library — owners pick what works on their pages.</li>
+                            </ul>
+                        </div>`,
+                },
+                prototypes: {
+                    tag: '// strength',
+                    title: 'PROTOTYPES THAT BECOME PRODUCTION',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Drift</div><div class="dw-stat-v">~ 0</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Stack</div><div class="dw-stat-v">React + Storybook</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Cycle</div><div class="dw-stat-v">design ↔ ship</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Hand-off</div><div class="dw-stat-v">code-first</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// the loop</h3>
+                            <ul class="dw-list">
+                                <li>Sketch in Figma → flesh out in code with Claude → component lives in Storybook → reviewed by both sides.</li>
+                                <li>Hypotheses ship as feature flags, not separate branches that rot.</li>
+                                <li>Reverse generate Figma components from finalized code for engineering tickets and QA.</li>
+                                <li>Tokens stay synced — no drift between mockup and ship.</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// shipped</h3>
+                            <ul class="dw-list">
+                                <li><strong>Americor — Community section</strong>: Reddit-style feed built fully in code, shipped to prod.</li>
+                                <li><strong>Health Samurai — landings + presentations</strong>: blocks library that non-tech team uses to assemble pages.</li>
+                            </ul>
+                        </div>`,
+                },
+                'figma-ai': {
+                    tag: '// strength',
+                    title: 'DEEP FIGMA + AI MULTITOOLING',
+                    html: `
+                        <div class="dw-stats">
+                            <div class="dw-stat"><div class="dw-stat-k">Skills</div><div class="dw-stat-v">12+ shipped</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Sync direction</div><div class="dw-stat-v">bi-directional</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Token drift</div><div class="dw-stat-v">0%</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Pipelines</div><div class="dw-stat-v">ComfyUI · Weavy</div></div>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// what i build</h3>
+                            <ul class="dw-list">
+                                <li><strong>Claude skill: Figma → code</strong> — pulls components, returns reactish primitives, tokens converted.</li>
+                                <li><strong>Reverse: code → Figma</strong> — finalized components regenerated for handoff.</li>
+                                <li><strong>Generative pipelines</strong> for illustrations / kudos / mascots through ComfyUI / Figma Weavy.</li>
+                                <li><strong>Custom MCP servers</strong> for Telegram, Slack, internal tools — agents talk to your stack.</li>
+                            </ul>
+                        </div>
+                        <div class="dw-section">
+                            <h3>// scale</h3>
+                            <ul class="dw-list">
+                                <li>Health Samurai: AI-generated illustrations across products in a unified style (mascot trained on company persona).</li>
+                                <li>Americor: 4-layer DS managed end-to-end with custom skills — token updates propagated across iOS / Android / Web in seconds.</li>
+                            </ul>
+                        </div>`,
+                },
+
                 figma: {
                     tag: '// agent',
                     title: 'FIGMA-SYNC',
@@ -9959,7 +10153,7 @@
             // (so dynamically-injected entries like FLOW-WATCH are included).
             function navList() {
                 return Array.from(document.querySelectorAll(
-                    '#agents-list .agent-item, #releases-list .release-item'
+                    '#tasks-list .task-item, #agents-list .agent-item, #releases-list .release-item'
                 )).map(li => li.dataset.id).filter(Boolean);
             }
 
@@ -9973,10 +10167,10 @@
                 dwContent.scrollTop = 0;
                 // mark the matching list item as selected
                 document.querySelectorAll(
-                    '#agents-list .agent-item.selected, #releases-list .release-item.selected'
+                    '#tasks-list .task-item.selected, #agents-list .agent-item.selected, #releases-list .release-item.selected'
                 ).forEach(el => el.classList.remove('selected'));
                 const liveItem = document.querySelector(
-                    `#agents-list .agent-item[data-id="${id}"], #releases-list .release-item[data-id="${id}"]`
+                    `#tasks-list .task-item[data-id="${id}"], #agents-list .agent-item[data-id="${id}"], #releases-list .release-item[data-id="${id}"]`
                 );
                 if (liveItem) liveItem.classList.add('selected');
                 // disable nav buttons at the ends
@@ -9999,7 +10193,7 @@
                 dw.setAttribute('aria-hidden', 'true');
                 currentId = null;
                 document.querySelectorAll(
-                    '#agents-list .agent-item.selected, #releases-list .release-item.selected'
+                    '#tasks-list .task-item.selected, #agents-list .agent-item.selected, #releases-list .release-item.selected'
                 ).forEach(el => el.classList.remove('selected'));
             }
 
@@ -10047,6 +10241,11 @@
                 if (!li) return;
                 open(li.dataset.id);
             });
+            document.getElementById('tasks-list')?.addEventListener('click', (e) => {
+                const li = e.target.closest('.task-item');
+                if (!li || !li.dataset.id) return;
+                open(li.dataset.id);
+            });
 
             dwClose.addEventListener('click', close);
             dwPrev.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1); });
@@ -10064,7 +10263,7 @@
             document.addEventListener('click', (e) => {
                 if (!body.classList.contains('dw-open')) return;
                 if (!e.target.closest) return;
-                if (e.target.closest('.dw-frame, .agent-item, .release-item')) return;
+                if (e.target.closest('.dw-frame, .agent-item, .release-item, .task-item')) return;
                 close();
             });
 
