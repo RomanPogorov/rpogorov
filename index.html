@@ -405,8 +405,13 @@
             text-transform: uppercase;
             cursor: pointer;
             user-select: none;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        /* Reveal showcase cue together with the right HUD (~10s after app-start) */
+        body.console-revealed .showcase-cue {
             opacity: 0.85;
-            transition: opacity 0.18s, transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+            transition-delay: 0.4s;
         }
         .showcase-cue::before,
         .showcase-cue::after {
@@ -1948,9 +1953,21 @@
             scrollbar-width: thin;
             scrollbar-color: rgba(var(--acc-rgb), 0.35) transparent;
         }
-        .agents-feed::-webkit-scrollbar { width: 4px; }
-        .agents-feed::-webkit-scrollbar-thumb { background: rgba(var(--acc-rgb), 0.35); }
-        .agents-feed::-webkit-scrollbar-track { background: transparent; }
+        .agents-feed::-webkit-scrollbar { width: 5px; }
+        .agents-feed::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 4px 0;
+        }
+        .agents-feed::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg,
+                rgba(var(--acc-rgb), 0.55) 0%,
+                rgba(var(--acc-rgb), 0.22) 100%);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.4);
+        }
+        .agents-feed::-webkit-scrollbar-thumb:hover {
+            background: rgba(var(--acc-rgb), 0.7);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.7);
+        }
 
         /* Welcome block — first thing a stranger sees */
         .welcome-block {
@@ -3056,6 +3073,23 @@
             color: var(--ink);
             font-size: 13px;
             line-height: 1.55;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
+        }
+        .dw-content::-webkit-scrollbar { width: 5px; }
+        .dw-content::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 6px 0;
+        }
+        .dw-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg,
+                rgba(var(--acc-rgb), 0.55) 0%,
+                rgba(var(--acc-rgb), 0.25) 100%);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.45);
+        }
+        .dw-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(var(--acc-rgb), 0.7);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.7);
         }
         .dw-section { margin-bottom: 22px; }
         .dw-section h3 {
