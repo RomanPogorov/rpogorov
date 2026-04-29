@@ -4741,122 +4741,162 @@
             animation: glitchOnce 0.35s steps(3);
         }
 
-        /* ============ ARTICLES — folded badge, expanded left panel, reader modal ============ */
-        .articles-badge-wrap {
+        /* ============ ARTICLES / CASES — top-left holographic tabs + drop-down panel + reader modal ============ */
+        .hud-tabs-left {
             position: fixed;
-            left: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 6;
+            top: 24px;
+            left: 28px;
+            z-index: 7;
+            display: flex;
+            gap: 8px;
             pointer-events: none;
-            perspective: 900px;
-            perspective-origin: 0 50%;
         }
-        .articles-badge {
+        .hud-tab-left {
             pointer-events: auto;
             appearance: none;
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            gap: 5px;
-            padding: 14px 22px 14px 18px;
-            background: linear-gradient(180deg,
-                rgba(var(--acc-rgb), 0.06) 0%,
-                rgba(2, 12, 22, 0.78) 30%,
-                rgba(2, 12, 22, 0.86) 100%);
+            gap: 3px;
+            padding: 10px 14px 9px;
+            min-width: 96px;
             border: 1px solid rgba(var(--acc-rgb), 0.4);
-            box-shadow:
-                0 0 24px rgba(var(--acc-rgb), 0.18),
-                0 8px 24px rgba(0, 0, 0, 0.45);
             color: var(--ink);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
             text-align: left;
-            transform-origin: 0 50%;
-            transform: rotateY(14deg);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
             opacity: 0;
-            transition: opacity 0.6s ease 0.4s, box-shadow 0.25s, border-color 0.25s;
-            animation: articles-badge-float 4.5s ease-in-out infinite;
-            will-change: transform;
-        }
-        body.console-revealed .articles-badge { opacity: 0.92; }
-        .articles-badge:hover {
-            border-color: var(--acc);
+            background:
+                /* diagonal scanline pattern */
+                repeating-linear-gradient(45deg,
+                    transparent 0,
+                    transparent 5px,
+                    rgba(var(--acc-rgb), 0.08) 5px,
+                    rgba(var(--acc-rgb), 0.08) 6px),
+                linear-gradient(180deg,
+                    rgba(var(--acc-rgb), 0.10) 0%,
+                    rgba(2, 12, 22, 0.55) 100%);
             box-shadow:
-                0 0 36px rgba(var(--acc-rgb), 0.32),
-                0 8px 24px rgba(0, 0, 0, 0.5);
+                0 0 14px rgba(var(--acc-rgb), 0.18) inset,
+                0 0 18px rgba(var(--acc-rgb), 0.12);
+            transition: border-color 0.18s, color 0.18s, box-shadow 0.22s, background 0.22s, transform 0.18s, opacity 0.6s ease 0.4s;
         }
-        .articles-badge:focus { outline: none; }
-        .articles-badge:focus-visible {
-            outline: none;
+        body.console-revealed .hud-tab-left { opacity: 1; }
+        .hud-tab-left:hover {
             border-color: var(--acc);
+            color: var(--acc);
+            background:
+                repeating-linear-gradient(45deg,
+                    transparent 0,
+                    transparent 5px,
+                    rgba(var(--acc-rgb), 0.14) 5px,
+                    rgba(var(--acc-rgb), 0.14) 6px),
+                linear-gradient(180deg,
+                    rgba(var(--acc-rgb), 0.16) 0%,
+                    rgba(2, 12, 22, 0.6) 100%);
+            box-shadow:
+                0 0 18px rgba(var(--acc-rgb), 0.25) inset,
+                0 0 26px rgba(var(--acc-rgb), 0.32);
+        }
+        .hud-tab-left.active {
+            border-color: var(--acc);
+            color: var(--acc);
+            background:
+                repeating-linear-gradient(45deg,
+                    transparent 0,
+                    transparent 5px,
+                    rgba(var(--acc-rgb), 0.20) 5px,
+                    rgba(var(--acc-rgb), 0.20) 6px),
+                linear-gradient(180deg,
+                    rgba(var(--acc-rgb), 0.22) 0%,
+                    rgba(2, 12, 22, 0.65) 100%);
+            box-shadow:
+                0 0 24px rgba(var(--acc-rgb), 0.32) inset,
+                0 0 32px rgba(var(--acc-rgb), 0.45);
+            transform: translateY(1px);
+        }
+        .hud-tab-left:focus { outline: none; }
+        .hud-tab-left:focus-visible {
+            outline: none;
             box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.55), 0 0 22px rgba(var(--acc-rgb), 0.4);
         }
-        .ab-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+        .htl-label {
+            font-size: 0.5625rem;
             color: var(--acc);
             opacity: 0.85;
             letter-spacing: 0.32em;
         }
-        .ab-title {
-            font-size: 11.5px;
-            color: var(--ink);
-            letter-spacing: 0.2em;
+        .htl-name {
+            font-size: 0.6875rem;
+            color: inherit;
+            letter-spacing: 0.22em;
+            font-weight: 600;
         }
-        .ab-count {
-            color: var(--acc);
-            margin-left: 6px;
-            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.5);
-        }
-        .ab-arrow {
-            display: inline-block;
-            margin-left: 8px;
-            color: var(--acc);
-            opacity: 0.7;
-        }
-        @keyframes articles-badge-float {
-            0%, 100% { transform: rotateY(14deg) translateY(0); }
-            50%      { transform: rotateY(14deg) translateY(-6px); }
-        }
-        body.articles-open .articles-badge {
+        body.engaged .hud-tabs-left,
+        body.dw-open .hud-tabs-left,
+        body.chat-fullscreen .hud-tabs-left,
+        body.pre-gate .hud-tabs-left,
+        body.showcase-open .hud-tabs-left,
+        body.case-open .hud-tabs-left,
+        body.reader-open .hud-tabs-left {
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
-        }
-        body.engaged .articles-badge,
-        body.dw-open .articles-badge,
-        body.chat-fullscreen .articles-badge,
-        body.pre-gate .articles-badge,
-        body.showcase-open .articles-badge,
-        body.case-open .articles-badge,
-        body.reader-open .articles-badge {
-            opacity: 0;
-            pointer-events: none;
         }
 
         /* Left panel — mirror of .hud-right */
         .hud-left-articles {
             position: fixed;
-            /* Leave clearance for // signal at top and // vibe settings at bottom of the existing left HUD */
-            top: 88px;
+            /* Sits below the holographic tabs (top:24 + ~58px tab height = ~82) and above // vibe settings */
+            top: 92px;
             left: 0;
             bottom: 88px;
             width: clamp(300px, 30vw, 460px);
             perspective: 1100px;
-            perspective-origin: -10% 50%;
+            perspective-origin: -10% 0%;
             pointer-events: none;
             opacity: 0;
+            transform-origin: top left;
+            transform: scaleY(0.04);
             filter: blur(10px) brightness(1.8);
-            transition: opacity 0.6s ease, filter 0.7s ease;
-            z-index: 11;
+            transition:
+                opacity 0.45s ease,
+                transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1),
+                filter 0.55s ease;
+            z-index: 6;
         }
         body.articles-open .hud-left-articles {
             opacity: 1;
+            transform: scaleY(1);
             filter: blur(0) brightness(1);
             pointer-events: auto;
+        }
+        /* Holographic top "beam" — cyan line that flashes across the panel top when it materializes */
+        .hud-left-articles::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(var(--acc-rgb), 0.6) 30%,
+                #fff 50%,
+                rgba(var(--acc-rgb), 0.6) 70%,
+                transparent 100%);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.7);
+            opacity: 0;
+            pointer-events: none;
+        }
+        body.articles-open .hud-left-articles::before {
+            animation: hla-beam 0.6s 0.05s ease-out forwards;
+        }
+        @keyframes hla-beam {
+            0%   { opacity: 0; transform: scaleX(0.2); }
+            30%  { opacity: 1; }
+            100% { opacity: 0; transform: scaleX(1); }
         }
         .hud-left-stack {
             position: absolute;
@@ -5009,22 +5049,104 @@
             background: rgba(var(--acc-rgb), 0.04);
         }
 
-        /* Stagger reveal of articles when panel opens (mirror of right HUD pattern) */
-        .hud-left-articles .articles-head,
-        .hud-left-articles .article-item {
+        /* Stagger reveal of articles / cases when panel opens — items drop in with translateY (matches the
+           top-down hologram materialize) instead of the side translateX used elsewhere. */
+        .hud-left-articles .article-item,
+        .hud-left-articles .case-item {
             opacity: 0;
-            transform: translateX(-14px);
+            transform: translateY(-12px);
         }
         @keyframes articles-item-in {
-            to { opacity: 1; transform: translateX(0); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        body.articles-open .hud-left-articles .articles-head           { animation: articles-item-in 0.5s ease-out 0.15s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(1) { animation: articles-item-in 0.5s ease-out 0.32s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(2) { animation: articles-item-in 0.5s ease-out 0.46s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(3) { animation: articles-item-in 0.5s ease-out 0.60s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(4) { animation: articles-item-in 0.5s ease-out 0.74s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(5) { animation: articles-item-in 0.5s ease-out 0.88s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(6) { animation: articles-item-in 0.5s ease-out 1.02s forwards; }
+        body.articles-open .hud-left-articles .article-item:nth-child(1),
+        body.articles-open .hud-left-articles .case-item:nth-child(1) { animation: articles-item-in 0.45s ease-out 0.18s forwards; }
+        body.articles-open .hud-left-articles .article-item:nth-child(2),
+        body.articles-open .hud-left-articles .case-item:nth-child(2) { animation: articles-item-in 0.45s ease-out 0.30s forwards; }
+        body.articles-open .hud-left-articles .article-item:nth-child(3),
+        body.articles-open .hud-left-articles .case-item:nth-child(3) { animation: articles-item-in 0.45s ease-out 0.42s forwards; }
+        body.articles-open .hud-left-articles .article-item:nth-child(4),
+        body.articles-open .hud-left-articles .case-item:nth-child(4) { animation: articles-item-in 0.45s ease-out 0.54s forwards; }
+        body.articles-open .hud-left-articles .article-item:nth-child(5),
+        body.articles-open .hud-left-articles .case-item:nth-child(5) { animation: articles-item-in 0.45s ease-out 0.66s forwards; }
+        body.articles-open .hud-left-articles .article-item:nth-child(6) { animation: articles-item-in 0.45s ease-out 0.78s forwards; }
+
+        /* Cases list reuses article-item card visuals */
+        .cases-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .case-item {
+            cursor: pointer;
+            padding: 12px 14px;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.04) 0%, rgba(0, 0, 0, 0) 100%);
+            transition: border-color 0.18s, background 0.18s, transform 0.15s;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .case-item:hover {
+            border-color: var(--acc);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            transform: translateX(2px);
+        }
+        .case-item:focus { outline: none; }
+        .case-item:focus-visible {
+            outline: none;
+            border-color: var(--acc);
+            box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.55), 0 0 18px rgba(var(--acc-rgb), 0.32);
+        }
+        .case-meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+        .case-no { color: var(--acc); }
+        .case-role { color: var(--dim); }
+        .case-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.78125rem;
+            line-height: 1.4;
+            color: var(--ink);
+            margin: 0;
+            letter-spacing: 0.04em;
+        }
+        .case-blurb {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65625rem;
+            line-height: 1.5;
+            color: var(--ink);
+            opacity: 0.78;
+            margin: 0;
+        }
+        .case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            list-style: none;
+            padding: 0;
+            margin: 2px 0 0;
+        }
+        .case-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.53125rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--acc);
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            padding: 2px 6px;
+            background: rgba(var(--acc-rgb), 0.04);
+        }
 
         /* Reader modal — long-form article reading window */
         .reader {
@@ -5344,33 +5466,30 @@
         </div>
     </div>
 
-    <!-- Articles badge — folded entry to the article reader (mid-left, 3D, gentle float) -->
-    <div class="articles-badge-wrap">
-        <button type="button" class="articles-badge" id="articles-badge" aria-label="Open my last articles">
-            <span class="ab-label">// my last</span>
-            <span class="ab-title">articles <span class="ab-count" id="articles-badge-count">(6)</span> <span class="ab-arrow" aria-hidden="true">→</span></span>
+    <!-- Left-side holographic tabs: replace `// signal` LIVE FEED. Click toggles a drop-down panel. -->
+    <div class="hud-tabs-left" id="hud-tabs-left">
+        <button type="button" class="hud-tab-left" data-pane="articles" aria-pressed="false">
+            <span class="htl-label">// my</span>
+            <span class="htl-name">articles</span>
+        </button>
+        <button type="button" class="hud-tab-left" data-pane="cases" aria-pressed="false">
+            <span class="htl-label">//</span>
+            <span class="htl-name">cases</span>
         </button>
     </div>
 
-    <!-- Articles panel — full left-side console, mirror of the right HUD; shown when badge clicked -->
+    <!-- Left-side hologram panel — drops down from the tabs above; content swaps via active pane. -->
     <div class="hud-left-articles" id="hud-left-articles" hidden>
         <div class="hud-left-stack" id="hud-left-stack">
             <div class="corner tl articles-feed">
-                <div class="articles-head">
-                    <span class="label">// articles</span>
-                    <button type="button" class="articles-close" id="articles-close" aria-label="Close articles">CLOSE</button>
-                </div>
-                <ul class="articles-list" id="articles-list" role="list"></ul>
+                <ul class="articles-list" id="articles-list" role="list" hidden></ul>
+                <ul class="cases-list" id="cases-list" role="list" hidden></ul>
             </div>
         </div>
     </div>
 
     <!-- HUD -->
     <div class="hud">
-        <div class="corner tl">
-            <span class="label">// signal</span>
-            <span class="blink">LIVE FEED</span>
-        </div>
         <div class="corner bl">
             <span class="label">// vibe settings</span>
             <div class="vibe-row">
@@ -8401,11 +8520,19 @@ See also: Health Samurai Lab: Game of Pools.`,
             },
         ];
 
+        // Cases (placeholder list) — opens the showcase basement at the matching case index
+        const CASES = [
+            { id: 'cs01', no: 'CS/01', role: 'Lead PD',     name: 'Americor · FinTech',           blurb: 'Multi-brand debt-relief platform — 4-layer DS, IPO redesign, code-first prototypes.', tags: ['FinTech', 'DS', 'Mobile'] },
+            { id: 'cs02', no: 'CS/02', role: 'Senior PD',   name: 'Health Samurai · Healthcare IT', blurb: 'shadCN DS Figma↔code, landing platform 1.5mo→3-4d, generators + FireCamp app.', tags: ['Healthcare', 'AI', 'Tooling'] },
+            { id: 'cs03', no: 'CS/03', role: 'Designer',    name: 'Landing Pipeline',              blurb: 'Markdown-first system replacing the old hand-rolled landings — 4-day cycle.', tags: ['Markdown', 'Pipeline'] },
+            { id: 'cs04', no: 'CS/04', role: 'UX',          name: 'Creditor Card · Lifecycle',     blurb: '11 states, 5 transitions and a programmer-friendly state design for the central object.', tags: ['State Design', 'Motion'] },
+            { id: 'cs05', no: 'CS/05', role: 'Consulting',  name: 'Databricks · Data UX',          blurb: 'Density without overload — navigation reorganized around what users come to do.', tags: ['Data Viz', 'Onboarding'] },
+        ];
+
         (() => {
-            const list = document.getElementById('articles-list');
-            const badge = document.getElementById('articles-badge');
-            const badgeCount = document.getElementById('articles-badge-count');
-            const closeBtn = document.getElementById('articles-close');
+            const articlesList = document.getElementById('articles-list');
+            const casesList = document.getElementById('cases-list');
+            const tabs = document.querySelectorAll('.hud-tab-left');
             const panel = document.getElementById('hud-left-articles');
             const reader = document.getElementById('reader');
             const readerClose = document.getElementById('reader-close');
@@ -8416,10 +8543,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             const readerTags = document.getElementById('reader-tags');
             const readerContent = document.getElementById('reader-content');
             const body = document.body;
-            if (!list || !badge || !panel) return;
-
-            // Update badge count
-            if (badgeCount) badgeCount.textContent = '(' + ARTICLES.length + ')';
+            if (!articlesList || !panel || !tabs.length) return;
 
             function fmtDate(iso) {
                 try {
@@ -8431,7 +8555,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 return s.replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
             }
 
-            // Build article cards in the panel
+            // Build article cards
             ARTICLES.forEach((a) => {
                 const li = document.createElement('li');
                 li.className = 'article-item';
@@ -8449,24 +8573,76 @@ See also: Health Samurai Lab: Game of Pools.`,
                 li.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openReader(a); }
                 });
-                list.appendChild(li);
+                articlesList.appendChild(li);
             });
 
-            function openPanel() {
+            // Build case cards
+            CASES.forEach((c) => {
+                const li = document.createElement('li');
+                li.className = 'case-item';
+                li.tabIndex = 0;
+                li.dataset.openShowcase = c.id;
+                li.innerHTML = `
+                    <div class="case-meta-row">
+                        <span class="case-no">${escapeHTML(c.no)}</span>
+                        <span class="case-role">${escapeHTML(c.role)}</span>
+                    </div>
+                    <h3 class="case-name">${escapeHTML(c.name)}</h3>
+                    <p class="case-blurb">${escapeHTML(c.blurb)}</p>
+                    <ul class="case-tags">${c.tags.map(t => `<li class="case-tag">${escapeHTML(t)}</li>`).join('')}</ul>`;
+                // The existing showcase IIFE listens for [data-open-showcase] clicks globally — so a click here
+                // will close any modal, open the showcase, and scroll-snap to the matching case.
+                li.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.click(); }
+                });
+                casesList.appendChild(li);
+            });
+
+            // Active pane tracking — 'articles' or 'cases' (or null when closed)
+            let active = null;
+
+            function showPane(pane) {
+                articlesList.hidden = pane !== 'articles';
+                casesList.hidden = pane !== 'cases';
+                tabs.forEach(t => {
+                    const on = t.dataset.pane === pane;
+                    t.classList.toggle('active', on);
+                    t.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+            }
+            function openPanel(pane) {
+                showPane(pane);
                 panel.hidden = false;
-                // Force a reflow before adding the open class so the transition fires
+                // Trigger a reflow so the scaleY transition runs from collapsed → expanded
                 void panel.offsetWidth;
                 body.classList.add('articles-open');
+                active = pane;
                 window.__sfx?.materialize?.();
             }
             function closePanel() {
                 body.classList.remove('articles-open');
+                active = null;
+                tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed', 'false'); });
                 window.__sfx?.disengage?.();
-                // Hide after the transition completes so it isn't picked up as tabbable
-                setTimeout(() => { if (!body.classList.contains('articles-open')) panel.hidden = true; }, 700);
+                // Hide after the collapse transition completes so it isn't tabbable
+                setTimeout(() => { if (!body.classList.contains('articles-open')) panel.hidden = true; }, 600);
             }
-            badge.addEventListener('click', openPanel);
-            closeBtn.addEventListener('click', closePanel);
+
+            tabs.forEach(t => {
+                t.addEventListener('click', () => {
+                    const pane = t.dataset.pane;
+                    if (active === pane) {
+                        closePanel();
+                    } else if (active) {
+                        // Just swap content, panel stays open
+                        showPane(pane);
+                        active = pane;
+                        window.__sfx?.tick?.();
+                    } else {
+                        openPanel(pane);
+                    }
+                });
+            });
 
             // Reader rendering
             function preprocessMD(md) {
