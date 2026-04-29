@@ -861,12 +861,20 @@
            duplicate thumb strip from the inline article. */
         .case-page.case-article-mode .cp-thumb-strip { display: none; }
         .case-page.case-article-mode .cp-inner {
-            padding: 36px 40px 96px;
+            padding: 24px 40px 96px;
+        }
+        /* Strip already shows 'CS/01 · …' in the terminal bar — kill the
+           duplicate green CS/01 + first divider in the inline meta line so
+           the article opens with the gray uppercase 'AMERICOR · LEAD PD · …'
+           heading right under the strip. */
+        .case-page.case-article-mode .cp-meta-no,
+        .case-page.case-article-mode .cp-meta > .cp-meta-no + .cp-meta-divider {
+            display: none;
         }
         /* When user hits ↓ to start reading, the article should land with its
-           first line tucked just under the persistent terminal strip (~64px). */
+           first line tucked just under the persistent terminal strip. Use
+           scroll-padding only — scroll-margin would double the offset. */
         .case { scroll-padding-top: 64px; }
-        .case-page.case-article-mode { scroll-margin-top: 64px; }
         /* Light variant inside the dark tablet — make its background fill the
            inline case so it reads as a clear visual break from the cover. */
         .case-page.case-article-mode.cp-light {
