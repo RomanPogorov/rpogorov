@@ -9375,16 +9375,18 @@
                 if (mode === 'grid') {
                     if (stripTitleText) stripTitleText.textContent = 'Selected works';
                     if (stripCounter) stripCounter.innerHTML = `<b>${items.length}</b> cases`;
-                    [prev, next, stripPrev, stripNext].forEach(b => { if (b) b.disabled = true; });
-                    Array.from(dotsList.children).forEach(d => d.classList.remove('active'));
+                    // Strip + outside arrows exist for grid scaffolding but
+                    // navigation between cards is by click only — disable them.
+                    [prev, next, stripPrev, stripNext].forEach(b => { if (b) { b.disabled = true; b.style.display = ''; } });
+                    Array.from(dotsList.children).forEach(d => { d.classList.remove('active'); d.style.display = ''; });
                 } else {
+                    // Detail: only Close (Esc/×) gets you out, no prev/next.
                     const idx = detailIdx;
                     const titleEl = items[idx]?.querySelector('.case-title');
                     if (stripTitleText) stripTitleText.textContent = titleEl ? titleEl.textContent.trim().replace(/\s+/g, ' ') : '';
-                    if (stripCounter) stripCounter.innerHTML = `<b>${idx + 1}</b> of ${items.length}`;
-                    [prev, stripPrev].forEach(b => { if (b) b.disabled = idx === 0; });
-                    [next, stripNext].forEach(b => { if (b) b.disabled = idx === items.length - 1; });
-                    Array.from(dotsList.children).forEach((d, i) => d.classList.toggle('active', i === idx));
+                    if (stripCounter) stripCounter.innerHTML = `<b>${idx + 1}</b> / ${items.length}`;
+                    [prev, next, stripPrev, stripNext].forEach(b => { if (b) b.style.display = 'none'; });
+                    Array.from(dotsList.children).forEach(d => { d.style.display = 'none'; });
                 }
             }
             // Boot
@@ -9412,20 +9414,9 @@
                     close();
                     return;
                 }
-                // Arrow nav: in detail switches case, in grid does nothing (avoid
-                // accidental case-jumps). Vertical arrows scroll the active case
-                // when in detail mode.
+                // No ←/→ case-switching: inside detail the only way out is back
+                // to the lobby (grid). Only ↑/↓ scrolls the article.
                 if (mode !== 'detail') return;
-                if (e.key === 'ArrowLeft')  {
-                    e.preventDefault();
-                    flashStripNav(stripPrev);
-                    gotoCase(detailIdx - 1);
-                }
-                if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    flashStripNav(stripNext);
-                    gotoCase(detailIdx + 1);
-                }
                 if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                     const active = items[detailIdx];
                     if (!active) return;
