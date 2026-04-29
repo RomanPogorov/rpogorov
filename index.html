@@ -676,9 +676,56 @@
             object-fit: cover;
             display: block;
             filter: contrast(1.05) saturate(0.95);
+            transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1), filter 0.35s ease;
         }
         /* Image overlay scanlines for that CRT feel */
         .case-media::marker { content: none; }
+
+        /* Make case-media clickable when the case has a detail page */
+        .case-media.is-openable { cursor: pointer; }
+        .case-media.is-openable:hover img {
+            transform: scale(1.025);
+            filter: contrast(1.05) saturate(0.95) brightness(1.08);
+        }
+        .case-media-open-cue {
+            position: absolute;
+            inset: auto 0 0 0;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 0 16px;
+            background: linear-gradient(to top,
+                rgba(0, 0, 0, 0.78) 0%,
+                rgba(0, 0, 0, 0.45) 60%,
+                transparent 100%);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.55);
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.28s ease, transform 0.28s ease;
+            pointer-events: none;
+        }
+        .case-media.is-openable:hover .case-media-open-cue,
+        .case.active .case-media.is-openable .case-media-open-cue {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .case-media-open-cue .arrow {
+            display: inline-block;
+            font-size: 0.875rem;
+            line-height: 1;
+            animation: case-open-bounce 1.6s ease-in-out infinite;
+        }
+        @keyframes case-open-bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(3px); }
+        }
 
         .case-body {
             display: flex;
@@ -6065,8 +6112,12 @@
 
             <div class="cases" id="cases">
                 <article class="case" data-case="cs01">
-                    <div class="case-media">
+                    <div class="case-media is-openable" data-open-case="cs01" role="button" tabindex="0" aria-label="Open Americor case study">
                         <img src="showcase/cases/cs01-americor.png" alt="Americor multi-brand design system">
+                        <div class="case-media-open-cue" aria-hidden="true">
+                            <span class="arrow">↓</span>
+                            <span>Open case</span>
+                        </div>
                     </div>
                     <div class="case-body">
                         <div class="case-head">
@@ -6087,8 +6138,12 @@
                 </article>
 
                 <article class="case" data-case="cs02">
-                    <div class="case-media">
+                    <div class="case-media is-openable" data-open-case="cs02" role="button" tabindex="0" aria-label="Open Health Samurai case study">
                         <img src="showcase/cases/cs02-aidbox.png" alt="Health Samurai design system">
+                        <div class="case-media-open-cue" aria-hidden="true">
+                            <span class="arrow">↓</span>
+                            <span>Open case</span>
+                        </div>
                     </div>
                     <div class="case-body">
                         <div class="case-head">
@@ -7974,6 +8029,15 @@
                     e.stopPropagation();
                     openCase(btn.dataset.openCase);
                 });
+                // Keyboard support for non-button elements (e.g. clickable .case-media)
+                if (btn.tagName !== 'BUTTON') {
+                    btn.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            openCase(btn.dataset.openCase);
+                        }
+                    });
+                }
             });
 
             document.querySelectorAll('[data-cp-close]').forEach(btn => {
