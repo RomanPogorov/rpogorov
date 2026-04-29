@@ -1925,7 +1925,8 @@
 
         /* Override absolute positioning for corners inside the 3D stack */
         .hud-right .corner.tr,
-        .hud-right .corner.br {
+        .hud-right .corner.br,
+        .hud-left-articles .corner.tl {
             position: static;
             inset: auto;
             top: auto;
@@ -1934,6 +1935,14 @@
             text-align: left;
             pointer-events: auto;
         }
+        .hud-left-articles .articles-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 0;
+            flex: 1;
+        }
+        .hud-left-articles .corner.tl { transform: translateZ(20px); }
         /* Breathing room from the left edge so content doesn't kiss the panel border */
         .hud-right .agents-feed {
             padding-left: 8px;
@@ -4741,36 +4750,14 @@
             animation: glitchOnce 0.35s steps(3);
         }
 
-        /* ============ ARTICLES / CASES — single-frame holographic tab group + drop-down panel + reader modal ============ */
-        .hud-tabs-left {
-            position: fixed;
-            top: 28px;
-            left: 32px;
-            z-index: 7;
-            /* Mirror the right-HUD perspective on the left side. Closer perspective + origin tightly off
-               the left edge makes the rotateY actually read on a small surface like the tab strip. */
-            perspective: 700px;
-            perspective-origin: -20% 50%;
-            pointer-events: none;
-            /* Idle float — same vibe as the right HUD's parallax */
-            animation: htl-float 5s ease-in-out infinite;
-            will-change: transform;
-        }
-        @keyframes htl-float {
-            0%, 100% { transform: translateY(0); }
-            50%      { transform: translateY(-3px); }
-        }
-        .htl-frame {
-            pointer-events: auto;
+        /* ============ ARTICLES / CASES — left HUD console, mirror of .hud-right ============ */
+        /* Inline tabs sitting at the top of the left stack (mirror of the dashboard/chat tabs at the
+           bottom of the right stack). No fixed wrapper — they ride the same 3D plane as the cards. */
+        .htl-tabs {
             display: inline-flex;
             align-items: stretch;
-            transform-origin: 0 50%;
-            /* Stronger angle than the panel because the strip is short and 14deg barely reads at this size.
-               translateZ pushes the frame slightly back so the perspective foreshortening is obvious. */
-            transform: rotateY(20deg) translateZ(-18px);
-            transform-style: preserve-3d;
+            margin-bottom: 14px;
             background:
-                /* soft diagonal scanlines inside the frame */
                 repeating-linear-gradient(45deg,
                     transparent 0,
                     transparent 6px,
@@ -4778,17 +4765,13 @@
                     rgba(var(--acc-rgb), 0.06) 7px),
                 linear-gradient(180deg,
                     rgba(var(--acc-rgb), 0.08) 0%,
-                    rgba(2, 12, 22, 0.55) 100%);
-            /* Soft holographic edge — no hard 1px border, just stacked accent shadows */
+                    rgba(2, 12, 22, 0.45) 100%);
             box-shadow:
                 0 0 0 1px rgba(var(--acc-rgb), 0.22),
-                0 0 18px rgba(var(--acc-rgb), 0.16) inset,
-                0 0 28px rgba(var(--acc-rgb), 0.18),
-                0 10px 32px rgba(0, 0, 0, 0.55);
-            opacity: 0;
-            transition: opacity 0.6s ease 0.4s;
+                0 0 16px rgba(var(--acc-rgb), 0.14) inset,
+                0 0 24px rgba(var(--acc-rgb), 0.16);
+            align-self: flex-start;
         }
-        body.console-revealed .htl-frame { opacity: 1; }
         .htl-item {
             pointer-events: auto;
             appearance: none;
@@ -4800,8 +4783,8 @@
             text-align: left;
             text-transform: uppercase;
             letter-spacing: 0.2em;
-            padding: 12px 18px 11px;
-            min-width: 110px;
+            padding: 10px 16px 9px;
+            min-width: 96px;
             display: flex;
             flex-direction: column;
             gap: 3px;
@@ -4839,7 +4822,6 @@
             background: linear-gradient(180deg, rgba(var(--acc-rgb), 0.20) 0%, rgba(var(--acc-rgb), 0.06) 100%);
         }
         .htl-item.active .htl-prefix { opacity: 1; }
-        /* Accent underline on the active tab — like a focus indicator on a real tab component */
         .htl-item.active::after {
             content: '';
             position: absolute;
@@ -4856,79 +4838,52 @@
             background: rgba(var(--acc-rgb), 0.1);
             box-shadow: inset 0 0 0 1px rgba(var(--acc-rgb), 0.5);
         }
-        body.engaged .hud-tabs-left,
-        body.dw-open .hud-tabs-left,
-        body.chat-fullscreen .hud-tabs-left,
-        body.pre-gate .hud-tabs-left,
-        body.showcase-open .hud-tabs-left,
-        body.case-open .hud-tabs-left,
-        body.reader-open .hud-tabs-left {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
 
         /* Left panel — mirror of .hud-right */
+        /* Left console — mirror of .hud-right on the opposite edge.
+           Same materialize entry (filter blur+brightness fade), same 3D rotation magnitude,
+           inset stack, mouse-parallax-friendly geometry. */
         .hud-left-articles {
             position: fixed;
-            /* Sits below the holographic tabs (top:24 + ~58px tab height = ~82) and above // vibe settings */
-            top: 92px;
+            top: 0;
             left: 0;
-            bottom: 88px;
-            width: clamp(300px, 30vw, 460px);
+            bottom: 0;
+            width: clamp(280px, 28vw, 420px);
             perspective: 1100px;
-            perspective-origin: -10% 0%;
+            perspective-origin: -10% 50%;
             pointer-events: none;
             opacity: 0;
-            transform-origin: top left;
-            transform: scaleY(0.04);
             filter: blur(10px) brightness(1.8);
-            transition:
-                opacity 0.45s ease,
-                transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1),
-                filter 0.55s ease;
-            z-index: 6;
+            transition: opacity 0.7s ease, filter 0.8s ease;
+            z-index: 5;
         }
-        body.articles-open .hud-left-articles {
+        body.console-revealed .hud-left-articles {
             opacity: 1;
-            transform: scaleY(1);
             filter: blur(0) brightness(1);
             pointer-events: auto;
         }
-        /* Holographic top "beam" — cyan line that flashes across the panel top when it materializes */
-        .hud-left-articles::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(var(--acc-rgb), 0.6) 30%,
-                #fff 50%,
-                rgba(var(--acc-rgb), 0.6) 70%,
-                transparent 100%);
-            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.7);
+        body.engaged .hud-left-articles,
+        body.dw-open .hud-left-articles,
+        body.chat-fullscreen .hud-left-articles,
+        body.case-open .hud-left-articles,
+        body.reader-open .hud-left-articles,
+        body.showcase-open .hud-left-articles {
             opacity: 0;
             pointer-events: none;
-        }
-        body.articles-open .hud-left-articles::before {
-            animation: hla-beam 0.6s 0.05s ease-out forwards;
-        }
-        @keyframes hla-beam {
-            0%   { opacity: 0; transform: scaleX(0.2); }
-            30%  { opacity: 1; }
-            100% { opacity: 0; transform: scaleX(1); }
+            transition: opacity 0.3s ease, filter 0.3s ease;
         }
         .hud-left-stack {
             position: absolute;
-            inset: 16px 28px 16px 32px;
+            inset: 28px 32px;
             display: flex;
             flex-direction: column;
+            gap: 12px;
             transform-origin: 0 50%;
             transform-style: preserve-3d;
-            transform: rotateY(14deg) translateZ(0);
+            transform:
+                rotateY(var(--lry, 14deg))
+                rotateX(var(--lrx, 0deg))
+                translateZ(0);
             will-change: transform;
         }
         .hud-left-stack > * { pointer-events: auto; }
@@ -5004,172 +4959,133 @@
             flex-direction: column;
             gap: 12px;
         }
-        .article-item {
-            cursor: pointer;
-            padding: 12px 14px;
-            border: 1px solid rgba(var(--acc-rgb), 0.22);
-            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.04) 0%, rgba(0, 0, 0, 0) 100%);
-            transition: border-color 0.18s, background 0.18s, transform 0.15s;
+        /* Article + Case cards — visually mirror .release-item from the right "Recent Works" block:
+           soft border, diagonal gradient bg, corner-tick accents (::before / ::after), compact mono type. */
+        .articles-list, .cases-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 7px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-height: 0;
+            flex: 1;
+            padding-right: 2px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
         }
-        .article-item:hover {
+        .articles-list::-webkit-scrollbar, .cases-list::-webkit-scrollbar { width: 4px; }
+        .articles-list::-webkit-scrollbar-thumb, .cases-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, rgba(var(--acc-rgb), 0.55) 0%, rgba(var(--acc-rgb), 0.22) 100%);
+            box-shadow: 0 0 4px rgba(var(--acc-rgb), 0.4);
+        }
+        .article-item, .case-item {
+            cursor: pointer;
+            padding: 8px 10px;
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.04) 0%, rgba(var(--acc-rgb), 0) 100%);
+            position: relative;
+            text-align: left;
+            text-transform: none;
+            letter-spacing: 0;
+            transition: border-color 0.2s, background 0.2s, transform 0.2s;
+        }
+        .article-item::before, .case-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 6px; height: 6px;
+            border-top: 1px solid rgba(var(--acc-rgb), 0.6);
+            border-left: 1px solid rgba(var(--acc-rgb), 0.6);
+        }
+        .article-item::after, .case-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 6px; height: 6px;
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.6);
+            border-right: 1px solid rgba(var(--acc-rgb), 0.6);
+        }
+        .article-item:hover, .case-item:hover {
             border-color: var(--acc);
-            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.12) 0%, rgba(var(--acc-rgb), 0.02) 100%);
             transform: translateX(2px);
         }
-        .article-item:focus { outline: none; }
-        .article-item:focus-visible {
-            outline: none;
+        .article-item:focus, .case-item:focus { outline: none; }
+        .article-item:focus-visible, .case-item:focus-visible {
             border-color: var(--acc);
-            box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.55), 0 0 18px rgba(var(--acc-rgb), 0.32);
+            box-shadow: inset 0 0 0 1px rgba(var(--acc-rgb), 0.6);
         }
-        .article-meta-row {
+        .article-meta-row, .case-meta-row {
             display: flex;
             justify-content: space-between;
-            gap: 8px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
+            font-size: 0.5625rem;
+            margin-bottom: 4px;
+            letter-spacing: 0.06em;
         }
-        .article-date { color: var(--acc); }
-        .article-time { color: var(--dim); }
-        .article-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-size: 12.5px;
-            line-height: 1.4;
+        .article-date, .case-no { color: var(--acc); letter-spacing: 0.1em; }
+        .article-time, .case-role { color: var(--dim); opacity: 0.7; letter-spacing: 0.06em; text-transform: uppercase; }
+        .article-title, .case-name {
             color: var(--ink);
-            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 600;
             letter-spacing: 0.04em;
+            margin: 0 0 3px;
+            line-height: 1.3;
         }
-        .article-desc {
+        .article-desc, .case-blurb {
+            color: var(--dim);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10.5px;
-            line-height: 1.5;
-            color: var(--ink);
-            opacity: 0.78;
+            font-size: 0.625rem;
+            line-height: 1.35;
+            opacity: 0.85;
             margin: 0;
         }
-        .article-tags {
+        .article-tags, .case-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px;
+            gap: 3px;
             list-style: none;
             padding: 0;
-            margin: 2px 0 0;
+            margin: 5px 0 0;
         }
-        .article-tag {
+        .article-tag, .case-tag {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 8.5px;
-            letter-spacing: 0.18em;
+            font-size: 0.5rem;
+            letter-spacing: 0.16em;
             text-transform: uppercase;
             color: var(--acc);
             border: 1px solid rgba(var(--acc-rgb), 0.3);
-            padding: 2px 6px;
+            padding: 1px 5px;
             background: rgba(var(--acc-rgb), 0.04);
         }
 
-        /* Stagger reveal of articles / cases when panel opens — items drop in with translateY (matches the
-           top-down hologram materialize) instead of the side translateX used elsewhere. */
+        /* Reveal cards alongside the panel materialize. Same pattern as the right HUD: items
+           start hidden (opacity 0, translateX +14) and slide in once console-revealed lands. */
         .hud-left-articles .article-item,
         .hud-left-articles .case-item {
             opacity: 0;
-            transform: translateY(-12px);
+            transform: translateX(14px);
         }
         @keyframes articles-item-in {
-            to { opacity: 1; transform: translateY(0); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        body.articles-open .hud-left-articles .article-item:nth-child(1),
-        body.articles-open .hud-left-articles .case-item:nth-child(1) { animation: articles-item-in 0.45s ease-out 0.18s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(2),
-        body.articles-open .hud-left-articles .case-item:nth-child(2) { animation: articles-item-in 0.45s ease-out 0.30s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(3),
-        body.articles-open .hud-left-articles .case-item:nth-child(3) { animation: articles-item-in 0.45s ease-out 0.42s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(4),
-        body.articles-open .hud-left-articles .case-item:nth-child(4) { animation: articles-item-in 0.45s ease-out 0.54s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(5),
-        body.articles-open .hud-left-articles .case-item:nth-child(5) { animation: articles-item-in 0.45s ease-out 0.66s forwards; }
-        body.articles-open .hud-left-articles .article-item:nth-child(6) { animation: articles-item-in 0.45s ease-out 0.78s forwards; }
-
-        /* Cases list reuses article-item card visuals */
-        .cases-list {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .case-item {
-            cursor: pointer;
-            padding: 12px 14px;
-            border: 1px solid rgba(var(--acc-rgb), 0.22);
-            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.04) 0%, rgba(0, 0, 0, 0) 100%);
-            transition: border-color 0.18s, background 0.18s, transform 0.15s;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .case-item:hover {
-            border-color: var(--acc);
-            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.1) 0%, rgba(0, 0, 0, 0) 100%);
-            transform: translateX(2px);
-        }
-        .case-item:focus { outline: none; }
-        .case-item:focus-visible {
-            outline: none;
-            border-color: var(--acc);
-            box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.55), 0 0 18px rgba(var(--acc-rgb), 0.32);
-        }
-        .case-meta-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.5625rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-        }
-        .case-no { color: var(--acc); }
-        .case-role { color: var(--dim); }
-        .case-name {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-            font-size: 0.78125rem;
-            line-height: 1.4;
-            color: var(--ink);
-            margin: 0;
-            letter-spacing: 0.04em;
-        }
-        .case-blurb {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.65625rem;
-            line-height: 1.5;
-            color: var(--ink);
-            opacity: 0.78;
-            margin: 0;
-        }
-        .case-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            list-style: none;
-            padding: 0;
-            margin: 2px 0 0;
-        }
-        .case-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.53125rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--acc);
-            border: 1px solid rgba(var(--acc-rgb), 0.3);
-            padding: 2px 6px;
-            background: rgba(var(--acc-rgb), 0.04);
-        }
+        body.console-revealed .hud-left-articles .htl-tabs { animation: articles-item-in 0.5s ease-out 0.20s forwards; opacity: 0; transform: translateX(14px); }
+        body.console-revealed .hud-left-articles .article-item:nth-child(1),
+        body.console-revealed .hud-left-articles .case-item:nth-child(1) { animation: articles-item-in 0.5s ease-out 0.40s forwards; }
+        body.console-revealed .hud-left-articles .article-item:nth-child(2),
+        body.console-revealed .hud-left-articles .case-item:nth-child(2) { animation: articles-item-in 0.5s ease-out 0.55s forwards; }
+        body.console-revealed .hud-left-articles .article-item:nth-child(3),
+        body.console-revealed .hud-left-articles .case-item:nth-child(3) { animation: articles-item-in 0.5s ease-out 0.70s forwards; }
+        body.console-revealed .hud-left-articles .article-item:nth-child(4),
+        body.console-revealed .hud-left-articles .case-item:nth-child(4) { animation: articles-item-in 0.5s ease-out 0.85s forwards; }
+        body.console-revealed .hud-left-articles .article-item:nth-child(5),
+        body.console-revealed .hud-left-articles .case-item:nth-child(5) { animation: articles-item-in 0.5s ease-out 1.00s forwards; }
+        body.console-revealed .hud-left-articles .article-item:nth-child(6) { animation: articles-item-in 0.5s ease-out 1.15s forwards; }
 
         /* Reader modal — long-form article reading window */
         .reader {
@@ -5489,26 +5405,23 @@
         </div>
     </div>
 
-    <!-- Left-side holographic tab group: one floating frame, two items, accent underline on active. -->
-    <div class="hud-tabs-left" id="hud-tabs-left">
-        <div class="htl-frame" role="tablist">
-            <button type="button" class="htl-item" data-pane="articles" role="tab" aria-selected="false">
-                <span class="htl-prefix">// my</span>
-                <span class="htl-name">articles</span>
-            </button>
-            <span class="htl-sep" aria-hidden="true"></span>
-            <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
-                <span class="htl-prefix">//</span>
-                <span class="htl-name">cases</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Left-side hologram panel — drops down from the tabs above; content swaps via active pane. -->
-    <div class="hud-left-articles" id="hud-left-articles" hidden>
+    <!-- Left-side hologram console — full mirror of .hud-right on the opposite edge. Tabs sit at the top
+         of the stack (mirror of the dashboard/chat tabs at the bottom of the right console). -->
+    <div class="hud-left-articles" id="hud-left-articles">
         <div class="hud-left-stack" id="hud-left-stack">
             <div class="corner tl articles-feed">
-                <ul class="articles-list" id="articles-list" role="list" hidden></ul>
+                <div class="htl-tabs" role="tablist">
+                    <button type="button" class="htl-item active" data-pane="articles" role="tab" aria-selected="true">
+                        <span class="htl-prefix">// my</span>
+                        <span class="htl-name">articles</span>
+                    </button>
+                    <span class="htl-sep" aria-hidden="true"></span>
+                    <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
+                        <span class="htl-prefix">//</span>
+                        <span class="htl-name">cases</span>
+                    </button>
+                </div>
+                <ul class="articles-list" id="articles-list" role="list"></ul>
                 <ul class="cases-list" id="cases-list" role="list" hidden></ul>
             </div>
         </div>
@@ -8624,8 +8537,8 @@ See also: Health Samurai Lab: Game of Pools.`,
                 casesList.appendChild(li);
             });
 
-            // Active pane tracking — 'articles' or 'cases' (or null when closed)
-            let active = null;
+            // Which pane is currently displayed
+            let active = 'articles';
 
             function showPane(pane) {
                 articlesList.hidden = pane !== 'articles';
@@ -8636,37 +8549,16 @@ See also: Health Samurai Lab: Game of Pools.`,
                     t.setAttribute('aria-selected', on ? 'true' : 'false');
                 });
             }
-            function openPanel(pane) {
-                showPane(pane);
-                panel.hidden = false;
-                // Trigger a reflow so the scaleY transition runs from collapsed → expanded
-                void panel.offsetWidth;
-                body.classList.add('articles-open');
-                active = pane;
-                window.__sfx?.materialize?.();
-            }
-            function closePanel() {
-                body.classList.remove('articles-open');
-                active = null;
-                tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
-                window.__sfx?.disengage?.();
-                // Hide after the collapse transition completes so it isn't tabbable
-                setTimeout(() => { if (!body.classList.contains('articles-open')) panel.hidden = true; }, 600);
-            }
-
+            // The left console is always visible after console-revealed (mirror of right HUD).
+            // Tabs only swap which pane is shown; no panel open/close toggle.
+            showPane(active);
             tabs.forEach(t => {
                 t.addEventListener('click', () => {
                     const pane = t.dataset.pane;
-                    if (active === pane) {
-                        closePanel();
-                    } else if (active) {
-                        // Just swap content, panel stays open
-                        showPane(pane);
-                        active = pane;
-                        window.__sfx?.tick?.();
-                    } else {
-                        openPanel(pane);
-                    }
+                    if (active === pane) return;
+                    active = pane;
+                    showPane(pane);
+                    window.__sfx?.tick?.();
                 });
             });
 
@@ -8718,17 +8610,12 @@ See also: Health Samurai Lab: Game of Pools.`,
             // Click on reader backdrop (outside the frame) closes it
             reader.addEventListener('click', (e) => { if (e.target === reader) closeReader(); });
 
-            // ESC priority: reader → panel
+            // ESC closes the reader if open
             document.addEventListener('keydown', (e) => {
                 if (e.key !== 'Escape') return;
                 if (body.classList.contains('reader-open')) {
                     e.stopPropagation();
                     closeReader();
-                    return;
-                }
-                if (body.classList.contains('articles-open')) {
-                    e.stopPropagation();
-                    closePanel();
                 }
             }, true);
         })();
