@@ -1943,6 +1943,45 @@
             flex: 1;
         }
         .hud-left-articles .corner.tl { transform: translateZ(20px); }
+
+        /* The single panel wrapper that holds tabs + cards. Soft holographic frame so the whole
+           thing reads as one container, not bare cards on the void. */
+        .hl-pane {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 14px 12px 12px;
+            min-height: 0;
+            flex: 1;
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            background:
+                linear-gradient(135deg,
+                    rgba(var(--acc-rgb), 0.05) 0%,
+                    rgba(var(--acc-rgb), 0.0) 60%);
+            box-shadow:
+                0 0 0 1px rgba(var(--acc-rgb), 0.05),
+                0 0 28px rgba(var(--acc-rgb), 0.08) inset;
+        }
+        /* Holographic corner ticks — TL + BR, like the .release-item card style scaled up */
+        .hl-pane::before,
+        .hl-pane::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
+        }
+        .hl-pane::before {
+            top: -1px; left: -1px;
+            border-top: 1px solid var(--acc);
+            border-left: 1px solid var(--acc);
+        }
+        .hl-pane::after {
+            bottom: -1px; right: -1px;
+            border-bottom: 1px solid var(--acc);
+            border-right: 1px solid var(--acc);
+        }
         /* Breathing room from the left edge so content doesn't kiss the panel border */
         .hud-right .agents-feed {
             padding-left: 8px;
@@ -5405,24 +5444,26 @@
         </div>
     </div>
 
-    <!-- Left-side hologram console — full mirror of .hud-right on the opposite edge. Tabs sit at the top
-         of the stack (mirror of the dashboard/chat tabs at the bottom of the right console). -->
+    <!-- Left-side hologram console — mirror of .hud-right on the opposite edge.
+         Tabs + content live inside a single .hl-pane wrapper so the whole thing reads as one panel. -->
     <div class="hud-left-articles" id="hud-left-articles">
         <div class="hud-left-stack" id="hud-left-stack">
             <div class="corner tl articles-feed">
-                <div class="htl-tabs" role="tablist">
-                    <button type="button" class="htl-item active" data-pane="articles" role="tab" aria-selected="true">
-                        <span class="htl-prefix">// my</span>
-                        <span class="htl-name">articles</span>
-                    </button>
-                    <span class="htl-sep" aria-hidden="true"></span>
-                    <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
-                        <span class="htl-prefix">//</span>
-                        <span class="htl-name">cases</span>
-                    </button>
+                <div class="hl-pane">
+                    <div class="htl-tabs" role="tablist">
+                        <button type="button" class="htl-item active" data-pane="articles" role="tab" aria-selected="true">
+                            <span class="htl-prefix">// my</span>
+                            <span class="htl-name">articles</span>
+                        </button>
+                        <span class="htl-sep" aria-hidden="true"></span>
+                        <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
+                            <span class="htl-prefix">//</span>
+                            <span class="htl-name">cases</span>
+                        </button>
+                    </div>
+                    <ul class="articles-list" id="articles-list" role="list"></ul>
+                    <ul class="cases-list" id="cases-list" role="list" hidden></ul>
                 </div>
-                <ul class="articles-list" id="articles-list" role="list"></ul>
-                <ul class="cases-list" id="cases-list" role="list" hidden></ul>
             </div>
         </div>
     </div>
@@ -8101,6 +8142,59 @@
 
             // Wait for the audio gate to be dismissed before kicking off the show
             document.addEventListener('app:start', startSequence, { once: true });
+        })();
+    </script>
+
+    <!-- Left-side HUD: hologram parallax (mirror of right HUD's parallax) — kicks in when cursor
+         is over the left panel; gentle idle sine drift always running on top. -->
+    <script>
+        (() => {
+            const stack = document.getElementById('hud-left-stack');
+            const hudLeft = document.getElementById('hud-left-articles');
+            if (!stack || !hudLeft) return;
+
+            const baseRY = 14;   // mirror of right's -14
+            const baseRX = 0;
+            const idleAmpY = 1.4;
+            const idleAmpX = 0.9;
+            const mouseAmpY = 3;
+            const mouseAmpX = 2;
+            const lerp = 0.06;
+
+            let targetRY = baseRY;
+            let targetRX = baseRX;
+            let curRY = baseRY;
+            let curRX = baseRX;
+
+            document.addEventListener('mousemove', (e) => {
+                const r = hudLeft.getBoundingClientRect();
+                const inside =
+                    e.clientX >= r.left && e.clientX <= r.right &&
+                    e.clientY >= r.top  && e.clientY <= r.bottom;
+                if (!inside) {
+                    targetRY = baseRY;
+                    targetRX = baseRX;
+                    return;
+                }
+                const nx = (e.clientX - r.left) / r.width  - 0.5;
+                const ny = (e.clientY - r.top)  / r.height - 0.5;
+                // Inverted X so the panel "faces" the cursor like the right HUD does on its side
+                targetRY = baseRY - nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
+            });
+
+            const start = performance.now();
+            function tick(t) {
+                requestAnimationFrame(tick);
+                const dt = (t - start) / 1000;
+                const idleY = Math.sin(dt * 0.5) * idleAmpY;
+                const idleX = Math.cos(dt * 0.37) * idleAmpX;
+                curRY += ((targetRY + idleY) - curRY) * lerp;
+                curRX += ((targetRX + idleX) - curRX) * lerp;
+                stack.style.setProperty('--lry', curRY.toFixed(2) + 'deg');
+                stack.style.setProperty('--lrx', curRX.toFixed(2) + 'deg');
+            }
+            requestAnimationFrame(tick);
         })();
     </script>
 
