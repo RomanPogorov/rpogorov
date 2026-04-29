@@ -536,26 +536,40 @@
         body.showcase-open .showcase {
             top: var(--sheet-top);
         }
-        /* Camera/sensor dot in the top-centre bezel — gives the device a face. */
-        .showcase::before {
-            content: '';
+        /* Carousel dots live in the top-centre bezel — replaces the old
+           camera-dot detail. */
+        #cases-dots {
             position: absolute;
-            top: calc(var(--device-bezel) / 2 - 3px);
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%,
-                rgba(var(--acc-rgb), 0.85) 0%,
-                rgba(var(--acc-rgb), 0.25) 35%,
-                #06080a 60%);
-            box-shadow:
-                0 0 0 1px rgba(var(--acc-rgb), 0.35),
-                0 0 8px rgba(var(--acc-rgb), 0.45);
-            z-index: 4;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--device-bezel);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            z-index: 9;
+            pointer-events: auto;
         }
+        #cases-dots .cases-dot {
+            width: 6px;
+            height: 6px;
+            border: 1px solid rgba(var(--acc-rgb), 0.5);
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            border-radius: 50%;
+            transition: background 0.18s, border-color 0.18s, transform 0.15s, box-shadow 0.18s;
+        }
+        #cases-dots .cases-dot.active {
+            background: var(--acc);
+            border-color: var(--acc);
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.7);
+        }
+        #cases-dots .cases-dot:hover { transform: scale(1.3); }
         /* Status LED + label in the top-right bezel — blinks slowly. */
         .showcase::after {
             content: '';
@@ -6719,11 +6733,11 @@
 
             <nav class="cases-nav" aria-label="Carousel navigation">
                 <button class="cases-arrow" id="cases-prev" type="button" aria-label="Previous case">←</button>
-                <ol class="cases-dots" id="cases-dots"></ol>
                 <button class="cases-arrow" id="cases-next" type="button" aria-label="Next case">→</button>
             </nav>
 
         </div>
+        <ol class="cases-dots" id="cases-dots" aria-hidden="true"></ol>
     </section>
 
     <!-- Case page: full-page detail for cs01 (Americor overall) -->
