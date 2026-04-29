@@ -482,24 +482,82 @@
             pointer-events: none;
         }
 
-        /* The basement section itself — black, slides up into view but stops short
-           of the top so a strip of the dimmed/blurred hero stays visible. Clicking
-           that strip collapses the showcase back. */
-        :root { --showcase-top-strip: 84px; }
+        /* The basement section — slides up like a piece of hardware. Stops short of
+           the top so a dim/blur strip of the hero stays visible (clickable to
+           collapse). The top edge has a complex notched silhouette via clip-path,
+           plus bracket corners + a header bar with status text. */
+        :root {
+            --showcase-top-strip: 110px;
+            --showcase-side-gap: 28px;
+            --showcase-bezel: 22px;     /* angled corner cut depth */
+            --showcase-notch-depth: 18px;
+        }
         .showcase {
             position: fixed;
-            top: 100vh;             /* off-screen below the hero */
-            left: 0;
-            right: 0;
+            top: 100vh;
+            left: var(--showcase-side-gap);
+            right: var(--showcase-side-gap);
             height: calc(100vh - var(--showcase-top-strip));
-            background: #050608;
+            background:
+                linear-gradient(180deg,
+                    rgba(10, 14, 18, 1) 0%,
+                    rgba(5, 6, 8, 1) 14%,
+                    rgba(5, 6, 8, 1) 100%);
             z-index: 7;
             overflow: hidden;
             transition: top 0.85s cubic-bezier(0.2, 0.9, 0.3, 1);
+            /* Notched cyber-console silhouette: angled bevels TL/TR, a tab/notch
+               cut into the top center, and small chamfers on bottom corners. */
+            --shape: polygon(
+                0 var(--showcase-bezel),
+                var(--showcase-bezel) 0,
+                calc(38% - 18px) 0,
+                calc(38% - 8px) var(--showcase-notch-depth),
+                calc(62% + 8px) var(--showcase-notch-depth),
+                calc(62% + 18px) 0,
+                calc(100% - var(--showcase-bezel)) 0,
+                100% var(--showcase-bezel),
+                100% calc(100% - 12px),
+                calc(100% - 12px) 100%,
+                12px 100%,
+                0 calc(100% - 12px)
+            );
+            clip-path: var(--shape);
+            -webkit-clip-path: var(--shape);
+            filter:
+                drop-shadow(0 0 1px rgba(var(--acc-rgb), 0.95))
+                drop-shadow(0 0 18px rgba(var(--acc-rgb), 0.32))
+                drop-shadow(0 12px 40px rgba(0, 0, 0, 0.6));
         }
         body.showcase-open .showcase {
             top: var(--showcase-top-strip);
         }
+        /* Header label sitting in the top notch — like a model number on a device */
+        .showcase-notch-label {
+            position: fixed;
+            top: calc(var(--showcase-top-strip) - 14px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--acc);
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.65);
+            padding: 0 14px;
+            opacity: 0;
+            transition: top 0.85s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .showcase-notch-label::before { content: '◆ '; opacity: 0.7; }
+        body.showcase-open .showcase-notch-label {
+            top: calc(var(--showcase-top-strip) + 14px);
+            opacity: 1;
+            transition-delay: 0.35s;
+        }
+        body.case-open .showcase-notch-label { opacity: 0; transition-delay: 0s; }
         /* Top strip — sits over the dim/blur hero, intercepts clicks to collapse */
         .showcase-top-handle {
             position: fixed;
@@ -950,8 +1008,8 @@
 
         .showcase-back {
             position: absolute;
-            top: 18px;
-            right: 22px;
+            top: 32px;
+            right: 38px;
             appearance: none;
             background: transparent;
             border: 1px solid rgba(var(--acc-rgb), 0.4);
@@ -6175,6 +6233,7 @@
     <button type="button" class="showcase-top-handle" id="showcase-top-handle" aria-label="Collapse showcase">
         <span class="hint"><span class="arrow">↑</span><span>Click to collapse</span></span>
     </button>
+    <span class="showcase-notch-label" aria-hidden="true">SHOWCASE · LIVE</span>
     <section class="showcase" id="showcase" aria-label="Recent works">
         <div class="showcase-inner">
             <div class="showcase-intro">
