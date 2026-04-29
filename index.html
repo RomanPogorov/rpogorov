@@ -9267,15 +9267,14 @@ See also: Health Samurai Lab: Game of Pools.`,
 
                 function tick() {
                     requestAnimationFrame(tick);
-                    // Skeleton opacity lerps toward target
                     skelCur += (skelTarget - skelCur) * 0.2;
                     skelEl.style.opacity = skelCur.toFixed(3);
-                    // Rays mask height: monotonic — only grows (never shrinks back).
+                    // Rays mask height: smoothly tracks proximity in BOTH directions — grows on
+                    // approach, shrinks back to the 80px baseline when cursor moves away. No sine
+                    // breathing, no monotonic lock.
                     const targetH = RAYS_MIN + (RAYS_MAX - RAYS_MIN) * prox;
-                    if (targetH > raysCur) {
-                        raysCur += (targetH - raysCur) * 0.18;
-                        raysEl.style.height = raysCur.toFixed(0) + 'px';
-                    }
+                    raysCur += (targetH - raysCur) * 0.18;
+                    raysEl.style.height = raysCur.toFixed(0) + 'px';
                 }
                 requestAnimationFrame(tick);
 
