@@ -1430,10 +1430,11 @@
             background: var(--acc);
         }
 
-        /* Timeline (sticky nav) */
+        /* Timeline (sticky nav) — pinned BELOW the persistent terminal strip
+           (64px) so it never overlaps it. */
         .cp-timeline {
             position: sticky;
-            top: 0;
+            top: 64px;
             z-index: 5;
             background: rgba(5,5,5,0.92);
             backdrop-filter: blur(14px);
