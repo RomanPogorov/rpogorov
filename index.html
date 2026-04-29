@@ -3431,7 +3431,16 @@
                 translateZ(0)
                 scaleX(1)
                 scaleY(1);
-            filter: blur(0) brightness(1);
+            /* perf: was `filter: blur(0) brightness(1)` — even at no-op values, `filter` keeps the
+               panel inside a filter stacking context (extra render pass per frame). `none` drops it
+               entirely once the engage transition lands. */
+            filter: none;
+        }
+        /* Pause home-screen prompt animations while panel is engaged — .prompt is opacity:0 but its
+           sweep / runner / pulse animations were still painting every frame. */
+        body.engaged .prompt,
+        body.engaged .prompt * {
+            animation-play-state: paused !important;
         }
 
         /* Projector flicker — runs once at engage */
@@ -3482,6 +3491,10 @@
             position: relative;
             width: 100%;
             height: 100%;
+            /* Force own GPU composite layer so children's transform animations don't
+               invalidate the parent's painted content. */
+            transform: translateZ(0);
+            will-change: transform;
             /* perf: dropped backdrop-filter blur(20px) saturate(1.4) — was the worst-case cost
                (heaviest blur radius on the site, sitting on a 3D-rotating element that updated
                on every mousemove). Slightly bumped the gradient solidity so the missing frosted
