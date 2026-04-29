@@ -132,8 +132,9 @@
         }
 
         /* ============ NOISE / GRAIN ============ */
-        /* perf: tiled PNG instead of SVG turbulence + mix-blend-mode overlay (overlay reads pixels under
-           the layer every frame — animated viewport-sized blend was the single most expensive idle effect) */
+        /* perf: tiled PNG (multi-octave, mean=128 so overlay stays neutral) instead of SVG turbulence.
+           Kept mix-blend-mode: overlay — it preserves video detail (highlights/shadows) instead of
+           dimming the frame. SVG rasterization removed; only the blend cost remains. */
         .noise {
             position: fixed;
             inset: -50%;
@@ -141,8 +142,9 @@
             height: 200%;
             pointer-events: none;
             z-index: 2;
-            opacity: 0.08;
-            background-image: url("noise.png?v=1");
+            opacity: 0.18;
+            mix-blend-mode: overlay;
+            background-image: url("noise.png?v=2");
             background-size: 256px 256px;
             animation: noiseShift 0.6s steps(4) infinite;
             will-change: transform;
