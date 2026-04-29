@@ -2602,9 +2602,9 @@
         .hud-tab:hover {
             color: var(--ink);
             background: linear-gradient(180deg,
-                rgba(var(--acc-rgb), 0.12) 0%,
-                rgba(var(--acc-rgb), 0.04) 100%);
-            box-shadow: inset 0 0 14px rgba(var(--acc-rgb), 0.18);
+                rgba(var(--acc-rgb), 0.05) 0%,
+                rgba(var(--acc-rgb), 0.015) 100%);
+            box-shadow: inset 0 0 12px rgba(var(--acc-rgb), 0.07);
         }
         .hud-tab:focus { outline: none; }
         .hud-tab:focus-visible {
@@ -7288,6 +7288,7 @@
                 tab.addEventListener('click', () => {
                     const target = tab.dataset.pane;
                     tabs.forEach((t) => t.classList.toggle('active', t === tab));
+                    window.__sfx?.tick?.();
                     if (target === 'chat') {
                         dashboard.hidden = true;
                         chatPane.hidden = false;
