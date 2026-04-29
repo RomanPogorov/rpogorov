@@ -4512,8 +4512,8 @@
 
 <body class="pre-gate" data-theme="green">
 
-    <!-- Perf HUD: enable with ?perf=1 in URL. Shows live FPS + jank counter (frames slower than 33ms / 1s). -->
-    <div class="perf-hud" id="perf-hud" hidden>
+    <!-- Perf HUD: always visible while we debug. Hide later by removing this div + the script. -->
+    <div class="perf-hud" id="perf-hud">
         <span class="perf-fps">— fps</span>
         <span class="perf-jank">jank: 0</span>
     </div>
@@ -6643,14 +6643,11 @@
         })();
     </script>
 
-    <!-- Perf HUD: live FPS + jank counter. Enable with ?perf=1. -->
+    <!-- Perf HUD: live FPS + jank counter. Always-on while we debug. -->
     <script>
         (() => {
-            const params = new URLSearchParams(location.search);
-            if (!params.has('perf')) return;
             const hud = document.getElementById('perf-hud');
             if (!hud) return;
-            hud.hidden = false;
             const fpsEl = hud.querySelector('.perf-fps');
             const jankEl = hud.querySelector('.perf-jank');
 
