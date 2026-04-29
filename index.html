@@ -1581,20 +1581,10 @@
             width: 4px;
             height: 4px;
             margin: -2px 0 0 -2px;
-            background: var(--acc);
+            /* Stays plain white at all times — no theme/accent recolor when held */
+            background: #fff;
             border-radius: 50%;
-            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.9);
-            transition: width 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
-                        height 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
-                        margin 0.22s cubic-bezier(0.2, 0.9, 0.3, 1),
-                        box-shadow 0.18s ease;
-        }
-        /* Cursor magnet-snap state — minimal visual lift, just enough to feel "held" */
-        body.cur-snap .cur-dot {
-            width: 5px;
-            height: 5px;
-            margin: -2.5px 0 0 -2.5px;
-            box-shadow: 0 0 9px rgba(var(--acc-rgb), 0.95);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.75);
         }
         .cur-ring {
             width: 24px;
@@ -7283,10 +7273,10 @@
             document.addEventListener('mouseenter', show);
 
             const lerp = 0.22;
-            // Spring-physics state for the dot (separate from raw mouse), used for the magnetic snap effect.
+            // Spring-physics state for the dot (separate from raw mouse) — light magnetic anchoring.
             let dx = mx, dy = my, vx = 0, vy = 0;
-            // Selectors that the dot snaps to. Currently: the left tab strip items (Articles / Cases).
             const SNAP_SEL = '.htl-item';
+            const SNAP_RADIUS = 28;   // px from a tab's top-center — within this, dot pins to it
             let lastSnapKey = null;
 
             function tick() {
@@ -7294,49 +7284,44 @@
                 rx += (mx - rx) * lerp;
                 ry += (my - ry) * lerp;
 
-                // Find a snap target under the cursor (tab item) — pull dot to its center
-                let snapEl = null;
-                const el = document.elementFromPoint(mx, my);
-                if (el && el.closest) snapEl = el.closest(SNAP_SEL);
-
+                // Find the nearest tab anchor (top-border center) and decide whether to pin
+                let pinKey = null;
                 let tx = mx, ty = my;
-                if (snapEl) {
-                    const r = snapEl.getBoundingClientRect();
-                    tx = r.left + r.width / 2;
-                    ty = r.top;        // top border, horizontal center
-                }
-                // Snap-state class for visual feedback + minimalist sound on transition
-                const snapKey = snapEl ? (snapEl.dataset.pane || 'snap') : null;
-                if (snapKey !== lastSnapKey) {
-                    if (snapKey !== null) window.__sfx?.snap?.();
-                    document.body.classList.toggle('cur-snap', !!snapKey);
-                    lastSnapKey = snapKey;
+                let nearest = null;
+                let nearestDist = Infinity;
+                document.querySelectorAll(SNAP_SEL).forEach(t => {
+                    const r = t.getBoundingClientRect();
+                    const cx = r.left + r.width / 2;
+                    const cy = r.top;
+                    const d  = Math.hypot(cx - mx, cy - my);
+                    if (d < nearestDist) {
+                        nearestDist = d;
+                        nearest = { x: cx, y: cy, key: t.dataset.pane };
+                    }
+                });
+                if (nearest && nearestDist < SNAP_RADIUS) {
+                    tx = nearest.x;
+                    ty = nearest.y;
+                    pinKey = nearest.key || 'snap';
                 }
 
-                // Spring physics — softer + more friction when snapped (clearly anchors), stiffer when free
-                const k = snapEl ? 0.18 : 0.42;     // stiffness
-                const f = snapEl ? 0.62 : 0.55;     // damping (kept velocity)
+                // Pin-state SFX on transitions only — never tab-to-tab directly
+                if (pinKey !== lastSnapKey) {
+                    if (pinKey !== null) window.__sfx?.snap?.();
+                    lastSnapKey = pinKey;
+                }
+
+                // Spring physics — heavier when pinned (gives the 'held' feel),
+                // brisk when free so the dot snaps right back under the cursor.
+                const k = pinKey ? 0.16 : 0.45;
+                const f = pinKey ? 0.66 : 0.50;
                 vx = vx * f + (tx - dx) * k;
                 vy = vy * f + (ty - dy) * k;
                 dx += vx;
                 dy += vy;
 
-                // While snapped, the dot physically stretches toward the cursor — a rubber-band feel.
-                // The further the cursor pulls from the snap point, the more elongated the dot.
-                let stretchT = '';
-                if (snapEl) {
-                    const pullX = mx - tx;
-                    const pullY = my - ty;
-                    const pullDist = Math.sqrt(pullX * pullX + pullY * pullY);
-                    if (pullDist > 3) {
-                        const angle  = Math.atan2(pullY, pullX) * 180 / Math.PI;
-                        // Subtle stretch only — just enough to feel the magnet 'holding' the dot
-                        const stretch = Math.min(1.2, 1 + pullDist / 220);
-                        const squash  = 1 / Math.sqrt(stretch);
-                        stretchT = ` rotate(${angle.toFixed(1)}deg) scaleX(${stretch.toFixed(3)}) scaleY(${squash.toFixed(3)})`;
-                    }
-                }
-                dot.style.transform  = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)${stretchT}`;
+                // Plain translate — stays a regular round dot, no 3D geometry distortion
+                dot.style.transform  = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
                 ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
             }
             requestAnimationFrame(tick);
