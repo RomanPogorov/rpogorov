@@ -5751,10 +5751,9 @@
                 const target = tab.dataset.view;
                 tabs.forEach(t => t.classList.toggle('active', t === tab));
                 views.forEach(v => v.classList.toggle('active', v.dataset.view === target));
-
-                // brief glitch on tab change
-                body.classList.add('glitching');
-                setTimeout(() => body.classList.remove('glitching'), 250);
+                // (was: body.classList.add('glitching') for 250ms — fired glitchOnce filter
+                // animation on bg.mp4. The flicker was visible through the dim .backdrop and
+                // read as a bug. Removed.)
             });
         });
 
