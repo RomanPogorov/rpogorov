@@ -836,9 +836,9 @@
             min-height: calc(100vh - var(--sheet-top) - var(--device-bezel) - 40px);
             display: grid;
             grid-template-columns: 1fr;
-            grid-template-rows: auto 1fr;
+            grid-template-rows: auto auto;
             gap: 22px;
-            padding: 88px 56px 132px;        /* clear of the 64px terminal bar */
+            padding: 88px 56px 56px;          /* clear of the 64px terminal bar */
             box-sizing: border-box;
             align-items: start;
             align-content: start;
@@ -8563,8 +8563,19 @@
                     const active = items[currentIndex()];
                     if (!active) return;
                     e.preventDefault();
-                    const dir = e.key === 'ArrowDown' ? 1 : -1;
-                    active.scrollBy({ top: active.clientHeight * 0.85 * dir, behavior: 'smooth' });
+                    if (e.key === 'ArrowDown') {
+                        const article = active.querySelector('.case-page.case-article-mode');
+                        // First ↓ from the cover lands directly on the article's
+                        // first line (skips the cover's empty bottom). Subsequent
+                        // ↓ presses scroll by ~85% of viewport.
+                        if (article && active.scrollTop < article.offsetTop - 40) {
+                            article.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            return;
+                        }
+                        active.scrollBy({ top: active.clientHeight * 0.85, behavior: 'smooth' });
+                    } else {
+                        active.scrollBy({ top: -active.clientHeight * 0.85, behavior: 'smooth' });
+                    }
                 }
             });
 
