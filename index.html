@@ -5241,7 +5241,9 @@
             42%      { opacity: 0.25; transform: translateY(0)     scaleY(1);   }
             68%      { opacity: 0.16; transform: translateY(4px)   scaleY(1);   }
         }
-        body.left-pane-open .htl-rays { opacity: 0; }
+        /* When the panel opens, only the skeleton hides. The rays gradient stays behind the panel
+           so the same hologram lighting carries through into the expanded state. */
+        body.left-pane-open .htl-skeleton { opacity: 0 !important; }
 
         /* Skeleton preview — faint placeholder cards under the collapsed tabs hinting where the panel
            will expand. Always faintly there, brightens on tab-strip hover. Mask gradient fades the
@@ -5273,12 +5275,12 @@
         }
         .skel-card {
             position: relative;
-            height: 86px;
-            padding: 14px 12px;
+            height: 100px;
+            padding: 12px 12px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 7px;
+            gap: 6px;
             border: 1px solid rgba(var(--acc-rgb), 0.16);
             background: linear-gradient(135deg,
                 rgba(var(--acc-rgb), 0.06) 0%,
@@ -5300,7 +5302,23 @@
             border-bottom: 1px solid rgba(var(--acc-rgb), 0.5);
             border-right: 1px solid rgba(var(--acc-rgb), 0.5);
         }
-        /* Inside each card: a thicker title bar + two thinner text bars (title + text preview) */
+        /* Inside each card: meta-row (date + reading-time) + title + two text bars — mirror of
+           the real .article-item structure. */
+        .skel-meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .skel-meta-bar {
+            display: block;
+            height: 4px;
+            border-radius: 1px;
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0.32) 0%,
+                rgba(var(--acc-rgb), 0.10) 100%);
+        }
+        .skel-meta-bar:nth-child(1) { width: 36%; }
+        .skel-meta-bar:nth-child(2) { width: 26%; opacity: 0.75; }
         .skel-title-bar,
         .skel-text-bar {
             display: block;
@@ -5308,11 +5326,11 @@
         }
         .skel-title-bar {
             height: 8px;
-            width: 62%;
+            width: 70%;
             background: linear-gradient(90deg,
                 rgba(var(--acc-rgb), 0.45) 0%,
                 rgba(var(--acc-rgb), 0.15) 100%);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         .skel-text-bar {
             height: 4px;
@@ -5723,21 +5741,37 @@
                     <span class="ray ray-6"></span>
                     <div class="htl-skeleton" aria-hidden="true">
                         <div class="skel-card">
+                            <span class="skel-meta-row">
+                                <span class="skel-meta-bar"></span>
+                                <span class="skel-meta-bar"></span>
+                            </span>
                             <span class="skel-title-bar"></span>
                             <span class="skel-text-bar"></span>
                             <span class="skel-text-bar short"></span>
                         </div>
                         <div class="skel-card">
+                            <span class="skel-meta-row">
+                                <span class="skel-meta-bar"></span>
+                                <span class="skel-meta-bar"></span>
+                            </span>
                             <span class="skel-title-bar"></span>
                             <span class="skel-text-bar"></span>
                             <span class="skel-text-bar short"></span>
                         </div>
                         <div class="skel-card">
+                            <span class="skel-meta-row">
+                                <span class="skel-meta-bar"></span>
+                                <span class="skel-meta-bar"></span>
+                            </span>
                             <span class="skel-title-bar"></span>
                             <span class="skel-text-bar"></span>
                             <span class="skel-text-bar short"></span>
                         </div>
                         <div class="skel-card">
+                            <span class="skel-meta-row">
+                                <span class="skel-meta-bar"></span>
+                                <span class="skel-meta-bar"></span>
+                            </span>
                             <span class="skel-title-bar"></span>
                             <span class="skel-text-bar"></span>
                             <span class="skel-text-bar short"></span>
