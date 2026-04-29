@@ -5115,38 +5115,36 @@
             background: rgba(var(--acc-rgb), 0.04);
         }
 
-        /* Reveal cards alongside the panel materialize. Same pattern as the right HUD: items
-           start hidden (opacity 0, translateX +14) and slide in once console-revealed lands. */
-        .hud-left-articles .article-item,
-        .hud-left-articles .case-item {
-            opacity: 0;
-            transform: translateX(14px);
-        }
-        @keyframes articles-item-in {
-            to { opacity: 1; transform: translateX(0); }
-        }
-        body.console-revealed .hud-left-articles .htl-tabs { animation: articles-item-in 0.5s ease-out 0.20s forwards; opacity: 0; transform: translateX(14px); }
-        body.console-revealed .hud-left-articles .article-item:nth-child(1),
-        body.console-revealed .hud-left-articles .case-item:nth-child(1) { animation: articles-item-in 0.5s ease-out 0.40s forwards; }
-        body.console-revealed .hud-left-articles .article-item:nth-child(2),
-        body.console-revealed .hud-left-articles .case-item:nth-child(2) { animation: articles-item-in 0.5s ease-out 0.55s forwards; }
-        body.console-revealed .hud-left-articles .article-item:nth-child(3),
-        body.console-revealed .hud-left-articles .case-item:nth-child(3) { animation: articles-item-in 0.5s ease-out 0.70s forwards; }
-        body.console-revealed .hud-left-articles .article-item:nth-child(4),
-        body.console-revealed .hud-left-articles .case-item:nth-child(4) { animation: articles-item-in 0.5s ease-out 0.85s forwards; }
-        body.console-revealed .hud-left-articles .article-item:nth-child(5),
-        body.console-revealed .hud-left-articles .case-item:nth-child(5) { animation: articles-item-in 0.5s ease-out 1.00s forwards; }
-        body.console-revealed .hud-left-articles .article-item:nth-child(6) { animation: articles-item-in 0.5s ease-out 1.15s forwards; }
-
-        /* Fast re-fade when the user swaps tabs (articles ↔ cases). Triggered by a transient
-           `.tab-fresh` class on the newly-shown list. Total cascade ~0.20s — feels snappy. */
-        .articles-list.tab-fresh > .article-item,
-        .cases-list.tab-fresh > .case-item {
-            animation: articles-tab-in 0.22s ease-out backwards;
-        }
+        /* Items in the left console are visible by default once their list is shown.
+           Animations only run on first panel open + first tab switch (driven by JS-toggled classes). */
         @keyframes articles-tab-in {
             from { opacity: 0; transform: translateX(10px); }
             to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* First panel-open: drop down + cascade items in */
+        .hl-pane.first-open {
+            animation: hl-pane-drop 0.42s cubic-bezier(0.2, 0.9, 0.3, 1) backwards;
+            transform-origin: top left;
+        }
+        @keyframes hl-pane-drop {
+            0%   { opacity: 0; transform: scaleY(0.06); }
+            100% { opacity: 1; transform: scaleY(1); }
+        }
+        .hl-pane.first-open > ul:not([hidden]) > li {
+            animation: articles-tab-in 0.28s ease-out backwards;
+        }
+        .hl-pane.first-open > ul:not([hidden]) > li:nth-child(1) { animation-delay: 0.18s; }
+        .hl-pane.first-open > ul:not([hidden]) > li:nth-child(2) { animation-delay: 0.22s; }
+        .hl-pane.first-open > ul:not([hidden]) > li:nth-child(3) { animation-delay: 0.26s; }
+        .hl-pane.first-open > ul:not([hidden]) > li:nth-child(4) { animation-delay: 0.30s; }
+        .hl-pane.first-open > ul:not([hidden]) > li:nth-child(5) { animation-delay: 0.34s; }
+        .hl-pane.first-open > ul:not([hidden]) > li:nth-child(6) { animation-delay: 0.38s; }
+
+        /* First tab swap (articles ↔ cases) — fast staggered re-fade. Subsequent swaps are instant. */
+        .articles-list.tab-fresh > .article-item,
+        .cases-list.tab-fresh > .case-item {
+            animation: articles-tab-in 0.22s ease-out backwards;
         }
         .articles-list.tab-fresh > .article-item:nth-child(1),
         .cases-list.tab-fresh > .case-item:nth-child(1) { animation-delay: 0.00s; }
@@ -5478,24 +5476,24 @@
         </div>
     </div>
 
-    <!-- Left-side hologram console — mirror of .hud-right on the opposite edge.
-         Tabs + content live inside a single .hl-pane wrapper so the whole thing reads as one panel. -->
+    <!-- Left-side hologram console — collapsed by default. Tabs hang at the top; click a tab to
+         drop the panel content downward. First open + first switch animate; later switches are instant. -->
     <div class="hud-left-articles" id="hud-left-articles">
         <div class="hud-left-stack" id="hud-left-stack">
             <div class="corner tl articles-feed">
-                <div class="hl-pane">
-                    <div class="htl-tabs" role="tablist">
-                        <button type="button" class="htl-item active" data-pane="articles" role="tab" aria-selected="true">
-                            <span class="htl-prefix">// my</span>
-                            <span class="htl-name">articles</span>
-                        </button>
-                        <span class="htl-sep" aria-hidden="true"></span>
-                        <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
-                            <span class="htl-prefix">//</span>
-                            <span class="htl-name">cases</span>
-                        </button>
-                    </div>
-                    <ul class="articles-list" id="articles-list" role="list"></ul>
+                <div class="htl-tabs" role="tablist">
+                    <button type="button" class="htl-item" data-pane="articles" role="tab" aria-selected="false">
+                        <span class="htl-prefix">// my</span>
+                        <span class="htl-name">articles</span>
+                    </button>
+                    <span class="htl-sep" aria-hidden="true"></span>
+                    <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
+                        <span class="htl-prefix">//</span>
+                        <span class="htl-name">cases</span>
+                    </button>
+                </div>
+                <div class="hl-pane" id="hl-pane" hidden>
+                    <ul class="articles-list" id="articles-list" role="list" hidden></ul>
                     <ul class="cases-list" id="cases-list" role="list" hidden></ul>
                 </div>
             </div>
@@ -8811,33 +8809,59 @@ See also: Health Samurai Lab: Game of Pools.`,
                 casesList.appendChild(li);
             });
 
-            // Which pane is currently displayed
-            let active = 'articles';
+            // The left pane is collapsed by default. Tabs hang at top; click expands it.
+            // Animation runs on the FIRST open and on the FIRST tab switch only — afterwards
+            // panel + content swap instantly (data is already there, no theatre needed).
+            const pane = document.getElementById('hl-pane');
+            let active = null;
+            let firstOpen = true;
+            let firstSwitch = true;
 
-            function showPane(pane, replay) {
-                articlesList.hidden = pane !== 'articles';
-                casesList.hidden = pane !== 'cases';
+            function setActiveTab(p) {
                 tabs.forEach(t => {
-                    const on = t.dataset.pane === pane;
+                    const on = t.dataset.pane === p;
                     t.classList.toggle('active', on);
                     t.setAttribute('aria-selected', on ? 'true' : 'false');
                 });
-                if (replay) {
-                    const list = pane === 'articles' ? articlesList : casesList;
+            }
+            function setVisibleList(p) {
+                articlesList.hidden = p !== 'articles';
+                casesList.hidden    = p !== 'cases';
+            }
+            function openPanel(p) {
+                pane.hidden = false;
+                setActiveTab(p);
+                setVisibleList(p);
+                if (firstOpen) {
+                    pane.classList.remove('first-open');
+                    void pane.offsetWidth;
+                    pane.classList.add('first-open');
+                    setTimeout(() => pane.classList.remove('first-open'), 800);
+                    firstOpen = false;
+                }
+                active = p;
+            }
+            function switchTo(p) {
+                if (active === p) return;
+                setActiveTab(p);
+                setVisibleList(p);
+                if (firstSwitch) {
+                    const list = p === 'articles' ? articlesList : casesList;
                     list.classList.remove('tab-fresh');
-                    void list.offsetWidth; // reflow restarts the animation
+                    void list.offsetWidth;
                     list.classList.add('tab-fresh');
                     setTimeout(() => list.classList.remove('tab-fresh'), 400);
+                    firstSwitch = false;
                 }
+                active = p;
             }
-            // Initial render — no replay, items already have their console-revealed entry animation
-            showPane(active, false);
+
             tabs.forEach(t => {
                 t.addEventListener('click', () => {
-                    const pane = t.dataset.pane;
-                    if (active === pane) return;
-                    active = pane;
-                    showPane(pane, true);
+                    const p = t.dataset.pane;
+                    if (active === null)      openPanel(p);
+                    else if (active !== p)    switchTo(p);
+                    /* else: same active tab — do nothing */
                     window.__sfx?.tick?.();
                 });
             });
