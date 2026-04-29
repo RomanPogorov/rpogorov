@@ -5216,6 +5216,27 @@
         }
         body.left-pane-open .htl-rays { opacity: 0; }
 
+        /* Random glitch on the collapsed left tab strip — fires at irregular intervals via JS. */
+        @keyframes htl-glitch {
+            0%   { filter: none;                                       transform: none; }
+            8%   { filter: hue-rotate(20deg) brightness(1.35);         transform: translate(2px, 0)  skewX(-1deg); }
+            18%  { filter: hue-rotate(-12deg) brightness(0.85) saturate(1.4); transform: translate(-3px, 1px) skewX(1.2deg); }
+            28%  { filter: hue-rotate(8deg)  brightness(1.1);          transform: translate(1px, -1px); }
+            42%  { filter: brightness(1.5) saturate(1.6);              transform: translate(0, 1px) skewY(-0.5deg); }
+            58%  { filter: hue-rotate(-6deg) brightness(0.9);          transform: translate(-1px, 0); }
+            76%  { filter: brightness(1.15);                            transform: translate(1px, 0); }
+            100% { filter: none;                                       transform: none; }
+        }
+        .htl-tabs.glitching {
+            animation: htl-glitch 0.42s steps(8) 1;
+        }
+        /* Pseudo RGB-split text shadow on the labels during a glitch — pure visual flair */
+        .htl-tabs.glitching .htl-name {
+            text-shadow:
+                1px 0 0 rgba(255, 0, 100, 0.6),
+                -1px 0 0 rgba(0, 200, 255, 0.5);
+        }
+
         /* First panel-open: drop down + cascade items in */
         .hl-pane.first-open {
             animation: hl-pane-drop 0.42s cubic-bezier(0.2, 0.9, 0.3, 1) backwards;
@@ -8983,6 +9004,32 @@ See also: Health Samurai Lab: Game of Pools.`,
                 collapsePanel();
                 window.__sfx?.tick?.();
             });
+
+            // Random stylish glitch on the collapsed tab strip — fires only while the panel is closed
+            // and only after the audio gate has been dismissed (so it doesn't run on the gate).
+            const tabsEl = document.querySelector('.htl-tabs');
+            if (tabsEl) {
+                let started = false;
+                function scheduleGlitch() {
+                    const delay = 8000 + Math.random() * 17000; // 8 – 25s
+                    setTimeout(() => {
+                        if (!body.classList.contains('left-pane-open') &&
+                            body.classList.contains('console-revealed') &&
+                            !body.classList.contains('pre-gate')) {
+                            tabsEl.classList.remove('glitching');
+                            void tabsEl.offsetWidth;
+                            tabsEl.classList.add('glitching');
+                            setTimeout(() => tabsEl.classList.remove('glitching'), 460);
+                        }
+                        scheduleGlitch();
+                    }, delay);
+                }
+                document.addEventListener('app:start', () => {
+                    if (started) return;
+                    started = true;
+                    scheduleGlitch();
+                }, { once: true });
+            }
 
             // Reader rendering
             function preprocessMD(md) {
