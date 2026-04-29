@@ -482,33 +482,100 @@
             pointer-events: none;
         }
 
-        /* iOS-style sheet stack: when the showcase opens, the hero clips to a
-           rounded inset card and the showcase rises as another rounded card. */
+        /* Showcase = a futuristic tablet rising from the bottom. Outer .showcase
+           is the device shell (bezel + body), inner .showcase-inner is the
+           screen where the cases carousel lives. */
         :root {
-            --sheet-side: 24px;
-            --sheet-top: 48px;
-            --sheet-radius: 22px;
+            --sheet-side: 36px;
+            --sheet-top: 56px;
+            --sheet-radius: 32px;        /* outer device corner */
+            --device-bezel: 14px;        /* bezel thickness around the screen */
+            --screen-radius: 18px;       /* inner screen corner */
         }
         .showcase {
             position: fixed;
-            /* Start fully off-screen + 32px below the viewport so the top edge
-               (border + glow + shadow) doesn't peek out behind the hero. */
-            top: calc(100vh + 32px);
+            /* Start fully off-screen + 40px below the viewport so the top of
+               the device (bezel + glow) doesn't peek above the bottom edge. */
+            top: calc(100vh + 40px);
             left: var(--sheet-side);
             right: var(--sheet-side);
             height: calc(100vh - var(--sheet-top) - var(--sheet-side));
-            background: #050608;
+            padding: var(--device-bezel);
+            box-sizing: border-box;
+            /* Brushed-metal-ish bezel: dark with a faint sheen and accent edge. */
+            background:
+                linear-gradient(180deg,
+                    rgba(28, 32, 36, 0.98) 0%,
+                    rgba(14, 16, 18, 1) 24%,
+                    rgba(10, 12, 14, 1) 100%);
             z-index: 7;
-            overflow: hidden;
+            overflow: visible;            /* allow camera dot / side detail */
             border-radius: var(--sheet-radius);
             box-shadow:
-                0 -2px 0 rgba(var(--acc-rgb), 0.45),
-                0 -18px 60px rgba(0, 0, 0, 0.55),
-                0 0 0 1px rgba(var(--acc-rgb), 0.35);
-            transition: top 0.7s cubic-bezier(0.32, 0.72, 0, 1);
+                /* inner bezel highlight + accent ring */
+                inset 0 1px 0 rgba(255, 255, 255, 0.06),
+                inset 0 0 0 1px rgba(var(--acc-rgb), 0.18),
+                /* outer 1px accent ring + halo + drop shadow */
+                0 0 0 1px rgba(var(--acc-rgb), 0.55),
+                0 0 22px rgba(var(--acc-rgb), 0.28),
+                0 28px 60px rgba(0, 0, 0, 0.65);
+            transition: top 0.78s cubic-bezier(0.32, 0.72, 0, 1);
         }
         body.showcase-open .showcase {
             top: var(--sheet-top);
+        }
+        /* Camera/sensor dot in the top-centre bezel — gives the device a face. */
+        .showcase::before {
+            content: '';
+            position: absolute;
+            top: calc(var(--device-bezel) / 2 - 3px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%,
+                rgba(var(--acc-rgb), 0.85) 0%,
+                rgba(var(--acc-rgb), 0.25) 35%,
+                #06080a 60%);
+            box-shadow:
+                0 0 0 1px rgba(var(--acc-rgb), 0.35),
+                0 0 8px rgba(var(--acc-rgb), 0.45);
+            z-index: 4;
+            pointer-events: none;
+        }
+        /* Status LED + label in the top-right bezel — blinks slowly. */
+        .showcase::after {
+            content: '';
+            position: absolute;
+            top: calc(var(--device-bezel) / 2 - 2px);
+            right: calc(var(--device-bezel) + 6px);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.85);
+            animation: showcase-led-blink 2.4s ease-in-out infinite;
+            z-index: 4;
+            pointer-events: none;
+        }
+        @keyframes showcase-led-blink {
+            0%, 60%, 100% { opacity: 0.95; }
+            70%, 80%      { opacity: 0.25; }
+        }
+        /* Inner screen — holds the case carousel and reads as 'the display'. */
+        .showcase-inner {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            border-radius: var(--screen-radius);
+            overflow: hidden;
+            background: #050608;
+            box-shadow:
+                inset 0 0 0 1px rgba(var(--acc-rgb), 0.10),
+                inset 0 0 30px rgba(var(--acc-rgb), 0.04);
         }
         /* Hero stays put — just a soft dim while the showcase is over it. */
         .stage,
