@@ -8510,6 +8510,7 @@
                 const items = Array.from(page.querySelectorAll('.cp-tl-item'));
                 const sections = Array.from(page.querySelectorAll('.cp-section'));
                 if (!items.length || !sections.length) return;
+                const slide = page.closest('.case');
 
                 items.forEach(item => {
                     item.addEventListener('click', () => {
@@ -8524,15 +8525,24 @@
                     items.forEach(i => i.classList.toggle('active', i.dataset.target === id));
                 };
 
+                // The slide is the scroll container now; the sticky header
+                // (~64 strip + ~64 timeline) covers the top, so we exclude
+                // those pixels from the active zone via rootMargin.
                 const io = new IntersectionObserver((entries) => {
-                    // Pick the entry closest to the top (most visible at the sticky-nav threshold)
                     const visible = entries.filter(e => e.isIntersecting);
                     if (!visible.length) return;
                     visible.sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
                     setActive(visible[0].target.id);
-                }, { root: page, rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+                }, {
+                    root: slide || page,
+                    rootMargin: '-140px 0px -55% 0px',
+                    threshold: 0,
+                });
 
                 sections.forEach(s => io.observe(s));
+
+                // Set initial active state to the first section.
+                setActive(sections[0].id);
             }
 
             function initSlideshow(el) {
