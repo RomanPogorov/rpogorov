@@ -985,6 +985,17 @@
             opacity: 1;
             filter: blur(0) brightness(1);
         }
+        /* Grid-mode card sizing — reaches AFTER the legacy carousel rules,
+           wins by source order. Sizes the image, kills the entry transform
+           so cards stand still. Body content stays fully visible. */
+        .cases:not(.detail-mode) .case .case-media {
+            transform: none;
+            opacity: 1;
+            filter: none;
+            max-height: 220px;
+            aspect-ratio: 16 / 10;
+        }
+        .cases:not(.detail-mode) .case .case-media .case-media-open-cue { display: none; }
         /* Dark gradient at the top of the image where the intro tag floats —
            so the white-on-image text stays legible without being covered. */
         .case-media .case-media-top-gradient {
@@ -1288,8 +1299,8 @@
         }
         .cases-dot:hover { transform: scale(1.25); }
 
-        /* ESC pill — identical to the OS-panel header close so the visual
-           language of "close" stays consistent across the site. */
+        /* Close pill — arrow + Esc hint. In grid mode the arrow reads as
+           '× close', in detail mode it switches to '← back'. */
         .showcase-back {
             position: relative;
             flex-shrink: 0;
@@ -1314,6 +1325,10 @@
             line-height: 1;
             color: var(--acc);
             text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
+        }
+        body.case-detail-active .showcase-back::before {
+            content: '←';
+            font-size: 0.875rem;
         }
         .showcase-back:hover {
             border-color: var(--acc);
@@ -9266,6 +9281,7 @@
             }
             function close() {
                 document.body.classList.remove('showcase-open');
+                document.body.classList.remove('case-detail-active');
                 window.__sfx?.disengage?.();
             }
             cue.addEventListener('click', open);
@@ -9315,7 +9331,7 @@
                 detailIdx = idx;
                 items.forEach((el, i) => el.classList.toggle('is-detail-active', i === idx));
                 cases.classList.add('detail-mode');
-                // reset both the case's own scroll and the cases container
+                document.body.classList.add('case-detail-active');
                 items[idx].scrollTop = 0;
                 updateStripState();
                 window.__sfx?.engage?.();
@@ -9325,6 +9341,7 @@
                 detailIdx = -1;
                 items.forEach(el => el.classList.remove('is-detail-active'));
                 cases.classList.remove('detail-mode');
+                document.body.classList.remove('case-detail-active');
                 updateStripState();
                 window.__sfx?.disengage?.();
             }
