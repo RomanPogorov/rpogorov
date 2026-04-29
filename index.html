@@ -1795,10 +1795,14 @@
         }
 
         /* Children start hidden, then stagger-reveal once .console-revealed is set */
+        .hud-right .welcome-block,
         .hud-right .agents-head,
+        .hud-right .tasks-block,
         .hud-right .agent-item,
         .hud-right .releases-block > .label,
         .hud-right .release-item,
+        .hud-right .experience-block,
+        .hud-right .showcase-tip,
         .hud-right .corner.br {
             opacity: 0;
             transform: translateX(14px);
@@ -1806,16 +1810,36 @@
         @keyframes hud-item-in {
             to { opacity: 1; transform: translateX(0); }
         }
-        body.console-revealed .hud-right .agents-head             { animation: hud-item-in 0.5s ease-out 0.20s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(1) { animation: hud-item-in 0.5s ease-out 0.40s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(2) { animation: hud-item-in 0.5s ease-out 0.55s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(3) { animation: hud-item-in 0.5s ease-out 0.70s forwards; }
-        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(4) { animation: hud-item-in 0.5s ease-out 0.85s forwards; }
+        /* Self-contained variant used to re-stagger the dashboard children when the user
+           switches back from the chat tab. Without explicit 0%, animation cannot replay
+           cleanly because `forwards` already set the items to opacity:1. */
+        @keyframes hud-item-in-fresh {
+            0%   { opacity: 0; transform: translateX(14px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        .agents-feed.fade-fresh > * {
+            animation: hud-item-in-fresh 0.45s ease-out both;
+        }
+        .agents-feed.fade-fresh > .welcome-block    { animation-delay: 0.04s; }
+        .agents-feed.fade-fresh > .agents-head      { animation-delay: 0.08s; }
+        .agents-feed.fade-fresh > .tasks-block      { animation-delay: 0.14s; }
+        .agents-feed.fade-fresh > .projects-block   { animation-delay: 0.22s; }
+        .agents-feed.fade-fresh > .releases-block   { animation-delay: 0.34s; }
+        .agents-feed.fade-fresh > .experience-block { animation-delay: 0.46s; }
+        .agents-feed.fade-fresh > .showcase-tip     { animation-delay: 0.58s; }
+        body.console-revealed .hud-right .welcome-block          { animation: hud-item-in 0.5s ease-out 0.10s forwards; }
+        body.console-revealed .hud-right .agents-head            { animation: hud-item-in 0.5s ease-out 0.20s forwards; }
+        body.console-revealed .hud-right .tasks-block            { animation: hud-item-in 0.5s ease-out 0.30s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(1) { animation: hud-item-in 0.5s ease-out 0.45s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(2) { animation: hud-item-in 0.5s ease-out 0.60s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(3) { animation: hud-item-in 0.5s ease-out 0.75s forwards; }
+        body.console-revealed .hud-right .agents-list .agent-item:not(.injected):nth-child(4) { animation: hud-item-in 0.5s ease-out 0.90s forwards; }
         body.console-revealed .hud-right .releases-block > .label { animation: hud-item-in 0.5s ease-out 1.10s forwards; }
         body.console-revealed .hud-right .release-item:nth-child(1) { animation: hud-item-in 0.5s ease-out 1.30s forwards; }
         body.console-revealed .hud-right .release-item:nth-child(2) { animation: hud-item-in 0.5s ease-out 1.45s forwards; }
-        body.console-revealed .hud-right .release-item:nth-child(3) { animation: hud-item-in 0.5s ease-out 1.60s forwards; }
-        body.console-revealed .hud-right .corner.br               { animation: hud-item-in 0.5s ease-out 1.80s forwards; }
+        body.console-revealed .hud-right .experience-block       { animation: hud-item-in 0.5s ease-out 1.65s forwards; }
+        body.console-revealed .hud-right .showcase-tip           { animation: hud-item-in 0.5s ease-out 1.85s forwards; }
+        body.console-revealed .hud-right .corner.br              { animation: hud-item-in 0.5s ease-out 2.00s forwards; }
 
         .hud-right-stack {
             position: absolute;
@@ -1917,6 +1941,158 @@
             flex-direction: column;
             gap: 10px;
             min-width: 240px;
+            /* Allow scroll if content exceeds the panel height. Slim accent scrollbar. */
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 2px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.35) transparent;
+        }
+        .agents-feed::-webkit-scrollbar { width: 4px; }
+        .agents-feed::-webkit-scrollbar-thumb { background: rgba(var(--acc-rgb), 0.35); }
+        .agents-feed::-webkit-scrollbar-track { background: transparent; }
+
+        /* Welcome block — first thing a stranger sees */
+        .welcome-block {
+            margin-bottom: 4px;
+        }
+        .welcome-block .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+            opacity: 0.85;
+        }
+        .welcome-block .welcome-text {
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            line-height: 1.55;
+            color: rgba(234, 246, 255, 0.78);
+        }
+        .welcome-block .welcome-text em {
+            color: var(--acc);
+            font-style: normal;
+        }
+
+        /* Experience block — short stat row + tagline */
+        .experience-block {
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .experience-block .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+            opacity: 0.85;
+        }
+        .exp-row {
+            display: flex;
+            gap: 6px;
+        }
+        .exp-stat {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            background: rgba(var(--acc-rgb), 0.03);
+            padding: 7px 9px;
+        }
+        .exp-stat-k {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 3px;
+        }
+        .exp-stat-v {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--acc);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .exp-blurb {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            line-height: 1.5;
+            color: rgba(234, 246, 255, 0.6);
+            margin: 0;
+        }
+
+        /* Showcase tip — subtle yellow nudge that lives at the bottom of the dashboard */
+        .showcase-tip {
+            margin-top: 6px;
+            margin-bottom: 6px;
+            padding: 10px 12px;
+            border: 1px solid rgba(255, 200, 60, 0.4);
+            background: rgba(255, 200, 60, 0.05);
+            cursor: pointer;
+            font-family: inherit;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: border-color 0.18s, background 0.18s;
+        }
+        .showcase-tip:hover {
+            border-color: rgba(255, 200, 60, 0.8);
+            background: rgba(255, 200, 60, 0.1);
+        }
+        .showcase-tip-head {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .showcase-tip-dot {
+            width: 7px; height: 7px;
+            background: rgb(255, 200, 60);
+            box-shadow: 0 0 8px rgba(255, 200, 60, 0.55);
+            border-radius: 50%;
+            animation: warn-pulse 1.0s ease-in-out infinite;
+        }
+        .showcase-tip-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.5px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgb(255, 200, 60);
+        }
+        .showcase-tip-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            line-height: 1.5;
+            color: rgba(234, 246, 255, 0.85);
+        }
+        .showcase-tip-text em {
+            color: rgb(255, 200, 60);
+            font-style: normal;
+        }
+
+        /* CTA link inside detail window — links cards to the full case in showcase */
+        .dw-cta { margin-top: 18px; }
+        .dw-cta-link {
+            display: inline-block;
+            color: var(--acc);
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.4);
+            padding: 6px 0;
+            cursor: pointer;
+            transition: color 0.18s, border-color 0.18s;
+        }
+        .dw-cta-link:hover {
+            color: #fff;
+            border-color: var(--acc);
         }
         .agents-head {
             display: flex;
@@ -4609,6 +4785,11 @@
         <div class="hud-right" id="hud-right">
             <div class="hud-right-stack" id="hud-right-stack">
                 <div class="corner tr agents-feed">
+                    <div class="welcome-block">
+                        <span class="label">// hello</span>
+                        <p class="welcome-text">Hi, stranger. You're on Roman's design portfolio. Browse what he's <em>currently shipping</em>, <em>recent work</em>, and a quick read on his <em>experience</em>. Got a question? <em>Chat tab</em> sits at the bottom — replies route through Telegram.</p>
+                    </div>
+
                     <div class="agents-head">
                         <span class="label">// my activities · live</span>
                         <span class="agents-clock" id="clock">00:00:00</span>
@@ -4656,34 +4837,44 @@
                     </div>
 
                     <div class="releases-block">
-                        <span class="label">// recent releases</span>
+                        <span class="label">// recent works</span>
                         <ul class="releases-list" id="releases-list">
-                            <li class="release-item" data-id="aida" tabindex="0">
+                            <li class="release-item" data-id="americor" tabindex="0">
                                 <div class="release-meta-row">
-                                    <span class="release-version">v3.4.0</span>
-                                    <span class="release-date">2 days ago</span>
+                                    <span class="release-version">Lead PD</span>
+                                    <span class="release-date">2023 — 2025</span>
                                 </div>
-                                <div class="release-name">AIDA · Onboarding</div>
-                                <div class="release-summary">multi-step onboarding rebuilt with adaptive variants · +24% completion</div>
+                                <div class="release-name">Americor · FinTech</div>
+                                <div class="release-summary">Multi-brand debt-relief platform. 4-layer DS across iOS / Android / Web, IPO redesign, code-first prototypes, in-house Facebook analyzer + NSF simulator.</div>
                             </li>
-                            <li class="release-item" data-id="vault" tabindex="0">
+                            <li class="release-item" data-id="health-samurai" tabindex="0">
                                 <div class="release-meta-row">
-                                    <span class="release-version">v1.8.2</span>
-                                    <span class="release-date">5 days ago</span>
+                                    <span class="release-version">Senior PD</span>
+                                    <span class="release-date">2024 — now</span>
                                 </div>
-                                <div class="release-name">Vault · Knowledge OS</div>
-                                <div class="release-summary">graph view · cross-source RAG · ingest pipeline rewrite</div>
-                            </li>
-                            <li class="release-item" data-id="prism" tabindex="0">
-                                <div class="release-meta-row">
-                                    <span class="release-version">v0.9.0</span>
-                                    <span class="release-date">2 weeks ago</span>
-                                </div>
-                                <div class="release-name">Prism · Design Tokens</div>
-                                <div class="release-summary">single source of truth · figma↔code sync · 312 tokens</div>
+                                <div class="release-name">Health Samurai · Healthcare IT</div>
+                                <div class="release-summary">FHIR-native infra. shadCN design system mirrored Figma↔code via Claude skill, landing platform 1.5mo → 3-4d, deck + kudos generators, FireCamp app shipped in a week.</div>
                             </li>
                         </ul>
                     </div>
+
+                    <div class="experience-block">
+                        <span class="label">// experience</span>
+                        <div class="exp-row">
+                            <div class="exp-stat"><div class="exp-stat-k">Years</div><div class="exp-stat-v">10+</div></div>
+                            <div class="exp-stat"><div class="exp-stat-k">Flagship</div><div class="exp-stat-v">2 active</div></div>
+                            <div class="exp-stat"><div class="exp-stat-k">Style</div><div class="exp-stat-v">design ↔ code</div></div>
+                        </div>
+                        <p class="exp-blurb">Bias toward shipping over polishing. Comfortable end-to-end — design systems, prototypes in code, and the small in-house tools that earn their keep.</p>
+                    </div>
+
+                    <button type="button" class="showcase-tip" id="showcase-tip" aria-label="Open showcase">
+                        <span class="showcase-tip-head">
+                            <span class="showcase-tip-dot"></span>
+                            <span class="showcase-tip-label">// tip</span>
+                        </span>
+                        <span class="showcase-tip-text">Ah yes — the <em>full case studies</em> live in the showcase below ↓</span>
+                    </button>
                 </div>
                 <!-- Chat pane (hidden by default, swaps with dashboard via tabs) -->
                 <div class="chat-pane" id="chat-pane" hidden>
@@ -6178,6 +6369,12 @@
                         }
                         dashboard.hidden = false;
                         chatPane.hidden = true;
+                        // Re-stagger children so blocks (incl. the yellow showcase-tip) cascade in
+                        // instead of popping back. Reflow forces the CSS animation to restart.
+                        dashboard.classList.remove('fade-fresh');
+                        void dashboard.offsetWidth;
+                        dashboard.classList.add('fade-fresh');
+                        setTimeout(() => dashboard.classList.remove('fade-fresh'), 1200);
                     }
                 });
             });
@@ -6525,6 +6722,24 @@
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
             });
+
+            // Yellow tip in the right HUD opens the showcase
+            const tip = document.getElementById('showcase-tip');
+            if (tip) tip.addEventListener('click', () => { open(); });
+
+            // "Full case in showcase ↓" links inside the detail window — close .dw, open
+            // showcase, scroll to the case that matches data-open-showcase value (cs01, cs02, ...).
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('[data-open-showcase]');
+                if (!link) return;
+                e.preventDefault();
+                const targetId = link.dataset.openShowcase;
+                const dwCloseBtn = document.getElementById('dw-close');
+                if (document.body.classList.contains('dw-open') && dwCloseBtn) dwCloseBtn.click();
+                open();
+                const targetIdx = items.findIndex(el => el.dataset.case === targetId);
+                if (targetIdx >= 0) requestAnimationFrame(() => setTimeout(() => scrollTo(targetIdx), 80));
+            });
         })();
     </script>
 
@@ -6858,117 +7073,67 @@
                             </ul>
                         </div>`,
                 },
-                'flow-watch': {
-                    tag: '// alert',
-                    title: 'FLOW-WATCH',
+                americor: {
+                    tag: '// recent · 2023 — 2025',
+                    title: 'AMERICOR · LEAD PD',
                     html: `
                         <div class="dw-stats">
-                            <div class="dw-stat"><div class="dw-stat-k">Severity</div><div class="dw-stat-v">P2</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Affected</div><div class="dw-stat-v">5 users</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">First Seen</div><div class="dw-stat-v">6m ago</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">ETA Fix</div><div class="dw-stat-v">~12m</div></div>
-                        </div>
-                        <div class="dw-section">
-                            <h3>// timeline</h3>
-                            <ul class="dw-list">
-                                <li>00:00 · drop detected on checkout step 3</li>
-                                <li>02:14 · cohort isolated · 5 sessions affected</li>
-                                <li>04:30 · replicated on staging</li>
-                                <li>06:42 · root cause: cdn cache miss → stale config</li>
-                                <li>09:15 · patch v0.4.2 staged · monitoring</li>
-                            </ul>
-                        </div>
-                        <div class="dw-section">
-                            <h3>// fix plan</h3>
-                            <ul class="dw-list">
-                                <li>force-purge CDN edge nodes for /api/checkout/* paths</li>
-                                <li>add stale-while-revalidate header (60s)</li>
-                                <li>regression test: synthetic checkout every 5 min</li>
-                            </ul>
-                        </div>`,
-                },
-                aida: {
-                    tag: '// release · v3.4.0',
-                    title: 'AIDA · ONBOARDING',
-                    html: `
-                        <div class="dw-stats">
-                            <div class="dw-stat"><div class="dw-stat-k">Completion</div><div class="dw-stat-v">+24%</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Steps</div><div class="dw-stat-v">5 → 3</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Drop Off</div><div class="dw-stat-v">-31%</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Ship Date</div><div class="dw-stat-v">2 days ago</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Role</div><div class="dw-stat-v">Lead PD</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Span</div><div class="dw-stat-v">2 yrs</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Stack</div><div class="dw-stat-v">iOS · Android · Web</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">DS Coverage</div><div class="dw-stat-v">~50–60%</div></div>
                         </div>
                         <div class="dw-section">
                             <h3>// what shipped</h3>
                             <ul class="dw-list">
-                                <li>Adaptive flow: skip steps based on signed-up plan</li>
-                                <li>Inline validation replacing 4 modal error screens</li>
-                                <li>Progress shown as breadcrumbs instead of bar</li>
-                                <li>Auto-saved drafts so users can resume later</li>
+                                <li>4-layer design system: root → semantic → brand → platform</li>
+                                <li>Multi-brand support across subsidiaries with state-driven color identities</li>
+                                <li>Full pre-IPO redesign of mobile + web</li>
+                                <li>Code-first React + Storybook prototype as the design source of truth</li>
+                                <li>In-house Facebook community feedback analyzer (topic + sentiment)</li>
+                                <li>NSF Shortfall simulator for tricky payment-date logic</li>
                             </ul>
                         </div>
                         <div class="dw-section">
-                            <h3>// stack</h3>
+                            <h3>// shift</h3>
                             <ul class="dw-list">
-                                <li>React Hook Form · Zod schemas</li>
-                                <li>Framer Motion for step transitions</li>
-                                <li>Server-driven content via JSON spec</li>
+                                <li>Process flipped from "design → handoff → dev" to "prototype in code → validate → handover"</li>
+                                <li>Decisions grounded in data: user interviews + Facebook community pipeline</li>
                             </ul>
+                        </div>
+                        <div class="dw-cta">
+                            <a class="dw-cta-link" data-open-showcase="cs01">Full case in showcase ↓</a>
                         </div>`,
                 },
-                vault: {
-                    tag: '// release · v1.8.2',
-                    title: 'VAULT · KNOWLEDGE OS',
+                'health-samurai': {
+                    tag: '// current · 2024 — present',
+                    title: 'HEALTH SAMURAI · SENIOR PD',
                     html: `
                         <div class="dw-stats">
-                            <div class="dw-stat"><div class="dw-stat-k">Sources</div><div class="dw-stat-v">14</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Documents</div><div class="dw-stat-v">38k</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Search p95</div><div class="dw-stat-v">120 ms</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Ship Date</div><div class="dw-stat-v">5 days ago</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Role</div><div class="dw-stat-v">Senior PD</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Domain</div><div class="dw-stat-v">FHIR · Healthcare IT</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Products</div><div class="dw-stat-v">5 (Aidbox + 4)</div></div>
+                            <div class="dw-stat"><div class="dw-stat-k">Landing T2M</div><div class="dw-stat-v">1.5mo → 3-4d</div></div>
                         </div>
                         <div class="dw-section">
-                            <h3>// what shipped</h3>
+                            <h3>// what's shipping</h3>
                             <ul class="dw-list">
-                                <li>Graph view of relationships across notes &amp; sources</li>
-                                <li>Cross-source RAG: query merges Notion + Drive + Slack + GitHub</li>
-                                <li>Ingest pipeline rewritten — 8× faster, 60% smaller index</li>
-                                <li>Hybrid search: BM25 + vector + recency boost</li>
+                                <li>shadCN design system mirrored Figma ↔ code via a Claude skill</li>
+                                <li>Aidbox + Aidbox Forms + MPI / MDM / Audit Box redesign onto the system</li>
+                                <li>Markdown-first landing platform with an in-browser MCP chat</li>
+                                <li>Block library + presentation generator for non-tech employees</li>
+                                <li>Kudos image generator (LLM trained on the brand's mascot)</li>
+                                <li>FireCamp conference app — voting, schedule, sections — vibecoded in a week</li>
                             </ul>
                         </div>
                         <div class="dw-section">
-                            <h3>// stack</h3>
+                            <h3>// proof</h3>
                             <ul class="dw-list">
-                                <li>Postgres + pgvector for hybrid search</li>
-                                <li>Rust ingest workers · multiplexed connectors</li>
-                                <li>Anthropic Claude for synthesis · streaming UX</li>
-                            </ul>
-                        </div>`,
-                },
-                prism: {
-                    tag: '// release · v0.9.0',
-                    title: 'PRISM · DESIGN TOKENS',
-                    html: `
-                        <div class="dw-stats">
-                            <div class="dw-stat"><div class="dw-stat-k">Tokens</div><div class="dw-stat-v">312</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Platforms</div><div class="dw-stat-v">5</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Drift</div><div class="dw-stat-v">0%</div></div>
-                            <div class="dw-stat"><div class="dw-stat-k">Ship Date</div><div class="dw-stat-v">2 weeks ago</div></div>
-                        </div>
-                        <div class="dw-section">
-                            <h3>// what shipped</h3>
-                            <ul class="dw-list">
-                                <li>Single source of truth for color · type · spacing · radius · motion</li>
-                                <li>Bidirectional Figma↔code sync via plugin + GitHub action</li>
-                                <li>Theme overrides per brand: 4 active brands today</li>
-                                <li>Output to CSS · iOS · Android · React Native · Tailwind config</li>
+                                <li>FireCamp shipped in a week became the proof point that convinced C-level the code-first approach was real</li>
                             </ul>
                         </div>
-                        <div class="dw-section">
-                            <h3>// stack</h3>
-                            <ul class="dw-list">
-                                <li>Style Dictionary as transformer base</li>
-                                <li>Custom Figma plugin · variables API · token studio sync</li>
-                                <li>GitHub action: PR-on-change with visual diff preview</li>
-                            </ul>
+                        <div class="dw-cta">
+                            <a class="dw-cta-link" data-open-showcase="cs02">Full case in showcase ↓</a>
                         </div>`,
                 },
             };
@@ -7241,39 +7406,9 @@
                     })();
                 }, 12500);
 
-                // FLOW-WATCH warning lands ~10s after the panel finished appearing (~20s total)
-                setTimeout(() => {
-                const li = document.createElement('li');
-                li.className = 'agent-item warning injected';
-                li.dataset.id = 'flow-watch';
-                li.innerHTML = `
-                    <span class="agent-dot"></span>
-                    <div class="agent-body">
-                        <div class="agent-name">FLOW-WATCH <span class="agent-tag">// alert</span></div>
-                        <div class="agent-task" data-task>checkout drop on step 3 · investigating</div>
-                        <div class="agent-meta" data-meta>3 sessions affected · last 4m ago</div>
-                    </div>`;
-                list.appendChild(li);
-                items.push(li);
-                POOL['flow-watch'] = [
-                    'checkout drop on step 3 · investigating',
-                    'checkout drop on step 3 · 5 affected · 6m',
-                    'replicating on staging · cohort isolated',
-                    'root cause: cdn cache miss · patching',
-                    'patch staged · v0.4.2 · monitoring',
-                    'green for 4m · auto-resolved ✓',
-                ];
-                META_POOL['flow-watch'] = [
-                    '3 sessions affected · last 4m ago',
-                    '5 sessions affected · last 1m ago',
-                    'replication 2/5 attempts',
-                    'patch v0.4.2 staged',
-                    'green for 4m · auto-resolved',
-                ];
-                idxMap['flow-watch'] = 0;
-                metaIdxMap['flow-watch'] = 0;
-                window.__sfx?.warn();
-                }, 20000);
+                // (was: 20s-delayed FLOW-WATCH alert injected into agents-list. Replaced with the
+                // static yellow .showcase-tip block at the bottom of the dashboard, revealed in the
+                // normal stagger sequence so it lands "in order" with everything else.)
             }; // end startSequence
 
             // Wait for the audio gate to be dismissed before kicking off the show
