@@ -1971,7 +1971,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            padding: 14px 12px 12px;
+            padding: 48px 12px 12px;
             min-height: 0;
             flex: 1;
             border: 1px solid rgba(var(--acc-rgb), 0.18);
@@ -1999,36 +1999,51 @@
         }
         .hl-close {
             position: absolute;
-            top: 6px;
-            right: 6px;
-            z-index: 2;
+            top: 10px;
+            right: 10px;
+            z-index: 3;
             appearance: none;
-            background: rgba(var(--acc-rgb), 0.05);
-            border: 1px solid rgba(var(--acc-rgb), 0.3);
-            color: var(--dim);
+            background: rgba(var(--acc-rgb), 0.1);
+            border: 1px solid rgba(var(--acc-rgb), 0.5);
+            color: var(--acc);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
+            font-weight: 700;
+            font-size: 0.6875rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
             line-height: 1;
-            width: 20px;
-            height: 20px;
+            height: 28px;
+            padding: 0 12px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 0;
-            transition: border-color 0.18s, color 0.18s, background 0.18s, transform 0.12s;
+            gap: 8px;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.55);
+            box-shadow:
+                0 0 0 1px rgba(var(--acc-rgb), 0.08),
+                0 0 12px rgba(var(--acc-rgb), 0.18);
+            transition: border-color 0.18s, color 0.18s, background 0.18s, transform 0.12s, box-shadow 0.18s;
+        }
+        .hl-close::before {
+            content: '×';
+            font-size: 0.95rem;
+            line-height: 1;
+            margin-top: -1px;
         }
         .hl-close:hover {
             border-color: var(--acc);
-            color: var(--acc);
-            background: rgba(var(--acc-rgb), 0.1);
+            color: #fff;
+            background: rgba(var(--acc-rgb), 0.18);
+            box-shadow:
+                0 0 0 1px rgba(var(--acc-rgb), 0.4),
+                0 0 18px rgba(var(--acc-rgb), 0.4);
         }
-        .hl-close:active { transform: scale(0.92); }
+        .hl-close:active { transform: scale(0.96); }
         .hl-close:focus { outline: none; }
         .hl-close:focus-visible {
             outline: none;
             border-color: var(--acc);
-            box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.55), 0 0 12px rgba(var(--acc-rgb), 0.4);
+            box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.6), 0 0 14px rgba(var(--acc-rgb), 0.4);
         }
         .hl-pane::after {
             bottom: -1px; right: -1px;
@@ -5795,7 +5810,7 @@
                     </div>
                 </div>
                 <div class="hl-pane" id="hl-pane" hidden>
-                    <button type="button" class="hl-close" id="hl-close" aria-label="Collapse panel">×</button>
+                    <button type="button" class="hl-close" id="hl-close" aria-label="Collapse panel">Hide</button>
                     <ul class="articles-list" id="articles-list" role="list" hidden></ul>
                     <ul class="cases-list" id="cases-list" role="list" hidden></ul>
                 </div>
