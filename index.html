@@ -5225,10 +5225,12 @@
                 rgba(var(--acc-rgb), 0.05) 50%,
                 transparent 88%);
             filter: blur(10px);
-            /* JS lerps --color-strength: 0.5 (cursor far) → 1.0 (cursor on tab) */
-            opacity: var(--color-strength, 0.5);
+            /* JS lerps --color-strength: 0.3 (cursor far) → 1.0 (cursor on tab) */
+            opacity: var(--color-strength, 0.3);
         }
-        /* Six thin accent rays — randomly pulsing opacity ('roaming rays' from the original version) */
+        /* Six thin accent rays — randomly pulsing opacity ('roaming rays' from the original version).
+           filter: opacity(--color-strength) multiplies the keyframe-driven opacity by the same
+           cursor-proximity strength variable that scales the cone. */
         .htl-rays .ray {
             position: absolute;
             top: 0;
@@ -5241,6 +5243,7 @@
             box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.18);
             opacity: 0;
             animation: htl-ray-pulse 4s ease-in-out infinite;
+            filter: opacity(var(--color-strength, 0.3));
         }
         @keyframes htl-ray-pulse {
             0%, 100% { opacity: 0;    transform: translateY(-14px) scaleY(0.5); }
@@ -9312,7 +9315,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 // Color strength: --color-strength scales the radial-gradient opacity from 0.5 → 1.0.
                 const MIN_EXT = 22;
                 const MAX_EXT = 85;
-                const MIN_STR = 0.5;
+                const MIN_STR = 0.3;
                 const MAX_STR = 1.0;
                 let skelTarget = 0;
                 let prox = 0;
