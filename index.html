@@ -655,6 +655,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            /* Fixed 16:9 frame — every case media reads the same regardless of
+               viewport orientation or the underlying image's aspect ratio. */
+            aspect-ratio: 16 / 9;
+            width: 100%;
+            height: auto;
+            max-height: 76vh;
             min-height: 0;
             box-shadow:
                 0 0 60px rgba(var(--acc-rgb), 0.18),
