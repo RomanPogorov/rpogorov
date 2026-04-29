@@ -3537,6 +3537,9 @@
             background: linear-gradient(90deg, transparent, var(--acc), #fff, var(--acc), transparent);
             box-shadow: 0 0 16px var(--acc), 0 0 30px var(--acc);
             top: 0;
+            left: 0;
+            transform: translateX(-120px);
+            will-change: transform;
             animation: panelRunnerTop 3.5s linear infinite;
         }
 
@@ -3546,26 +3549,16 @@
             animation: panelRunnerBottom 3.5s linear infinite 1.75s;
         }
 
+        /* perf: was animating `left` (layout-affecting → reflow every frame on a backdrop-filter parent).
+           Now `transform: translateX` — pure GPU compositor, no reflow. Visual identical at panel max width 1040px. */
         @keyframes panelRunnerTop {
-            0% {
-                left: -120px;
-            }
-
-            100% {
-                left: 100%;
-            }
+            0%   { transform: translateX(-120px); }
+            100% { transform: translateX(1200px); }
         }
 
         @keyframes panelRunnerBottom {
-            0% {
-                right: -120px;
-                left: auto;
-            }
-
-            100% {
-                right: 100%;
-                left: auto;
-            }
+            0%   { transform: translateX(1200px); }
+            100% { transform: translateX(-120px); }
         }
 
         /* corner ticks */
@@ -3608,26 +3601,25 @@
         }
 
         /* internal scanlines */
+        /* perf: was animating background-position (forces a full layer repaint each frame on a
+           backdrop-filter parent). Now `transform: translateY` — composite-only. inset: -120px keeps
+           the edges off-frame so translation never reveals a clipped seam. */
         .panel-frame>.holo-lines {
             position: absolute;
-            inset: 0;
+            inset: -120px 0;
             pointer-events: none;
             background: repeating-linear-gradient(to bottom,
                     transparent 0,
                     transparent 3px,
                     rgba(var(--acc-rgb), 0.04) 4px,
                     transparent 5px);
+            will-change: transform;
             animation: linesShift 4s linear infinite;
         }
 
         @keyframes linesShift {
-            from {
-                background-position: 0 0;
-            }
-
-            to {
-                background-position: 0 80px;
-            }
+            from { transform: translateY(0); }
+            to   { transform: translateY(80px); }
         }
 
         /* materialize streak — appears on open */
