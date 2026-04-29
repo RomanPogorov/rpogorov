@@ -7323,7 +7323,21 @@
                 dx += vx;
                 dy += vy;
 
-                dot.style.transform  = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+                // While snapped, the dot physically stretches toward the cursor — a rubber-band feel.
+                // The further the cursor pulls from the snap point, the more elongated the dot.
+                let stretchT = '';
+                if (snapEl) {
+                    const pullX = mx - tx;
+                    const pullY = my - ty;
+                    const pullDist = Math.sqrt(pullX * pullX + pullY * pullY);
+                    if (pullDist > 3) {
+                        const angle  = Math.atan2(pullY, pullX) * 180 / Math.PI;
+                        const stretch = Math.min(2.0, 1 + pullDist / 90);   // cap at 2x
+                        const squash  = 1 / Math.sqrt(stretch);              // preserve area
+                        stretchT = ` rotate(${angle.toFixed(1)}deg) scaleX(${stretch.toFixed(3)}) scaleY(${squash.toFixed(3)})`;
+                    }
+                }
+                dot.style.transform  = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)${stretchT}`;
                 ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
             }
             requestAnimationFrame(tick);
