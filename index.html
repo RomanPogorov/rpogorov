@@ -5241,6 +5241,59 @@
         }
         body.left-pane-open .htl-rays { opacity: 0; }
 
+        /* Skeleton preview — faint placeholder cards under the collapsed tabs hinting where the panel
+           will expand. Always faintly there, brightens on tab-strip hover. Mask gradient fades the
+           bottom rows so it dissolves into the rays cone. */
+        .htl-skeleton {
+            position: absolute;
+            top: 14px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0 6px;
+            pointer-events: none;
+            opacity: 0.1;
+            mask-image: linear-gradient(180deg,
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.55) 35%,
+                rgba(0, 0, 0, 0.18) 70%,
+                transparent 100%);
+            -webkit-mask-image: linear-gradient(180deg,
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.55) 35%,
+                rgba(0, 0, 0, 0.18) 70%,
+                transparent 100%);
+            transition: opacity 0.35s ease;
+        }
+        .htl-tabs:hover .htl-skeleton { opacity: 0.4; }
+        .skel-card {
+            position: relative;
+            height: 56px;
+            border: 1px solid rgba(var(--acc-rgb), 0.16);
+            background: linear-gradient(135deg,
+                rgba(var(--acc-rgb), 0.06) 0%,
+                rgba(var(--acc-rgb), 0) 100%);
+        }
+        /* Tiny corner ticks to suggest the real card frame */
+        .skel-card::before, .skel-card::after {
+            content: '';
+            position: absolute;
+            width: 6px; height: 6px;
+        }
+        .skel-card::before {
+            top: 0; left: 0;
+            border-top: 1px solid rgba(var(--acc-rgb), 0.5);
+            border-left: 1px solid rgba(var(--acc-rgb), 0.5);
+        }
+        .skel-card::after {
+            bottom: 0; right: 0;
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.5);
+            border-right: 1px solid rgba(var(--acc-rgb), 0.5);
+        }
+
         /* Random glitch on the collapsed left tab strip — fires at irregular intervals via JS. */
         @keyframes htl-glitch {
             0%   { filter: none;                                       transform: none; }
@@ -5629,7 +5682,7 @@
                     <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
                         <span class="htl-name">Cases</span>
                     </button>
-                    <!-- Hint glow + rays under collapsed tabs (sibling so it inherits tab-strip width) -->
+                    <!-- Hint glow + rays + skeleton preview under collapsed tabs -->
                     <div class="htl-rays" id="htl-rays" aria-hidden="true">
                         <span class="ray ray-1"></span>
                         <span class="ray ray-2"></span>
@@ -5637,6 +5690,13 @@
                         <span class="ray ray-4"></span>
                         <span class="ray ray-5"></span>
                         <span class="ray ray-6"></span>
+                        <div class="htl-skeleton" aria-hidden="true">
+                            <div class="skel-card"></div>
+                            <div class="skel-card"></div>
+                            <div class="skel-card"></div>
+                            <div class="skel-card"></div>
+                            <div class="skel-card"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="hl-pane" id="hl-pane" hidden>
