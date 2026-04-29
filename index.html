@@ -1728,6 +1728,546 @@
             transition: opacity 0.3s ease;
         }
 
+        /* ============ AMERICOR CASE — namespaced .am-* ============ */
+        .am-case {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: rgba(255,255,255,0.9);
+            font-size: 15px;
+            line-height: 1.65;
+        }
+        .am-case * { box-sizing: border-box; }
+        .am-case h2.am-h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            font-size: 1.375rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--acc);
+            text-shadow: 0 0 14px rgba(var(--acc-rgb), 0.35);
+            margin: 56px 0 18px;
+        }
+        .am-case h3.am-h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.8125rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--acc);
+            margin: 32px 0 12px;
+        }
+        .am-case p { margin: 0 0 14px; }
+        .am-case p strong, .am-case strong { color: #fff; font-weight: 700; }
+        .am-case p em, .am-case em { color: var(--acc); font-style: italic; font-weight: 500; }
+        .am-case ul, .am-case ol { margin: 0 0 16px; padding-left: 20px; }
+        .am-case li { margin: 6px 0; }
+        .am-section { padding: 0; }
+
+        /* Hero with BeforeAfter */
+        .am-hero { padding-bottom: 24px; }
+        .am-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 18px;
+        }
+        .am-eyebrow b { color: var(--acc); font-weight: 600; }
+        .am-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+            line-height: 1.1;
+            color: #fff;
+            margin: 0 0 12px;
+            letter-spacing: 0.01em;
+        }
+        .am-title em { color: var(--acc); font-style: normal; }
+        .am-subtitle {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.7);
+            margin: 0 0 28px;
+        }
+
+        /* BeforeAfter — drag-to-compare */
+        .am-ba {
+            position: relative;
+            margin-top: 8px;
+        }
+        .am-ba-tabs {
+            display: inline-flex;
+            gap: 4px;
+            padding: 4px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(var(--acc-rgb), 0.25);
+            background: rgba(0,0,0,0.4);
+        }
+        .am-ba-tab {
+            appearance: none;
+            background: transparent;
+            border: 0;
+            color: rgba(255,255,255,0.6);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+        }
+        .am-ba-tab:hover { color: var(--ink); }
+        .am-ba-tab.active {
+            background: rgba(var(--acc-rgb), 0.18);
+            color: var(--acc);
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
+        }
+        .am-ba-stage {
+            position: relative;
+            width: 100%;
+            background: #0a0d10;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            overflow: hidden;
+            user-select: none;
+            box-shadow:
+                0 0 40px rgba(var(--acc-rgb), 0.12),
+                inset 0 0 30px rgba(var(--acc-rgb), 0.04);
+        }
+        .am-ba-stage[data-platform="desktop"] { aspect-ratio: 16 / 10; }
+        .am-ba-stage[data-platform="mobile"]  { aspect-ratio: 9 / 16; max-width: 360px; margin: 0 auto; }
+        .am-ba-stage[hidden] { display: none; }
+        .am-ba-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+        .am-ba-after-wrap {
+            position: absolute;
+            inset: 0;
+            clip-path: inset(0 0 0 var(--ba-pos, 50%));
+            -webkit-clip-path: inset(0 0 0 var(--ba-pos, 50%));
+            transition: clip-path 0.05s linear;
+        }
+        .am-ba-divider {
+            position: absolute;
+            top: 0; bottom: 0;
+            left: var(--ba-pos, 50%);
+            width: 2px;
+            background: var(--acc);
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,0.5),
+                0 0 14px rgba(var(--acc-rgb), 0.65);
+            transform: translateX(-1px);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .am-ba-handle {
+            position: absolute;
+            top: 50%;
+            left: var(--ba-pos, 50%);
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.78);
+            border: 1.5px solid var(--acc);
+            cursor: ew-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1;
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.7);
+            box-shadow: 0 0 18px rgba(var(--acc-rgb), 0.4),
+                        inset 0 0 12px rgba(var(--acc-rgb), 0.15);
+            z-index: 4;
+            transition: transform 0.06s linear;
+        }
+        .am-ba-handle::before { content: '◄'; margin-right: 2px; opacity: 0.85; }
+        .am-ba-handle::after  { content: '►'; margin-left: 2px;  opacity: 0.85; }
+        .am-ba-handle:active { transform: translate(-50%, -50%) scale(0.95); }
+        .am-ba-label {
+            position: absolute;
+            top: 12px;
+            padding: 4px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--acc);
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
+            z-index: 2;
+        }
+        .am-ba-label.before { left: 12px; color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.25); text-shadow: none; }
+        .am-ba-label.after  { right: 12px; }
+
+        /* TL;DR + metrics */
+        .am-tldr-block {
+            padding: 22px 26px;
+            margin: 12px 0 0;
+            border: 1px solid rgba(var(--acc-rgb), 0.28);
+            border-left: 2px solid var(--acc);
+            background:
+                linear-gradient(135deg, rgba(var(--acc-rgb), 0.05), rgba(var(--acc-rgb), 0.01) 60%),
+                rgba(0, 0, 0, 0.18);
+        }
+        .am-tldr-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--acc);
+            margin-bottom: 12px;
+        }
+        .am-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 22px;
+        }
+        .am-metric {
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.06) 0%, rgba(var(--acc-rgb), 0) 100%);
+            padding: 16px 18px;
+            position: relative;
+        }
+        .am-metric::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 24px; height: 1px;
+            background: var(--acc);
+            box-shadow: 0 0 6px var(--acc);
+        }
+        .am-metric-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 10px;
+        }
+        .am-metric-vals {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .am-metric-was { color: rgba(255,255,255,0.45); font-size: 1rem; text-decoration: line-through; }
+        .am-metric-arrow { color: var(--acc); font-size: 0.875rem; }
+        .am-metric-now {
+            color: var(--acc);
+            font-size: 1.625rem;
+            font-weight: 600;
+            text-shadow: 0 0 12px rgba(var(--acc-rgb), 0.5);
+        }
+        .am-metric-now.txt { font-size: 1rem; color: var(--ink); text-shadow: none; }
+
+        /* MediaBlock — image / video / iframe + caption + click-to-lightbox */
+        .am-media {
+            margin: 22px 0 6px;
+            position: relative;
+        }
+        .am-media-frame {
+            position: relative;
+            width: 100%;
+            background: #0a0d10;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            overflow: hidden;
+            cursor: zoom-in;
+            transition: border-color 0.18s, box-shadow 0.18s, transform 0.25s;
+        }
+        .am-media-frame::before, .am-media-frame::after {
+            content: '';
+            position: absolute;
+            width: 14px; height: 14px;
+            border: 1px solid var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
+            z-index: 2;
+            pointer-events: none;
+        }
+        .am-media-frame::before { top: -1px; left: -1px;  border-right: none; border-bottom: none; }
+        .am-media-frame::after  { bottom: -1px; right: -1px; border-left: none;  border-top: none; }
+        .am-media-frame:hover {
+            border-color: rgba(var(--acc-rgb), 0.5);
+            box-shadow: 0 0 30px rgba(var(--acc-rgb), 0.18);
+        }
+        .am-media-frame[data-aspect="16-10"] { aspect-ratio: 16 / 10; }
+        .am-media-frame[data-aspect="16-9"]  { aspect-ratio: 16 / 9; }
+        .am-media-frame[data-aspect="4-3"]   { aspect-ratio: 4 / 3; }
+        .am-media-frame[data-aspect="auto"]  { aspect-ratio: auto; }
+        .am-media-frame img,
+        .am-media-frame video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .am-media-caption {
+            margin-top: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.14em;
+            color: rgba(255,255,255,0.55);
+        }
+        .am-media-caption b { color: var(--acc); font-weight: 600; }
+        /* Video play badge — overlay on video tiles */
+        .am-media-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .am-media-play::before {
+            content: '▸';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.65);
+            border: 1.5px solid var(--acc);
+            color: var(--acc);
+            font-size: 1.75rem;
+            line-height: 1;
+            padding-left: 8px;
+            text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.6);
+            box-shadow: 0 0 24px rgba(var(--acc-rgb), 0.4);
+        }
+        /* Placeholder tile content */
+        .am-media-stub {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.55);
+            background:
+                linear-gradient(135deg, rgba(var(--acc-rgb), 0.05) 0%, rgba(var(--acc-rgb), 0) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 14px,
+                    rgba(var(--acc-rgb), 0.04) 14px, rgba(var(--acc-rgb), 0.04) 15px);
+            padding: 16px;
+        }
+
+        /* MediaGallery — multi-tile grid, each tile clickable */
+        .am-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin: 22px 0 8px;
+        }
+        .am-gallery.cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .am-gallery.cols-4 { grid-template-columns: repeat(2, 1fr); }
+        @media (min-width: 720px) {
+            .am-gallery.cols-4 { grid-template-columns: repeat(4, 1fr); }
+        }
+        .am-gallery .am-media { margin: 0; }
+
+        /* CaseStudyDemo — embedded live demo wrapper */
+        .am-demo {
+            position: relative;
+            margin: 22px 0;
+            border: 1px dashed rgba(var(--acc-rgb), 0.4);
+            background: rgba(0,0,0,0.25);
+            padding: 28px 22px 22px;
+        }
+        .am-demo-tag {
+            position: absolute;
+            top: -10px; left: 16px;
+            padding: 2px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--acc);
+            background: #050505;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+        }
+
+        /* DeepCaseLink card grid */
+        .am-deeplinks {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+        }
+        @media (max-width: 720px) {
+            .am-deeplinks { grid-template-columns: 1fr; }
+            .am-metrics { grid-template-columns: 1fr; }
+            .am-gallery { grid-template-columns: 1fr !important; }
+        }
+        .am-deeplink {
+            display: flex;
+            flex-direction: column;
+            padding: 16px 18px;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.05), rgba(var(--acc-rgb), 0));
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: border-color 0.18s, transform 0.2s, background 0.18s;
+            position: relative;
+        }
+        .am-deeplink::after {
+            content: '→';
+            position: absolute;
+            right: 16px; top: 16px;
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .am-deeplink:hover {
+            border-color: var(--acc);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.1), rgba(var(--acc-rgb), 0.02));
+            transform: translateX(4px);
+        }
+        .am-deeplink-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.32em;
+            color: var(--acc);
+            margin-bottom: 6px;
+        }
+        .am-deeplink-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            color: var(--ink);
+            margin: 0 0 6px;
+            padding-right: 24px;
+        }
+        .am-deeplink-desc {
+            font-size: 0.8125rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.5;
+        }
+
+        /* TodoBlock — only visible in dev */
+        .am-todo {
+            margin: 24px 0;
+            padding: 14px 18px;
+            border: 1px dashed rgba(255, 200, 0, 0.4);
+            background: rgba(255, 200, 0, 0.05);
+            color: rgba(255, 215, 100, 0.85);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+        .am-todo-label { color: rgba(255, 200, 0, 0.95); font-weight: 700; margin-right: 8px; }
+
+        /* ============ LIGHTBOX — fullscreen viewer ============ */
+        .am-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease;
+            padding: 56px;
+        }
+        .am-lightbox.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .am-lightbox-stage {
+            position: relative;
+            max-width: 100%;
+            max-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .am-lightbox img,
+        .am-lightbox video {
+            max-width: 100%;
+            max-height: calc(100vh - 112px);
+            object-fit: contain;
+            display: block;
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            box-shadow: 0 0 60px rgba(var(--acc-rgb), 0.18);
+        }
+        .am-lightbox video { background: #000; }
+        .am-lb-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            z-index: 4;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            padding: 8px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .am-lb-close::before { content: '×'; font-size: 1rem; line-height: 1; }
+        .am-lb-close:hover { color: #fff; border-color: var(--acc); background: rgba(var(--acc-rgb), 0.1); }
+        .am-lb-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 4;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(var(--acc-rgb), 0.35);
+            color: var(--acc);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+        }
+        .am-lb-nav:hover { color: #fff; border-color: var(--acc); }
+        .am-lb-prev { left: 16px; }
+        .am-lb-next { right: 16px; }
+        .am-lb-counter {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.65);
+        }
+        .am-lb-caption {
+            position: absolute;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            color: rgba(255,255,255,0.85);
+            text-align: center;
+            max-width: 80%;
+        }
+
         /* ============ CASE PAGE — LIGHT VARIANT (white bg, blue accent) ============ */
         .case-page.cp-light {
             background: #ffffff;
@@ -6749,150 +7289,357 @@
             <span class="cp-close-arrow" aria-hidden="true">↑</span>
             <span>back to showcase</span>
         </button>
-        <div class="cp-inner">
-            <div class="cp-thumb-strip" aria-hidden="true">
-                <span class="cp-thumb-tag">CS/01 · Cover</span>
-                <img class="cp-thumb" src="showcase/cases/cs01-americor.png" alt="">
-            </div>
-            <header class="cp-hero">
-                <div class="cp-meta">
-                    <span class="cp-meta-no">CS/01</span>
-                    <span class="cp-meta-divider"></span>
-                    <span>Americor</span>
-                    <span class="cp-meta-divider"></span>
-                    <span>Lead Product Designer</span>
-                    <span class="cp-meta-divider"></span>
-                    <span>2023 — 2025</span>
+        <div class="cp-inner am-case">
+            <!-- HERO -->
+            <header class="am-hero">
+                <div class="am-eyebrow">CS/01 · <b>Americor</b> · Lead Product Designer · 2023–2025</div>
+                <h1 class="am-title">Редизайн продукта и <em>дизайн-система</em> для трёх платформ</h1>
+                <p class="am-subtitle">Финтех в сфере debt relief: веб + iOS + Android, несколько брендов, IPO-режим.</p>
+                <div class="am-ba" data-ba>
+                    <div class="am-ba-tabs" role="tablist">
+                        <button class="am-ba-tab active" type="button" data-platform="desktop" role="tab" aria-selected="true">Desktop</button>
+                        <button class="am-ba-tab" type="button" data-platform="mobile" role="tab" aria-selected="false">Mobile</button>
+                    </div>
+                    <div class="am-ba-stage" data-platform="desktop">
+                        <img class="am-ba-img am-ba-before-img" data-stub="desktop-before.png" alt="Десктоп до редизайна">
+                        <div class="am-ba-after-wrap">
+                            <img class="am-ba-img" data-stub="desktop-after.png" alt="Десктоп после редизайна">
+                        </div>
+                        <span class="am-ba-label before">Before</span>
+                        <span class="am-ba-label after">After</span>
+                        <div class="am-ba-divider" aria-hidden="true"></div>
+                        <button class="am-ba-handle" type="button" aria-label="Drag to compare"></button>
+                    </div>
+                    <div class="am-ba-stage" data-platform="mobile" hidden>
+                        <img class="am-ba-img am-ba-before-img" data-stub="mobile-before.png" alt="Мобилка до редизайна">
+                        <div class="am-ba-after-wrap">
+                            <img class="am-ba-img" data-stub="mobile-after.png" alt="Мобилка после редизайна">
+                        </div>
+                        <span class="am-ba-label before">Before</span>
+                        <span class="am-ba-label after">After</span>
+                        <div class="am-ba-divider" aria-hidden="true"></div>
+                        <button class="am-ba-handle" type="button" aria-label="Drag to compare"></button>
+                    </div>
                 </div>
-                <h1 class="cp-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h1>
-                <p class="cp-sub">Americor is a fintech in the debt-relief space — a web app plus iOS and Android. I was brought in as Lead PD to bring order to the design process and run a full product redesign ahead of IPO.</p>
             </header>
 
-            <div class="cp-tldr">
-                <div class="cp-tldr-label">// TL;DR</div>
+            <!-- TL;DR -->
+            <section class="am-section">
+                <h2 class="am-h2">TL;DR</h2>
+                <div class="am-tldr-block">
+                    <div class="am-tldr-label">// summary</div>
+                    <p>За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на code-first подход.</p>
+                    <p>Ключевая продуктовая находка — <em>разделение пользовательского опыта на фазы программы</em>: раньше в разных фазах клиент видел один и тот же интерфейс, хотя его потребности и контекст радикально менялись. Я спроектировал систему фаз и отдельные UI-состояния для каждой.</p>
+                    <div class="am-metrics">
+                        <div class="am-metric">
+                            <div class="am-metric-label">NPS</div>
+                            <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
+                        </div>
+                        <div class="am-metric">
+                            <div class="am-metric-label">CSAT (5)</div>
+                            <div class="am-metric-vals"><span class="am-metric-was">3.6</span><span class="am-metric-arrow">→</span><span class="am-metric-now">4.5</span></div>
+                        </div>
+                        <div class="am-metric">
+                            <div class="am-metric-label">Onboarding completion</div>
+                            <div class="am-metric-vals"><span class="am-metric-now txt">▲ TODO</span></div>
+                        </div>
+                    </div>
+                    <p style="margin-top:18px;color:rgba(255,255,255,0.6);font-size:0.875rem;">По результатам редизайна команда получила премию.</p>
+                </div>
+            </section>
+
+            <!-- Company and product -->
+            <section class="am-section">
+                <h2 class="am-h2">Компания и продукт</h2>
+                <p>Americor — финтех в сфере debt relief. Помогает людям выходить из долгов через программы реструктуризации. У компании есть дочерние бренды в разных штатах с собственной визуальной идентификацией — это связано с различиями в законодательстве.</p>
+                <p>Продукт состоит из веб-приложения (десктоп + адаптив) и мобильных приложений для iOS и Android. Через них клиенты отслеживают план погашения, вносят платежи, общаются со службой поддержки и видят прогресс по программе.</p>
+            </section>
+
+            <!-- My role -->
+            <section class="am-section">
+                <h2 class="am-h2">Моя роль</h2>
+                <p>Lead Product Designer. Репортил продакт-менеджеру (→ CPO). В команде — junior-дизайнер, которого менторил и постепенно вовлекал в задачи возрастающей сложности.</p>
+            </section>
+
+            <!-- Task -->
+            <section class="am-section">
+                <h2 class="am-h2">Задача</h2>
+                <p>Меня взяли решить три связанные задачи:</p>
                 <ul>
-                    <li>Designed and shipped a multi-layer design system across three platforms (iOS / Android / Web): root → semantic → brand → platform. Covered ~50–60% of interfaces and gave Americor's multiple brands one shared visual language.</li>
-                    <li>Flipped the process from <em>mockup → handoff → dev</em> to <em>code-first</em>: in the final ~3 months the team worked on a live React prototype + Storybook; new features got assembled directly from code.</li>
-                    <li>To back redesign decisions with real signal, I built a user-interview pipeline and a custom analyzer for the Facebook community feed — decisions ran on data, not assumptions.</li>
+                    <li>Редизайн продуктовой линейки — веб- и мобильных приложений. Компания готовилась к IPO, текущий дизайн потерял актуальность.</li>
+                    <li>Поднять <strong>NPS и CSAT</strong> за счёт улучшения пользовательского опыта в ключевых сценариях.</li>
+                    <li>Создать дизайн-систему с нуля и внедрить её в работу — так, чтобы она реально использовалась дизайнерами и разработчиками, а не осталась файлом в Figma.</li>
                 </ul>
-            </div>
+                <p>И параллельно — навести порядок в дизайн-процессах и вырастить junior-дизайнера.</p>
+            </section>
 
-            <nav class="cp-timeline" aria-label="Case timeline">
-                <ol class="cp-timeline-list">
-                    <li><button class="cp-tl-item active" data-target="cp-sec-01" type="button">
-                        <span class="cp-tl-num">01 / Start</span>
-                        <span class="cp-tl-name">Audit &amp; context</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-02" type="button">
-                        <span class="cp-tl-num">02 / Foundation</span>
-                        <span class="cp-tl-name">Design system</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-03" type="button">
-                        <span class="cp-tl-num">03 / Pre-IPO</span>
-                        <span class="cp-tl-name">Redesign</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-04" type="button">
-                        <span class="cp-tl-num">04 / Tools</span>
-                        <span class="cp-tl-name">Vibecoding tools</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-05" type="button">
-                        <span class="cp-tl-num">05 / Shift</span>
-                        <span class="cp-tl-name">Code-first prototypes</span>
-                    </button></li>
-                </ol>
-            </nav>
+            <!-- What was at start -->
+            <section class="am-section">
+                <h2 class="am-h2">Что было на старте</h2>
+                <p>Единой дизайн-системы не существовало: переиспользуемые блоки лежали россыпью по файлам Figma, и при создании нового макета дизайнер собирал страницу из разрозненных кусков вручную. Поддерживать и масштабировать интерфейсы при таком подходе было невозможно.</p>
+                <p>Предыдущая попытка привлечь фриланс-дизайнера для разработки фирменного стиля провалилась — за полгода работа была сделана на 40–50%, после чего дизайнер ушёл.</p>
+                <p>Разработчики тратили недели на поиск «источника правды» для компонентов. Визуальная консистентность между платформами отсутствовала.</p>
+                <p>И главное: <strong>никаких артефактов о том, как устроен продукт, не существовало</strong> — ни user flow, ни process maps, ни документации. Понимание жило в головах отдельных людей.</p>
+            </section>
 
-            <article class="cp-section" id="cp-sec-01">
-                <div class="cp-sec-num">01 — Start</div>
-                <h2 class="cp-sec-title">What I walked into, and where I started</h2>
-                <div class="cp-sec-body">
-                    <p>The team was middle- and junior-level designers. <strong>There was no actual design system.</strong> Reusable elements lived scattered across files — never formalized as components. Every new mockup got hand-assembled from disparate pieces. Maintaining or updating interfaces at scale was impossible this way.</p>
-                    <p>An earlier attempt to bring in a freelancer to define the brand had stalled — six months in, the work was 40–50% done and the designer left. Engineers were spending <em>weeks</em> hunting for a "source of truth" for components. Visual consistency across platforms didn't exist.</p>
-                    <p>I started with an audit: pulled every screen across desktop + responsive, iOS and Android, surfaced the recurring patterns, and decided what had to get systematized first.</p>
+            <!-- Approach -->
+            <section class="am-section">
+                <h2 class="am-h2">Подход</h2>
+
+                <h3 class="am-h3">1. Разобраться в продукте с нуля</h3>
+                <p>Поскольку документации не было, я начал с интервью — с аналитиками, бизнесом, разработчиками. Восстанавливал логику продукта по кускам.</p>
+                <p>Чтобы валидировать своё понимание, собрал <strong>Product Flow Diagram</strong> — end-to-end карту продукта со всеми ключевыми флоу, ветвлениями по бизнес-правилам (например, разделение клиентов по сумме долга — Primary Flow для долгов &gt;$7500 и Secondary Flow для меньших) и состояниями пользователя на каждом этапе. Это стало <em>первым в компании единым источником правды</em> о том, как устроен продукт.</p>
+                <figure class="am-media" data-media data-kind="image" data-src="" data-stub="product-flow-diagram.svg" data-caption="Product Flow Diagram — end-to-end карта продукта">
+                    <div class="am-media-frame" data-aspect="16-9">
+                        <div class="am-media-stub">image · product-flow-diagram.svg</div>
+                    </div>
+                    <div class="am-media-caption"><b>↑</b> end-to-end карта продукта со всеми флоу и ветвлениями. Клик — fullscreen.</div>
+                </figure>
+
+                <h3 class="am-h3">2. Аудит существующих макетов и работающего продукта</h3>
+                <p>Зашёл в Figma — обнаружил, что макеты разбросаны: непонятно, где какая версия, что актуально, а что нет. Параллельно поставил тестовые сборки приложений, прошёл реальные флоу в тестовом окружении и собрал карту экранов с плюсами и минусами каждого решения.</p>
+                <p>Опирался на здравый смысл, продуктовый опыт и UX best practices. Часть проблем была очевидной: где-то не хватало информации, где-то мы запутывали пользователя, где-то некорректно показывали данные, где-то не давали достаточной прозрачности по плате за услуги. <em>Проблем накопилось много.</em></p>
+
+                <h3 class="am-h3">3. Параллельный трек: дизайн-система и редизайн</h3>
+                <p>Для дизайн-системы у меня уже было достаточно понимания, чтобы стартовать. С редизайном — другая история: его нельзя начинать без серьёзного ресерча.</p>
+                <p>Поэтому треки пошли параллельно. Дизайн-систему я строил под существующий дизайн — не меняя визуальный язык, а наводя порядок и фикся явные бессистемные моменты. По редизайну параллельно шёл research: рисовали ключевые флоу, тестировали прототипы на пользователях, сравнивали «как было» и «как стало». В компании был отдел исследований, который проводил интервью и собирал данные.</p>
+
+                <h3 class="am-h3">4. Систематизация сбора обратной связи</h3>
+                <p>Кроме интервью, ценный источник данных — пользовательская активность в Facebook-группе компании. Чтобы превратить это в работающий инструмент, я написал на vibe-code приложение, которое:</p>
+                <ul>
+                    <li>парсило все посты и комментарии (обработали <strong>~80 000 сообщений</strong>),</li>
+                    <li>прогоняло каждое сообщение через нейросеть, которая определяла тему (UX, служба поддержки, конкретная фича) и сентимент,</li>
+                    <li>предоставляло UI с фильтрацией и поиском по всей базе.</li>
+                </ul>
+                <p>Эту систему мы использовали для подготовки гипотез к редизайну — опирались на реальные данные о том, что болит у пользователей.</p>
+                <div class="am-gallery cols-2">
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="facebook-parser-ui.png" data-caption="Парсер Facebook-группы — фильтр по теме и сентименту">
+                        <div class="am-media-frame" data-aspect="16-10">
+                            <div class="am-media-stub">image · facebook-parser-ui.png</div>
+                        </div>
+                        <div class="am-media-caption">Парсер Facebook-группы — UI</div>
+                    </figure>
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="feedback-summary-ui.png" data-caption="Сводный UI обратной связи: интервью + Facebook-группа">
+                        <div class="am-media-frame" data-aspect="16-10">
+                            <div class="am-media-stub">image · feedback-summary-ui.png</div>
+                        </div>
+                        <div class="am-media-caption">Сводный UI обратной связи</div>
+                    </figure>
                 </div>
-                <div class="cp-figure">image · audit landscape (before)</div>
-                <div class="cp-figure-cap">Audit of the existing mockups — which patterns to unify, which to leave alone.</div>
-            </article>
 
-            <article class="cp-section" id="cp-sec-02">
-                <div class="cp-sec-num">02 — Foundation</div>
-                <h2 class="cp-sec-title">A multi-layer design system</h2>
-                <div class="cp-sec-body">
-                    <p>Built on the audit, I designed and shipped a multi-layer token architecture:</p>
-                    <ul>
-                        <li><strong>Root</strong> — primitive values: colors, spacing, typography.</li>
-                        <li><strong>Semantic</strong> — a layer of meaningfully-named tokens.</li>
-                        <li><strong>Brand</strong> — a brand layer: Americor has subsidiaries in different states, each with its own color identity driven by per-state regulation.</li>
-                        <li><strong>Platform modes</strong> — Android, iOS, Web — managed from one place.</li>
-                    </ul>
-                    <p>In parallel I reorganized the whole Figma library: iterations, branches for development, clear navigation across mockups. Together with the teams we started rolling the system out component by component and reached <strong>~50–60% interface coverage</strong>.</p>
+                <h3 class="am-h3">5. IPO и адаптация дизайн-системы</h3>
+                <p>Через ~3 месяца работы над дизайн-системой пришёл бизнес и сказал: компания готовится к IPO, нужен редизайн. Получилась нетривиальная ситуация — дизайн-система, спроектированная под существующий дизайн, должна была начать поддерживать новый.</p>
+                <p>Сначала это коснулось веб-приложения, потом — мобильных. Архитектура системы (root → semantic → brand с тремя режимами Web/iOS/Android) была заложена достаточно гибко, чтобы обновлять её на лету, не ломая уже сделанного. <em>Это был один из моментов, где правильно выбранная изначальная архитектура окупилась многократно.</em></p>
+                <figure class="am-media" data-media data-kind="image" data-src="" data-stub="design-system-overview.png" data-caption="Структура токенов и компонентов в Figma">
+                    <div class="am-media-frame" data-aspect="16-9">
+                        <div class="am-media-stub">image · design-system-overview.png</div>
+                    </div>
+                    <div class="am-media-caption">Структура дизайн-системы в Figma</div>
+                </figure>
+            </section>
+
+            <!-- What did -->
+            <section class="am-section">
+                <h2 class="am-h2">Что сделал</h2>
+
+                <h3 class="am-h3">Дизайн-система для трёх платформ</h3>
+                <p>Многоуровневая структура:</p>
+                <ul>
+                    <li><strong>Root</strong> — базовые значения: цвета, отступы, типографика</li>
+                    <li><strong>Semantic</strong> — семантический слой с осмысленными названиями токенов</li>
+                    <li><strong>Brand</strong> — уровень брендов (для дочерних компаний с разной идентификацией)</li>
+                    <li><strong>Три режима</strong>: Web, iOS, Android — управление из одного места</li>
+                </ul>
+                <p>Параллельно реорганизовал структуру в Figma: итерации, ветки для разработки, понятная навигация. Покомпонентно раскатывали систему на текущие приложения вместе с командами разработки — покрыли <strong>~50–60% интерфейсов</strong>.</p>
+
+                <h3 class="am-h3">Редизайн веб- и мобильных приложений</h3>
+                <p>Главная продуктовая находка — <em>разделение опыта на фазы программы</em>. Раньше клиент в разных фазах видел один и тот же UI, хотя его контекст и потребности радикально менялись. Я спроектировал систему фаз и отдельные интерфейсные состояния для каждой. Подробнее — в углублённом кейсе ниже.</p>
+                <p>Middle-дизайнер к моменту начала редизайна ушла, и мы работали вдвоём с junior-дизайнером. Я вёл редизайн, контролировал качество, менторил коллегу.</p>
+                <div class="am-gallery cols-2">
+                    <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-offer-acceptance.mp4" data-caption="Флоу принятия нового offer">
+                        <div class="am-media-frame" data-aspect="16-10">
+                            <div class="am-media-stub">video · screencast-offer-acceptance.mp4</div>
+                            <div class="am-media-play"></div>
+                        </div>
+                        <div class="am-media-caption">Флоу принятия нового offer</div>
+                    </figure>
+                    <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-community.mp4" data-caption="Community section — раздел сообщества">
+                        <div class="am-media-frame" data-aspect="16-10">
+                            <div class="am-media-stub">video · screencast-community.mp4</div>
+                            <div class="am-media-play"></div>
+                        </div>
+                        <div class="am-media-caption">Community section</div>
+                    </figure>
                 </div>
-                <div class="cp-figure">image · token architecture diagram (root → semantic → brand → platform)</div>
-                <div class="cp-figure-cap">The four token layers and three platform modes, on one diagram.</div>
-                <div class="cp-figure">image · figma library structure</div>
-                <div class="cp-figure-cap">Figma library reorg: branches, iterations, navigation.</div>
-            </article>
 
-            <article class="cp-section" id="cp-sec-03">
-                <div class="cp-sec-num">03 — Pre-IPO</div>
-                <h2 class="cp-sec-title">The pre-IPO redesign</h2>
-                <div class="cp-sec-body">
-                    <p>Mid-rollout, leadership decided on a <strong>full redesign of the mobile and web apps</strong> — the company was preparing for IPO and the existing design had aged out.</p>
-                    <p>By that point the middle designer had left and we were down to two — me leading and a junior. I drove the redesign end-to-end and was the quality bar for everything that shipped.</p>
-                    <p>To ground decisions in data rather than assumptions, I built a feedback pipeline: ran user interviews and, in parallel, launched a custom analyzer for the Facebook community feed (see next section).</p>
+                <h3 class="am-h3">Иллюстрации и визуальный язык</h3>
+                <p>Параллельно с системной работой нужно было решить вопрос с графикой — иллюстрациями для пустых состояний, онбординга, ключевых экранов. Аватарами для коммуникаций.</p>
+                <p>Подход выстраивал итеративно. Сначала генерировал десятки вариантов в разных стилях через нейросети — нужно было найти стиль, который ляжет на бренд и будет узнаваемым. Со временем вырос пайплайн через нодовый редактор: начинал в <strong>ComfyUI</strong>, позже перешёл на <strong>Figma Weavy</strong>. Это позволило стабильно генерировать иллюстрации в едином стиле — <em>не один раз случайно угадать, а превратить генерацию в управляемый процесс</em>.</p>
+                <h4 class="am-h3" style="margin-top:14px;color:rgba(255,255,255,0.7);">Поиск стиля</h4>
+                <div class="am-gallery cols-4">
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-1.png" data-caption="Стиль 1">
+                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 1</div></div>
+                    </figure>
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-2.png" data-caption="Стиль 2">
+                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 2</div></div>
+                    </figure>
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-3.png" data-caption="Стиль 3">
+                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 3</div></div>
+                    </figure>
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-4.png" data-caption="Стиль 4">
+                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 4</div></div>
+                    </figure>
                 </div>
-                <div class="cp-figure">image · before / after key screens</div>
-                <div class="cp-figure-cap">Before / after of key screens from the redesign.</div>
-            </article>
-
-            <article class="cp-section" id="cp-sec-04">
-                <div class="cp-sec-num">04 — Tools</div>
-                <h2 class="cp-sec-title">Vibecoding: custom tools to back decisions</h2>
-                <div class="cp-sec-body">
-                    <p><strong>Facebook community analyzer.</strong> I wrote a scraper that pulled every post and comment from Americor's Facebook community, then ran each message through an LLM that classified <em>topic</em> (UX, support, a specific feature) and <em>sentiment</em> (complaint, gratitude, request, frustration). On top of that I built a UI with filters by topic and sentiment — the team could surface problem areas in seconds and ground redesign decisions in real signal.</p>
-                    <p><strong>NSF Shortfall simulator.</strong> While designing a tricky shortfall-prediction feature for payment dates, I ran into gnarly business logic. I built an interactive simulator end-to-end myself — it let me reason through the mechanics, verify edge-case scenarios, and ship the design faster.</p>
+                <h4 class="am-h3" style="margin-top:14px;color:rgba(255,255,255,0.7);">Финальный набор</h4>
+                <div class="am-gallery cols-3">
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="final-illustration-1.png" data-caption="Финальная иллюстрация 1">
+                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">final · 1</div></div>
+                    </figure>
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="final-illustration-2.png" data-caption="Финальная иллюстрация 2">
+                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">final · 2</div></div>
+                    </figure>
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="final-illustration-3.png" data-caption="Финальная иллюстрация 3">
+                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">final · 3</div></div>
+                    </figure>
                 </div>
-                <div class="cp-figure">image · feedback analyzer UI (filters by topic + sentiment)</div>
-                <div class="cp-figure-cap">Feedback analyzer — filters by topic and sentiment.</div>
-                <div class="cp-figure">image · NSF shortfall simulator</div>
-                <div class="cp-figure-cap">Simulator for shortfall business logic on payment dates.</div>
-            </article>
+                <h4 class="am-h3" style="margin-top:14px;color:rgba(255,255,255,0.7);">Аватары</h4>
+                <figure class="am-media" data-media data-kind="image" data-src="" data-stub="avatars.png" data-caption="Сетка аватаров для коммуникаций">
+                    <div class="am-media-frame" data-aspect="16-9"><div class="am-media-stub">image · avatars.png</div></div>
+                </figure>
+                <h4 class="am-h3" style="margin-top:14px;color:rgba(255,255,255,0.7);">Пайплайн генерации</h4>
+                <figure class="am-media" data-media data-kind="video" data-src="" data-stub="video-generation-pipeline.mp4" data-caption="ComfyUI → Figma Weavy: управляемая генерация в едином стиле">
+                    <div class="am-media-frame" data-aspect="16-9">
+                        <div class="am-media-stub">video · video-generation-pipeline.mp4</div>
+                        <div class="am-media-play"></div>
+                    </div>
+                    <div class="am-media-caption">Процесс генерации в нодовом редакторе</div>
+                </figure>
 
-            <article class="cp-section" id="cp-sec-05">
-                <div class="cp-sec-num">05 — Shift</div>
-                <h2 class="cp-sec-title">Code-first: live prototypes instead of mockups</h2>
-                <div class="cp-sec-body">
-                    <p>In the final stretch (~3 months) I moved the entire design process to <strong>code-first</strong>: rebuilt every app screen — including the responsive set — as a real React app. Alongside it lived a Storybook where every component shipped from. The interface was assembled from those components, end of story.</p>
-                    <p>I built new features almost entirely in code with Claude, then <em>generated Figma components from the finished code</em> for engineering handoff. Hypotheses were captured and tested on a real, working prototype — not static mockups.</p>
-                    <p>It flipped the process: from <strong>"design → handoff → dev"</strong> to <strong>"prototype in code → validate → hand over ready components."</strong></p>
+                <h3 class="am-h3">Code-first процесс и Community</h3>
+                <p>На финальном этапе работы — последний крупный проект, раздел <strong>Community</strong>. Группу на Facebook заблокировали, и мы решили построить аналог Reddit/Facebook внутри приложения. Поскольку это была фича с нуля, я попробовал на ней новый подход.</p>
+                <p>Базовый макет собрал в Figma, дальше попросил Claude собрать из этого React-приложение с компонентами в Storybook во всех состояниях. Развитие продолжалось непосредственно в коде: продуктовые гипотезы вшивались прямо в прототип — через иконку шестерёнки можно было переключать варианты и сравнивать.</p>
+                <p>Когда решение было готово, я просил Claude сгенерировать Figma-компоненты для разработчиков и тестировщиков (они работали в своём стеке, отдельном от моего прототипа) — в наших токенах, шрифтах, дизайн-системе. <em>Передача проходила без расхождений.</em></p>
+                <p>Процесс перевернулся: вместо «дизайн → передача → разработка» стало <strong>«прототип в коде → валидация на работающем продукте → передача готовых компонентов»</strong>.</p>
+                <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-figma-claude-pipeline.mp4" data-caption="Двусторонний пайплайн: компонент из Figma → обогащение через Claude → возврат новых состояний обратно в Figma">
+                    <div class="am-media-frame" data-aspect="16-9">
+                        <div class="am-media-stub">video · screencast-figma-claude-pipeline.mp4 (приоритет)</div>
+                        <div class="am-media-play"></div>
+                    </div>
+                    <div class="am-media-caption"><b>★</b> Ключевое видео раздела: Figma ↔ Claude pipeline</div>
+                </figure>
+                <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-community-section.mp4" data-caption="Community section с переключателями гипотез">
+                    <div class="am-media-frame" data-aspect="16-9">
+                        <div class="am-media-stub">video · screencast-community-section.mp4</div>
+                        <div class="am-media-play"></div>
+                    </div>
+                    <div class="am-media-caption">Community section с переключателями гипотез</div>
+                </figure>
+
+                <h3 class="am-h3">Внутренние утилиты</h3>
+                <p>Помимо основной работы, на vibe-code собрал несколько инструментов для команды:</p>
+                <ul>
+                    <li><strong>Facebook-парсер с сентимент-анализом</strong> — стал постоянным инструментом сбора обратной связи.</li>
+                    <li><strong>NSF Shortfall симулятор</strong> — для разбора сложной бизнес-логики прогнозирования платёжной нагрузки. Помог всей команде (не только дизайну) вникнуть в механику.</li>
+                </ul>
+
+                <h3 class="am-h3">Менторство</h3>
+                <p>Обучал junior-дизайнера: давал самостоятельные задачи нарастающей сложности, контролировал результат, помогал расти. К концу моей работы он закрывал значительную часть продуктовых задач самостоятельно.</p>
+            </section>
+
+            <!-- Results -->
+            <section class="am-section">
+                <h2 class="am-h2">Результаты</h2>
+                <h3 class="am-h3">Метрики</h3>
+                <div class="am-metrics">
+                    <div class="am-metric">
+                        <div class="am-metric-label">NPS</div>
+                        <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
+                    </div>
+                    <div class="am-metric">
+                        <div class="am-metric-label">CSAT (5)</div>
+                        <div class="am-metric-vals"><span class="am-metric-was">3.6</span><span class="am-metric-arrow">→</span><span class="am-metric-now">4.5</span></div>
+                    </div>
+                    <div class="am-metric">
+                        <div class="am-metric-label">Onboarding completion</div>
+                        <div class="am-metric-vals"><span class="am-metric-now txt">▲ TODO</span></div>
+                    </div>
                 </div>
-                <div class="cp-figure">image · live React prototype + Storybook side-by-side</div>
-                <div class="cp-figure-cap">Live React prototype and Storybook components — one source of truth.</div>
-                <div class="cp-figure">image · code → figma reverse pipeline</div>
-                <div class="cp-figure-cap">Reverse pipeline: components from code into Figma for handoff.</div>
-            </article>
+                <p style="margin-top:18px;">Премия команде по итогам работы над редизайном.</p>
 
+                <h3 class="am-h3">Качественные результаты</h3>
+                <ul>
+                    <li><strong>Покрытие дизайн-системой</strong>: ~50–60% интерфейсов переведены на новую систему</li>
+                    <li>Единый визуальный язык для нескольких брендов компании</li>
+                    <li><strong>Скорость разработки</strong>: команды веб- и мобильной разработки отметили, что работать стало заметно проще — пропали недельные поиски актуальных компонентов</li>
+                    <li>Систематизация обратной связи: <strong>80&nbsp;000+</strong> обработанных сообщений из Facebook-группы стали базой решений по редизайну</li>
+                </ul>
+            </section>
+
+            <!-- Deep cases -->
+            <section class="am-section">
+                <h2 class="am-h2">Углублённые кейсы</h2>
+                <p>Ниже — отдельные продуктовые истории, которые я раскрываю в самостоятельных кейсах.</p>
+                <div class="am-deeplinks">
+                    <a class="am-deeplink" data-deeplink="program-phases">
+                        <div class="am-deeplink-num">DEEP / 01</div>
+                        <h3 class="am-deeplink-title">Разделение опыта на фазы программы</h3>
+                        <p class="am-deeplink-desc">Главное продуктовое решение редизайна — отдельные UI для разных фаз клиента.</p>
+                    </a>
+                    <a class="am-deeplink" data-deeplink="offer-acceptance">
+                        <div class="am-deeplink-num">DEEP / 02</div>
+                        <h3 class="am-deeplink-title">Принятие офера</h3>
+                        <p class="am-deeplink-desc">Как пользователь принимает предложение по реструктуризации долга.</p>
+                    </a>
+                    <a class="am-deeplink" data-deeplink="creditor-card">
+                        <div class="am-deeplink-num">DEEP / 03</div>
+                        <h3 class="am-deeplink-title">Карточка кредитора</h3>
+                        <p class="am-deeplink-desc">Дизайн ключевого элемента интерфейса — карточки конкретного долга.</p>
+                    </a>
+                    <a class="am-deeplink" data-deeplink="creditor-lifecycle">
+                        <div class="am-deeplink-num">DEEP / 04</div>
+                        <h3 class="am-deeplink-title">Жизненный цикл карточки кредитора</h3>
+                        <p class="am-deeplink-desc">Состояния и переходы карточки на разных этапах программы.</p>
+                    </a>
+                    <a class="am-deeplink" data-deeplink="waiting-frustration">
+                        <div class="am-deeplink-num">DEEP / 05</div>
+                        <h3 class="am-deeplink-title">Снижение фрустрации на этапе ожидания</h3>
+                        <p class="am-deeplink-desc">Самый длительный и стрессовый этап клиента — как с ним работали.</p>
+                    </a>
+                    <a class="am-deeplink" data-deeplink="communication">
+                        <div class="am-deeplink-num">DEEP / 06</div>
+                        <h3 class="am-deeplink-title">Communication</h3>
+                        <p class="am-deeplink-desc">Раздел коммуникаций: уведомления, чаты, статусы.</p>
+                    </a>
+                    <a class="am-deeplink" data-deeplink="community-codefirst">
+                        <div class="am-deeplink-num">DEEP / 07</div>
+                        <h3 class="am-deeplink-title">Community + code-first</h3>
+                        <p class="am-deeplink-desc">Раздел сообщества и переход на code-first процесс.</p>
+                    </a>
+                    <a class="am-deeplink" data-deeplink="nsf-shortfall">
+                        <div class="am-deeplink-num">DEEP / 08</div>
+                        <h3 class="am-deeplink-title">NSF Shortfall симулятор</h3>
+                        <p class="am-deeplink-desc">Внутренний инструмент для разбора платёжной логики.</p>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Internal TODO (only visible in dev) -->
+            <aside class="am-todo" data-dev-only>
+                <span class="am-todo-label">// TODO</span>
+                Прислать финальные ассеты: 4× before/after, product-flow-diagram, fb-parser/feedback-summary UI, design-system-overview, набор иллюстраций (стили + финал + аватары), 4× screencasts (offer-acceptance, community, figma↔claude pipeline, community-section), video-generation-pipeline, 8× превью для углублённых кейсов.
+            </aside>
         </div>
-
-        <section class="cp-gallery" aria-label="Visual gallery">
-            <div class="cp-gallery-head">
-                <div class="cp-gallery-label">// gallery</div>
-                <h3 class="cp-gallery-title">Visual selection</h3>
-                <p class="cp-gallery-hint">Drop screenshots of the system, redesign frames and tools here — they'll tile across the full width.</p>
-            </div>
-            <div class="cp-gallery-grid" id="cp-gallery-grid-cs01">
-                <div class="cp-gallery-tile">image · slot 01</div>
-                <div class="cp-gallery-tile">image · slot 02</div>
-                <div class="cp-gallery-tile">image · slot 03</div>
-                <div class="cp-gallery-tile">image · slot 04</div>
-                <div class="cp-gallery-tile">image · slot 05</div>
-                <div class="cp-gallery-tile">image · slot 06</div>
-                <div class="cp-gallery-tile">image · slot 07</div>
-                <div class="cp-gallery-tile">image · slot 08</div>
-                <div class="cp-gallery-tile">image · slot 09</div>
-            </div>
-        </section>
     </section>
+
+    <!-- Lightbox (shared across the page; opens images & videos at fullscreen with scrubbing) -->
+    <div class="am-lightbox" id="am-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+        <button class="am-lb-close" id="am-lb-close" type="button">close · esc</button>
+        <button class="am-lb-nav am-lb-prev" id="am-lb-prev" type="button" aria-label="Previous">←</button>
+        <button class="am-lb-nav am-lb-next" id="am-lb-next" type="button" aria-label="Next">→</button>
+        <div class="am-lightbox-stage" id="am-lb-stage" aria-live="polite"></div>
+        <div class="am-lb-caption" id="am-lb-caption"></div>
+        <div class="am-lb-counter" id="am-lb-counter"></div>
+    </div>
 
     <!-- Case page: full-page detail for cs02 (Health Samurai overall) — light theme -->
     <section class="case-page cp-light" id="case-page-cs02" data-case-page="cs02" aria-label="Health Samurai case study">
@@ -10278,6 +11025,180 @@ See also: Health Samurai Lab: Game of Pools.`,
                     window.__sfx?.tick?.();
                 });
             }
+        })();
+    </script>
+
+    <!-- Americor case page interactions: BeforeAfter sliders, Lightbox, stub renderer -->
+    <script>
+        (() => {
+            // -------- 1. BeforeAfter sliders --------
+            const baBlocks = document.querySelectorAll('[data-ba]');
+            baBlocks.forEach(block => {
+                const tabs   = block.querySelectorAll('.am-ba-tab');
+                const stages = block.querySelectorAll('.am-ba-stage');
+
+                // Tab switch
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const platform = tab.dataset.platform;
+                        tabs.forEach(t => {
+                            const on = t === tab;
+                            t.classList.toggle('active', on);
+                            t.setAttribute('aria-selected', on ? 'true' : 'false');
+                        });
+                        stages.forEach(s => {
+                            if (s.dataset.platform === platform) s.removeAttribute('hidden');
+                            else s.setAttribute('hidden', '');
+                        });
+                    });
+                });
+
+                // Drag handle on each stage
+                stages.forEach(stage => {
+                    stage.style.setProperty('--ba-pos', '50%');
+                    const setPos = (clientX) => {
+                        const r = stage.getBoundingClientRect();
+                        const pct = Math.min(100, Math.max(0, ((clientX - r.left) / r.width) * 100));
+                        stage.style.setProperty('--ba-pos', pct.toFixed(2) + '%');
+                    };
+                    let dragging = false;
+                    const startDrag = (e) => {
+                        dragging = true;
+                        document.body.style.userSelect = 'none';
+                        const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
+                        setPos(clientX);
+                        e.preventDefault();
+                    };
+                    const move = (e) => {
+                        if (!dragging) return;
+                        const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
+                        setPos(clientX);
+                    };
+                    const stopDrag = () => {
+                        dragging = false;
+                        document.body.style.userSelect = '';
+                    };
+                    stage.addEventListener('mousedown', startDrag);
+                    stage.addEventListener('touchstart', startDrag, { passive: false });
+                    document.addEventListener('mousemove', move);
+                    document.addEventListener('touchmove', move, { passive: false });
+                    document.addEventListener('mouseup', stopDrag);
+                    document.addEventListener('touchend', stopDrag);
+                    document.addEventListener('touchcancel', stopDrag);
+
+                    // Keyboard: ←/→ on focused handle moves 5%
+                    const handle = stage.querySelector('.am-ba-handle');
+                    handle?.addEventListener('keydown', (e) => {
+                        const cur = parseFloat(getComputedStyle(stage).getPropertyValue('--ba-pos')) || 50;
+                        let next = cur;
+                        if (e.key === 'ArrowLeft')  next = Math.max(0, cur - 5);
+                        if (e.key === 'ArrowRight') next = Math.min(100, cur + 5);
+                        if (next !== cur) {
+                            stage.style.setProperty('--ba-pos', next + '%');
+                            e.preventDefault();
+                        }
+                    });
+                });
+            });
+
+            // -------- 2. Lightbox --------
+            const lb = document.getElementById('am-lightbox');
+            if (!lb) return;
+            const stage   = document.getElementById('am-lb-stage');
+            const closeBtn= document.getElementById('am-lb-close');
+            const prevBtn = document.getElementById('am-lb-prev');
+            const nextBtn = document.getElementById('am-lb-next');
+            const captionEl = document.getElementById('am-lb-caption');
+            const counterEl = document.getElementById('am-lb-counter');
+
+            // Collect every [data-media] in DOM order; each entry has {src,kind,caption}
+            const tiles = Array.from(document.querySelectorAll('[data-media]'));
+            let idx = 0;
+
+            function buildItem(tile) {
+                return {
+                    kind: tile.dataset.kind || 'image',
+                    src:  tile.dataset.src || '',
+                    stub: tile.dataset.stub || '',
+                    caption: tile.dataset.caption || '',
+                };
+            }
+
+            function render(i) {
+                idx = (i + tiles.length) % tiles.length;
+                const item = buildItem(tiles[idx]);
+                stage.innerHTML = '';
+                if (item.src) {
+                    if (item.kind === 'video') {
+                        const v = document.createElement('video');
+                        v.src = item.src;
+                        v.controls = true;
+                        v.autoplay = true;
+                        v.playsInline = true;
+                        stage.appendChild(v);
+                    } else {
+                        const img = document.createElement('img');
+                        img.src = item.src;
+                        img.alt = item.caption;
+                        stage.appendChild(img);
+                    }
+                } else {
+                    // stub: big SVG with the asset filename
+                    const svg = document.createElement('div');
+                    svg.style.cssText = 'width:min(80vw,1200px);height:min(70vh,720px);display:flex;align-items:center;justify-content:center;border:1px dashed rgba(var(--acc-rgb),0.5);background:repeating-linear-gradient(45deg,transparent 0,transparent 22px,rgba(var(--acc-rgb),0.04) 22px,rgba(var(--acc-rgb),0.04) 23px),rgba(0,0,0,0.4);color:var(--acc);font-family:JetBrains Mono,monospace;letter-spacing:0.28em;text-transform:uppercase;font-size:0.875rem;text-align:center;padding:24px;';
+                    svg.textContent = (item.kind === 'video' ? '▸ video · ' : 'image · ') + (item.stub || 'placeholder');
+                    stage.appendChild(svg);
+                }
+                captionEl.textContent = item.caption || '';
+                counterEl.textContent = `${idx + 1} of ${tiles.length}`;
+            }
+
+            function open(i) {
+                render(i);
+                lb.classList.add('open');
+                lb.setAttribute('aria-hidden', 'false');
+            }
+            function close() {
+                lb.classList.remove('open');
+                lb.setAttribute('aria-hidden', 'true');
+                stage.innerHTML = ''; // stop video playback
+            }
+
+            tiles.forEach((tile, i) => {
+                const trigger = tile.querySelector('.am-media-frame') || tile;
+                trigger.addEventListener('click', () => open(i));
+                trigger.style.cursor = 'zoom-in';
+            });
+
+            closeBtn.addEventListener('click', close);
+            prevBtn.addEventListener('click', () => render(idx - 1));
+            nextBtn.addEventListener('click', () => render(idx + 1));
+            lb.addEventListener('click', (e) => {
+                if (e.target === lb) close();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (!lb.classList.contains('open')) return;
+                if (e.key === 'Escape') { e.stopPropagation(); close(); }
+                if (e.key === 'ArrowLeft')  render(idx - 1);
+                if (e.key === 'ArrowRight') render(idx + 1);
+            });
+
+            // -------- 3. Strip dev-only TODO blocks in production --------
+            // Heuristic: hide on host clauderunner.com (production), show on localhost / dev
+            if (location.hostname && !/localhost|127\.0\.0\.1|^dev\./.test(location.hostname)) {
+                document.querySelectorAll('[data-dev-only]').forEach(el => el.style.display = 'none');
+            }
+
+            // -------- 4. Deep-case links — placeholder click handler --------
+            document.querySelectorAll('[data-deeplink]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // For now: log + flash. Real wiring once deep cases are written.
+                    link.style.background = 'linear-gradient(135deg, rgba(var(--acc-rgb), 0.18), rgba(var(--acc-rgb), 0.04))';
+                    setTimeout(() => link.style.background = '', 300);
+                    console.log('[deep-case] open', link.dataset.deeplink);
+                });
+            });
         })();
     </script>
 
