@@ -557,7 +557,7 @@
             opacity: 1;
             transition-delay: 0.35s;
         }
-        body.case-open .showcase-notch-label { opacity: 0; transition-delay: 0s; }
+        /* notch label stays visible while a case is open — it's the device label */
         /* Top strip — sits over the dim/blur hero, intercepts clicks to collapse */
         .showcase-top-handle {
             position: fixed;
@@ -584,11 +584,8 @@
             pointer-events: auto;
             transition-delay: 0.25s;
         }
-        body.case-open .showcase-top-handle {
-            opacity: 0;
-            pointer-events: none;
-            transition-delay: 0s;
-        }
+        /* Keep the top strip visible while in a case so user can collapse all
+           the way back to the hero in one click. */
         .showcase-top-handle .hint {
             display: inline-flex;
             align-items: center;
@@ -1064,9 +1061,14 @@
             40% { transform: translateY(3px); }
         }
 
+        /* Case page slides up INSIDE the showcase console — clipped to the same
+           notched silhouette so it stays inside the device frame. */
         .case-page {
             position: fixed;
-            inset: 0;
+            top: var(--showcase-top-strip);
+            left: var(--showcase-side-gap);
+            right: var(--showcase-side-gap);
+            bottom: 0;
             z-index: 35;
             background: #050505;
             color: #ffffff;
@@ -1077,6 +1079,35 @@
             pointer-events: none;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            /* Same silhouette as .showcase so the case stays inside the device. */
+            clip-path: polygon(
+                0 var(--showcase-bezel),
+                var(--showcase-bezel) 0,
+                calc(38% - 18px) 0,
+                calc(38% - 8px) var(--showcase-notch-depth),
+                calc(62% + 8px) var(--showcase-notch-depth),
+                calc(62% + 18px) 0,
+                calc(100% - var(--showcase-bezel)) 0,
+                100% var(--showcase-bezel),
+                100% calc(100% - 12px),
+                calc(100% - 12px) 100%,
+                12px 100%,
+                0 calc(100% - 12px)
+            );
+            -webkit-clip-path: polygon(
+                0 var(--showcase-bezel),
+                var(--showcase-bezel) 0,
+                calc(38% - 18px) 0,
+                calc(38% - 8px) var(--showcase-notch-depth),
+                calc(62% + 8px) var(--showcase-notch-depth),
+                calc(62% + 18px) 0,
+                calc(100% - var(--showcase-bezel)) 0,
+                100% var(--showcase-bezel),
+                100% calc(100% - 12px),
+                calc(100% - 12px) 100%,
+                12px 100%,
+                0 calc(100% - 12px)
+            );
         }
         body.case-open .case-page.open {
             transform: translateY(0);
@@ -1094,8 +1125,8 @@
 
         .cp-close {
             position: fixed;
-            top: 22px;
-            right: 24px;
+            top: calc(var(--showcase-top-strip) + 22px);
+            right: calc(var(--showcase-side-gap) + 38px);
             z-index: 50;
             appearance: none;
             background: rgba(5,5,5,0.6);
