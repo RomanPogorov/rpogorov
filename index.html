@@ -1954,6 +1954,7 @@
             pointer-events: auto;
         }
         .hud-left-articles .articles-feed {
+            position: relative;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -5183,12 +5184,13 @@
         /* Holographic hint under the collapsed tab strip — softer, longer descending glow with more
            accent rays of varied heights / opacities for a less uniform "drawing space" effect. */
         .htl-tabs { position: relative; }
+        /* Sit in the same area where the real .hl-pane expands — full panel-area width */
         .htl-rays {
             position: absolute;
-            top: 100%;
+            top: 64px;     /* below the tab strip + the 12px stack gap */
             left: 0;
             right: 0;
-            height: 480px;
+            bottom: 0;
             pointer-events: none;
             overflow: hidden;
             transition: opacity 0.4s ease;
@@ -5709,35 +5711,36 @@
                     <button type="button" class="htl-item" data-pane="cases" role="tab" aria-selected="false">
                         <span class="htl-name">Cases</span>
                     </button>
-                    <!-- Hint glow + rays + skeleton preview under collapsed tabs -->
-                    <div class="htl-rays" id="htl-rays" aria-hidden="true">
-                        <span class="ray ray-1"></span>
-                        <span class="ray ray-2"></span>
-                        <span class="ray ray-3"></span>
-                        <span class="ray ray-4"></span>
-                        <span class="ray ray-5"></span>
-                        <span class="ray ray-6"></span>
-                        <div class="htl-skeleton" aria-hidden="true">
-                            <div class="skel-card">
-                                <span class="skel-title-bar"></span>
-                                <span class="skel-text-bar"></span>
-                                <span class="skel-text-bar short"></span>
-                            </div>
-                            <div class="skel-card">
-                                <span class="skel-title-bar"></span>
-                                <span class="skel-text-bar"></span>
-                                <span class="skel-text-bar short"></span>
-                            </div>
-                            <div class="skel-card">
-                                <span class="skel-title-bar"></span>
-                                <span class="skel-text-bar"></span>
-                                <span class="skel-text-bar short"></span>
-                            </div>
-                            <div class="skel-card">
-                                <span class="skel-title-bar"></span>
-                                <span class="skel-text-bar"></span>
-                                <span class="skel-text-bar short"></span>
-                            </div>
+                </div>
+                <!-- Hint glow + rays + skeleton preview — sibling of .htl-tabs / .hl-pane so they occupy
+                     the full panel area width, matching the real panel that expands here. -->
+                <div class="htl-rays" id="htl-rays" aria-hidden="true">
+                    <span class="ray ray-1"></span>
+                    <span class="ray ray-2"></span>
+                    <span class="ray ray-3"></span>
+                    <span class="ray ray-4"></span>
+                    <span class="ray ray-5"></span>
+                    <span class="ray ray-6"></span>
+                    <div class="htl-skeleton" aria-hidden="true">
+                        <div class="skel-card">
+                            <span class="skel-title-bar"></span>
+                            <span class="skel-text-bar"></span>
+                            <span class="skel-text-bar short"></span>
+                        </div>
+                        <div class="skel-card">
+                            <span class="skel-title-bar"></span>
+                            <span class="skel-text-bar"></span>
+                            <span class="skel-text-bar short"></span>
+                        </div>
+                        <div class="skel-card">
+                            <span class="skel-title-bar"></span>
+                            <span class="skel-text-bar"></span>
+                            <span class="skel-text-bar short"></span>
+                        </div>
+                        <div class="skel-card">
+                            <span class="skel-title-bar"></span>
+                            <span class="skel-text-bar"></span>
+                            <span class="skel-text-bar short"></span>
                         </div>
                     </div>
                 </div>
@@ -9140,14 +9143,14 @@ See also: Health Samurai Lab: Game of Pools.`,
             const skelEl = document.querySelector('.htl-skeleton');
             const tabsBox = document.querySelector('.htl-tabs');
             if (skelEl && tabsBox) {
-                const NEAR = 80;   // within this distance — full target opacity
-                const FAR  = 360;  // beyond this — invisible
-                const PEAK = 0.45;
+                const PEAK_ON     = 0.6;   // cursor literally over a tab — full reveal
+                const FAINT_NEAR  = 0.16;  // cursor near the strip — faint hint
+                const FAR         = 280;   // beyond this — fully invisible
                 let target = 0;
                 let cur = 0;
                 let raf = null;
                 function animate() {
-                    cur += (target - cur) * 0.18;
+                    cur += (target - cur) * 0.2;
                     if (Math.abs(target - cur) < 0.005) {
                         cur = target;
                         skelEl.style.opacity = cur.toFixed(3);
@@ -9165,13 +9168,18 @@ See also: Health Samurai Lab: Game of Pools.`,
                         target = 0;
                     } else {
                         const r = tabsBox.getBoundingClientRect();
-                        // Distance from cursor to nearest edge of the tab strip (clamped >=0)
                         const dx = Math.max(0, Math.max(r.left - e.clientX, e.clientX - r.right));
                         const dy = Math.max(0, Math.max(r.top  - e.clientY, e.clientY - r.bottom));
                         const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist <= NEAR) target = PEAK;
-                        else if (dist >= FAR) target = 0;
-                        else target = PEAK * (1 - (dist - NEAR) / (FAR - NEAR));
+                        if (dist === 0) {
+                            // Cursor is literally on the tab strip — full reveal
+                            target = PEAK_ON;
+                        } else if (dist >= FAR) {
+                            target = 0;
+                        } else {
+                            // Faint hint that decays smoothly to 0 as cursor moves away
+                            target = FAINT_NEAR * (1 - dist / FAR);
+                        }
                     }
                     if (!raf) raf = requestAnimationFrame(animate);
                 });
