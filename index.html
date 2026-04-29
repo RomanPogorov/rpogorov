@@ -661,11 +661,11 @@
             left: 0;
             right: 0;
             min-height: 64px;
-            padding: 0 130px 0 14px;          /* right pad clears Close button */
+            padding: 0 138px 0 26px;          /* right pad clears Close button */
             box-sizing: border-box;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 16px;
             z-index: 12;
             pointer-events: auto;
             background: #050608;
@@ -673,6 +673,29 @@
             box-shadow: 0 1px 0 rgba(var(--acc-rgb), 0.18);
         }
         .showcase-intro.faded { opacity: 1; }
+        /* nav cluster sits to the LEFT of the Close button */
+        .strip-nav-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .strip-counter {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--ink);
+            opacity: 0.78;
+            min-width: 56px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .strip-counter b {
+            color: var(--acc);
+            font-weight: 700;
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55);
+        }
         /* Prev/next nav buttons inside the strip */
         .strip-nav {
             appearance: none;
@@ -6570,11 +6593,13 @@
     <section class="showcase" id="showcase" aria-label="Recent works">
         <div class="showcase-inner">
             <div class="showcase-intro">
-                <button class="strip-nav strip-prev" id="strip-prev" type="button" aria-label="Previous case">←</button>
-                <button class="strip-nav strip-next" id="strip-next" type="button" aria-label="Next case">→</button>
                 <div class="showcase-title-now" id="showcase-title-now" aria-live="polite">
-                    <span class="case-no">CS/01</span>
                     <span class="title-text">Loading…</span>
+                </div>
+                <div class="strip-nav-group">
+                    <button class="strip-nav strip-prev" id="strip-prev" type="button" aria-label="Previous case">←</button>
+                    <span class="strip-counter" id="strip-counter">1 of 5</span>
+                    <button class="strip-nav strip-next" id="strip-next" type="button" aria-label="Next case">→</button>
                 </div>
             </div>
 
@@ -8457,8 +8482,8 @@
             // keyboard press for visual feedback).
             const stripPrev = document.getElementById('strip-prev');
             const stripNext = document.getElementById('strip-next');
-            const stripTitleNo = document.querySelector('#showcase-title-now .case-no');
             const stripTitleText = document.querySelector('#showcase-title-now .title-text');
+            const stripCounter = document.getElementById('strip-counter');
             stripPrev?.addEventListener('click', () => scrollTo(currentIndex() - 1));
             stripNext?.addEventListener('click', () => scrollTo(currentIndex() + 1));
 
@@ -8470,13 +8495,13 @@
 
             function updateStripTitle(idx) {
                 const slide = items[idx];
-                if (!slide || !stripTitleNo || !stripTitleText) return;
-                const no = slide.querySelector('.case-no')?.textContent?.trim() || '';
+                if (!slide || !stripTitleText) return;
                 const titleEl = slide.querySelector('.case-title');
-                // Strip out HTML/em from title — single line plain text.
                 const title = titleEl ? titleEl.textContent.trim().replace(/\s+/g, ' ') : '';
-                stripTitleNo.textContent = no;
                 stripTitleText.textContent = title;
+                if (stripCounter) {
+                    stripCounter.innerHTML = `<b>${idx + 1}</b> of ${items.length}`;
+                }
             }
 
             cases.addEventListener('scroll', () => {
