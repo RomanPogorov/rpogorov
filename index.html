@@ -132,10 +132,9 @@
         }
 
         /* ============ NOISE / GRAIN ============ */
-        /* perf: tiled PNG (multi-octave, mean=128 so overlay stays neutral) instead of SVG turbulence.
-           Kept mix-blend-mode: overlay — it preserves video detail (highlights/shadows) instead of
-           dimming the frame. SVG rasterization removed; only the blend cost remains. */
+        /* perf-experiment: noise overlay disabled to A/B test CPU. To bring back: drop display:none. */
         .noise {
+            display: none;
             position: fixed;
             inset: -50%;
             width: 200%;
