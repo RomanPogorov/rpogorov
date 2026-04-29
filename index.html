@@ -5194,20 +5194,21 @@
             top: 64px;     /* below the tab strip + the 12px stack gap */
             left: 0;
             right: 0;
-            height: 80px;  /* baseline; JS overrides via inline style */
+            height: 400px; /* fixed — gradient extent stays the same; the mask reveals more of it */
             pointer-events: none;
             overflow: hidden;
             transition: opacity 0.4s ease;
-            /* Soft falloff at the bottom so the gradient never ends with a hard edge —
-               regardless of the JS-driven mask height. */
+            /* Vertical mask reveal — JS drives --mask-end (20% far away → ~85% on a tab). The mask
+               always keeps a 15% falloff so the bottom never cuts hard. */
+            --mask-end: 20%;
             mask-image: linear-gradient(180deg,
                 black 0%,
-                black 50%,
-                transparent 100%);
+                black calc(var(--mask-end) - 15%),
+                transparent var(--mask-end));
             -webkit-mask-image: linear-gradient(180deg,
                 black 0%,
-                black 50%,
-                transparent 100%);
+                black calc(var(--mask-end) - 15%),
+                transparent var(--mask-end));
         }
         /* Soft elongated cone of light — fixed 460px tall regardless of parent's clipped height,
            so the cone shape stays the same; the parent's overflow:hidden + animated height is the mask. */
@@ -5217,7 +5218,7 @@
             top: 0;
             left: -14%;
             right: -14%;
-            height: 460px;
+            height: 400px;
             background: radial-gradient(140% 100% at 50% 0%,
                 rgba(var(--acc-rgb), 0.26) 0%,
                 rgba(var(--acc-rgb), 0.13) 22%,
@@ -5226,25 +5227,31 @@
             filter: blur(10px);
             opacity: 1;
         }
-        /* Six thin accent rays — static opacity, fixed pixel heights */
+        /* Six thin accent rays — randomly pulsing opacity ('roaming rays' from the original version) */
         .htl-rays .ray {
             position: absolute;
             top: 0;
             width: 1px;
             background: linear-gradient(180deg,
-                rgba(var(--acc-rgb), 0.22) 0%,
-                rgba(var(--acc-rgb), 0.10) 35%,
-                rgba(var(--acc-rgb), 0.03) 70%,
+                rgba(var(--acc-rgb), 0.32) 0%,
+                rgba(var(--acc-rgb), 0.14) 35%,
+                rgba(var(--acc-rgb), 0.04) 70%,
                 rgba(var(--acc-rgb), 0)    100%);
-            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.16);
-            opacity: 0.25;
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.18);
+            opacity: 0;
+            animation: htl-ray-pulse 4s ease-in-out infinite;
         }
-        .htl-rays .ray-1 { left: 12%; height: 330px; }
-        .htl-rays .ray-2 { left: 28%; height: 420px; }
-        .htl-rays .ray-3 { left: 44%; height: 280px; }
-        .htl-rays .ray-4 { left: 60%; height: 460px; }
-        .htl-rays .ray-5 { left: 76%; height: 370px; }
-        .htl-rays .ray-6 { left: 90%; height: 250px; }
+        @keyframes htl-ray-pulse {
+            0%, 100% { opacity: 0;    transform: translateY(-14px) scaleY(0.5); }
+            45%      { opacity: 0.45; transform: translateY(0)     scaleY(1);   }
+            70%      { opacity: 0.28; transform: translateY(3px)   scaleY(1);   }
+        }
+        .htl-rays .ray-1 { left: 12%; height: 330px; animation-delay: 0s;    animation-duration: 4.0s; }
+        .htl-rays .ray-2 { left: 28%; height: 380px; animation-delay: 1.4s;  animation-duration: 4.6s; }
+        .htl-rays .ray-3 { left: 44%; height: 260px; animation-delay: 0.7s;  animation-duration: 3.8s; }
+        .htl-rays .ray-4 { left: 60%; height: 400px; animation-delay: 2.2s;  animation-duration: 5.0s; }
+        .htl-rays .ray-5 { left: 76%; height: 340px; animation-delay: 1.8s;  animation-duration: 4.2s; }
+        .htl-rays .ray-6 { left: 90%; height: 230px; animation-delay: 3.0s;  animation-duration: 4.8s; }
         /* When the panel opens, only the skeleton hides. The rays gradient stays behind the panel
            so the same hologram lighting carries through into the expanded state. */
         body.left-pane-open .htl-skeleton { opacity: 0 !important; }
@@ -9298,23 +9305,23 @@ See also: Health Samurai Lab: Game of Pools.`,
                 const PEAK_ON     = 0.6;   // cursor literally over a tab
                 const FAINT_NEAR  = 0.16;  // cursor near the strip
                 const FAR         = 320;   // beyond this — proximity = 0
-                const RAYS_MIN    = 80;
-                const RAYS_MAX    = 460;
+                // Mask reveal: --mask-end goes from MIN_EXT (small color zone, mostly faded out) when
+                // cursor is far → MAX_EXT (most of the 400px gradient visible, falloff still keeps
+                // the bottom soft) when cursor is on a tab.
+                const MIN_EXT = 22;
+                const MAX_EXT = 85;
                 let skelTarget = 0;
-                let prox = 0;              // 0..1 cursor-proximity factor
+                let prox = 0;
                 let skelCur = 0;
-                let raysCur = RAYS_MIN;
+                let extCur = MIN_EXT;
 
                 function tick() {
                     requestAnimationFrame(tick);
                     skelCur += (skelTarget - skelCur) * 0.2;
                     skelEl.style.opacity = skelCur.toFixed(3);
-                    // Rays mask height: smoothly tracks proximity in BOTH directions — grows on
-                    // approach, shrinks back to the 80px baseline when cursor moves away. No sine
-                    // breathing, no monotonic lock.
-                    const targetH = RAYS_MIN + (RAYS_MAX - RAYS_MIN) * prox;
-                    raysCur += (targetH - raysCur) * 0.18;
-                    raysEl.style.height = raysCur.toFixed(0) + 'px';
+                    const target = MIN_EXT + (MAX_EXT - MIN_EXT) * prox;
+                    extCur += (target - extCur) * 0.18;
+                    raysEl.style.setProperty('--mask-end', extCur.toFixed(2) + '%');
                 }
                 requestAnimationFrame(tick);
 
