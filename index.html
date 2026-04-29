@@ -4745,11 +4745,16 @@
         .hud-tabs-left {
             position: fixed;
             top: 24px;
-            left: 28px;
+            left: 32px;
             z-index: 7;
             display: flex;
-            gap: 8px;
+            /* No gap — the two tabs share their inner edge like a real tab group */
+            gap: 0;
             pointer-events: none;
+            /* Same 3D context as the panel below so they feel like one stack */
+            perspective: 1100px;
+            perspective-origin: 0 50%;
+            transform-style: preserve-3d;
         }
         .hud-tab-left {
             pointer-events: auto;
@@ -4758,8 +4763,8 @@
             display: flex;
             flex-direction: column;
             gap: 3px;
-            padding: 10px 14px 9px;
-            min-width: 96px;
+            padding: 10px 16px 9px;
+            min-width: 110px;
             border: 1px solid rgba(var(--acc-rgb), 0.4);
             color: var(--ink);
             font-family: 'JetBrains Mono', monospace;
@@ -4767,6 +4772,10 @@
             text-transform: uppercase;
             letter-spacing: 0.2em;
             opacity: 0;
+            position: relative;
+            /* Match the rotateY of the panel content below — tabs and panel share the same 3D plane */
+            transform-origin: 0 50%;
+            transform: rotateY(14deg);
             background:
                 /* diagonal scanline pattern */
                 repeating-linear-gradient(45deg,
@@ -4780,7 +4789,12 @@
             box-shadow:
                 0 0 14px rgba(var(--acc-rgb), 0.18) inset,
                 0 0 18px rgba(var(--acc-rgb), 0.12);
-            transition: border-color 0.18s, color 0.18s, box-shadow 0.22s, background 0.22s, transform 0.18s, opacity 0.6s ease 0.4s;
+            transition: border-color 0.18s, color 0.18s, box-shadow 0.22s, background 0.22s, opacity 0.6s ease 0.4s;
+        }
+        /* Connected-tabs trick: the right tab pulls left by 1px so its left border overlaps the
+           previous tab's right border — visually one shared edge instead of two parallel lines. */
+        .hud-tab-left + .hud-tab-left {
+            margin-left: -1px;
         }
         body.console-revealed .hud-tab-left { opacity: 1; }
         .hud-tab-left:hover {
@@ -4798,6 +4812,7 @@
             box-shadow:
                 0 0 18px rgba(var(--acc-rgb), 0.25) inset,
                 0 0 26px rgba(var(--acc-rgb), 0.32);
+            z-index: 1; /* hover sits above sibling so its glow isn't clipped */
         }
         .hud-tab-left.active {
             border-color: var(--acc);
@@ -4806,15 +4821,15 @@
                 repeating-linear-gradient(45deg,
                     transparent 0,
                     transparent 5px,
-                    rgba(var(--acc-rgb), 0.20) 5px,
-                    rgba(var(--acc-rgb), 0.20) 6px),
+                    rgba(var(--acc-rgb), 0.22) 5px,
+                    rgba(var(--acc-rgb), 0.22) 6px),
                 linear-gradient(180deg,
-                    rgba(var(--acc-rgb), 0.22) 0%,
+                    rgba(var(--acc-rgb), 0.24) 0%,
                     rgba(2, 12, 22, 0.65) 100%);
             box-shadow:
                 0 0 24px rgba(var(--acc-rgb), 0.32) inset,
-                0 0 32px rgba(var(--acc-rgb), 0.45);
-            transform: translateY(1px);
+                0 0 32px rgba(var(--acc-rgb), 0.5);
+            z-index: 2; /* active overlaps inactive's borders */
         }
         .hud-tab-left:focus { outline: none; }
         .hud-tab-left:focus-visible {
