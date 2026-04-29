@@ -4481,10 +4481,38 @@
         body.glitching .stage video {
             animation: glitchOnce 0.35s steps(3);
         }
+
+        /* ============ PERF HUD (enable: ?perf=1) ============ */
+        .perf-hud {
+            position: fixed;
+            bottom: 8px;
+            right: 8px;
+            z-index: 99999;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            color: var(--acc, #66ff99);
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(102, 255, 153, 0.4);
+            padding: 5px 9px;
+            display: flex;
+            gap: 12px;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+        .perf-fps.warn { color: #ffa500; }
+        .perf-fps.bad  { color: #ff5252; }
+        .perf-jank.bad { color: #ff5252; }
     </style>
 </head>
 
 <body class="pre-gate" data-theme="green">
+
+    <!-- Perf HUD: enable with ?perf=1 in URL. Shows live FPS + jank counter (frames slower than 33ms / 1s). -->
+    <div class="perf-hud" id="perf-hud" hidden>
+        <span class="perf-fps">— fps</span>
+        <span class="perf-jank">jank: 0</span>
+    </div>
 
     <!-- Layered background -->
     <div class="stage">
@@ -6608,6 +6636,46 @@
 
                 update();
             }
+        })();
+    </script>
+
+    <!-- Perf HUD: live FPS + jank counter. Enable with ?perf=1. -->
+    <script>
+        (() => {
+            const params = new URLSearchParams(location.search);
+            if (!params.has('perf')) return;
+            const hud = document.getElementById('perf-hud');
+            if (!hud) return;
+            hud.hidden = false;
+            const fpsEl = hud.querySelector('.perf-fps');
+            const jankEl = hud.querySelector('.perf-jank');
+
+            let frames = 0;
+            let last = performance.now();
+            let prev = last;
+            let jank = 0;       // frames whose frame-time exceeded 33ms (i.e. <30fps stutter)
+            let jankTotal = 0;
+
+            function tick(now) {
+                frames++;
+                const dt = now - prev;
+                prev = now;
+                if (dt > 33) { jank++; jankTotal++; }
+
+                if (now - last >= 1000) {
+                    const fps = Math.round(frames * 1000 / (now - last));
+                    fpsEl.textContent = fps + ' fps';
+                    fpsEl.classList.toggle('warn', fps < 50 && fps >= 30);
+                    fpsEl.classList.toggle('bad', fps < 30);
+                    jankEl.textContent = 'jank: ' + jank;
+                    jankEl.classList.toggle('bad', jank > 5);
+                    frames = 0;
+                    jank = 0;
+                    last = now;
+                }
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
         })();
     </script>
 
