@@ -5271,7 +5271,12 @@
         }
         .skel-card {
             position: relative;
-            height: 56px;
+            height: 86px;
+            padding: 14px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 7px;
             border: 1px solid rgba(var(--acc-rgb), 0.16);
             background: linear-gradient(135deg,
                 rgba(var(--acc-rgb), 0.06) 0%,
@@ -5293,6 +5298,28 @@
             border-bottom: 1px solid rgba(var(--acc-rgb), 0.5);
             border-right: 1px solid rgba(var(--acc-rgb), 0.5);
         }
+        /* Inside each card: a thicker title bar + two thinner text bars (title + text preview) */
+        .skel-title-bar,
+        .skel-text-bar {
+            display: block;
+            border-radius: 1px;
+        }
+        .skel-title-bar {
+            height: 8px;
+            width: 62%;
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0.45) 0%,
+                rgba(var(--acc-rgb), 0.15) 100%);
+            margin-bottom: 4px;
+        }
+        .skel-text-bar {
+            height: 4px;
+            width: 92%;
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0.22) 0%,
+                rgba(var(--acc-rgb), 0.06) 100%);
+        }
+        .skel-text-bar.short { width: 70%; }
 
         /* Random glitch on the collapsed left tab strip — fires at irregular intervals via JS. */
         @keyframes htl-glitch {
@@ -5691,11 +5718,26 @@
                         <span class="ray ray-5"></span>
                         <span class="ray ray-6"></span>
                         <div class="htl-skeleton" aria-hidden="true">
-                            <div class="skel-card"></div>
-                            <div class="skel-card"></div>
-                            <div class="skel-card"></div>
-                            <div class="skel-card"></div>
-                            <div class="skel-card"></div>
+                            <div class="skel-card">
+                                <span class="skel-title-bar"></span>
+                                <span class="skel-text-bar"></span>
+                                <span class="skel-text-bar short"></span>
+                            </div>
+                            <div class="skel-card">
+                                <span class="skel-title-bar"></span>
+                                <span class="skel-text-bar"></span>
+                                <span class="skel-text-bar short"></span>
+                            </div>
+                            <div class="skel-card">
+                                <span class="skel-title-bar"></span>
+                                <span class="skel-text-bar"></span>
+                                <span class="skel-text-bar short"></span>
+                            </div>
+                            <div class="skel-card">
+                                <span class="skel-title-bar"></span>
+                                <span class="skel-text-bar"></span>
+                                <span class="skel-text-bar short"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
