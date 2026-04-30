@@ -9074,8 +9074,23 @@
             }, { passive: true });
 
             document.addEventListener('keydown', (e) => {
-                if (!document.body.classList.contains('showcase-open')) return;
-                if (document.body.classList.contains('case-open')) return; // case-page handles its own ESC
+                const body = document.body;
+                // Hero state: ↓ opens the showcase (mirror of the cue button).
+                if (e.key === 'ArrowDown'
+                    && !body.classList.contains('showcase-open')
+                    && !body.classList.contains('case-open')
+                    && !body.classList.contains('engaged')
+                    && !body.classList.contains('dw-open')
+                    && !body.classList.contains('chat-fullscreen')
+                    && !body.classList.contains('reader-open')) {
+                    const tag = e.target?.tagName;
+                    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
+                    e.preventDefault();
+                    open();
+                    return;
+                }
+                if (!body.classList.contains('showcase-open')) return;
+                if (body.classList.contains('case-open')) return; // case-page handles its own ESC
                 if (e.key === 'Escape') { close(); return; }
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
