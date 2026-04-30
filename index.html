@@ -1241,40 +1241,43 @@
             gap: 8px;
         }
         .cp-hero-shot-tab {
+            --shot-blue: #0065FF;
+            --shot-blue-rgb: 0, 101, 255;
             display: flex;
             flex-direction: column;
             gap: 6px;
             text-align: left;
             padding: 14px 16px;
             border: 1px solid rgba(8, 18, 30, 0.14);
-            background: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.7);
             border-radius: 10px;
             cursor: pointer;
-            color: rgba(8, 18, 30, 0.65);
+            color: rgba(8, 18, 30, 0.85);
             font-family: inherit;
             transition: border-color 0.18s, background 0.18s, color 0.18s, transform 0.18s;
         }
         .cp-hero-shot-tab:hover {
-            border-color: rgba(8, 18, 30, 0.4);
-            background: rgba(255, 255, 255, 0.85);
-            color: rgba(8, 18, 30, 0.9);
+            border-color: rgba(var(--shot-blue-rgb), 0.4);
+            background: #fff;
+            color: rgba(8, 18, 30, 1);
         }
         .cp-hero-shot-tab.is-active {
-            border-color: var(--acc);
+            border-color: var(--shot-blue);
             background: #fff;
             color: rgba(8, 18, 30, 1);
             box-shadow:
                 0 6px 18px rgba(8, 18, 30, 0.08),
-                0 0 0 2px rgba(var(--acc-rgb), 0.16);
+                0 0 0 2px rgba(var(--shot-blue-rgb), 0.18);
         }
         .cp-hero-shot-tab .tab-num {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.5625rem;
-            letter-spacing: 0.32em;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.28em;
             text-transform: uppercase;
-            opacity: 0.55;
+            color: rgba(8, 18, 30, 0.55);
         }
-        .cp-hero-shot-tab.is-active .tab-num { color: var(--acc); opacity: 1; }
+        .cp-hero-shot-tab.is-active .tab-num { color: var(--shot-blue); }
         .cp-hero-shot-tab .tab-label {
             font-size: 0.9375rem;
             font-weight: 500;
