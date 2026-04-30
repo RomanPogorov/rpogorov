@@ -6170,26 +6170,15 @@
             animation: glitchOnce 0.35s steps(3);
         }
 
-        /* Bg loop seam glitch — deliberate tape-cut effect when video wraps to frame 0 */
+        /* Bg loop seam — subtle hue/saturation shift on the wrap to frame 0 */
         @keyframes bgLoopGlitch {
-            0%   { filter: contrast(1.15) saturate(1.0) brightness(0.8) hue-rotate(0); transform: translate3d(0, 0, 0) scale(1); }
-            12%  { filter: contrast(1.7)  saturate(0.4) brightness(1.25) hue-rotate(18deg); transform: translate3d(-4px, 0, 0) scale(1.006); }
-            26%  { filter: contrast(2.1)  saturate(2.0) brightness(0.55) hue-rotate(-28deg); transform: translate3d(5px, -2px, 0) scale(0.996); }
-            42%  { filter: contrast(1.4)  saturate(1.4) brightness(0.95) hue-rotate(10deg); transform: translate3d(-2px, 1px, 0) scale(1.002); }
-            66%  { filter: contrast(1.25) saturate(1.0) brightness(0.85) hue-rotate(0); transform: translate3d(1px, 0, 0) scale(1); }
-            100% { filter: contrast(1.15) saturate(1.0) brightness(0.8) hue-rotate(0); transform: translate3d(0, 0, 0) scale(1); }
+            0%   { filter: contrast(1.15) saturate(1.0) brightness(0.8) hue-rotate(0); }
+            30%  { filter: contrast(1.2)  saturate(1.4) brightness(0.85) hue-rotate(18deg); }
+            60%  { filter: contrast(1.18) saturate(0.7) brightness(0.82) hue-rotate(-12deg); }
+            100% { filter: contrast(1.15) saturate(1.0) brightness(0.8) hue-rotate(0); }
         }
         .stage video.bg-loop-glitch {
-            animation: bgLoopGlitch 0.42s steps(7) both;
-        }
-        @keyframes bgLoopScanlines {
-            0%, 100% { opacity: 1; }
-            12%      { opacity: 0.3; }
-            26%      { opacity: 1.4; }
-            42%      { opacity: 0.6; }
-        }
-        body.bg-loop-glitching .scanlines {
-            animation: bgLoopScanlines 0.42s steps(7) both;
+            animation: bgLoopGlitch 0.28s ease-out;
         }
 
         /* ============ ARTICLES / CASES — left HUD console, mirror of .hud-right ============ */
@@ -8758,16 +8747,12 @@
             console.log('[bg] video loaded ok');
         });
 
-        // Manual loop — fire glitch on the seam, then restart from 0.
+        // Manual loop — fire subtle hue shift on the seam, then restart from 0.
         video.addEventListener('ended', () => {
             video.classList.add('bg-loop-glitch');
-            document.body.classList.add('bg-loop-glitching');
             video.currentTime = 0;
             video.play().catch(() => {});
-            setTimeout(() => {
-                video.classList.remove('bg-loop-glitch');
-                document.body.classList.remove('bg-loop-glitching');
-            }, 420);
+            setTimeout(() => video.classList.remove('bg-loop-glitch'), 280);
         });
 
         // Don't autoplay video under the audio gate — and even after consent,
