@@ -6594,14 +6594,19 @@
         .ctl-fab-bar {
             grid-column: var(--s) / calc(var(--e) + 1);
             margin: 2px 1px;
-            background: rgba(var(--acc-rgb), 0.15);
-            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            background: rgba(var(--acc-rgb), var(--fill, 0.15));
+            border: 1px solid rgba(var(--acc-rgb), var(--stroke, 0.4));
             position: relative;
             transition: background 0.25s, border-color 0.25s;
         }
+        /* Progressive intensity left -> right; the rightmost is .is-current */
+        .ctl-fab-bar:nth-child(1) { --fill: 0.04; --stroke: 0.22; }
+        .ctl-fab-bar:nth-child(2) { --fill: 0.09; --stroke: 0.30; }
+        .ctl-fab-bar:nth-child(3) { --fill: 0.18; --stroke: 0.42; }
+        .ctl-fab-bar:nth-child(4) { --fill: 0.32; --stroke: 0.58; }
         .ctl-fab:hover .ctl-fab-bar:not(.is-current) {
-            background: rgba(var(--acc-rgb), 0.22);
-            border-color: rgba(var(--acc-rgb), 0.6);
+            background: rgba(var(--acc-rgb), calc(var(--fill, 0.15) + 0.06));
+            border-color: rgba(var(--acc-rgb), calc(var(--stroke, 0.4) + 0.18));
         }
         .ctl-fab-bar.is-current {
             background: linear-gradient(135deg, var(--acc), color-mix(in srgb, var(--acc) 60%, white));
@@ -15051,15 +15056,18 @@ See also: Health Samurai Lab: Game of Pools.`,
                 });
             });
 
-            window.addEventListener('mousemove', (e) => {
+            // FAB 3D tilt — only while cursor is over the strip itself
+            fab.addEventListener('mousemove', (e) => {
                 if (document.body.classList.contains('ctl-open')) return;
                 const r = fab.getBoundingClientRect();
-                const cx = r.left + r.width / 2;
-                const cy = r.top  + r.height / 2;
-                const dx = (e.clientX - cx) / Math.max(window.innerWidth / 2, 600);
-                const dy = (e.clientY - cy) / Math.max(window.innerHeight / 2, 400);
-                fab.style.setProperty('--ctl-fab-ry', (dx * 5).toFixed(2) + 'deg');
-                fab.style.setProperty('--ctl-fab-rx', (-dy * 3).toFixed(2) + 'deg');
+                const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+                const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
+                fab.style.setProperty('--ctl-fab-ry', (dx * 6).toFixed(2) + 'deg');
+                fab.style.setProperty('--ctl-fab-rx', (-dy * 4).toFixed(2) + 'deg');
+            });
+            fab.addEventListener('mouseleave', () => {
+                fab.style.setProperty('--ctl-fab-ry', '0deg');
+                fab.style.setProperty('--ctl-fab-rx', '0deg');
             });
         })();
     </script>
