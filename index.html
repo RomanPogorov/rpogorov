@@ -978,6 +978,94 @@
             padding: 96px 40px 140px;
         }
 
+        /* Full-bleed breakouts — escape the 980px column to span the case-page
+           (which is itself fixed inset:0). Used for comparator, big diagrams,
+           horizontal-pan figures. */
+        .cp-fullbleed {
+            position: relative;
+            margin-left:  calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            width: 100vw;
+            max-width: 100vw;
+            margin-top: 32px;
+            margin-bottom: 32px;
+        }
+        .cp-fullbleed.cp-fullbleed--snug {
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+        /* Free horizontal pan: image keeps natural size, frame is fixed-height
+           and scrolls horizontally on drag. */
+        .cp-pan {
+            position: relative;
+            height: clamp(360px, 60vh, 720px);
+            overflow-x: auto;
+            overflow-y: hidden;
+            cursor: grab;
+            background: #f4f6f9;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.35) transparent;
+        }
+        .cp-pan:active { cursor: grabbing; }
+        .cp-pan::-webkit-scrollbar { height: 6px; }
+        .cp-pan::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); border-radius: 4px; }
+        .cp-pan > img,
+        .cp-pan > video {
+            height: 100%;
+            width: auto;
+            min-width: 100%;
+            max-width: none;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+        .cp-pan-caption {
+            margin: 10px auto 0;
+            max-width: 980px;
+            padding: 0 40px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            color: rgba(255,255,255,0.55);
+        }
+        .cp-pan-caption b { color: var(--acc); }
+        .cp-light .cp-pan-caption { color: rgba(0,0,0,0.55); }
+        .cp-light .cp-pan-caption b { color: var(--acc); }
+        /* Cropped-with-mini-navigator: image rendered full-bleed, but with
+           a small thumbnail in the corner showing current pan position. */
+        .cp-pan-nav {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            width: 200px;
+            height: 60px;
+            background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(var(--acc-rgb), 0.35);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 3;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .cp-pan-nav img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            opacity: 0.7;
+        }
+        .cp-pan-nav-window {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            border: 1.5px solid var(--acc);
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.6);
+            pointer-events: none;
+        }
+
         .cp-close {
             position: fixed;
             top: 22px;
@@ -7314,134 +7402,215 @@
                     <span class="cp-meta-divider"></span>
                     <span>2023 — 2025</span>
                 </div>
-                <h1 class="cp-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h1>
-                <p class="cp-sub">Americor is a fintech in the debt-relief space — a web app plus iOS and Android. I was brought in as Lead PD to bring order to the design process and run a full product redesign ahead of IPO.</p>
+                <h1 class="cp-title">Редизайн продукта и <em>дизайн-система</em> для трёх платформ.</h1>
+                <p class="cp-sub">Финтех в сфере debt relief: веб + iOS + Android, несколько брендов, IPO-режим. Главная находка редизайна — разделение пользовательского опыта на фазы программы.</p>
             </header>
+        </div>
 
+        <!-- HERO COMPARATOR — full-bleed BeforeAfter with 3 scenes -->
+        <div class="cp-fullbleed">
+            <div class="am-ba" data-ba>
+                <button type="button" class="am-ba-fullscreen" data-ba-fullscreen aria-label="Toggle fullscreen">Expand</button>
+                <div class="am-ba-tabs" role="tablist">
+                    <button class="am-ba-tab active" type="button" data-platform="desktop" role="tab" aria-selected="true">Desktop</button>
+                    <button class="am-ba-tab" type="button" data-platform="mobile" role="tab" aria-selected="false">Mobile</button>
+                </div>
+                <div class="am-ba-stage" data-platform="desktop">
+                    <img class="am-ba-img am-ba-before-img" src="showcase/cs01/desktop-before.jpg" alt="Desktop до редизайна">
+                    <div class="am-ba-after-wrap">
+                        <img class="am-ba-img" src="showcase/cs01/desktop-after.png" alt="Desktop после редизайна">
+                    </div>
+                    <span class="am-ba-label before">Before</span>
+                    <span class="am-ba-label after">After</span>
+                    <div class="am-ba-divider" aria-hidden="true"></div>
+                    <div class="am-ba-handle" aria-hidden="true"></div>
+                    <input type="range" class="am-ba-range" min="0" max="100" step="0.1" value="50" aria-label="Compare before and after">
+                </div>
+                <div class="am-ba-stage" data-platform="mobile" hidden>
+                    <img class="am-ba-img am-ba-before-img" data-stub="mobile-before.png" alt="Мобилка до редизайна">
+                    <div class="am-ba-after-wrap">
+                        <img class="am-ba-img" data-stub="mobile-after.png" alt="Мобилка после редизайна">
+                    </div>
+                    <span class="am-ba-label before">Before</span>
+                    <span class="am-ba-label after">After</span>
+                    <div class="am-ba-divider" aria-hidden="true"></div>
+                    <div class="am-ba-handle" aria-hidden="true"></div>
+                    <input type="range" class="am-ba-range" min="0" max="100" step="0.1" value="50" aria-label="Compare before and after">
+                </div>
+                <div class="am-ba-scenes" data-ba-scenes>
+                    <button type="button" class="am-ba-scene active" data-scene="dashboard">
+                        <img src="showcase/cs01/desktop-after.png" alt="">
+                        <span class="am-ba-scene-label">Dashboard</span>
+                    </button>
+                    <button type="button" class="am-ba-scene" data-scene="creditor">
+                        <img src="showcase/cs01/creditor-after.png" alt="">
+                        <span class="am-ba-scene-label">Creditors</span>
+                    </button>
+                    <button type="button" class="am-ba-scene" data-scene="offer">
+                        <img src="showcase/cs01/offer-after.png" alt="">
+                        <span class="am-ba-scene-label">Offer Flow</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="cp-inner">
             <div class="cp-tldr">
                 <div class="cp-tldr-label">// TL;DR</div>
                 <ul>
-                    <li>Designed and shipped a multi-layer design system across three platforms (iOS / Android / Web): root → semantic → brand → platform. Covered ~50–60% of interfaces and gave Americor's multiple brands one shared visual language.</li>
-                    <li>Flipped the process from <em>mockup → handoff → dev</em> to <em>code-first</em>: in the final ~3 months the team worked on a live React prototype + Storybook; new features got assembled directly from code.</li>
-                    <li>To back redesign decisions with real signal, I built a user-interview pipeline and a custom analyzer for the Facebook community feed — decisions ran on data, not assumptions.</li>
+                    <li>За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов.</li>
+                    <li>Ключевая продуктовая находка — <em>разделение опыта на фазы программы</em>: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.</li>
+                    <li>Перевёл дизайн-процесс на <em>code-first</em>: live React-прототип + Storybook, гипотезы тестировались на работающем продукте.</li>
+                    <li><strong>NPS 45 → 78 · CSAT 3.6 → 4.5 · ~50–60%</strong> покрытие интерфейсов дизайн-системой. Премия команде по итогам.</li>
                 </ul>
             </div>
 
             <nav class="cp-timeline" aria-label="Case timeline">
                 <ol class="cp-timeline-list">
                     <li><button class="cp-tl-item active" data-target="cp-sec-01" type="button">
-                        <span class="cp-tl-num">01 / Start</span>
-                        <span class="cp-tl-name">Audit &amp; context</span>
+                        <span class="cp-tl-num">01 / Контекст</span>
+                        <span class="cp-tl-name">Компания и роль</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-02" type="button">
-                        <span class="cp-tl-num">02 / Foundation</span>
-                        <span class="cp-tl-name">Design system</span>
+                        <span class="cp-tl-num">02 / Старт</span>
+                        <span class="cp-tl-name">Что было до меня</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-03" type="button">
-                        <span class="cp-tl-num">03 / Pre-IPO</span>
-                        <span class="cp-tl-name">Redesign</span>
+                        <span class="cp-tl-num">03 / Подход</span>
+                        <span class="cp-tl-name">Как разбирался</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-04" type="button">
-                        <span class="cp-tl-num">04 / Tools</span>
-                        <span class="cp-tl-name">Vibecoding tools</span>
+                        <span class="cp-tl-num">04 / Система</span>
+                        <span class="cp-tl-name">Дизайн-система × 3 платформы</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-05" type="button">
-                        <span class="cp-tl-num">05 / Shift</span>
-                        <span class="cp-tl-name">Code-first prototypes</span>
+                        <span class="cp-tl-num">05 / Редизайн</span>
+                        <span class="cp-tl-name">IPO-релиз</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-06" type="button">
+                        <span class="cp-tl-num">06 / Tools</span>
+                        <span class="cp-tl-name">Vibe-coded инструменты</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-07" type="button">
+                        <span class="cp-tl-num">07 / Shift</span>
+                        <span class="cp-tl-name">Code-first процесс</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-08" type="button">
+                        <span class="cp-tl-num">08 / Итоги</span>
+                        <span class="cp-tl-name">Метрики и решения</span>
                     </button></li>
                 </ol>
             </nav>
 
             <article class="cp-section" id="cp-sec-01">
-                <div class="cp-sec-num">01 — Start</div>
-                <h2 class="cp-sec-title">What I walked into, and where I started</h2>
+                <div class="cp-sec-num">01 — Контекст</div>
+                <h2 class="cp-sec-title">Компания, роль, задача</h2>
                 <div class="cp-sec-body">
-                    <p>The team was middle- and junior-level designers. <strong>There was no actual design system.</strong> Reusable elements lived scattered across files — never formalized as components. Every new mockup got hand-assembled from disparate pieces. Maintaining or updating interfaces at scale was impossible this way.</p>
-                    <p>An earlier attempt to bring in a freelancer to define the brand had stalled — six months in, the work was 40–50% done and the designer left. Engineers were spending <em>weeks</em> hunting for a "source of truth" for components. Visual consistency across platforms didn't exist.</p>
-                    <p>I started with an audit: pulled every screen across desktop + responsive, iOS and Android, surfaced the recurring patterns, and decided what had to get systematized first.</p>
+                    <p><strong>Americor</strong> — финтех в сфере debt relief. Помогает людям выходить из долгов через программы реструктуризации. Дочерние бренды в разных штатах со своей визуальной идентификацией — это связано с различиями в законодательстве. Продукт: веб-приложение (десктоп + адаптив) + мобильные приложения для iOS и Android.</p>
+                    <p><strong>Моя роль</strong> — Lead Product Designer. Репортил продакт-менеджеру (→ CPO). В команде junior-дизайнер — менторил, постепенно вовлекал в задачи возрастающей сложности.</p>
+                    <p><strong>Задача</strong> сразу была тройная: редизайн продуктовой линейки (компания готовилась к IPO); поднять <strong>NPS и CSAT</strong>; построить дизайн-систему с нуля и реально внедрить её в работу — не файл в Figma, а инструмент команды.</p>
                 </div>
-                <div class="cp-figure">image · audit landscape (before)</div>
-                <div class="cp-figure-cap">Audit of the existing mockups — which patterns to unify, which to leave alone.</div>
             </article>
 
             <article class="cp-section" id="cp-sec-02">
-                <div class="cp-sec-num">02 — Foundation</div>
-                <h2 class="cp-sec-title">A multi-layer design system</h2>
+                <div class="cp-sec-num">02 — Старт</div>
+                <h2 class="cp-sec-title">Что было на старте</h2>
                 <div class="cp-sec-body">
-                    <p>Built on the audit, I designed and shipped a multi-layer token architecture:</p>
-                    <ul>
-                        <li><strong>Root</strong> — primitive values: colors, spacing, typography.</li>
-                        <li><strong>Semantic</strong> — a layer of meaningfully-named tokens.</li>
-                        <li><strong>Brand</strong> — a brand layer: Americor has subsidiaries in different states, each with its own color identity driven by per-state regulation.</li>
-                        <li><strong>Platform modes</strong> — Android, iOS, Web — managed from one place.</li>
-                    </ul>
-                    <p>In parallel I reorganized the whole Figma library: iterations, branches for development, clear navigation across mockups. Together with the teams we started rolling the system out component by component and reached <strong>~50–60% interface coverage</strong>.</p>
+                    <p>Единой дизайн-системы не существовало: переиспользуемые блоки лежали россыпью по файлам Figma, и при создании нового макета дизайнер собирал страницу из разрозненных кусков вручную. Поддерживать и масштабировать так — невозможно.</p>
+                    <p>Предыдущая попытка фриланс-дизайнера на фирменный стиль провалилась — 40–50% за полгода, человек ушёл. Разработчики тратили <em>недели</em> на поиск «источника правды» для компонентов.</p>
+                    <p>Главное: <strong>никаких артефактов о том, как устроен продукт, не существовало</strong> — ни user flow, ни process maps, ни документации. Понимание жило в головах отдельных людей.</p>
                 </div>
-                <div class="cp-figure">image · token architecture diagram (root → semantic → brand → platform)</div>
-                <div class="cp-figure-cap">The four token layers and three platform modes, on one diagram.</div>
-                <div class="cp-figure">image · figma library structure</div>
-                <div class="cp-figure-cap">Figma library reorg: branches, iterations, navigation.</div>
             </article>
 
             <article class="cp-section" id="cp-sec-03">
-                <div class="cp-sec-num">03 — Pre-IPO</div>
-                <h2 class="cp-sec-title">The pre-IPO redesign</h2>
+                <div class="cp-sec-num">03 — Подход</div>
+                <h2 class="cp-sec-title">Разобраться в продукте с нуля</h2>
                 <div class="cp-sec-body">
-                    <p>Mid-rollout, leadership decided on a <strong>full redesign of the mobile and web apps</strong> — the company was preparing for IPO and the existing design had aged out.</p>
-                    <p>By that point the middle designer had left and we were down to two — me leading and a junior. I drove the redesign end-to-end and was the quality bar for everything that shipped.</p>
-                    <p>To ground decisions in data rather than assumptions, I built a feedback pipeline: ran user interviews and, in parallel, launched a custom analyzer for the Facebook community feed (see next section).</p>
+                    <p>Поскольку документации не было, я начал с интервью — с аналитиками, бизнесом, разработчиками. Восстанавливал логику продукта по кускам.</p>
+                    <p>Чтобы валидировать понимание, собрал <strong>Product Flow Diagram</strong> — end-to-end карту со всеми флоу, ветвлениями по бизнес-правилам (Primary Flow для долгов &gt; $7500, Secondary для меньших) и состояниями пользователя на каждом этапе. Это стало <em>первым в компании единым источником правды</em>.</p>
                 </div>
-                <div class="cp-figure">image · before / after key screens</div>
-                <div class="cp-figure-cap">Before / after of key screens from the redesign.</div>
+            </article>
+        </div>
+
+        <!-- Full-bleed Product Flow with horizontal pan -->
+        <figure class="cp-fullbleed">
+            <div class="cp-pan">
+                <img src="showcase/cs01/high-level.png" alt="Product Flow Diagram — end-to-end карта продукта">
+            </div>
+            <figcaption class="cp-pan-caption"><b>↔</b> Product Flow Diagram. Перетащи мышкой / drag — диаграмма скроллится в полную ширину.</figcaption>
+        </figure>
+
+        <div class="cp-inner">
+            <article class="cp-section">
+                <div class="cp-sec-body">
+                    <p>Параллельно — аудит макетов и реальной сборки приложений (поставил тестовые билды, прошёл флоу сам). Опирался на здравый смысл, продуктовый опыт и UX best practices. Часть проблем была очевидной: где-то не хватало информации, где-то запутывали пользователя, где-то некорректно показывали данные, где-то не давали прозрачности по платежам. <em>Проблем накопилось много.</em></p>
+                </div>
             </article>
 
             <article class="cp-section" id="cp-sec-04">
-                <div class="cp-sec-num">04 — Tools</div>
-                <h2 class="cp-sec-title">Vibecoding: custom tools to back decisions</h2>
+                <div class="cp-sec-num">04 — Система</div>
+                <h2 class="cp-sec-title">Дизайн-система для трёх платформ</h2>
                 <div class="cp-sec-body">
-                    <p><strong>Facebook community analyzer.</strong> I wrote a scraper that pulled every post and comment from Americor's Facebook community, then ran each message through an LLM that classified <em>topic</em> (UX, support, a specific feature) and <em>sentiment</em> (complaint, gratitude, request, frustration). On top of that I built a UI with filters by topic and sentiment — the team could surface problem areas in seconds and ground redesign decisions in real signal.</p>
-                    <p><strong>NSF Shortfall simulator.</strong> While designing a tricky shortfall-prediction feature for payment dates, I ran into gnarly business logic. I built an interactive simulator end-to-end myself — it let me reason through the mechanics, verify edge-case scenarios, and ship the design faster.</p>
+                    <p>Многоуровневая структура:</p>
+                    <ul>
+                        <li><strong>Root</strong> — базовые значения: цвета, отступы, типографика.</li>
+                        <li><strong>Semantic</strong> — семантический слой с осмысленными названиями токенов.</li>
+                        <li><strong>Brand</strong> — уровень брендов (для дочерних компаний с разной идентификацией).</li>
+                        <li><strong>Три режима</strong>: Web, iOS, Android — управление из одного места.</li>
+                    </ul>
+                    <p>Параллельно реорганизовал структуру в Figma: итерации, ветки для разработки, понятная навигация. Покомпонентно раскатывали на текущие приложения вместе с командами разработки — покрыли <strong>~50–60% интерфейсов</strong>.</p>
                 </div>
-                <div class="cp-figure">image · feedback analyzer UI (filters by topic + sentiment)</div>
-                <div class="cp-figure-cap">Feedback analyzer — filters by topic and sentiment.</div>
-                <div class="cp-figure">image · NSF shortfall simulator</div>
-                <div class="cp-figure-cap">Simulator for shortfall business logic on payment dates.</div>
             </article>
 
             <article class="cp-section" id="cp-sec-05">
-                <div class="cp-sec-num">05 — Shift</div>
-                <h2 class="cp-sec-title">Code-first: live prototypes instead of mockups</h2>
+                <div class="cp-sec-num">05 — Редизайн</div>
+                <h2 class="cp-sec-title">IPO и адаптация дизайн-системы</h2>
                 <div class="cp-sec-body">
-                    <p>In the final stretch (~3 months) I moved the entire design process to <strong>code-first</strong>: rebuilt every app screen — including the responsive set — as a real React app. Alongside it lived a Storybook where every component shipped from. The interface was assembled from those components, end of story.</p>
-                    <p>I built new features almost entirely in code with Claude, then <em>generated Figma components from the finished code</em> for engineering handoff. Hypotheses were captured and tested on a real, working prototype — not static mockups.</p>
-                    <p>It flipped the process: from <strong>"design → handoff → dev"</strong> to <strong>"prototype in code → validate → hand over ready components."</strong></p>
+                    <p>Через ~3 месяца работы пришёл бизнес: компания готовится к IPO, нужен полный редизайн. Ситуация нетривиальная — система, спроектированная под существующий дизайн, должна была начать поддерживать новый.</p>
+                    <p>Сначала это коснулось веб-приложения, потом — мобильных. Архитектура (root → semantic → brand с тремя режимами) была заложена достаточно гибко, чтобы обновлять её на лету, не ломая уже сделанного. <em>Это был один из моментов, где правильно выбранная изначальная архитектура окупилась многократно.</em></p>
+                    <p>Главная продуктовая находка — <em>разделение опыта на фазы программы</em>. Раньше клиент в разных фазах видел один и тот же UI, хотя его контекст и потребности радикально менялись. Я спроектировал систему фаз и отдельные интерфейсные состояния для каждой.</p>
+                    <p>Middle-дизайнер к моменту начала редизайна ушла. Мы работали вдвоём с junior-дизайнером — я вёл редизайн, контролировал качество, менторил.</p>
                 </div>
-                <div class="cp-figure">image · live React prototype + Storybook side-by-side</div>
-                <div class="cp-figure-cap">Live React prototype and Storybook components — one source of truth.</div>
-                <div class="cp-figure">image · code → figma reverse pipeline</div>
-                <div class="cp-figure-cap">Reverse pipeline: components from code into Figma for handoff.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-06">
+                <div class="cp-sec-num">06 — Tools</div>
+                <h2 class="cp-sec-title">Vibe-coded инструменты для решений на данных</h2>
+                <div class="cp-sec-body">
+                    <p><strong>Facebook Community Analyzer.</strong> Кроме интервью, ценный источник данных — пользовательская активность в Facebook-группе компании. Я написал на vibe-code приложение, которое парсило все посты и комментарии (<strong>~80 000 сообщений</strong>), прогоняло каждое через нейросеть для определения темы (UX, поддержка, конкретная фича) и сентимента, и отдавало UI с фильтрацией. Команда смотрела на проблемные области в секунды и опиралась на реальный сигнал.</p>
+                    <p><strong>NSF Shortfall Simulator.</strong> При проектировании сложной фичи прогнозирования shortfall для платёжных дат столкнулся с запутанной бизнес-логикой. Самостоятельно собрал интерактивный симулятор, который помог разобраться в механике, верифицировать сценарии и ускорить проектирование.</p>
+                    <p>Оба инструмента стали постоянной частью рабочего процесса команды — не только для дизайна.</p>
+                </div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-07">
+                <div class="cp-sec-num">07 — Shift</div>
+                <h2 class="cp-sec-title">Code-first процесс и раздел Community</h2>
+                <div class="cp-sec-body">
+                    <p>На финальном этапе — последний крупный проект, раздел <strong>Community</strong>. Группу на Facebook заблокировали, и мы решили построить аналог Reddit/Facebook внутри приложения. Поскольку это была фича с нуля, я попробовал на ней новый подход.</p>
+                    <p>Базовый макет собрал в Figma, дальше попросил Claude собрать React-приложение с компонентами в Storybook во всех состояниях. Развитие продолжалось в коде: продуктовые гипотезы вшивались прямо в прототип — через иконку шестерёнки переключались варианты, сравнивались side-by-side.</p>
+                    <p>Когда решение было готово, я просил Claude сгенерировать Figma-компоненты для разработчиков и тестировщиков (они работали в своём стеке) — в наших токенах, шрифтах, дизайн-системе. <em>Передача проходила без расхождений.</em></p>
+                    <p>Процесс перевернулся: вместо «дизайн → передача → разработка» стало <strong>«прототип в коде → валидация на работающем продукте → передача готовых компонентов»</strong>.</p>
+                </div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-08">
+                <div class="cp-sec-num">08 — Итоги</div>
+                <h2 class="cp-sec-title">Метрики и решения</h2>
+                <div class="cp-sec-body">
+                    <ul>
+                        <li><strong>NPS: 45 → 78</strong> · <strong>CSAT: 3.6 → 4.5</strong> (5-балльная шкала)</li>
+                        <li>Onboarding completion вырос (точная цифра — TBD).</li>
+                        <li>Премия команде по итогам редизайна.</li>
+                        <li>Покрытие дизайн-системой: <strong>~50–60% интерфейсов</strong> переведены на новую систему.</li>
+                        <li>Единый визуальный язык для нескольких брендов компании.</li>
+                        <li>Скорость разработки: команды веб- и мобильной разработки отметили, что пропали недельные поиски актуальных компонентов.</li>
+                        <li>Систематизация обратной связи: <strong>80&nbsp;000+</strong> обработанных сообщений из Facebook-группы стали базой решений по редизайну.</li>
+                    </ul>
+                </div>
             </article>
 
         </div>
-
-        <section class="cp-gallery" aria-label="Visual gallery">
-            <div class="cp-gallery-head">
-                <div class="cp-gallery-label">// gallery</div>
-                <h3 class="cp-gallery-title">Visual selection</h3>
-                <p class="cp-gallery-hint">Drop screenshots of the system, redesign frames and tools here — they'll tile across the full width.</p>
-            </div>
-            <div class="cp-gallery-grid" id="cp-gallery-grid-cs01">
-                <div class="cp-gallery-tile">image · slot 01</div>
-                <div class="cp-gallery-tile">image · slot 02</div>
-                <div class="cp-gallery-tile">image · slot 03</div>
-                <div class="cp-gallery-tile">image · slot 04</div>
-                <div class="cp-gallery-tile">image · slot 05</div>
-                <div class="cp-gallery-tile">image · slot 06</div>
-                <div class="cp-gallery-tile">image · slot 07</div>
-                <div class="cp-gallery-tile">image · slot 08</div>
-                <div class="cp-gallery-tile">image · slot 09</div>
-            </div>
-        </section>
     </section>
 
 
@@ -11175,6 +11344,36 @@ See also: Health Samurai Lab: Game of Pools.`,
             }, true);
 
             window.__vibeTerm = { open, close };
+        })();
+    </script>
+
+    <!-- cp-pan drag-to-scroll: full-bleed horizontal-scroll figures (diagrams). -->
+    <script>
+        (() => {
+            document.querySelectorAll('.cp-pan').forEach(pan => {
+                let down = false, startX = 0, startScroll = 0;
+                pan.addEventListener('mousedown', (e) => {
+                    down = true;
+                    startX = e.pageX;
+                    startScroll = pan.scrollLeft;
+                    e.preventDefault();
+                });
+                pan.addEventListener('mousemove', (e) => {
+                    if (!down) return;
+                    pan.scrollLeft = startScroll - (e.pageX - startX);
+                });
+                const stop = () => { down = false; };
+                pan.addEventListener('mouseup', stop);
+                pan.addEventListener('mouseleave', stop);
+                window.addEventListener('blur', stop);
+                // Wheel: convert vertical wheel to horizontal scroll for trackpads
+                pan.addEventListener('wheel', (e) => {
+                    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                        pan.scrollLeft += e.deltaY;
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+            });
         })();
     </script>
 
