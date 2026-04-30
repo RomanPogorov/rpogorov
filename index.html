@@ -16601,9 +16601,11 @@ See also: Health Samurai Lab: Game of Pools.`,
             return s;
         }
 
-        // Mount bg.mp4 as VideoTexture on a far plane behind the wireframe scene.
-        // Postprocessing thus cuts through the video too.
+        // Mount bg.mp4 as scene.background — Three renders it as a full-screen
+        // quad regardless of camera position, so the video shows entirely
+        // (tower at top stays visible). Postprocessing still cuts through it.
         function VideoBackdrop() {
+            const { scene } = useThree();
             const texture = useMemo(() => {
                 const v = document.createElement('video');
                 v.src = 'bg.mp4';
@@ -16619,12 +16621,12 @@ See also: Health Samurai Lab: Game of Pools.`,
                 tex.colorSpace = SRGBColorSpace;
                 return tex;
             }, []);
-            return (
-                <mesh position={[0, 0, -40]} renderOrder={-1}>
-                    <planeGeometry args={[160, 90]} />
-                    <meshBasicMaterial map={texture} toneMapped={false} depthWrite={false} fog={false} />
-                </mesh>
-            );
+            useEffect(() => {
+                const prev = scene.background;
+                scene.background = texture;
+                return () => { scene.background = prev; };
+            }, [scene, texture]);
+            return null;
         }
 
         // Tron-style ground grid drifting forward in z.
@@ -16734,29 +16736,6 @@ See also: Health Samurai Lab: Game of Pools.`,
             );
         }
 
-        // Sceneo content faded by signal. Wireframes/orb/stars are invisible
-        // at signal=1 (clean cityscape only), come in as signal drops.
-        function SceneShapes() {
-            const signal = useSignal();
-            const inv = 1 - signal;
-            // Fade wireframes in across mid->low band (start visible from ~0.7).
-            const wfOp = Math.max(0, Math.min(0.85, (0.7 - signal) * 2.5));
-            return (
-                <>
-                    {wfOp > 0.01 && (
-                        <>
-                            <CoreOrb opacity={wfOp} />
-                            <FloatingShape position={[-4, 0.5, -3]}  scale={0.9}  speed={1.0} opacity={wfOp} />
-                            <FloatingShape position={[ 4, 1.0, -4]}  scale={1.2}  speed={0.8} opacity={wfOp} />
-                            <FloatingShape position={[ 4, -1.5, -2]} scale={0.7}  speed={1.4} opacity={wfOp} />
-                            <FloatingShape position={[-3.5, 2.2, -2]} scale={0.55} speed={1.6} opacity={wfOp} />
-                            <FloatingShape position={[-4.5, -1.0, -3]} scale={0.45} speed={1.2} opacity={wfOp} />
-                        </>
-                    )}
-                </>
-            );
-        }
-
         function App() {
             useEffect(() => {
                 document.body.classList.add('r3f-active');
@@ -16766,16 +16745,11 @@ See also: Health Samurai Lab: Game of Pools.`,
                 <Canvas
                     gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
                     dpr={[1, 1.5]}
-                    camera={{ position: [0, 1.2, 8], fov: 60 }}
+                    camera={{ position: [0, 0, 5], fov: 60 }}
                 >
-                    <color attach="background" args={['#050708']} />
-                    <fog attach="fog" args={['#050708', 14, 36]} />
                     <ambientLight intensity={0.3} />
-
                     <VideoBackdrop />
-                    <CameraDance />
-                    <SceneShapes />
-
+                    {/* Step 2 will spawn polygons here as signal drops. */}
                     <Effects />
                 </Canvas>
             );
