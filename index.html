@@ -1129,7 +1129,7 @@
         /* TLDR */
         .cp-tldr {
             margin: 64px 0 80px;
-            padding: 30px 36px 32px;
+            padding: 32px 36px 36px;
             background: rgba(var(--acc-rgb),0.05);
             border-left: 2px solid var(--acc);
         }
@@ -1139,7 +1139,29 @@
             text-transform: uppercase;
             color: var(--acc);
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+        }
+        .cp-tldr-lead {
+            color: var(--ink);
+            opacity: 0.94;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0 0 16px;
+        }
+        .cp-tldr-note {
+            color: var(--ink);
+            opacity: 0.78;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            margin: 0;
+            padding-top: 14px;
+            border-top: 1px solid rgba(var(--acc-rgb), 0.12);
+        }
+        .cp-tldr-lead em,
+        .cp-tldr-note em {
+            color: var(--acc);
+            font-style: normal;
+            font-weight: 500;
         }
         .cp-tldr ul { list-style: none; padding: 0; margin: 0; }
         .cp-tldr li {
@@ -1996,14 +2018,18 @@
         .am-metrics {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            margin-top: 22px;
+            gap: 16px;
+            margin-top: 24px;
         }
         .am-metric {
             border: 1px solid rgba(var(--acc-rgb), 0.22);
             background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.06) 0%, rgba(var(--acc-rgb), 0) 100%);
-            padding: 16px 18px;
+            padding: 20px 22px;
             position: relative;
+            min-height: 116px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .am-metric::before {
             content: '';
@@ -2019,23 +2045,35 @@
             letter-spacing: 0.32em;
             text-transform: uppercase;
             color: rgba(255,255,255,0.55);
-            margin-bottom: 10px;
+            margin-bottom: 14px;
         }
         .am-metric-vals {
             display: flex;
             align-items: baseline;
-            gap: 8px;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-feature-settings: 'tnum' 1;
+        }
+        .am-metric-was {
+            color: rgba(255,255,255,0.4);
+            font-size: 1.125rem;
+            font-weight: 500;
+            text-decoration: line-through;
             font-family: 'Orbitron', sans-serif;
         }
-        .am-metric-was { color: rgba(255,255,255,0.45); font-size: 1rem; text-decoration: line-through; }
-        .am-metric-arrow { color: var(--acc); font-size: 0.875rem; }
+        .am-metric-arrow {
+            color: var(--acc);
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
         .am-metric-now {
             color: var(--acc);
-            font-size: 1.625rem;
+            font-size: 1.75rem;
             font-weight: 600;
-            text-shadow: 0 0 12px rgba(var(--acc-rgb), 0.5);
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 12px rgba(var(--acc-rgb), 0.4);
+            letter-spacing: 0.01em;
         }
-        .am-metric-now.txt { font-size: 1rem; color: var(--ink); text-shadow: none; }
 
         /* MediaBlock — image / video / iframe + caption + click-to-lightbox */
         .am-media {
@@ -7454,9 +7492,9 @@
             <!-- TL;DR -->
             <div class="cp-tldr">
                 <div class="cp-tldr-label">// TL;DR</div>
-                <p style="color: var(--ink); opacity: 0.92;">За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на <em>code-first</em> подход.</p>
-                <p style="color: var(--ink); opacity: 0.86; font-size: 0.875rem;">Ключевая продуктовая находка — <em>разделение опыта на фазы программы</em>: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.</p>
-                <div class="am-metrics" style="margin-top: 22px;">
+                <p class="cp-tldr-lead">За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на <em>code-first</em> подход.</p>
+                <p class="cp-tldr-note">Ключевая продуктовая находка — <em>разделение опыта на фазы программы</em>: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.</p>
+                <div class="am-metrics">
                     <div class="am-metric">
                         <div class="am-metric-label">NPS</div>
                         <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
@@ -7467,7 +7505,7 @@
                     </div>
                     <div class="am-metric">
                         <div class="am-metric-label">DS coverage</div>
-                        <div class="am-metric-vals"><span class="am-metric-now txt">▲ 50–60%</span></div>
+                        <div class="am-metric-vals"><span class="am-metric-was">0%</span><span class="am-metric-arrow">→</span><span class="am-metric-now">50–60%</span></div>
                     </div>
                 </div>
             </div>
