@@ -279,6 +279,55 @@
             0%, 100% { filter: drop-shadow(0 0 4px rgba(var(--acc-rgb), 0.5)); }
             50%      { filter: drop-shadow(0 0 12px rgba(var(--acc-rgb), 0.95)); }
         }
+        /* Burn-pulse variant that ALSO applies SVG distortion at signal=low. */
+        @keyframes grid-burn-pulse-low {
+            0%, 100% { filter: drop-shadow(0 0 6px rgba(var(--acc-rgb), 0.7)) url(#grid-distort); }
+            50%      { filter: drop-shadow(0 0 18px rgba(var(--acc-rgb), 1)) url(#grid-distort); }
+        }
+        /* Grid crackle — micro-jitter / skew / scale steps so the grid
+           visibly trembles, lags, and twists. Two intensity tiers. */
+        @keyframes grid-crackle-mid {
+            0%, 100% { transform: translate(0, 0); }
+            12% { transform: translate(-1px, 0)    skewX(0.2deg); }
+            25% { transform: translate(2px, -1px); }
+            37% { transform: translate(0, 1px)     scaleX(1.004); }
+            50% { transform: translate(-1px, 0)    skewY(-0.15deg); }
+            62% { transform: translate(1px, 1px); }
+            75% { transform: translate(-2px, -1px) skewX(-0.2deg); }
+            87% { transform: translate(1px, 0)     scaleY(0.998); }
+        }
+        @keyframes grid-crackle-low {
+            0%, 100% { transform: translate(0, 0);                   opacity: 1; }
+            7%   { transform: translate(-5px, 2px)   skewX(0.7deg);   opacity: 0.4; }
+            14%  { transform: translate(4px, -3px)   skewY(-0.5deg);  opacity: 1; }
+            21%  { transform: translate(-3px, 1px)   scaleX(1.018);   opacity: 0.7; }
+            28%  { transform: translate(0, 0); }
+            36%  { transform: translate(6px, 2px)    skewX(-0.6deg);  opacity: 1; }
+            42%  { transform: translate(-4px, -2px); opacity: 0.3; }
+            50%  { transform: translate(0, 1px)      scale(0.985);    opacity: 1; }
+            57%  { transform: translate(3px, 0)      skewY(0.5deg); }
+            64%  { transform: translate(-5px, -1px); }
+            71%  { transform: translate(0, 2px)      scaleX(1.014);   opacity: 0.55; }
+            79%  { transform: translate(2px, 0); }
+            86%  { transform: translate(-3px, 1px)   skewY(-0.4deg);  opacity: 1; }
+            93%  { transform: translate(1px, -1px); }
+        }
+        body[data-sim-state="mid"] .layer-grid-burn,
+        body[data-sim-state="mid"] .grid {
+            animation:
+                grid-burn-pulse 0.9s ease-in-out infinite,
+                grid-crackle-mid 0.34s steps(8, end) infinite;
+        }
+        body[data-sim-state="low"] .layer-grid-burn {
+            animation:
+                grid-burn-pulse-low 0.45s ease-in-out infinite,
+                grid-crackle-low 0.2s steps(10, end) infinite;
+        }
+        body[data-sim-state="low"] .grid {
+            animation:
+                grid-crackle-low 0.18s steps(10, end) infinite;
+            filter: url(#grid-distort);
+        }
         /* Random horizontal tear-bars — JS-spawned, RGB-split look, brief flicker. */
         .layer-tear {
             position: fixed;
@@ -9624,6 +9673,13 @@
                 <animate attributeName="baseFrequency" values="0.04;0.08;0.05;0.04" dur="1.2s" repeatCount="indefinite"/>
             </feTurbulence>
             <feDisplacementMap in="SourceGraphic" scale="40" />
+        </filter>
+        <filter id="grid-distort">
+            <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="11">
+                <animate attributeName="seed" values="11;27;5;19;33;11" dur="1.4s" repeatCount="indefinite"/>
+                <animate attributeName="baseFrequency" values="0.014;0.024;0.018;0.014" dur="2.6s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" scale="8" />
         </filter>
     </svg>
 
