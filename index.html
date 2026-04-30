@@ -3235,6 +3235,8 @@
         .hs-grid-cards {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(200px, auto);
+            grid-auto-flow: dense;
             gap: 16px;
         }
         .hs-grid-card {
@@ -3249,11 +3251,73 @@
             color: inherit;
             cursor: pointer;
             transition: border-color 0.18s, transform 0.18s, background 0.18s;
+            position: relative;
+            overflow: hidden;
         }
         .hs-grid-card:hover {
             border-color: var(--hs-red);
             transform: translateY(-2px);
             background: linear-gradient(180deg, var(--hs-bg-elev), rgba(var(--hs-red-rgb), 0.04));
+        }
+        /* Feature cards (bento headliners): span 2x2 cells, larger title, extra stat strip. */
+        .hs-grid-card.is-feature {
+            grid-column: span 2;
+            grid-row: span 2;
+            padding: 28px 28px 30px;
+            background: linear-gradient(135deg, var(--hs-bg-elev) 0%, rgba(var(--hs-red-rgb), 0.06) 100%);
+        }
+        .hs-grid-card.is-feature::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(var(--hs-red-rgb), 0.18), rgba(var(--hs-red-rgb), 0));
+            pointer-events: none;
+        }
+        .hs-grid-card.is-feature .hs-grid-card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+        }
+        .hs-grid-card.is-feature .hs-grid-card-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+        .hs-grid-card.is-feature .hs-grid-card-title {
+            font-size: clamp(1.375rem, 2vw, 1.75rem);
+            line-height: 1.2;
+            min-height: 0;
+            margin-top: 4px;
+        }
+        .hs-grid-card.is-feature .hs-grid-card-desc {
+            font-size: 0.9375rem;
+            margin-top: 6px;
+        }
+        .hs-grid-card-stat {
+            margin-top: auto;
+            padding-top: 14px;
+            border-top: 1px solid var(--hs-border);
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+        .hs-grid-card-stat-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--hs-red);
+            letter-spacing: -0.01em;
+            line-height: 1;
+        }
+        .hs-grid-card-stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--hs-text-muted);
         }
         .hs-grid-card-icon {
             width: 40px;
@@ -3299,13 +3363,20 @@
         }
         @media (max-width: 1100px) {
             .hs-grid-cards { grid-template-columns: repeat(3, 1fr); }
+            .hs-grid-card.is-feature { grid-column: span 2; grid-row: span 2; }
         }
         @media (max-width: 800px) {
             .hs-grid-cards { grid-template-columns: repeat(2, 1fr); }
+            .hs-grid-card.is-feature { grid-column: span 2; grid-row: span 1; padding: 22px 22px 24px; }
+            .hs-grid-card.is-feature .hs-grid-card-icon { width: 40px; height: 40px; }
+            .hs-grid-card.is-feature .hs-grid-card-icon svg { width: 20px; height: 20px; }
+            .hs-grid-card.is-feature .hs-grid-card-title { font-size: 1.125rem; }
+            .hs-grid-card.is-feature .hs-grid-card-desc { font-size: 0.8125rem; }
             .hs-grid-overview { padding: 0 24px 56px; }
         }
         @media (max-width: 480px) {
             .hs-grid-cards { grid-template-columns: 1fr; }
+            .hs-grid-card.is-feature { grid-column: span 1; }
         }
 
         @media (max-width: 980px) {
@@ -8842,13 +8913,17 @@
                 <p class="hs-grid-sub">Click any card to jump to the full subcase below — design system, content infrastructure, product redesigns, brand work, and proof artifacts.</p>
             </div>
             <div class="hs-grid-cards">
-                <a class="hs-grid-card" href="#hs-01" data-grid-target="hs-01">
+                <a class="hs-grid-card is-feature" href="#hs-01" data-grid-target="hs-01">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="12" y="2" width="6" height="6" rx="1"/><rect x="2" y="12" width="6" height="6" rx="1"/><rect x="12" y="12" width="6" height="6" rx="1"/></svg>
                     </div>
                     <div class="hs-grid-card-meta">01 · <strong>System</strong></div>
                     <h3 class="hs-grid-card-title">Design system: Figma to Storybook</h3>
-                    <p class="hs-grid-card-desc">Multi-layer DS on shadCN, semantic tokens, bidirectional sync.</p>
+                    <p class="hs-grid-card-desc">Multi-layer DS on shadCN — semantic tokens, custom states, code as source of truth, Figma as representation. Bidirectional sync via custom Claude skill.</p>
+                    <div class="hs-grid-card-stat">
+                        <span class="hs-grid-card-stat-value">All teams</span>
+                        <span class="hs-grid-card-stat-label">use it in production</span>
+                    </div>
                 </a>
                 <a class="hs-grid-card" href="#hs-02" data-grid-target="hs-02">
                     <div class="hs-grid-card-icon">
@@ -8858,13 +8933,17 @@
                     <h3 class="hs-grid-card-title">Figma ↔ Code mapping skill</h3>
                     <p class="hs-grid-card-desc">Custom Claude skill, 70–80% accuracy first run, iteratively improved.</p>
                 </a>
-                <a class="hs-grid-card" href="#hs-03" data-grid-target="hs-03">
+                <a class="hs-grid-card is-feature" href="#hs-03" data-grid-target="hs-03">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="16" height="14" rx="1"/><line x1="2" y1="7" x2="18" y2="7"/><line x1="9" y1="7" x2="9" y2="17"/></svg>
                     </div>
                     <div class="hs-grid-card-meta">03 · <strong>Process</strong></div>
                     <h3 class="hs-grid-card-title">Landing platform &amp; AI pipeline</h3>
-                    <p class="hs-grid-card-desc">3 months → 2–3 days. The site you're on runs on it.</p>
+                    <p class="hs-grid-card-desc">From a 3-month chain to MD-in / brand-styled-out in 2–3 days. Block library, "Fixik" DOM-aware Claude chat, blog and docs all run on the same engine. The site you're on runs on this.</p>
+                    <div class="hs-grid-card-stat">
+                        <span class="hs-grid-card-stat-value">3 mo → 2–3 d</span>
+                        <span class="hs-grid-card-stat-label">cycle time per landing</span>
+                    </div>
                 </a>
                 <a class="hs-grid-card" href="#hs-04" data-grid-target="hs-04">
                     <div class="hs-grid-card-icon">
@@ -8922,13 +9001,17 @@
                     <h3 class="hs-grid-card-title">Kudos generator</h3>
                     <p class="hs-grid-card-desc">Mascot-trained image gen, ~200 generations, daily use.</p>
                 </a>
-                <a class="hs-grid-card" href="#hs-11" data-grid-target="hs-11">
+                <a class="hs-grid-card is-feature" href="#hs-11" data-grid-target="hs-11">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 2 L4 11 L9 11 L8 18 L16 8 L11 8 Z"/></svg>
                     </div>
                     <div class="hs-grid-card-meta">11 · <strong>Proof</strong></div>
                     <h3 class="hs-grid-card-title">FireCamp app — vibe-coded production</h3>
-                    <p class="hs-grid-card-desc">1 week build, ~100 attendees, C-level proof point.</p>
+                    <p class="hs-grid-card-desc">Annual healthcare-IT gathering in Portugal — Microsoft &amp; industry leaders. Shipped a responsive web app in a week: voting, schedule, subscriptions. The proof point that convinced C-level the code-first approach was real.</p>
+                    <div class="hs-grid-card-stat">
+                        <span class="hs-grid-card-stat-value">1 wk · ~100</span>
+                        <span class="hs-grid-card-stat-label">build · attendees</span>
+                    </div>
                 </a>
                 <a class="hs-grid-card" href="#hs-12" data-grid-target="hs-12">
                     <div class="hs-grid-card-icon">
