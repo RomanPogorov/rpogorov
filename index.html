@@ -1054,15 +1054,14 @@
         .case-media img {
             width: 100%;
             height: 100%;
-            /* contain preserves the full image (no head zoom-in crop) */
-            object-fit: contain;
+            object-fit: cover;
+            object-position: top center;     /* keep header visible on tall screenshots */
             display: block;
             filter: contrast(1.05) saturate(0.95);
             transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1), filter 0.35s ease;
         }
-        /* Cover-mode for cards that need full-bleed crop (legacy). Default
-           behaviour above is contain. */
-        .case-media.is-bleed img { object-fit: cover; }
+        /* Contain mode for media that should never crop (e.g. illustrations). */
+        .case-media.is-contained img { object-fit: contain; }
         /* Image overlay scanlines for that CRT feel */
         .case-media::marker { content: none; }
 
