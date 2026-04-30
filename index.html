@@ -205,18 +205,8 @@
             mix-blend-mode: multiply;
         }
 
-        /* slow rolling band */
-        .scanlines::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(to bottom, transparent,
-                rgba(var(--acc-rgb), calc(0.05 + var(--sim-fall, 0) * 0.18)),
-                transparent);
-            animation: roll calc(9s - (1 - var(--sim-signal, 1)) * 4s) linear infinite;
-        }
+        /* (Removed the slow rolling green band — too cheesy, replaced by
+           interlace + periodic geometric tear in .layer-tear / page shift. */
 
         /* Amplified scanlines on the CITY (above video, below noise) — gets
            dense and bright as signal drops. Two layers: dense static scan
@@ -262,7 +252,7 @@
             inset: 0;
             pointer-events: none;
             z-index: 1;
-            opacity: calc(var(--sim-fall, 0) * 0.6);
+            opacity: calc(var(--sim-fall, 0) * 0.35);
             background-image:
                 linear-gradient(rgba(var(--acc-rgb), 0.55) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(var(--acc-rgb), 0.55) 1px, transparent 1px);
@@ -516,9 +506,45 @@
         }
         @media (prefers-reduced-motion: reduce) {
             .layer-scanlines-amp, .layer-grid-burn, .layer-holo-flicker,
-            .grid-glitch-cell, .tear-bar { animation: none; }
+            .grid-glitch-cell, .tear-bar, .layer-interlace { animation: none; }
             body[data-sim-state="low"] .stage video { animation: none; }
         }
+
+        /* Interlace — every-other-line dim overlay that pulses on/off in
+           rapid steps. Only fires at low signal. Replaces the cheesy walking
+           gradient with something that reads as a TV losing sync. */
+        .layer-interlace {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.55) 0px,
+                rgba(0, 0, 0, 0.55) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            mix-blend-mode: multiply;
+        }
+        body[data-sim-state="mid"] .layer-interlace {
+            animation: interlace-pulse 0.74s steps(4, end) infinite;
+        }
+        body[data-sim-state="low"] .layer-interlace {
+            animation: interlace-pulse 0.34s steps(5, end) infinite;
+        }
+        @keyframes interlace-pulse {
+            0%, 100% { opacity: 0; }
+            22%      { opacity: calc(var(--sim-fall, 0) * 1.6); }
+            44%      { opacity: 0; }
+            68%      { opacity: calc(var(--sim-fall, 0) * 0.9); }
+            85%      { opacity: 0; }
+        }
+
+        /* Geometric image shift on the bg — handled inside R3F by offsetting
+           the video texture in bursts (see VideoBackdrop). CSS layer here
+           reserved for future use. */
 
         /* SIGNAL slider — sits next to the settings cog in .corner.bl */
         .sim-signal {
@@ -640,7 +666,7 @@
             background-size: 80px 80px;
             mask-image: radial-gradient(ellipse at center, black 10%, transparent 75%);
             -webkit-mask-image: radial-gradient(ellipse at center, black 10%, transparent 75%);
-            opacity: 0.7;
+            opacity: 0.32;
             transition: opacity 0.8s ease, filter 0.8s ease;
             /* Slow drift — subtle wandering of the grid plane to make the bg feel alive. Pure transform, GPU-only. */
             animation: grid-drift 28s ease-in-out infinite;
@@ -9745,6 +9771,7 @@
     <div class="grid"></div>
     <div class="layer-grid-burn" aria-hidden="true"></div>
     <div class="layer-grid-interference" aria-hidden="true"></div>
+    <div class="layer-interlace" aria-hidden="true"></div>
     <div class="horizon"></div>
     <div class="noise"></div>
     <div class="scanlines"></div>
@@ -16602,9 +16629,11 @@ See also: Health Samurai Lab: Game of Pools.`,
         }
 
         // Mount bg.mp4 as scene.background — Three renders it as a full-screen
-        // quad regardless of camera position, so the video shows entirely
-        // (tower at top stays visible). Postprocessing still cuts through it.
+        // quad regardless of camera position, so the video shows entirely.
+        // Postprocessing cuts through it; signal also drives periodic
+        // geometric tear (texture.offset bursts) at low signal.
         function VideoBackdrop() {
+            const signal = useSignal();
             const { scene } = useThree();
             const texture = useMemo(() => {
                 const v = document.createElement('video');
@@ -16621,6 +16650,30 @@ See also: Health Samurai Lab: Game of Pools.`,
                 tex.colorSpace = SRGBColorSpace;
                 return tex;
             }, []);
+            // Burst state: when active, texture is shoved by some px-equivalent.
+            const burst = useRef({ until: 0, ox: 0, oy: 0 });
+            useFrame((state) => {
+                const t = state.clock.elapsedTime;
+                const inv = 1 - signal;
+                // Probability of firing a burst this frame, only above mid signal.
+                if (signal < 0.6 && t > burst.current.until) {
+                    if (Math.random() < 0.004 + inv * 0.025) {
+                        // Strong horizontal jump, occasionally vertical.
+                        const mag = 0.05 + inv * 0.18;
+                        burst.current.ox = (Math.random() - 0.5) * mag;
+                        burst.current.oy = (Math.random() < 0.3 ? (Math.random() - 0.5) * mag * 0.4 : 0);
+                        burst.current.until = t + 0.06 + Math.random() * 0.10;
+                    } else {
+                        burst.current.ox = 0;
+                        burst.current.oy = 0;
+                    }
+                } else if (t >= burst.current.until) {
+                    burst.current.ox = 0;
+                    burst.current.oy = 0;
+                }
+                texture.offset.x = burst.current.ox;
+                texture.offset.y = burst.current.oy;
+            });
             useEffect(() => {
                 const prev = scene.background;
                 scene.background = texture;
