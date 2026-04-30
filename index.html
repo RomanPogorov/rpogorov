@@ -2095,13 +2095,15 @@
             background: rgba(var(--acc-rgb), 0.18);
             box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.4);
         }
-        /* Fullscreen mode — true edge-to-edge overlay */
+        /* Fullscreen mode — true edge-to-edge overlay. JS moves .am-ba.is-fs
+           into <body> on toggle so it escapes the case-page stacking context. */
         body.am-ba-fs { overflow: hidden; }
-        body.am-ba-fs .am-ba.is-fs {
-            position: fixed;
-            inset: 0;
+        body > .am-ba.is-fs,
+        .am-ba.is-fs {
+            position: fixed !important;
+            inset: 0 !important;
             margin: 0;
-            z-index: 110;
+            z-index: 9999 !important;
             display: flex;
             flex-direction: column;
             background: #000;
@@ -2109,7 +2111,7 @@
             border: 0;
             box-shadow: none;
         }
-        body.am-ba-fs .am-ba.is-fs .am-ba-tabs {
+        .am-ba.is-fs .am-ba-tabs {
             position: absolute;
             top: 14px;
             left: 14px;
@@ -2117,11 +2119,11 @@
             z-index: 4;
             background: rgba(0, 0, 0, 0.55);
         }
-        body.am-ba-fs .am-ba.is-fs .am-ba-fullscreen {
+        .am-ba.is-fs .am-ba-fullscreen {
             top: 14px;
             right: 14px;
         }
-        body.am-ba-fs .am-ba.is-fs .am-ba-stage {
+        .am-ba.is-fs .am-ba-stage {
             flex: 1;
             width: 100%;
             height: 100%;
@@ -2129,14 +2131,7 @@
             border: 0;
             box-shadow: none;
         }
-        body.am-ba-fs::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 109;
-            pointer-events: none;
-        }
+        .am-ba.is-fs .am-ba-img { background: #000; }
         .am-ba-tabs {
             display: inline-flex;
             gap: 4px;
@@ -2212,12 +2207,19 @@
             opacity: 0.18;
             transition: opacity 0.35s ease;
         }
-        .am-ba-handle,
         .am-ba-label {
             opacity: 0.18;
-            transition: opacity 0.35s ease, transform 0.06s linear;
+            transition: opacity 0.35s ease;
         }
-        .am-ba-stage:hover .am-ba-handle,
+        .am-ba-handle {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.06s linear;
+        }
+        .am-ba-stage:hover .am-ba-handle {
+            opacity: 1;
+            pointer-events: auto;
+        }
         .am-ba-stage:hover .am-ba-label,
         .am-ba-stage:hover .am-ba-divider {
             opacity: 1;
@@ -11934,20 +11936,38 @@ See also: Health Samurai Lab: Game of Pools.`,
                     });
                 });
 
-                // Fullscreen toggle
+                // Fullscreen toggle. To escape every parent stacking context
+                // (case-page z:35, showcase z:7, etc.) we move the block into
+                // <body> when going fullscreen and put it back in its slot
+                // (via a placeholder) when collapsing.
                 const fsBtn = block.querySelector('[data-ba-fullscreen]');
+                let placeholder = null;
+                const enterFs = () => {
+                    placeholder = document.createComment('am-ba-placeholder');
+                    block.parentNode.insertBefore(placeholder, block);
+                    document.body.appendChild(block);
+                    block.classList.add('is-fs');
+                    document.body.classList.add('am-ba-fs');
+                    fsBtn && (fsBtn.textContent = 'Collapse');
+                };
+                const exitFs = () => {
+                    block.classList.remove('is-fs');
+                    document.body.classList.remove('am-ba-fs');
+                    if (placeholder && placeholder.parentNode) {
+                        placeholder.parentNode.replaceChild(block, placeholder);
+                        placeholder = null;
+                    }
+                    fsBtn && (fsBtn.textContent = 'Expand');
+                };
                 if (fsBtn) {
                     fsBtn.addEventListener('click', () => {
-                        const isFs = block.classList.toggle('is-fs');
-                        document.body.classList.toggle('am-ba-fs', isFs);
-                        fsBtn.textContent = isFs ? 'Collapse' : 'Expand';
+                        if (block.classList.contains('is-fs')) exitFs();
+                        else enterFs();
                     });
                     document.addEventListener('keydown', (e) => {
                         if (e.key === 'Escape' && block.classList.contains('is-fs')) {
                             e.stopImmediatePropagation();
-                            block.classList.remove('is-fs');
-                            document.body.classList.remove('am-ba-fs');
-                            fsBtn.textContent = 'Expand';
+                            exitFs();
                         }
                     }, true);
                 }
