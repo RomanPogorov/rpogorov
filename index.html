@@ -2622,6 +2622,297 @@
         }
         .am-todo-label { color: rgba(255, 200, 0, 0.95); font-weight: 700; margin-right: 8px; }
 
+        /* ============ AM TIMELINE — Gantt-style roadmap recap ============ */
+        .am-tl-bleed { padding: 8px clamp(20px, 4vw, 56px) 32px; }
+        .am-tl-frame {
+            position: relative;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            background:
+                linear-gradient(rgba(var(--acc-rgb), 0.04) 1px, transparent 1px) 0 0 / 100% 38px,
+                radial-gradient(ellipse at top right, rgba(var(--acc-rgb), 0.10), transparent 55%),
+                radial-gradient(ellipse at bottom left, rgba(var(--acc-rgb), 0.06), transparent 60%),
+                #060708;
+            padding: 28px 28px 26px;
+            box-shadow:
+                0 0 60px rgba(var(--acc-rgb), 0.10),
+                inset 0 0 80px rgba(var(--acc-rgb), 0.05);
+        }
+        /* HUD corner brackets */
+        .am-tl-frame::before,
+        .am-tl-frame::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--acc);
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.6);
+            pointer-events: none;
+        }
+        .am-tl-frame::before {
+            top: -1px; left: -1px;
+            border-right: 0;
+            border-bottom: 0;
+        }
+        .am-tl-frame::after {
+            bottom: -1px; right: -1px;
+            border-left: 0;
+            border-top: 0;
+        }
+        .am-tl-headstrip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+        .am-tl-stamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.85);
+        }
+        .am-tl-stamp b { color: #fff; font-weight: 600; }
+        .am-tl-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+        }
+        .am-tl-legend-item { display: inline-flex; align-items: center; gap: 8px; }
+        .am-tl-sw {
+            width: 22px;
+            height: 10px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .am-tl-sw--primary {
+            background: linear-gradient(135deg, var(--acc), color-mix(in srgb, var(--acc) 55%, white));
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.6);
+        }
+        .am-tl-sw--product {
+            background: rgba(var(--acc-rgb), 0.18);
+            border: 1px solid rgba(var(--acc-rgb), 0.5);
+        }
+        .am-tl-sw--bg {
+            background: repeating-linear-gradient(45deg,
+                rgba(255,255,255,0.05) 0 4px,
+                rgba(255,255,255,0.14) 4px 8px);
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+        .am-tl-sw--short {
+            background: transparent;
+            border: 1px dashed rgba(var(--acc-rgb), 0.7);
+        }
+
+        .am-tl-grid {
+            position: relative;
+            display: grid;
+            gap: 6px;
+        }
+        .am-tl-row {
+            display: grid;
+            grid-template-columns: clamp(180px, 18vw, 240px) 1fr;
+            align-items: stretch;
+            gap: 16px;
+            min-height: 38px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+            transition-delay: var(--am-tl-delay, 0ms);
+        }
+        .am-tl-grid.is-revealed .am-tl-row { opacity: 1; transform: translateY(0); }
+        .am-tl-row--head {
+            min-height: 30px;
+            opacity: 1;
+            transform: none;
+            margin-bottom: 4px;
+        }
+        .am-tl-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8125rem;
+            line-height: 1.3;
+            color: rgba(255,255,255,0.88);
+        }
+        .am-tl-dot {
+            width: 6px; height: 6px;
+            background: var(--acc);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.85);
+            flex-shrink: 0;
+        }
+        .am-tl-name {
+            flex: 1;
+            min-width: 0;
+        }
+        .am-tl-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.2em;
+            color: rgba(var(--acc-rgb), 0.6);
+            flex-shrink: 0;
+        }
+        .am-tl-track {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(var(--am-tl-cols, 8), 1fr);
+            background:
+                linear-gradient(90deg, rgba(var(--acc-rgb), 0.13) 1px, transparent 1px) 0 0 / calc(100% / var(--am-tl-cols, 8)) 100%;
+            border-left: 1px solid rgba(var(--acc-rgb), 0.18);
+            border-right: 1px solid rgba(var(--acc-rgb), 0.13);
+            min-height: 30px;
+        }
+        .am-tl-row--head .am-tl-track {
+            background: none;
+            border: 0;
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.28);
+        }
+        .am-tl-quarter {
+            grid-column: var(--c) / span 1;
+            padding: 6px 10px 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 1px solid rgba(var(--acc-rgb), 0.13);
+        }
+        .am-tl-quarter:first-child { border-left: 0; }
+        .am-tl-quarter.is-now {
+            color: var(--acc);
+            text-shadow: 0 0 12px rgba(var(--acc-rgb), 0.7);
+        }
+        .am-tl-now {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            background: var(--acc);
+            color: #050505;
+            font-weight: 700;
+            font-size: 0.5625rem;
+            letter-spacing: 0.22em;
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.75);
+            animation: am-tl-pulse 2.4s ease-in-out infinite;
+        }
+        @keyframes am-tl-pulse {
+            0%, 100% { box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.55); }
+            50%      { box-shadow: 0 0 18px rgba(var(--acc-rgb), 0.95); }
+        }
+        .am-tl-bar {
+            grid-column: var(--s) / calc(var(--e) + 1);
+            align-self: center;
+            margin: 4px 4px;
+            padding: 6px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: default;
+            position: relative;
+            transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+        }
+        .am-tl-bar:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.18);
+            z-index: 2;
+        }
+        .am-tl-bar--primary {
+            background: linear-gradient(135deg, var(--acc), color-mix(in srgb, var(--acc) 55%, white));
+            color: #050505;
+            font-weight: 700;
+            box-shadow:
+                0 0 14px rgba(var(--acc-rgb), 0.45),
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 0 rgba(0,0,0,0.2);
+        }
+        .am-tl-bar--product {
+            background: rgba(var(--acc-rgb), 0.16);
+            border: 1px solid rgba(var(--acc-rgb), 0.5);
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.4);
+        }
+        .am-tl-bar--bg {
+            background: repeating-linear-gradient(45deg,
+                rgba(255,255,255,0.04) 0 5px,
+                rgba(255,255,255,0.10) 5px 10px);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: rgba(255,255,255,0.72);
+            font-weight: 500;
+        }
+        .am-tl-bar--short {
+            background: transparent;
+            border: 1px dashed rgba(var(--acc-rgb), 0.75);
+            color: var(--acc);
+            font-weight: 600;
+        }
+        .am-tl-bar--planned {
+            background: transparent;
+            border: 1px dashed rgba(255,255,255,0.35);
+            color: rgba(255,255,255,0.55);
+        }
+
+        /* "now" vertical scan-line over the whole grid (column 8 / 8) */
+        .am-tl-grid::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            bottom: 0;
+            left: calc(clamp(180px, 18vw, 240px) + 16px + (100% - clamp(180px, 18vw, 240px) - 16px) * 7 / 8);
+            width: 1px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(var(--acc-rgb), 0.55) 12%,
+                rgba(var(--acc-rgb), 0.55) 88%,
+                transparent);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.5);
+            pointer-events: none;
+        }
+        .am-tl-foot {
+            margin-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+        }
+        .am-tl-foot b { color: var(--acc); font-weight: 500; }
+
+        @media (max-width: 880px) {
+            .am-tl-bleed { padding: 8px 0 24px; }
+            .am-tl-frame {
+                padding: 22px 0 22px;
+                border-left: 0;
+                border-right: 0;
+            }
+            .am-tl-headstrip { padding: 0 18px; }
+            .am-tl-foot { padding: 0 18px; }
+            .am-tl-grid {
+                overflow-x: auto;
+                padding: 0 18px;
+                scrollbar-width: thin;
+                scrollbar-color: rgba(var(--acc-rgb), 0.5) transparent;
+            }
+            .am-tl-grid::after { display: none; }
+            .am-tl-row { min-width: 880px; }
+        }
+
         /* ============ LIGHTBOX — fullscreen viewer ============ */
         .am-lightbox {
             position: fixed;
@@ -3741,6 +4032,294 @@
             .cp-stat-row { gap: 10px; }
         }
 
+        /* ============ HS TIMELINE — Gantt-style roadmap (cs02 visual language) ============ */
+        .hs-timeline-wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 64px 64px;
+        }
+        .hs-tl-head {
+            margin-bottom: 24px;
+        }
+        .hs-tl-head .hs-eyebrow { margin: 0 0 16px; }
+        .hs-tl-h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+            font-weight: 700;
+            line-height: 1.18;
+            letter-spacing: -0.012em;
+            color: var(--hs-text);
+            margin: 0 0 12px;
+        }
+        .hs-tl-h2 em { color: var(--hs-red); font-style: normal; }
+        .hs-tl-sub {
+            font-size: 1rem;
+            line-height: 1.55;
+            color: var(--hs-text-secondary);
+            max-width: 60ch;
+            margin: 0;
+        }
+
+        .hs-tl-card {
+            position: relative;
+            background: var(--hs-bg-elev);
+            border: 1px solid var(--hs-border);
+            border-radius: 8px;
+            padding: 28px 28px 26px;
+            overflow: hidden;
+        }
+        .hs-tl-card::before {
+            /* Soft red top gradient — restrained, not glowing */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(var(--hs-red-rgb), 0.55) 30%,
+                rgba(var(--hs-red-rgb), 0.55) 70%,
+                transparent 100%);
+            pointer-events: none;
+        }
+
+        .hs-tl-headstrip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--hs-border);
+        }
+        .hs-tl-stamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--hs-text-muted);
+        }
+        .hs-tl-stamp b { color: var(--hs-red); font-weight: 600; }
+        .hs-tl-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 22px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: var(--hs-text-secondary);
+        }
+        .hs-tl-legend-item { display: inline-flex; align-items: center; gap: 8px; }
+        .hs-tl-sw {
+            width: 22px;
+            height: 10px;
+            display: inline-block;
+            flex-shrink: 0;
+            border-radius: 2px;
+        }
+        .hs-tl-sw--primary {
+            background: var(--hs-red);
+        }
+        .hs-tl-sw--product {
+            background: rgba(var(--hs-red-rgb), 0.14);
+            border: 1px solid rgba(var(--hs-red-rgb), 0.45);
+        }
+        .hs-tl-sw--bg {
+            background: repeating-linear-gradient(45deg,
+                rgba(255,255,255,0.04) 0 4px,
+                rgba(255,255,255,0.10) 4px 8px);
+            border: 1px solid var(--hs-border-strong);
+        }
+        .hs-tl-sw--short {
+            background: transparent;
+            border: 1px dashed rgba(var(--hs-red-rgb), 0.7);
+        }
+
+        .hs-tl-grid {
+            position: relative;
+            display: grid;
+            gap: 6px;
+        }
+        .hs-tl-row {
+            display: grid;
+            grid-template-columns: clamp(180px, 18vw, 240px) 1fr;
+            align-items: stretch;
+            gap: 16px;
+            min-height: 38px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+            transition-delay: var(--hs-tl-delay, 0ms);
+        }
+        .hs-tl-grid.is-revealed .hs-tl-row { opacity: 1; transform: translateY(0); }
+        .hs-tl-row--head {
+            min-height: 30px;
+            opacity: 1;
+            transform: none;
+            margin-bottom: 4px;
+        }
+        .hs-tl-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            line-height: 1.3;
+            color: var(--hs-text);
+        }
+        .hs-tl-dash {
+            width: 12px;
+            height: 1px;
+            background: var(--hs-red);
+            flex-shrink: 0;
+        }
+        .hs-tl-name { flex: 1; min-width: 0; }
+        .hs-tl-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            color: var(--hs-text-muted);
+            flex-shrink: 0;
+        }
+        .hs-tl-track {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(var(--hs-tl-cols, 8), 1fr);
+            background:
+                linear-gradient(90deg, var(--hs-border) 1px, transparent 1px) 0 0 / calc(100% / var(--hs-tl-cols, 8)) 100%;
+            border-left: 1px solid var(--hs-border);
+            border-right: 1px solid var(--hs-border);
+            border-radius: 2px;
+            min-height: 30px;
+        }
+        .hs-tl-row--head .hs-tl-track {
+            background: none;
+            border: 0;
+            border-bottom: 1px solid var(--hs-border-strong);
+            border-radius: 0;
+        }
+        .hs-tl-quarter {
+            grid-column: var(--c) / span 1;
+            padding: 6px 10px 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--hs-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 1px solid var(--hs-border);
+        }
+        .hs-tl-quarter:first-child { border-left: 0; }
+        .hs-tl-quarter.is-now { color: var(--hs-red); }
+        .hs-tl-now {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 7px;
+            background: var(--hs-red);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.5625rem;
+            letter-spacing: 0.22em;
+            border-radius: 3px;
+        }
+        .hs-tl-bar {
+            grid-column: var(--s) / calc(var(--e) + 1);
+            align-self: center;
+            margin: 4px 4px;
+            padding: 6px 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: default;
+            position: relative;
+            border-radius: 4px;
+            transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+        }
+        .hs-tl-bar:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.08);
+            z-index: 2;
+        }
+        .hs-tl-bar--primary {
+            background: var(--hs-red);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.15);
+        }
+        .hs-tl-bar--product {
+            background: rgba(var(--hs-red-rgb), 0.12);
+            border: 1px solid rgba(var(--hs-red-rgb), 0.42);
+            color: var(--hs-text);
+        }
+        .hs-tl-bar--bg {
+            background: repeating-linear-gradient(45deg,
+                rgba(255,255,255,0.03) 0 5px,
+                rgba(255,255,255,0.08) 5px 10px);
+            border: 1px solid var(--hs-border-strong);
+            color: var(--hs-text-secondary);
+        }
+        .hs-tl-bar--short {
+            background: transparent;
+            border: 1px dashed rgba(var(--hs-red-rgb), 0.7);
+            color: var(--hs-red);
+            font-weight: 600;
+        }
+
+        /* "now" vertical line over the whole grid (column 8 / 8) */
+        .hs-tl-grid::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            bottom: 0;
+            left: calc(clamp(180px, 18vw, 240px) + 16px + (100% - clamp(180px, 18vw, 240px) - 16px) * 7 / 8);
+            width: 1px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(var(--hs-red-rgb), 0.45) 12%,
+                rgba(var(--hs-red-rgb), 0.45) 88%,
+                transparent);
+            pointer-events: none;
+        }
+        .hs-tl-foot {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid var(--hs-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--hs-text-muted);
+        }
+        .hs-tl-foot b { color: var(--hs-red); font-weight: 600; }
+
+        @media (max-width: 880px) {
+            .hs-timeline-wrap { padding: 16px 16px 40px; }
+            .hs-tl-card { padding: 22px 0; border-left: 0; border-right: 0; border-radius: 0; }
+            .hs-tl-headstrip,
+            .hs-tl-foot { padding-left: 18px; padding-right: 18px; }
+            .hs-tl-grid {
+                overflow-x: auto;
+                padding: 0 18px;
+                scrollbar-width: thin;
+                scrollbar-color: rgba(var(--hs-red-rgb), 0.5) transparent;
+            }
+            .hs-tl-grid::after { display: none; }
+            .hs-tl-row { min-width: 880px; }
+        }
 
         /* ============ CUSTOM CURSOR ============ */
         @media (hover: hover) and (pointer: fine) {
@@ -5896,6 +6475,801 @@
         .tc {
             font-variant-numeric: tabular-nums;
             color: var(--acc3);
+        }
+
+        /* ============ CAREER TRACK — top-center mini Gantt strip + holo modal ============ */
+        .ctl-fab {
+            position: fixed;
+            top: 22px;
+            left: 50%;
+            z-index: 24;
+            width: min(640px, 88vw);
+            padding: 10px 16px 12px;
+            appearance: none;
+            background:
+                radial-gradient(ellipse at top right, rgba(var(--acc-rgb), 0.10), transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(var(--acc-rgb), 0.05), transparent 60%),
+                linear-gradient(180deg, rgba(2, 8, 14, 0.55), rgba(2, 8, 14, 0.45));
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            color: rgba(255, 255, 255, 0.85);
+            cursor: pointer;
+            text-align: left;
+            backdrop-filter: blur(10px) saturate(1.1);
+            -webkit-backdrop-filter: blur(10px) saturate(1.1);
+            transform: translateX(-50%) perspective(1100px) rotateX(var(--ctl-fab-rx, 0deg)) rotateY(var(--ctl-fab-ry, 0deg));
+            transform-origin: 50% 50%;
+            transform-style: preserve-3d;
+            box-shadow:
+                0 0 22px rgba(var(--acc-rgb), 0.18),
+                0 0 60px rgba(var(--acc-rgb), 0.08),
+                inset 0 0 30px rgba(var(--acc-rgb), 0.04);
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+            transition:
+                opacity 0.32s ease,
+                transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s ease,
+                border-color 0.25s ease;
+            will-change: transform;
+        }
+        /* Initial reveal uses a one-shot animation with delay — keeps the
+           transition itself fast so subsequent show/hide on modal close
+           doesn't carry the 1.2s startup delay. */
+        body.console-revealed .ctl-fab {
+            pointer-events: auto;
+            animation: ctl-fab-reveal 0.55s ease 1.1s forwards;
+        }
+        @keyframes ctl-fab-reveal {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        body.case-open .ctl-fab,
+        body.showcase-open .ctl-fab,
+        body.dw-open .ctl-fab,
+        body.chat-fullscreen .ctl-fab,
+        body.ctl-open .ctl-fab,
+        body.reader-open .ctl-fab {
+            opacity: 0;
+            pointer-events: none;
+        }
+        /* HUD corner brackets */
+        .ctl-fab::before,
+        .ctl-fab::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border: 1px solid var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
+            pointer-events: none;
+        }
+        .ctl-fab::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+        .ctl-fab::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+        .ctl-fab:hover {
+            border-color: rgba(var(--acc-rgb), 0.7);
+            box-shadow:
+                0 0 32px rgba(var(--acc-rgb), 0.35),
+                0 0 80px rgba(var(--acc-rgb), 0.18),
+                inset 0 0 40px rgba(var(--acc-rgb), 0.08);
+            transform: translateX(-50%) perspective(1100px) rotateX(var(--ctl-fab-rx, 0deg)) rotateY(var(--ctl-fab-ry, 0deg)) translateZ(6px);
+        }
+        .ctl-fab:focus-visible {
+            outline: 2px solid var(--acc);
+            outline-offset: 4px;
+        }
+
+        /* Animated horizontal scan line — sweeps across the strip continuously */
+        .ctl-fab-scan {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                rgba(var(--acc-rgb), 0.65) 30%,
+                rgba(var(--acc-rgb), 0.65) 70%,
+                transparent 100%);
+            box-shadow: 0 0 14px var(--acc), 0 0 28px rgba(var(--acc-rgb), 0.5);
+            pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+            animation: ctl-fab-sweep 5.4s ease-in-out infinite;
+        }
+        @keyframes ctl-fab-sweep {
+            0%   { left: -2px; opacity: 0; }
+            8%   { opacity: 1; }
+            92%  { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        /* Title strip — eyebrow + CTA */
+        .ctl-fab-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+        }
+        .ctl-fab-eyebrow { color: rgba(var(--acc-rgb), 0.9); }
+        .ctl-fab-eyebrow b { color: #fff; font-weight: 700; }
+        .ctl-fab-cta {
+            color: rgba(255,255,255,0.55);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s ease;
+        }
+        .ctl-fab-cta-arrow {
+            width: 8px;
+            height: 8px;
+            border-top: 1px solid currentColor;
+            border-right: 1px solid currentColor;
+            transform: rotate(45deg);
+            display: inline-block;
+            transition: transform 0.25s ease;
+        }
+        .ctl-fab:hover .ctl-fab-cta { color: var(--acc); }
+        .ctl-fab:hover .ctl-fab-cta-arrow { transform: rotate(45deg) translate(2px, -2px); }
+
+        /* Mini Gantt track — grid backdrop + bars */
+        .ctl-fab-track {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            height: 16px;
+            gap: 0;
+            background:
+                linear-gradient(to right,
+                    rgba(var(--acc-rgb), 0.13) 1px,
+                    transparent 1px) 0 0 / calc(100% / 13) 100%,
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0,
+                    transparent 4px,
+                    rgba(var(--acc-rgb), 0.04) 4px,
+                    rgba(var(--acc-rgb), 0.04) 5px
+                );
+            border-top: 1px solid rgba(var(--acc-rgb), 0.22);
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.22);
+            border-left: 1px solid rgba(var(--acc-rgb), 0.18);
+            border-right: 1px solid rgba(var(--acc-rgb), 0.18);
+        }
+        .ctl-fab-bar {
+            grid-column: var(--s) / calc(var(--e) + 1);
+            margin: 2px 1px;
+            background: rgba(var(--acc-rgb), 0.15);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            position: relative;
+            transition: background 0.25s, border-color 0.25s;
+        }
+        .ctl-fab:hover .ctl-fab-bar:not(.is-current) {
+            background: rgba(var(--acc-rgb), 0.22);
+            border-color: rgba(var(--acc-rgb), 0.6);
+        }
+        .ctl-fab-bar.is-current {
+            background: linear-gradient(135deg, var(--acc), color-mix(in srgb, var(--acc) 60%, white));
+            border-color: var(--acc);
+            box-shadow:
+                0 0 8px rgba(var(--acc-rgb), 0.75),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            animation: ctl-fab-current 2.6s ease-in-out infinite;
+        }
+        @keyframes ctl-fab-current {
+            0%, 100% { box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55), inset 0 1px 0 rgba(255,255,255,0.25); }
+            50%      { box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.95), inset 0 1px 0 rgba(255,255,255,0.4); }
+        }
+
+        /* Side projects mini lane — even thinner */
+        .ctl-fab-side {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            height: 5px;
+            margin-top: 2px;
+        }
+        .ctl-fab-side-bar {
+            grid-column: var(--s) / calc(var(--e) + 1);
+            margin: 0 1px;
+            background: rgba(var(--acc-rgb), 0.4);
+            box-shadow: 0 0 4px rgba(var(--acc-rgb), 0.4);
+        }
+
+        /* Year-tick mini scale — subtle marks under the track */
+        .ctl-fab-years {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            margin-top: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.4375rem;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.45);
+        }
+        .ctl-fab-year {
+            grid-column: var(--c) / span 1;
+            text-align: center;
+            opacity: 0;
+        }
+        .ctl-fab-year.show { opacity: 1; }
+        .ctl-fab-year:first-child { text-align: left; }
+        .ctl-fab-year:last-child { text-align: right; color: var(--acc); }
+
+        @media (max-width: 880px) {
+            .ctl-fab {
+                top: 14px;
+                width: min(560px, 92vw);
+                padding: 8px 12px 10px;
+            }
+        }
+        @media (max-width: 600px) {
+            .ctl-fab-head { font-size: 0.5rem; letter-spacing: 0.22em; }
+        }
+
+        /* Holo modal — full hologram timeline window */
+        .ctl-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 38;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            background:
+                radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.85));
+        }
+        body.ctl-open .ctl-modal {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .ctl-modal::before {
+            /* Subtle scanline overlay covering the whole backdrop, like the rest of the HUD */
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0,
+                transparent 2px,
+                rgba(var(--acc-rgb), 0.04) 2px,
+                rgba(var(--acc-rgb), 0.04) 3px
+            );
+            pointer-events: none;
+        }
+        .ctl-pane {
+            position: relative;
+            width: min(1500px, 95vw);
+            max-height: min(820px, 88vh);
+            padding: 24px 28px 22px;
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0,
+                    transparent 2px,
+                    rgba(var(--acc-rgb), 0.06) 2px,
+                    rgba(var(--acc-rgb), 0.06) 3px
+                ),
+                radial-gradient(ellipse at top right, rgba(var(--acc-rgb), 0.10), transparent 50%),
+                radial-gradient(ellipse at bottom left, rgba(var(--acc-rgb), 0.08), transparent 55%),
+                linear-gradient(180deg, rgba(2, 8, 14, 0.62) 0%, rgba(2, 8, 14, 0.74) 100%);
+            backdrop-filter: blur(14px) saturate(1.15);
+            -webkit-backdrop-filter: blur(14px) saturate(1.15);
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            box-shadow:
+                0 0 80px rgba(var(--acc-rgb), 0.28),
+                0 0 200px rgba(var(--acc-rgb), 0.10),
+                inset 0 0 80px rgba(var(--acc-rgb), 0.05);
+            transform:
+                perspective(1500px)
+                rotateY(var(--ctl-pane-ry, 0deg))
+                rotateX(var(--ctl-pane-rx, 0deg))
+                scale(var(--ctl-pane-scale, 1));
+            transform-origin: 50% 50%;
+            transform-style: preserve-3d;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            will-change: transform;
+        }
+        body.ctl-open .ctl-pane {
+            animation: ctl-pane-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        /* Unfolds downward from the FAB strip — single smooth bezier sweep.
+           Mirrors the chat-fullscreen "stretch out, soft settle" feel, but anchored
+           to the top instead of the right HUD edge. */
+        @keyframes ctl-pane-in {
+            0% {
+                opacity: 0;
+                transform-origin: 50% 0%;
+                transform:
+                    translateY(-46vh)
+                    perspective(1500px)
+                    rotateX(-6deg)
+                    scale(0.42, 0.06);
+                filter: blur(4px);
+            }
+            45% { opacity: 1; filter: blur(0); }
+            80% {
+                opacity: 1;
+                transform-origin: 50% 0%;
+                transform:
+                    translateY(0)
+                    perspective(1500px)
+                    rotateX(0.5deg)
+                    scale(1.012, 1.012);
+            }
+            100% {
+                opacity: 1;
+                transform-origin: 50% 50%;
+                transform:
+                    translateY(0)
+                    perspective(1500px)
+                    rotateY(var(--ctl-pane-ry, 0deg))
+                    rotateX(var(--ctl-pane-rx, 0deg))
+                    scale(1, 1);
+                filter: blur(0);
+            }
+        }
+        /* Holographic vertical edges — left + right glow bars, same as chat-fullscreen */
+        .ctl-pane::before,
+        .ctl-pane::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            bottom: 18px;
+            width: 1px;
+            background: linear-gradient(to bottom,
+                transparent 0%,
+                rgba(var(--acc-rgb), 0.55) 25%,
+                rgba(var(--acc-rgb), 0.55) 75%,
+                transparent 100%);
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.45);
+            pointer-events: none;
+        }
+        .ctl-pane::before { left: -10px; }
+        .ctl-pane::after  { right: -10px; }
+
+        .ctl-headstrip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        .ctl-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.85);
+            margin: 0;
+        }
+        .ctl-eyebrow b { color: #fff; font-weight: 700; }
+        .ctl-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1rem, 1.6vw, 1.375rem);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--acc);
+            text-shadow: 0 0 14px rgba(var(--acc-rgb), 0.55);
+            margin: 6px 0 14px;
+        }
+        .ctl-title em { color: #fff; font-style: normal; }
+        .ctl-close {
+            position: absolute;
+            top: 16px;
+            right: 18px;
+            appearance: none;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            padding: 6px 12px 6px 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
+            z-index: 5;
+        }
+        .ctl-close:hover {
+            color: #050505;
+            background: var(--acc);
+            border-color: var(--acc);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.7);
+        }
+        .ctl-close-x {
+            position: relative;
+            width: 10px;
+            height: 10px;
+        }
+        .ctl-close-x::before,
+        .ctl-close-x::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0;
+            width: 100%; height: 1px;
+            background: currentColor;
+        }
+        .ctl-close-x::before { transform: translateY(-50%) rotate(45deg); }
+        .ctl-close-x::after  { transform: translateY(-50%) rotate(-45deg); }
+
+        .ctl-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+        }
+        .ctl-legend-item { display: inline-flex; align-items: center; gap: 8px; }
+        .ctl-sw {
+            width: 22px;
+            height: 10px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .ctl-sw--primary {
+            background: linear-gradient(135deg, var(--acc), color-mix(in srgb, var(--acc) 55%, white));
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.6);
+        }
+        .ctl-sw--product {
+            background: rgba(var(--acc-rgb), 0.18);
+            border: 1px solid rgba(var(--acc-rgb), 0.5);
+        }
+        .ctl-sw--bg {
+            background: repeating-linear-gradient(45deg,
+                rgba(255,255,255,0.05) 0 4px,
+                rgba(255,255,255,0.14) 4px 8px);
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+        .ctl-sw--short {
+            background: transparent;
+            border: 1px dashed rgba(var(--acc-rgb), 0.7);
+        }
+
+        /* Timeline axis — horizontal company bars + side projects + year scale */
+        .ctl-axis {
+            flex-shrink: 0;
+            margin-bottom: 6px;
+            position: relative;
+            padding: 14px 0 0;
+        }
+        /* Grid backdrop — vertical year lines + faint horizontal scanlines */
+        .ctl-axis::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 26px 0;
+            background:
+                /* Major vertical line every year */
+                linear-gradient(to right,
+                    rgba(var(--acc-rgb), 0.13) 1px,
+                    transparent 1px) 0 0 / calc(100% / 13) 100%,
+                /* Faint horizontal scanlines */
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0,
+                    transparent 8px,
+                    rgba(var(--acc-rgb), 0.04) 8px,
+                    rgba(var(--acc-rgb), 0.04) 9px
+                );
+            border-top: 1px solid rgba(var(--acc-rgb), 0.22);
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.22);
+            border-left: 1px solid rgba(var(--acc-rgb), 0.18);
+            border-right: 1px solid rgba(var(--acc-rgb), 0.18);
+            pointer-events: none;
+        }
+        /* Stronger axis tick lines at every other year — chart-feel */
+        .ctl-axis::after {
+            content: '';
+            position: absolute;
+            inset: 0 0 26px 0;
+            background:
+                linear-gradient(to right,
+                    rgba(var(--acc-rgb), 0.32) 1px,
+                    transparent 1px) 0 0 / calc(100% / 6.5) 100%;
+            pointer-events: none;
+            opacity: 0.55;
+        }
+        .ctl-axis-row {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 4px;
+            height: 38px;
+            margin-bottom: 6px;
+        }
+        .ctl-axis-row--side {
+            height: 26px;
+            margin-bottom: 8px;
+        }
+        .ctl-co {
+            grid-column: var(--s) / calc(var(--e) + 1);
+            appearance: none;
+            background: repeating-linear-gradient(45deg,
+                rgba(var(--acc-rgb), 0.04) 0 5px,
+                rgba(var(--acc-rgb), 0.10) 5px 10px);
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            color: rgba(255, 255, 255, 0.62);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: border-color 0.22s, color 0.22s, background 0.22s,
+                        box-shadow 0.22s, transform 0.22s;
+        }
+        .ctl-co:hover {
+            border-color: rgba(var(--acc-rgb), 0.7);
+            color: rgba(255, 255, 255, 0.92);
+            background: repeating-linear-gradient(45deg,
+                rgba(var(--acc-rgb), 0.08) 0 5px,
+                rgba(var(--acc-rgb), 0.18) 5px 10px);
+        }
+        .ctl-co.is-active {
+            border-color: var(--acc);
+            color: #fff;
+            background: repeating-linear-gradient(45deg,
+                rgba(var(--acc-rgb), 0.14) 0 5px,
+                rgba(var(--acc-rgb), 0.26) 5px 10px);
+            box-shadow:
+                0 0 18px rgba(var(--acc-rgb), 0.5),
+                inset 0 0 18px rgba(var(--acc-rgb), 0.12);
+            text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.7);
+        }
+        .ctl-co.is-active::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border: 1px solid rgba(var(--acc-rgb), 0.55);
+            pointer-events: none;
+        }
+        .ctl-co--side {
+            font-size: 0.5625rem;
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.72);
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0.04) 0%,
+                rgba(var(--acc-rgb), 0.08) 100%);
+            border: 1px solid rgba(var(--acc-rgb), 0.42);
+            padding: 0 10px;
+        }
+        .ctl-co--side:hover {
+            color: rgba(255, 255, 255, 0.95);
+            border-color: rgba(var(--acc-rgb), 0.75);
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0.08) 0%,
+                rgba(var(--acc-rgb), 0.16) 100%);
+        }
+        .ctl-co--side.is-active {
+            border-color: var(--acc);
+            color: #fff;
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0.12) 0%,
+                rgba(var(--acc-rgb), 0.24) 100%);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.45);
+        }
+
+        .ctl-axis-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .ctl-axis-years {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            padding-top: 8px;
+            margin-top: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+        .ctl-axis-year {
+            grid-column: var(--c) / span 1;
+            text-align: center;
+            padding: 0 4px;
+            position: relative;
+        }
+        .ctl-axis-year::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 1px;
+            height: 4px;
+            background: rgba(var(--acc-rgb), 0.5);
+            transform: translateX(-50%);
+        }
+        .ctl-axis-year.is-major {
+            color: rgba(255, 255, 255, 0.78);
+        }
+        .ctl-axis-year.is-major::before {
+            height: 6px;
+            background: var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55);
+        }
+        .ctl-axis-year.is-now {
+            color: var(--acc);
+            text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.7);
+        }
+        .ctl-axis-year.is-now::before {
+            background: var(--acc);
+            box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.95);
+        }
+
+        /* Detail card — sits below the timeline, updates on bar click */
+        .ctl-detail-wrap {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 22px 4px 4px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.5) transparent;
+        }
+        .ctl-detail-grid {
+            display: grid;
+            grid-template-columns: minmax(260px, 320px) 1fr;
+            gap: 36px;
+            align-items: start;
+        }
+        .ctl-detail-side {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .ctl-detail-name {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.5rem, 2.4vw, 2.125rem);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #fff;
+            margin: 0;
+            text-shadow: 0 0 18px rgba(var(--acc-rgb), 0.4);
+        }
+        .ctl-detail-role {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--acc);
+        }
+        .ctl-detail-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            align-self: flex-start;
+        }
+        .ctl-detail-chip-dot {
+            width: 8px; height: 8px;
+            background: var(--acc);
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.7);
+            flex-shrink: 0;
+        }
+        .ctl-detail-chip span + span { color: var(--acc); }
+        .ctl-detail-summary {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 4px 0 0;
+        }
+        .ctl-detail-summary em { color: var(--acc); font-style: normal; font-weight: 500; }
+        .ctl-detail-summary strong { color: #fff; font-weight: 600; }
+
+        .ctl-detail-projects { min-width: 0; }
+        .ctl-detail-projects-head {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            margin: 0 0 14px;
+        }
+        .ctl-detail-projects-head b { color: var(--acc); font-weight: 600; }
+        .ctl-detail-projects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .ctl-project {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 14px 16px;
+            transition: border-color 0.22s, background 0.22s, transform 0.22s;
+            border-radius: 4px;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .ctl-project:hover {
+            border-color: rgba(var(--acc-rgb), 0.45);
+            background: rgba(var(--acc-rgb), 0.05);
+            transform: translateY(-1px);
+        }
+        .ctl-project-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #fff;
+            margin: 0 0 4px;
+            line-height: 1.3;
+        }
+        .ctl-project-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: lowercase;
+        }
+
+        /* Cross-fade animation when active company switches */
+        .ctl-detail.is-fading {
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+        .ctl-detail {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.32s ease, transform 0.32s ease;
+        }
+
+        @media (max-width: 980px) {
+            .ctl-detail-grid { grid-template-columns: 1fr; gap: 22px; }
+            .ctl-detail-projects-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 760px) {
+            .ctl-pane { padding: 18px 14px 16px; }
+            .ctl-title { font-size: 1rem; margin: 4px 0 10px; }
+            .ctl-detail-projects-grid { grid-template-columns: 1fr; }
+            .ctl-co { font-size: 0.5625rem; letter-spacing: 0.12em; }
+            .ctl-co--side { font-size: 0.5rem; }
+            .ctl-axis-row { height: 32px; }
         }
 
         /* ============ BACKDROP — pushed back when panel opens ============ */
@@ -8071,6 +9445,102 @@
         </div>
     </div>
 
+    <!-- Top-center mini Gantt strip — opens the full hologram timeline modal -->
+    <button type="button" class="ctl-fab" id="career-tl-btn" aria-haspopup="dialog" aria-controls="career-tl-modal" aria-label="Open career track timeline">
+        <span class="ctl-fab-scan" aria-hidden="true"></span>
+
+        <div class="ctl-fab-head">
+            <span class="ctl-fab-eyebrow">// my career track · <b>2014 → 2026</b></span>
+            <span class="ctl-fab-cta">click to expand <span class="ctl-fab-cta-arrow" aria-hidden="true"></span></span>
+        </div>
+
+        <div class="ctl-fab-track" aria-hidden="true">
+            <span class="ctl-fab-bar" style="--s: 1; --e: 2;"></span>
+            <span class="ctl-fab-bar" style="--s: 3; --e: 6;"></span>
+            <span class="ctl-fab-bar" style="--s: 7; --e: 9;"></span>
+            <span class="ctl-fab-bar" style="--s: 10; --e: 11;"></span>
+            <span class="ctl-fab-bar is-current" style="--s: 12; --e: 13;"></span>
+        </div>
+
+        <div class="ctl-fab-side" aria-hidden="true">
+            <span class="ctl-fab-side-bar" style="--s: 6; --e: 7;"></span>
+            <span class="ctl-fab-side-bar" style="--s: 8; --e: 9;"></span>
+            <span class="ctl-fab-side-bar" style="--s: 10; --e: 11;"></span>
+        </div>
+
+        <div class="ctl-fab-years" aria-hidden="true">
+            <span class="ctl-fab-year show" style="--c: 1">'14</span>
+            <span class="ctl-fab-year" style="--c: 2"></span>
+            <span class="ctl-fab-year" style="--c: 3"></span>
+            <span class="ctl-fab-year show" style="--c: 4">'17</span>
+            <span class="ctl-fab-year" style="--c: 5"></span>
+            <span class="ctl-fab-year" style="--c: 6"></span>
+            <span class="ctl-fab-year show" style="--c: 7">'20</span>
+            <span class="ctl-fab-year" style="--c: 8"></span>
+            <span class="ctl-fab-year" style="--c: 9"></span>
+            <span class="ctl-fab-year show" style="--c: 10">'23</span>
+            <span class="ctl-fab-year" style="--c: 11"></span>
+            <span class="ctl-fab-year" style="--c: 12"></span>
+            <span class="ctl-fab-year show" style="--c: 13">'26</span>
+        </div>
+    </button>
+
+    <!-- Career timeline hologram modal -->
+    <div class="ctl-modal" id="career-tl-modal" role="dialog" aria-modal="true" aria-labelledby="career-tl-title" hidden>
+        <div class="ctl-pane" data-ctl-pane>
+            <button type="button" class="ctl-close" id="career-tl-close" aria-label="Close timeline">
+                <span class="ctl-close-x" aria-hidden="true"></span>
+                <span>close</span>
+            </button>
+
+            <div class="ctl-headstrip">
+                <span class="ctl-eyebrow">// career timeline · <b>2014 → 2026</b> · 5 roles · 3 side projects</span>
+            </div>
+            <h2 class="ctl-title" id="career-tl-title">Как сложилась карьера <em>с 2014.</em></h2>
+
+            <!-- Horizontal company axis -->
+            <div class="ctl-axis">
+                <div class="ctl-axis-row" data-ctl-row="main">
+                    <button type="button" class="ctl-co" data-role="project-practice" style="--s: 1; --e: 2;" aria-label="Project Practice">Project Practice</button>
+                    <button type="button" class="ctl-co" data-role="gotrg" style="--s: 3; --e: 6;" aria-label="goTRG">goTRG</button>
+                    <button type="button" class="ctl-co" data-role="helix" style="--s: 7; --e: 9;" aria-label="Helix Medindex">Helix (Medindex)</button>
+                    <button type="button" class="ctl-co" data-role="health-samurai" style="--s: 10; --e: 11;" aria-label="Health Samurai">Samurai</button>
+                    <button type="button" class="ctl-co is-active" data-role="americor" style="--s: 12; --e: 13;" aria-label="Americor">Americor</button>
+                </div>
+
+                <span class="ctl-axis-tag">// side projects · part-time</span>
+                <div class="ctl-axis-row ctl-axis-row--side" data-ctl-row="side">
+                    <button type="button" class="ctl-co ctl-co--side" data-role="code-we-trust" style="--s: 6; --e: 7;" aria-label="Code We Trust">Code We Trust</button>
+                    <button type="button" class="ctl-co ctl-co--side" data-role="oort-digital" style="--s: 8; --e: 9;" aria-label="Oort Digital">Oort Digital</button>
+                    <button type="button" class="ctl-co ctl-co--side" data-role="pavilion" style="--s: 10; --e: 11;" aria-label="Pavilion">Pavilion</button>
+                </div>
+
+                <div class="ctl-axis-years">
+                    <span class="ctl-axis-year is-major" style="--c: 1">2014</span>
+                    <span class="ctl-axis-year" style="--c: 2">'15</span>
+                    <span class="ctl-axis-year" style="--c: 3">'16</span>
+                    <span class="ctl-axis-year is-major" style="--c: 4">2017</span>
+                    <span class="ctl-axis-year" style="--c: 5">'18</span>
+                    <span class="ctl-axis-year" style="--c: 6">'19</span>
+                    <span class="ctl-axis-year is-major" style="--c: 7">2020</span>
+                    <span class="ctl-axis-year" style="--c: 8">'21</span>
+                    <span class="ctl-axis-year" style="--c: 9">'22</span>
+                    <span class="ctl-axis-year is-major" style="--c: 10">2023</span>
+                    <span class="ctl-axis-year" style="--c: 11">'24</span>
+                    <span class="ctl-axis-year" style="--c: 12">'25</span>
+                    <span class="ctl-axis-year is-now" style="--c: 13">2026</span>
+                </div>
+            </div>
+
+            <!-- Detail card — updates on company click -->
+            <div class="ctl-detail-wrap">
+                <div class="ctl-detail" data-ctl-detail>
+                    <!-- Populated by JS on open + on bar click -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- HUD -->
     <div class="hud">
         <div class="corner bl">
@@ -8821,6 +10291,143 @@
                 </div>
             </article>
 
+            <!-- Roadmap recap — Gantt-style timeline of all parallel workstreams -->
+            <article class="cp-section">
+                <div class="cp-sec-num">— Roadmap recap</div>
+                <h2 class="cp-sec-title">Хронология — c Q1 2024 по&nbsp;сейчас</h2>
+                <div class="cp-sec-body cp-sec-body-narrow">
+                    <p>Восемь параллельных линий работы. Цвет полоски — про интенсивность: <em>основное направление</em>, продуктовая работа, фон или короткий заход. Многое шло параллельно — поэтому редизайн, дизайн-система и code-first процесс пересекаются в одних кварталах.</p>
+                </div>
+
+                <div class="cp-fullbleed am-tl-bleed">
+                    <div class="am-tl-frame">
+                        <div class="am-tl-headstrip">
+                            <div class="am-tl-stamp">// timeline · <b>Q1 2024 → Q4 2025</b> · 8 streams</div>
+                            <div class="am-tl-legend">
+                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--primary"></i> Основное направление</span>
+                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--product"></i> Работа над продуктом</span>
+                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--bg"></i> Идёт фоном</span>
+                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--short"></i> Короткий проект</span>
+                            </div>
+                        </div>
+
+                        <div class="am-tl-grid" style="--am-tl-cols: 8;" data-am-tl>
+                            <div class="am-tl-row am-tl-row--head">
+                                <div class="am-tl-label" aria-hidden="true"></div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-quarter" style="--c: 1">Q1 24</div>
+                                    <div class="am-tl-quarter" style="--c: 2">Q2 24</div>
+                                    <div class="am-tl-quarter" style="--c: 3">Q3 24</div>
+                                    <div class="am-tl-quarter" style="--c: 4">Q4 24</div>
+                                    <div class="am-tl-quarter" style="--c: 5">Q1 25</div>
+                                    <div class="am-tl-quarter" style="--c: 6">Q2 25</div>
+                                    <div class="am-tl-quarter" style="--c: 7">Q3 25</div>
+                                    <div class="am-tl-quarter is-now" style="--c: 8">Q4 25 <span class="am-tl-now">NOW</span></div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 60ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Онбординг и аудит</span>
+                                    <span class="am-tl-sub">01</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 1; --e: 1;" title="Q1 2024 — погружение в продукт, аудит UX/визуала, карта стейкхолдеров">Аудит</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 120ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Дизайн-система</span>
+                                    <span class="am-tl-sub">02</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 1; --e: 2;" title="4-слойная архитектура: root → semantic → brand → platform">4 слоя · root → platform</div>
+                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 3; --e: 6;" title="Внедрение DS: iOS / Android / Web, синхронизация Figma ↔ код">Внедрение iOS / Android / Web</div>
+                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 7; --e: 8;" title="Покрытие 50–60% → 100% к концу года">Покрытие → 100%</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 180ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Pre-IPO редизайн</span>
+                                    <span class="am-tl-sub">03</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 2; --e: 3;" title="Четыре варианта концепции, тестирование на реальных пользователях">4 варианта концепции</div>
+                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 4; --e: 5;" title="v3 (адаптивный флоу) — shipped at +18.2% conversion">v3 · shipped +18.2%</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 240ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Мультибренд</span>
+                                    <span class="am-tl-sub">04</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 3; --e: 7;" title="Subsidiaries — отдельные визуальные идентификации по штатам, унифицированный фундамент">Subsidiaries · цвета по штатам</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 300ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Code-first процесс</span>
+                                    <span class="am-tl-sub">05</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--bg" style="--s: 4; --e: 8;" title="Прототип в коде → handover. React + Storybook как source of truth">React + Storybook · prototype → handover</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 360ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Vibe-code прототипы</span>
+                                    <span class="am-tl-sub">06</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 5; --e: 5;" title="Анализатор Facebook-сообщества: 80k+ сообщений → topic + sentiment">FB Analyzer · 80k msg</div>
+                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 6; --e: 6;" title="NSF Shortfall simulator — для логики проблемных дат списания">NSF Simulator</div>
+                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 7; --e: 7;" title="Code-first прототип Community-раздела для валидации">Community demo</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 420ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Раздел Community</span>
+                                    <span class="am-tl-sub">07</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 7; --e: 8;" title="Reddit-style лента внутри приложения, целиком собран в коде, в продакшене">Reddit-style → prod</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 480ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Раздел Webinars</span>
+                                    <span class="am-tl-sub">08</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--planned" style="--s: 8; --e: 8;" title="Новый раздел для образовательного контента — в работе">В работе</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="am-tl-foot">
+                            <span>// 8 streams · 8 quarters · <b>shipped + ongoing</b></span>
+                            <span>scroll ↓ before / after</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
             <!-- Before/After comparator — moved to bottom, after §08 metrics -->
             <article class="cp-section">
                 <div class="cp-sec-num">— Было / стало</div>
@@ -9106,6 +10713,144 @@
                     <h3 class="hs-grid-card-title">JSON Parser &amp; vibe-code as method</h3>
                     <p class="hs-grid-card-desc">Working prototypes instead of static mockups, from day one.</p>
                 </a>
+            </div>
+        </section>
+
+        <!-- HS Timeline — Gantt-style roadmap recap (cs02 visual language) -->
+        <section class="hs-timeline-wrap" aria-label="Health Samurai timeline">
+            <div class="hs-tl-head">
+                <span class="hs-eyebrow">Timeline · Q1 2024 → Q4 2025</span>
+                <h2 class="hs-tl-h2">Как это всё уложилось <em>во времени.</em></h2>
+                <p class="hs-tl-sub">Восемь параллельных линий работы. Цвет полоски — про интенсивность: основное направление, продуктовая работа, фоновая активность или короткий заход.</p>
+            </div>
+
+            <div class="hs-tl-card">
+                <div class="hs-tl-headstrip">
+                    <div class="hs-tl-stamp">// timeline · <b>Q1 2024 → Q4 2025</b> · 8 streams</div>
+                    <div class="hs-tl-legend">
+                        <span class="hs-tl-legend-item"><i class="hs-tl-sw hs-tl-sw--primary"></i> Основное направление</span>
+                        <span class="hs-tl-legend-item"><i class="hs-tl-sw hs-tl-sw--product"></i> Работа над продуктом</span>
+                        <span class="hs-tl-legend-item"><i class="hs-tl-sw hs-tl-sw--bg"></i> Идёт фоном</span>
+                        <span class="hs-tl-legend-item"><i class="hs-tl-sw hs-tl-sw--short"></i> Короткий проект</span>
+                    </div>
+                </div>
+
+                <div class="hs-tl-grid" style="--hs-tl-cols: 8;" data-hs-tl>
+                    <div class="hs-tl-row hs-tl-row--head">
+                        <div class="hs-tl-label" aria-hidden="true"></div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-quarter" style="--c: 1">Q1 24</div>
+                            <div class="hs-tl-quarter" style="--c: 2">Q2 24</div>
+                            <div class="hs-tl-quarter" style="--c: 3">Q3 24</div>
+                            <div class="hs-tl-quarter" style="--c: 4">Q4 24</div>
+                            <div class="hs-tl-quarter" style="--c: 5">Q1 25</div>
+                            <div class="hs-tl-quarter" style="--c: 6">Q2 25</div>
+                            <div class="hs-tl-quarter" style="--c: 7">Q3 25</div>
+                            <div class="hs-tl-quarter is-now" style="--c: 8">Q4 25 <span class="hs-tl-now">NOW</span></div>
+                        </div>
+                    </div>
+
+                    <div class="hs-tl-row" style="--hs-tl-delay: 60ms;">
+                        <div class="hs-tl-label">
+                            <span class="hs-tl-dash"></span>
+                            <span class="hs-tl-name">Онбординг и аудит</span>
+                            <span class="hs-tl-sub">01</span>
+                        </div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-bar hs-tl-bar--product" style="--s: 1; --e: 1;" title="Q1 2024 — погружение в продукт, аудит UX/визуала, карта стейкхолдеров">Аудит</div>
+                        </div>
+                    </div>
+
+                    <div class="hs-tl-row" style="--hs-tl-delay: 120ms;">
+                        <div class="hs-tl-label">
+                            <span class="hs-tl-dash"></span>
+                            <span class="hs-tl-name">Дизайн-система</span>
+                            <span class="hs-tl-sub">02</span>
+                        </div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 1; --e: 1;" title="shadCN + semantic слой">shadCN + semantic слой</div>
+                            <div class="hs-tl-bar hs-tl-bar--product" style="--s: 2; --e: 3;" title="Внедрение DS, синхронизация Figma ↔ код">Внедрение, Figma ↔ код</div>
+                        </div>
+                    </div>
+
+                    <div class="hs-tl-row" style="--hs-tl-delay: 180ms;">
+                        <div class="hs-tl-label">
+                            <span class="hs-tl-dash"></span>
+                            <span class="hs-tl-name">Редизайн продуктов</span>
+                            <span class="hs-tl-sub">03</span>
+                        </div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-bar hs-tl-bar--product" style="--s: 3; --e: 3;" title="Aidbox — первая фаза редизайна">Aidbox · первая фаза</div>
+                            <div class="hs-tl-bar hs-tl-bar--product" style="--s: 5; --e: 6;" title="MPI Box, Aidbox v2 — миграция на DS">MPI Box, Aidbox v2 · DS-миграция</div>
+                        </div>
+                    </div>
+
+                    <div class="hs-tl-row" style="--hs-tl-delay: 240ms;">
+                        <div class="hs-tl-label">
+                            <span class="hs-tl-dash"></span>
+                            <span class="hs-tl-name">Платформа лендингов</span>
+                            <span class="hs-tl-sub">04</span>
+                        </div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 3; --e: 4;" title="v1 — MD → Claude → лендинг, 2–3 дня вместо 3 месяцев">v1 · MD → Claude → лендинг</div>
+                            <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 5; --e: 6;" title="v2 — визуальный редактор">v2 · визуальный редактор</div>
+                            <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 7; --e: 8;" title="Блог, документация, схемы — на той же платформе">Блог, докс, схемы</div>
+                        </div>
+                    </div>
+
+                    <div class="hs-tl-row" style="--hs-tl-delay: 300ms;">
+                        <div class="hs-tl-label">
+                            <span class="hs-tl-dash"></span>
+                            <span class="hs-tl-name">Генератор презентаций</span>
+                            <span class="hs-tl-sub">05</span>
+                        </div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 8; --e: 8;" title="Custom Claude skill + визуальный редактор для презентаций">Скилл + редактор</div>
+                        </div>
+                    </div>
+
+                    <div class="hs-tl-row" style="--hs-tl-delay: 360ms;">
+                        <div class="hs-tl-label">
+                            <span class="hs-tl-dash"></span>
+                            <span class="hs-tl-name">Бренд и иллюстрации</span>
+                            <span class="hs-tl-sub">06</span>
+                        </div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-bar hs-tl-bar--product" style="--s: 1; --e: 2;" title="Логотипы, маски, иллюстрации">Логотипы, маски</div>
+                            <div class="hs-tl-bar hs-tl-bar--product" style="--s: 7; --e: 8;" title="Стиль диаграмм, Mermaid-темы">Стиль диаграмм, Mermaid</div>
+                        </div>
+                    </div>
+
+                    <div class="hs-tl-row" style="--hs-tl-delay: 420ms;">
+                        <div class="hs-tl-label">
+                            <span class="hs-tl-dash"></span>
+                            <span class="hs-tl-name">Vibe-code прототипы</span>
+                            <span class="hs-tl-sub">07</span>
+                        </div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-bar hs-tl-bar--short" style="--s: 5; --e: 5;" title="BOF App — гипотеза в коде">BOF App</div>
+                            <div class="hs-tl-bar hs-tl-bar--short" style="--s: 6; --e: 6;" title="JSON Parser — UI-гипотеза для Aidbox">JSON Parser</div>
+                            <div class="hs-tl-bar hs-tl-bar--short" style="--s: 7; --e: 7;" title="FireCamp — конференционное приложение, собрано за неделю">FireCamp · 1 нед</div>
+                            <div class="hs-tl-bar hs-tl-bar--short" style="--s: 8; --e: 8;" title="Kudos generator на нейросетке, тренированной на маскоте">Кудосы</div>
+                        </div>
+                    </div>
+
+                    <div class="hs-tl-row" style="--hs-tl-delay: 480ms;">
+                        <div class="hs-tl-label">
+                            <span class="hs-tl-dash"></span>
+                            <span class="hs-tl-name">Работа в паре с&nbsp;коллегой-дизайнером</span>
+                            <span class="hs-tl-sub">08</span>
+                        </div>
+                        <div class="hs-tl-track">
+                            <div class="hs-tl-bar hs-tl-bar--bg" style="--s: 3; --e: 8;" title="Ежедневные сессии с коллегой-дизайнером — параллельная пара по всем продуктовым направлениям">Сессии с&nbsp;коллегой-дизайнером, ежедневно</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hs-tl-foot">
+                    <span>// 8 streams · 8 quarters · <b>shipped + ongoing</b></span>
+                    <span>scroll ↓ deep dives</span>
+                </div>
             </div>
         </section>
 
@@ -13122,6 +14867,275 @@ See also: Health Samurai Lab: Game of Pools.`,
         })();
     </script>
 
+    <!-- Career timeline hologram modal: open/close, ESC, click-outside, mouse-tilt, role detail -->
+    <script>
+        (() => {
+            const fab    = document.getElementById('career-tl-btn');
+            const modal  = document.getElementById('career-tl-modal');
+            const pane   = modal && modal.querySelector('[data-ctl-pane]');
+            const closeBtn = document.getElementById('career-tl-close');
+            const detail  = modal && modal.querySelector('[data-ctl-detail]');
+            if (!fab || !modal || !pane || !detail) return;
+
+            // Role data — keys match data-role on each .ctl-co button
+            const ROLES = {
+                'americor': {
+                    name: 'Americor',
+                    role: 'Lead Product Designer',
+                    period: '2024 — now',
+                    location: 'Los Angeles',
+                    tag: 'FinTech',
+                    summary: 'FinTech for debt relief. Led the pre-IPO redesign of web + iOS + Android. Built a 3-platform, multi-brand, token-driven design system. Flipped the process to <em>code-first</em> with React + Storybook. Mentored the junior designer through it all.',
+                    projects: [
+                        { title: 'Multi-platform Redesign',  sub: 'web · iOS · Android' },
+                        { title: '3-platform Design System', sub: 'multi-brand tokens' },
+                        { title: 'Code-first Process',       sub: 'React · Storybook' },
+                        { title: 'FB Insights Parser',       sub: 'AI research tool' },
+                        { title: 'NSF Shortfall Simulator',  sub: 'internal tool' },
+                        { title: 'Junior Mentoring',         sub: 'people' },
+                    ],
+                },
+                'health-samurai': {
+                    name: 'Health Samurai',
+                    role: 'Designer-Developer',
+                    period: '2023 — now',
+                    location: 'Lisbon',
+                    tag: 'Healthcare IT',
+                    summary: 'Healthcare IT since 2004. Built an <em>AI-generated design system</em> on shadCN, a markdown-first landing platform with Claude in the loop, a presentation generator, and shipped two product redesigns (Aidbox, MPI Box). Custom Claude skills became the default tooling.',
+                    projects: [
+                        { title: 'shadCN Design System',  sub: 'figma to storybook' },
+                        { title: 'Figma ↔ Code skill',    sub: 'custom claude skill' },
+                        { title: 'Landing Platform',      sub: 'md → claude → page' },
+                        { title: 'Presentation Generator',sub: 'same engine, decks' },
+                        { title: 'Embedded Analytics',    sub: 'posthog, every page' },
+                        { title: 'Aidbox v2 + MPI Box',   sub: 'product redesigns' },
+                        { title: 'Brand & Illustrations', sub: 'logos, mascots' },
+                        { title: 'FireCamp app',          sub: '1-week vibe-code' },
+                        { title: 'Kudos generator',       sub: 'mascot-trained gen' },
+                    ],
+                },
+                'helix': {
+                    name: 'Helix · Medindex',
+                    role: 'Lead Product Designer',
+                    period: '2020 — 2023',
+                    location: 'SPb · Moscow · Astana · Minsk',
+                    tag: 'MedTech',
+                    summary: 'One of the largest medical labs in Eurasia. Built a design team from scratch, modernized legacy desktop apps to web, shipped 3 new applications + a mobile app, plus the design system with token-based theming.',
+                    projects: [
+                        { title: '3 new applications',   sub: 'released to prod' },
+                        { title: 'Mobile application',   sub: 'launch' },
+                        { title: 'Website redesign',     sub: 'corp site' },
+                        { title: 'Design system + tokens',sub: 'theming engine' },
+                        { title: 'Built design team',    sub: 'from scratch' },
+                        { title: 'Multi-platform ecosystem', sub: 'desktop → web' },
+                    ],
+                },
+                'gotrg': {
+                    name: 'goTRG',
+                    role: 'UX/UI Designer',
+                    period: '2016 — 2020',
+                    location: 'SPb · Miami',
+                    tag: 'SaaS · ERP',
+                    summary: 'SaaS, Supply Chain & ReCommerce platform. Audited a legacy ERP, built a design system from scratch with legacy-support layer, and launched a brand-new ERP on top of it. Heavy CSS refactoring, React-component layouting, user interviews.',
+                    projects: [
+                        { title: 'ERP Audit',            sub: 'legacy SaaS' },
+                        { title: 'Design System',        sub: 'from scratch' },
+                        { title: 'New ERP Launch',       sub: 'on the new DS' },
+                        { title: 'React Layouting',      sub: 'components' },
+                        { title: 'CSS Refactoring',      sub: 'legacy → tokens' },
+                        { title: 'Interviews & Testing', sub: 'with key users' },
+                    ],
+                },
+                'project-practice': {
+                    name: 'Project Practice',
+                    role: 'UX/UI Designer · Developer',
+                    period: '2014 — 2016',
+                    location: 'Moscow',
+                    tag: 'PM Tools',
+                    summary: 'Joined as UX/UI; due to specialist shortage, started laying out my own designs and building simple features. JS, LESS, CSS, HTML, C# templates. The bridge between design and code that has never closed since.',
+                    projects: [
+                        { title: 'PM-system × 4 redesigns', sub: 'project management' },
+                        { title: 'Theming Mechanism',       sub: 'in-system theming' },
+                        { title: 'CSS → LESS Refactor',     sub: '80% coverage' },
+                        { title: 'Mobile App Design',       sub: 'adaptive devices' },
+                        { title: 'Design Processes',        sub: 'established' },
+                        { title: 'UX Research',             sub: 'iteration loops' },
+                    ],
+                },
+                'code-we-trust': {
+                    name: 'Code We Trust',
+                    role: 'UX/UI · Part-time',
+                    period: '2019 — 2024',
+                    location: 'Greece',
+                    tag: 'Side · DevTools',
+                    summary: 'Source-code assessment & audit platform. Designed from scratch — UI in low and hi-fi, prototyping, user testing, React-component layouting, CSS refactoring.',
+                    projects: [
+                        { title: 'UI Design',          sub: 'low + hi-fi' },
+                        { title: 'CSS Refactoring',    sub: 'legacy cleanup' },
+                        { title: 'React Layouting',    sub: 'components' },
+                        { title: 'Prototyping',        sub: 'flow validation' },
+                        { title: 'User Testing',       sub: 'with devs' },
+                        { title: 'Code Audit UX',      sub: 'core flow' },
+                    ],
+                },
+                'oort-digital': {
+                    name: 'Oort Digital',
+                    role: 'UX/UI · Part-time',
+                    period: '2021 — 2023',
+                    location: 'Hong Kong',
+                    tag: 'Side · Web3',
+                    summary: 'Layer-0 NFT solution — adding utility to NFTs, in-game worlds, community rewards. Researched Web3 patterns, designed the main app UX/UI, built and expanded the design system, ran rapid prototyping cycles and user interviews.',
+                    projects: [
+                        { title: 'Web3 Pattern Research', sub: 'NFT mechanics' },
+                        { title: 'Main App UX/UI',        sub: 'core product' },
+                        { title: 'Design System',         sub: 'created + expanded' },
+                        { title: 'Rapid Prototyping',     sub: 'hypothesis loops' },
+                        { title: 'User Interviews',       sub: 'community' },
+                        { title: 'NFT World Dive',        sub: 'domain learning' },
+                    ],
+                },
+                'pavilion': {
+                    name: 'Pavilion',
+                    role: 'UX/UI · Part-time',
+                    period: '2023 — 2024',
+                    location: 'Lisbon · Texas',
+                    tag: 'Side · ERP',
+                    summary: 'ERP solution for the jewelry industry, built on Salesforce. Deep market research, detailed prototyping, user interviews and testing, extending Salesforce Lightning components.',
+                    projects: [
+                        { title: 'Market Research',         sub: 'deep dive' },
+                        { title: 'Detailed Prototyping',    sub: 'flow precision' },
+                        { title: 'User Interviews',         sub: 'jewelry biz' },
+                        { title: 'Salesforce Lightning',    sub: 'components extending' },
+                        { title: 'Design Review',           sub: 'cross-team' },
+                        { title: 'Usability Testing',       sub: 'iteration' },
+                    ],
+                },
+            };
+
+            function renderDetail(roleId) {
+                const r = ROLES[roleId];
+                if (!r) return;
+                const projects = r.projects.map(p => `
+                    <div class="ctl-project">
+                        <div class="ctl-project-title">${p.title}</div>
+                        <div class="ctl-project-sub">${p.sub}</div>
+                    </div>
+                `).join('');
+                detail.innerHTML = `
+                    <div class="ctl-detail-grid">
+                        <div class="ctl-detail-side">
+                            <h3 class="ctl-detail-name">${r.name}</h3>
+                            <div class="ctl-detail-role">${r.role}</div>
+                            <div class="ctl-detail-chip">
+                                <span>${r.period}</span>
+                                <span>·</span>
+                                <span>${r.location}</span>
+                                <span class="ctl-detail-chip-dot" aria-hidden="true"></span>
+                                <span>${r.tag}</span>
+                            </div>
+                            <p class="ctl-detail-summary">${r.summary}</p>
+                        </div>
+                        <div class="ctl-detail-projects">
+                            <div class="ctl-detail-projects-head">
+                                <b>${r.projects.length}</b> notable projects
+                            </div>
+                            <div class="ctl-detail-projects-grid">${projects}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function setActive(roleId) {
+                modal.querySelectorAll('.ctl-co').forEach(b => {
+                    b.classList.toggle('is-active', b.dataset.role === roleId);
+                });
+                // Cross-fade detail
+                detail.classList.add('is-fading');
+                setTimeout(() => {
+                    renderDetail(roleId);
+                    detail.classList.remove('is-fading');
+                }, 180);
+                window.__sfx?.tick?.();
+            }
+
+            // Wire all company buttons
+            modal.querySelectorAll('.ctl-co').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    setActive(btn.dataset.role);
+                });
+            });
+
+            // Initial render — Americor (most recent) is the default active
+            renderDetail('americor');
+
+            let lastFocus = null;
+            let mouseRaf = 0;
+
+            function open() {
+                lastFocus = document.activeElement;
+                modal.hidden = false;
+                document.body.classList.add('ctl-open');
+                fab.setAttribute('aria-expanded', 'true');
+                window.__sfx?.tick?.();
+                requestAnimationFrame(() => { closeBtn?.focus(); });
+            }
+            function close() {
+                document.body.classList.remove('ctl-open');
+                fab.setAttribute('aria-expanded', 'false');
+                window.__sfx?.tick?.();
+                setTimeout(() => {
+                    if (!document.body.classList.contains('ctl-open')) modal.hidden = true;
+                }, 320);
+                if (lastFocus && typeof lastFocus.focus === 'function') {
+                    try { lastFocus.focus(); } catch (e) {}
+                }
+            }
+
+            fab.addEventListener('click', () => {
+                if (document.body.classList.contains('ctl-open')) close();
+                else open();
+            });
+            closeBtn?.addEventListener('click', close);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) close();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.body.classList.contains('ctl-open')) {
+                    e.stopPropagation();
+                    close();
+                }
+            }, true);
+
+            window.addEventListener('mousemove', (e) => {
+                if (!document.body.classList.contains('ctl-open')) return;
+                if (mouseRaf) return;
+                mouseRaf = requestAnimationFrame(() => {
+                    mouseRaf = 0;
+                    const cx = window.innerWidth  / 2;
+                    const cy = window.innerHeight / 2;
+                    const dx = (e.clientX - cx) / cx;
+                    const dy = (e.clientY - cy) / cy;
+                    pane.style.setProperty('--ctl-pane-ry', (dx * 2.6).toFixed(2) + 'deg');
+                    pane.style.setProperty('--ctl-pane-rx', (-dy * 1.8).toFixed(2) + 'deg');
+                });
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (document.body.classList.contains('ctl-open')) return;
+                const r = fab.getBoundingClientRect();
+                const cx = r.left + r.width / 2;
+                const cy = r.top  + r.height / 2;
+                const dx = (e.clientX - cx) / Math.max(window.innerWidth / 2, 600);
+                const dy = (e.clientY - cy) / Math.max(window.innerHeight / 2, 400);
+                fab.style.setProperty('--ctl-fab-ry', (dx * 5).toFixed(2) + 'deg');
+                fab.style.setProperty('--ctl-fab-rx', (-dy * 3).toFixed(2) + 'deg');
+            });
+        })();
+    </script>
+
     <!-- Settings cog popover toggle + A− / A+ text scale (no persistence) -->
     <script>
         (() => {
@@ -13627,6 +15641,22 @@ See also: Health Samurai Lab: Game of Pools.`,
     <!-- Americor case page interactions: BeforeAfter sliders, Lightbox, stub renderer -->
     <script>
         (() => {
+            // -------- 0. Timeline reveal on scroll (Americor + HS) --------
+            const tlGrids = document.querySelectorAll('[data-am-tl], [data-hs-tl]');
+            if (tlGrids.length && 'IntersectionObserver' in window) {
+                const tlObs = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-revealed');
+                            tlObs.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.18 });
+                tlGrids.forEach(g => tlObs.observe(g));
+            } else {
+                tlGrids.forEach(g => g.classList.add('is-revealed'));
+            }
+
             // -------- 1. BeforeAfter sliders --------
             const baBlocks = document.querySelectorAll('[data-ba]');
             baBlocks.forEach(block => {
