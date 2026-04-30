@@ -1126,32 +1126,43 @@
             font-weight: 400;
         }
 
-        /* Hero shot — single static "new state" image after the hero header */
+        /* Hero shot — full-bleed blueprint board with centered screenshot.
+           Future: track of multiple shots that slides horizontally. */
         .cp-hero-shot {
             position: relative;
-            margin: 8px 0 0;
-            border: 1px solid rgba(var(--acc-rgb), 0.18);
-            background: #0a0a0a;
+            margin: 32px calc(-50vw + 50%) 32px;
+            width: 100vw;
+            max-width: 100vw;
+            padding: 72px 32px;
+            background: #e8eaee;
+            /* blueprint-style grid: barely-visible '+' at every 60px intersection */
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><path d='M30 26 L30 34 M26 30 L34 30' stroke='rgba(8,18,30,0.18)' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
+            background-size: 60px 60px;
+            background-position: center center;
             overflow: hidden;
+        }
+        .cp-hero-shot-track {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
         }
         .cp-hero-shot img {
             display: block;
             width: 100%;
+            max-width: 1180px;
             height: auto;
+            border-radius: 10px;
+            box-shadow:
+                0 24px 48px rgba(8, 18, 30, 0.18),
+                0 6px 14px rgba(8, 18, 30, 0.1),
+                0 1px 0 rgba(255, 255, 255, 0.6) inset;
         }
-        .cp-hero-shot-tag {
-            position: absolute;
-            top: 10px;
-            left: 12px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.5625rem;
-            letter-spacing: 0.32em;
-            text-transform: uppercase;
-            color: var(--acc);
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(var(--acc-rgb), 0.4);
-            padding: 5px 10px;
-            z-index: 2;
+        @media (max-width: 720px) {
+            .cp-hero-shot { padding: 36px 16px; }
+            .cp-hero-shot img { border-radius: 6px; }
         }
 
         /* TLDR */
@@ -7629,9 +7640,10 @@
                 <p class="cp-sub">Финтех в сфере debt relief: веб + iOS + Android, несколько брендов, IPO-режим. Главная находка редизайна — разделение пользовательского опыта на фазы программы.</p>
             </header>
 
-            <figure class="cp-hero-shot">
-                <span class="cp-hero-shot-tag">// new</span>
-                <img src="showcase/cs01/desktop-after.png" alt="Americor — редизайнённый dashboard">
+            <figure class="cp-hero-shot" data-shot-board>
+                <div class="cp-hero-shot-track" data-shot-track>
+                    <img src="showcase/cs01/desktop-after.png" alt="Americor — редизайнённый dashboard">
+                </div>
             </figure>
 
             <!-- TL;DR -->
