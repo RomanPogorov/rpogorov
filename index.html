@@ -3123,8 +3123,90 @@
             margin: 0 auto 28px;
         }
 
+        /* Meta row + TL;DR — sit between hero and the TOC layout. */
+        .hs-meta-row {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 64px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 24px;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--hs-text-muted);
+        }
+        .hs-meta-item strong {
+            color: var(--hs-text);
+            font-weight: 600;
+        }
+        .hs-meta-dot {
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: var(--hs-red);
+            display: inline-block;
+        }
+        .hs-tldr-wrap {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 64px 64px;
+        }
+        .hs-tldr {
+            background: var(--hs-bg-elev);
+            border-left: 2px solid var(--hs-red);
+            padding: 28px 32px 32px;
+            border-radius: 0 8px 8px 0;
+        }
+        .hs-tldr-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--hs-red);
+            margin-bottom: 18px;
+        }
+        .hs-tldr-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .hs-tldr-list li {
+            padding: 8px 0 8px 24px;
+            position: relative;
+            font-size: 1rem;
+            line-height: 1.55;
+            color: var(--hs-text);
+        }
+        .hs-tldr-list li + li {
+            border-top: 1px solid var(--hs-border);
+        }
+        .hs-tldr-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 18px;
+            width: 14px;
+            height: 1px;
+            background: var(--hs-red);
+        }
+        .hs-tldr-list li em {
+            color: var(--hs-red);
+            font-style: normal;
+            font-weight: 500;
+        }
+        .hs-tldr-list li strong {
+            color: var(--hs-text);
+            font-weight: 600;
+        }
+
         @media (max-width: 980px) {
             .hs-hero { padding: 100px 24px 56px; }
+            .hs-meta-row { padding: 0 24px 24px; }
+            .hs-tldr-wrap { padding: 0 24px 48px; }
+            .hs-tldr { padding: 24px; }
             .hs-toc-layout { grid-template-columns: 1fr; gap: 24px; padding: 0 24px 80px; }
             .hs-toc {
                 position: relative;
@@ -8624,6 +8706,28 @@
                 <span class="hs-cta-arrow">→</span>
             </a>
         </header>
+
+        <div class="hs-meta-row">
+            <span class="hs-meta-item">Role · <strong>Senior Product Designer</strong></span>
+            <span class="hs-meta-dot" aria-hidden="true"></span>
+            <span class="hs-meta-item">2024 — present</span>
+            <span class="hs-meta-dot" aria-hidden="true"></span>
+            <span class="hs-meta-item">FHIR-native infrastructure</span>
+            <span class="hs-meta-dot" aria-hidden="true"></span>
+            <span class="hs-meta-item">Flat org · No QAs · No PMs</span>
+        </div>
+
+        <div class="hs-tldr-wrap">
+            <div class="hs-tldr">
+                <div class="hs-tldr-label">// TL;DR</div>
+                <ul class="hs-tldr-list">
+                    <li>Stood up a <strong>shadCN-based design system</strong> end-to-end — Figma + code + Storybook in lockstep, plus a Claude skill that pulled components straight out of Figma <em>before that tooling existed elsewhere.</em></li>
+                    <li>Built a markdown-first <strong>landing platform</strong> with an in-browser DOM-aware Claude chat — time-to-landing dropped from <em>3 months to 2–3 days</em>. The whole company website now runs on it.</li>
+                    <li>Generators on top of the same primitives — <strong>presentation generator</strong> for any teammate, <strong>kudos image generator</strong> trained on the brand mascot, embedded analytics on every page.</li>
+                    <li>Vibe-coded the <strong>FireCamp conference app</strong> in a week — voting, schedule, subscriptions. Became the proof point that convinced C-level the code-first approach was real, not a side project.</li>
+                </ul>
+            </div>
+        </div>
 
         <div class="hs-toc-layout">
             <nav class="hs-toc" aria-label="Subcases">
