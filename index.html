@@ -2230,6 +2230,46 @@
             border: 1px solid rgba(var(--acc-rgb), 0.4);
         }
 
+        /* Award / recognition callout */
+        .am-award {
+            display: grid;
+            grid-template-columns: 56px 1fr;
+            gap: 18px;
+            align-items: center;
+            margin: 8px 0 28px;
+            padding: 18px 22px;
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.08) 0%, rgba(var(--acc-rgb), 0.02) 100%);
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            border-left: 2px solid var(--acc);
+        }
+        .am-award-badge {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--acc);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            text-shadow: 0 0 12px rgba(var(--acc-rgb), 0.5);
+        }
+        .am-award-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--acc);
+            margin-bottom: 4px;
+        }
+        .am-award-text {
+            font-size: 1.0625rem;
+            color: var(--ink);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        .cp-sec-body-narrow { max-width: 760px; }
+
         /* DeepCaseLink card grid */
         .am-deeplinks {
             display: grid;
@@ -7694,7 +7734,7 @@
                     <p><strong>NSF Shortfall Simulator.</strong> При проектировании сложной фичи прогнозирования shortfall для платёжных дат столкнулся с запутанной бизнес-логикой. Самостоятельно собрал интерактивный симулятор, который помог разобраться в механике, верифицировать сценарии и ускорить проектирование.</p>
                     <p>Оба инструмента стали постоянной частью рабочего процесса команды — не только для дизайна.</p>
                 </div>
-                <div class="am-gallery cols-2">
+                <div class="am-gallery cols-3">
                     <figure class="am-media" data-media data-kind="image" data-src="" data-stub="facebook-parser-ui.png" data-caption="Парсер Facebook-группы — фильтры по теме и сентименту">
                         <div class="am-media-frame" data-aspect="16-10">
                             <div class="am-media-stub">image · facebook-parser-ui.png</div>
@@ -7706,6 +7746,12 @@
                             <div class="am-media-stub">image · feedback-summary-ui.png</div>
                         </div>
                         <div class="am-media-caption">Сводный UI обратной связи</div>
+                    </figure>
+                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="nsf-shortfall-simulator.png" data-caption="NSF Shortfall Simulator — интерактивный разбор бизнес-логики платежей">
+                        <div class="am-media-frame" data-aspect="16-10">
+                            <div class="am-media-stub">image · nsf-shortfall-simulator.png</div>
+                        </div>
+                        <div class="am-media-caption">NSF Shortfall Simulator</div>
                     </figure>
                 </div>
             </article>
@@ -7738,7 +7784,16 @@
             <article class="cp-section" id="cp-sec-08">
                 <div class="cp-sec-num">08 — Итоги</div>
                 <h2 class="cp-sec-title">Метрики и решения</h2>
-                <div class="am-metrics" style="margin: 12px 0 24px;">
+
+                <div class="am-award">
+                    <div class="am-award-badge" aria-hidden="true">★</div>
+                    <div class="am-award-body">
+                        <div class="am-award-label">// recognition</div>
+                        <div class="am-award-text">Премия команде по итогам редизайна.</div>
+                    </div>
+                </div>
+
+                <div class="am-metrics">
                     <div class="am-metric">
                         <div class="am-metric-label">NPS</div>
                         <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
@@ -7749,16 +7804,16 @@
                     </div>
                     <div class="am-metric">
                         <div class="am-metric-label">DS coverage</div>
-                        <div class="am-metric-vals"><span class="am-metric-now txt">▲ 50–60%</span></div>
+                        <div class="am-metric-vals"><span class="am-metric-was">0%</span><span class="am-metric-arrow">→</span><span class="am-metric-now">50–60%</span></div>
                     </div>
                 </div>
-                <div class="cp-sec-body">
-                    <p>Премия команде по итогам редизайна.</p>
-                    <p><strong>Качественные результаты</strong></p>
+
+                <div class="cp-sec-body cp-sec-body-narrow">
+                    <h3 class="am-h3">Качественные результаты</h3>
                     <ul>
                         <li>Единый визуальный язык для нескольких брендов компании.</li>
                         <li>Команды веб- и мобильной разработки отметили, что пропали недельные поиски актуальных компонентов.</li>
-                        <li>Систематизация обратной связи: <strong>80&nbsp;000+</strong> обработанных сообщений из Facebook-группы стали базой решений по редизайну.</li>
+                        <li><strong>80&nbsp;000+</strong> обработанных сообщений из Facebook-группы стали базой решений по редизайну.</li>
                         <li>Onboarding completion вырос (точная цифра — TBD).</li>
                     </ul>
                 </div>
