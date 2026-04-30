@@ -2106,7 +2106,9 @@
                 0 0 40px rgba(var(--acc-rgb), 0.12),
                 inset 0 0 30px rgba(var(--acc-rgb), 0.04);
         }
-        .am-ba-stage[data-platform="desktop"] { aspect-ratio: 16 / 10; }
+        /* Aspect matches the supplied screenshots (2880×2360 ≈ 1.22) so the
+           full page fits with no cropping. Mobile stays 9:16. */
+        .am-ba-stage[data-platform="desktop"] { aspect-ratio: 2880 / 2360; }
         .am-ba-stage[data-platform="mobile"]  { aspect-ratio: 9 / 16; max-width: 360px; margin: 0 auto; }
         .am-ba-stage[hidden] { display: none; }
         .am-ba-img {
@@ -2114,10 +2116,12 @@
             inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            /* contain so the full screenshot fits — no top/bottom cropping. */
+            object-fit: contain;
             object-position: top center;
             display: block;
             pointer-events: none;
+            background: #f4f6f9;
         }
         .am-ba-after-wrap {
             position: absolute;
