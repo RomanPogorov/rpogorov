@@ -2132,6 +2132,39 @@
             box-shadow: none;
         }
         .am-ba.is-fs .am-ba-img { background: #000; }
+        .am-ba.is-fs .am-ba-scenes {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            margin: 0;
+            z-index: 4;
+            grid-template-columns: repeat(3, 140px);
+            background: rgba(0, 0, 0, 0.55);
+            padding: 6px;
+            border: 1px solid rgba(var(--acc-rgb), 0.25);
+        }
+        /* Empty-scene state inside the stage */
+        .am-ba-stage.is-scene-empty {
+            background:
+                repeating-linear-gradient(45deg,
+                    #0a0d10 0, #0a0d10 16px,
+                    rgba(var(--acc-rgb), 0.04) 16px, rgba(var(--acc-rgb), 0.04) 17px);
+        }
+        .am-ba-stage.is-scene-empty .am-ba-img { display: none; }
+        .am-ba-stage.is-scene-empty::after {
+            content: '⤓ scene assets coming soon';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.6);
+        }
         .am-ba-tabs {
             display: inline-flex;
             gap: 4px;
@@ -2267,6 +2300,92 @@
         }
         .am-ba-label.before { left: 12px; color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.25); text-shadow: none; }
         .am-ba-label.after  { right: 12px; }
+
+        /* Scene picker — toggles which screen the BeforeAfter is showing */
+        .am-ba-scenes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .am-ba-scene {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 0;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            background: #0a0d10;
+            cursor: pointer;
+            overflow: hidden;
+            aspect-ratio: 16 / 10;
+            transition: border-color 0.2s, transform 0.18s, box-shadow 0.18s;
+        }
+        .am-ba-scene img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            opacity: 0.6;
+            transition: opacity 0.18s;
+        }
+        .am-ba-scene .am-ba-scene-label {
+            position: relative;
+            z-index: 2;
+            padding: 6px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.85);
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+            width: 100%;
+        }
+        .am-ba-scene::before {
+            content: '';
+            position: absolute;
+            top: 8px; right: 10px;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: rgba(var(--acc-rgb), 0.3);
+            z-index: 3;
+            transition: background 0.18s, box-shadow 0.18s;
+        }
+        .am-ba-scene:hover {
+            border-color: rgba(var(--acc-rgb), 0.55);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), 0 0 14px rgba(var(--acc-rgb), 0.15);
+        }
+        .am-ba-scene:hover img { opacity: 0.85; }
+        .am-ba-scene.active {
+            border-color: var(--acc);
+            box-shadow: 0 0 0 1px var(--acc), 0 0 18px rgba(var(--acc-rgb), 0.35);
+        }
+        .am-ba-scene.active::before {
+            background: var(--acc);
+            box-shadow: 0 0 8px var(--acc);
+        }
+        .am-ba-scene.active img { opacity: 1; }
+        .am-ba-scene.is-empty img { display: none; }
+        .am-ba-scene.is-empty {
+            background: repeating-linear-gradient(45deg,
+                #0a0d10 0, #0a0d10 12px,
+                rgba(var(--acc-rgb), 0.03) 12px, rgba(var(--acc-rgb), 0.03) 13px);
+        }
+        .am-ba-scene.is-empty::after {
+            content: '⤓ tbd';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.55);
+        }
 
         /* TL;DR + metrics */
         .am-tldr-block {
@@ -7726,6 +7845,20 @@
                         <div class="am-ba-divider" aria-hidden="true"></div>
                         <button class="am-ba-handle" type="button" aria-label="Drag to compare"></button>
                     </div>
+                    <div class="am-ba-scenes" data-ba-scenes>
+                        <button type="button" class="am-ba-scene active" data-scene="dashboard">
+                            <img src="showcase/cs01/desktop-after.png" alt="">
+                            <span class="am-ba-scene-label">Dashboard</span>
+                        </button>
+                        <button type="button" class="am-ba-scene is-empty" data-scene="creditor">
+                            <img src="" alt="">
+                            <span class="am-ba-scene-label">Creditor Card</span>
+                        </button>
+                        <button type="button" class="am-ba-scene is-empty" data-scene="community">
+                            <img src="" alt="">
+                            <span class="am-ba-scene-label">Community</span>
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -11933,6 +12066,40 @@ See also: Health Samurai Lab: Game of Pools.`,
                             stage.style.setProperty('--ba-pos', next + '%');
                             e.preventDefault();
                         }
+                    });
+                });
+
+                // Scene picker — swaps BA images per scene without rebuilding DOM.
+                const SCENES = {
+                    dashboard: {
+                        desktop: { before: 'showcase/cs01/desktop-before.jpg', after: 'showcase/cs01/desktop-after.png' },
+                        mobile:  { before: '', after: '' },
+                    },
+                    creditor: {
+                        desktop: { before: '', after: '' },
+                        mobile:  { before: '', after: '' },
+                    },
+                    community: {
+                        desktop: { before: '', after: '' },
+                        mobile:  { before: '', after: '' },
+                    },
+                };
+                const scenes = block.querySelectorAll('.am-ba-scene');
+                scenes.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.dataset.scene;
+                        const data = SCENES[id];
+                        if (!data) return;
+                        scenes.forEach(b => b.classList.toggle('active', b === btn));
+                        block.querySelectorAll('.am-ba-stage').forEach(stage => {
+                            const platform = stage.dataset.platform;
+                            const pair = data[platform];
+                            const beforeImg = stage.querySelector('.am-ba-before-img');
+                            const afterImg  = stage.querySelector('.am-ba-after-wrap img');
+                            if (beforeImg) beforeImg.src = pair?.before || '';
+                            if (afterImg)  afterImg.src  = pair?.after  || '';
+                            stage.classList.toggle('is-scene-empty', !pair?.before && !pair?.after);
+                        });
                     });
                 });
 
