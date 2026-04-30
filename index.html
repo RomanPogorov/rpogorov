@@ -136,17 +136,13 @@
                 linear-gradient(135deg, #050708 0%, #0a1410 100%);
         }
 
-        .stage {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
         .stage video {
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
             filter: contrast(1.15) saturate(1.0) brightness(0.8);
             opacity: 0;
             transition: opacity 1.2s ease, filter 0.8s ease;
