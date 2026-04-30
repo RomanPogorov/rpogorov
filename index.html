@@ -226,25 +226,9 @@
             transition: opacity 0.25s ease;
             will-change: opacity;
         }
-        .layer-scanlines-amp::after {
-            /* Thick rolling band — only visible past low-signal threshold */
-            content: '';
-            position: absolute;
-            left: 0; right: 0;
-            height: 180px;
-            background: linear-gradient(to bottom,
-                transparent,
-                rgba(var(--acc-rgb), 0.28),
-                rgba(255, 255, 255, 0.18),
-                rgba(var(--acc-rgb), 0.28),
-                transparent);
-            mix-blend-mode: screen;
-            animation: city-scan-roll calc(1.6s + var(--sim-signal, 1) * 6s) linear infinite;
-        }
-        @keyframes city-scan-roll {
-            from { top: -180px; }
-            to   { top: 100%;   }
-        }
+        /* (Thick rolling band on .layer-scanlines-amp::after removed — Roman
+           said the gradient walk reads as cheesy; replaced by interlace +
+           geometric texture-offset bursts handled in JS / R3F.) */
         /* Burn the grid background as signal drops — heavy override of
            --grid alpha via a sibling layer with stronger lines. */
         .layer-grid-burn {
