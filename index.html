@@ -11174,7 +11174,7 @@
                 dotsList.appendChild(li);
             });
 
-            function open() {
+            function open(opts) {
                 document.body.classList.add('showcase-open');
                 cases.scrollLeft = 0;
                 window.__sfx?.engage?.();
@@ -11186,11 +11186,19 @@
                     items[0].classList.add('active');
                 }
                 if (intro) intro.classList.remove('faded');
+                if (!opts?.silent) window.__router?.set({ showcase: true });
             }
-            function close() {
+            function close(opts) {
                 document.body.classList.remove('showcase-open');
                 window.__sfx?.disengage?.();
+                if (!opts?.silent) window.__router?.set({});
             }
+            // Expose for the URL router.
+            window.__sc = {
+                open, close,
+                scrollTo: (i) => scrollTo(i),
+                indexForCase: (id) => items.findIndex(el => el.dataset.case === id),
+            };
             cue.addEventListener('click', open);
             cue.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
@@ -11237,12 +11245,24 @@
             prev.addEventListener('click', () => scrollTo(currentIndex() - 1));
             next.addEventListener('click', () => scrollTo(currentIndex() + 1));
 
+            let scrollHashTimer;
             cases.addEventListener('scroll', () => {
                 const idx = currentIndex();
                 Array.from(dotsList.children).forEach((d, i) => d.classList.toggle('active', i === idx));
                 prev.disabled = idx === 0;
                 next.disabled = idx === items.length - 1;
                 if (intro) intro.classList.toggle('faded', idx > 0);
+                // Reflect the active case in the URL while showcase is open (debounced).
+                if (document.body.classList.contains('showcase-open')
+                    && !document.body.classList.contains('case-open')) {
+                    clearTimeout(scrollHashTimer);
+                    scrollHashTimer = setTimeout(() => {
+                        const activeCase = items[idx]?.dataset.case;
+                        if (activeCase) {
+                            window.__router?.set({ showcase: true, activeCase });
+                        }
+                    }, 250);
+                }
             }, { passive: true });
 
             document.addEventListener('keydown', (e) => {
@@ -11304,7 +11324,7 @@
             if (!openButtons.length || !pages.length) return;
             const initialized = new WeakSet();
 
-            function openCase(id) {
+            function openCase(id, opts) {
                 const page = document.querySelector(`.case-page[data-case-page="${id}"]`);
                 if (!page) return;
                 pages.forEach(p => p.classList.toggle('open', p === page));
@@ -11315,13 +11335,25 @@
                     initTimeline(page);
                     page.querySelectorAll('.cp-slideshow').forEach(initSlideshow);
                 });
+                if (!opts?.silent) window.__router?.set({ case: id });
             }
 
-            function closeCase() {
+            function closeCase(opts) {
                 body.classList.remove('case-open');
                 pages.forEach(p => p.classList.remove('open'));
                 window.__sfx?.disengage?.();
+                // Drop case + sub from hash; if showcase was the entry, fall back to it.
+                if (!opts?.silent) {
+                    if (body.classList.contains('showcase-open')) {
+                        window.__router?.set({ showcase: true });
+                    } else {
+                        window.__router?.set({});
+                    }
+                }
             }
+
+            // Expose for the URL router.
+            window.__cp = { open: openCase, close: closeCase };
 
             openButtons.forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -13394,6 +13426,8 @@ See also: Health Samurai Lab: Game of Pools.`,
             if (!sections.length) return;
 
             const states = new Map(sections.map(s => [s.id, false]));
+            let lastActiveId = null;
+            let routeTimer = null;
             const recompute = () => {
                 let activeId = null;
                 let bestTop = -Infinity;
@@ -13407,6 +13441,15 @@ See also: Health Samurai Lab: Game of Pools.`,
                     }
                 }
                 tocLinks.forEach(a => a.classList.toggle('is-active', a.dataset.tocTarget === activeId));
+                // Reflect the active subcase in the URL (debounced) while cs02 is open.
+                if (activeId && activeId !== lastActiveId
+                    && document.body.classList.contains('case-open')) {
+                    lastActiveId = activeId;
+                    clearTimeout(routeTimer);
+                    routeTimer = setTimeout(() => {
+                        window.__router?.set({ case: 'cs02', sub: activeId });
+                    }, 200);
+                }
             };
 
             const io = new IntersectionObserver((entries) => {
@@ -13426,6 +13469,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     smoothJump(link.dataset.tocTarget);
+                    window.__router?.set({ case: 'cs02', sub: link.dataset.tocTarget });
                 });
             });
 
@@ -13433,8 +13477,12 @@ See also: Health Samurai Lab: Game of Pools.`,
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
                     smoothJump(card.dataset.gridTarget);
+                    window.__router?.set({ case: 'cs02', sub: card.dataset.gridTarget });
                 });
             });
+
+            // Helper exposed for the router: scroll directly to a subcase id.
+            window.__cs02 = { scrollToSub: smoothJump };
         })();
     </script>
 
@@ -13851,6 +13899,122 @@ See also: Health Samurai Lab: Game of Pools.`,
                     console.log('[deep-case] open', link.dataset.deeplink);
                 });
             });
+        })();
+    </script>
+
+    <!-- URL hash router: keeps showcase / case / subcase state in the URL so links are deep-linkable.
+         Hash patterns:
+           ''                       — home
+           #showcase                — showcase basement open
+           #showcase/cs01           — showcase open, scrolled to that case
+           #case/cs01               — full case page open
+           #case/cs02/hs-03         — case page open, scrolled to subcase
+    -->
+    <script>
+        (() => {
+            const parseHash = () => {
+                const raw = location.hash.replace(/^#/, '');
+                if (!raw) return { type: 'home' };
+                const parts = raw.split('/').filter(Boolean);
+                if (parts[0] === 'case' && parts[1]) {
+                    return { type: 'case', id: parts[1], sub: parts[2] || null };
+                }
+                if (parts[0] === 'showcase') {
+                    return { type: 'showcase', activeCase: parts[1] || null };
+                }
+                return { type: 'home' };
+            };
+
+            const buildHash = (route) => {
+                if (!route) return '';
+                if (route.case) {
+                    return route.sub ? `#case/${route.case}/${route.sub}` : `#case/${route.case}`;
+                }
+                if (route.showcase) {
+                    return route.activeCase ? `#showcase/${route.activeCase}` : '#showcase';
+                }
+                return '';
+            };
+
+            let suppressApply = false;
+
+            const setHash = (newHash) => {
+                const current = location.hash || '';
+                if (newHash === current) return;
+                suppressApply = true;
+                if (newHash) {
+                    history.replaceState(null, '', newHash);
+                } else {
+                    // Drop the hash without triggering a scroll jump.
+                    history.replaceState(null, '', location.pathname + location.search);
+                }
+                setTimeout(() => { suppressApply = false; }, 30);
+            };
+
+            window.__router = {
+                set(partial) {
+                    setHash(buildHash(partial));
+                },
+                parse: parseHash,
+            };
+
+            const apply = (initial) => {
+                const route = parseHash();
+
+                if (route.type === 'case') {
+                    if (window.__cp && route.id) {
+                        // Open if not already that case
+                        const currentOpen = document.querySelector('.case-page.open');
+                        if (currentOpen?.dataset.casePage !== route.id) {
+                            window.__cp.open(route.id, { silent: true });
+                        }
+                        if (route.sub) {
+                            // Wait for layout
+                            setTimeout(() => {
+                                const page = document.querySelector(`.case-page[data-case-page="${route.id}"]`);
+                                const target = document.getElementById(route.sub);
+                                if (page && target) {
+                                    const top = target.offsetTop - 24;
+                                    page.scrollTo({ top, behavior: initial ? 'auto' : 'smooth' });
+                                }
+                            }, initial ? 400 : 60);
+                        }
+                    }
+                } else if (route.type === 'showcase') {
+                    if (window.__sc) {
+                        if (!document.body.classList.contains('showcase-open')) {
+                            window.__sc.open({ silent: true });
+                        }
+                        if (document.body.classList.contains('case-open')) {
+                            window.__cp?.close({ silent: true });
+                        }
+                        if (route.activeCase) {
+                            setTimeout(() => {
+                                const idx = window.__sc.indexForCase(route.activeCase);
+                                if (idx >= 0) window.__sc.scrollTo(idx);
+                            }, initial ? 200 : 60);
+                        }
+                    }
+                } else {
+                    // Home — close everything.
+                    if (document.body.classList.contains('case-open')) {
+                        window.__cp?.close({ silent: true });
+                    }
+                    if (document.body.classList.contains('showcase-open')) {
+                        window.__sc?.close({ silent: true });
+                    }
+                }
+            };
+
+            window.addEventListener('hashchange', () => {
+                if (suppressApply) return;
+                apply(false);
+            });
+
+            // Initial apply once the IIFEs above have registered their callbacks.
+            const runInitial = () => setTimeout(() => apply(true), 80);
+            if (document.readyState === 'complete') runInitial();
+            else window.addEventListener('load', runInitial, { once: true });
         })();
     </script>
 
