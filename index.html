@@ -2204,14 +2204,23 @@
             position: absolute;
             top: 0; bottom: 0;
             left: var(--ba-pos, 50%);
-            width: 2px;
-            background: var(--acc);
-            box-shadow:
-                0 0 0 1px rgba(0,0,0,0.5),
-                0 0 14px rgba(var(--acc-rgb), 0.65);
-            transform: translateX(-1px);
+            width: 1px;
+            background: #000;
+            transform: translateX(-0.5px);
             pointer-events: none;
             z-index: 3;
+            opacity: 0.18;
+            transition: opacity 0.35s ease;
+        }
+        .am-ba-handle,
+        .am-ba-label {
+            opacity: 0.18;
+            transition: opacity 0.35s ease, transform 0.06s linear;
+        }
+        .am-ba-stage:hover .am-ba-handle,
+        .am-ba-stage:hover .am-ba-label,
+        .am-ba-stage:hover .am-ba-divider {
+            opacity: 1;
         }
         .am-ba-handle {
             position: absolute;
