@@ -2151,11 +2151,18 @@
             left: 50%;
             transform: translateX(-50%);
             margin: 0;
-            z-index: 4;
+            z-index: 10;            /* above the range slider (z:5) */
             grid-template-columns: repeat(3, 140px);
             background: rgba(0, 0, 0, 0.55);
             padding: 6px;
             border: 1px solid rgba(var(--acc-rgb), 0.25);
+            pointer-events: auto;
+        }
+        .am-ba.is-fs .am-ba-tabs {
+            z-index: 10;
+        }
+        .am-ba.is-fs .am-ba-fullscreen {
+            z-index: 10;
         }
         /* Empty-scene state inside the stage */
         .am-ba-stage.is-scene-empty {
@@ -3183,7 +3190,9 @@
             pointer-events: none;
             z-index: 100000;          /* always above BA fullscreen (9999) and lightbox */
             will-change: transform;
-            mix-blend-mode: screen;
+            /* difference auto-inverts vs whatever's behind — visible on both
+               dark hero AND white case-page / before-after screenshots. */
+            mix-blend-mode: difference;
         }
         .cur-dot {
             width: 4px;
