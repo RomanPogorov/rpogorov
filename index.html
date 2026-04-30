@@ -1169,33 +1169,48 @@
             font-weight: 400;
         }
 
-        /* Hero shot — full-bleed blueprint board with centered screenshot.
-           Future: track of multiple shots that slides horizontally. */
+        /* Hero shot — full-bleed blueprint board with 80/20 split: image stage left, switcher nav right. */
         .cp-hero-shot {
             position: relative;
             margin: 32px calc(-50vw + 50%) 32px;
             width: 100vw;
             max-width: 100vw;
-            padding: 72px 32px;
+            padding: 56px 32px;
             background: #e8eaee;
-            /* blueprint-style grid: barely-visible '+' at every 60px intersection */
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><path d='M30 26 L30 34 M26 30 L34 30' stroke='rgba(8,18,30,0.18)' stroke-width='1' fill='none' stroke-linecap='round'/></svg>");
             background-size: 60px 60px;
             background-position: center center;
             overflow: hidden;
         }
-        .cp-hero-shot-track {
-            max-width: 1180px;
+        .cp-hero-shot-grid {
+            max-width: 1480px;
             margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: grid;
+            grid-template-columns: 4fr 1fr;
             gap: 32px;
+            align-items: stretch;
         }
-        .cp-hero-shot img {
+        .cp-hero-shot-stage {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        .cp-hero-shot-track {
+            display: flex;
+            transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: translateX(calc(var(--shot-index, 0) * -100%));
+            will-change: transform;
+        }
+        .cp-hero-shot-slide {
+            flex: 0 0 100%;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cp-hero-shot-slide img {
             display: block;
             width: 100%;
-            max-width: 1180px;
             height: auto;
             border-radius: 10px;
             box-shadow:
@@ -1203,9 +1218,77 @@
                 0 6px 14px rgba(8, 18, 30, 0.1),
                 0 1px 0 rgba(255, 255, 255, 0.6) inset;
         }
+        .cp-hero-shot-stub {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px dashed rgba(8, 18, 30, 0.22);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(8, 18, 30, 0.45);
+            text-align: center;
+            padding: 24px;
+        }
+        .cp-hero-shot-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .cp-hero-shot-tab {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+            padding: 14px 16px;
+            border: 1px solid rgba(8, 18, 30, 0.14);
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 10px;
+            cursor: pointer;
+            color: rgba(8, 18, 30, 0.65);
+            font-family: inherit;
+            transition: border-color 0.18s, background 0.18s, color 0.18s, transform 0.18s;
+        }
+        .cp-hero-shot-tab:hover {
+            border-color: rgba(8, 18, 30, 0.4);
+            background: rgba(255, 255, 255, 0.85);
+            color: rgba(8, 18, 30, 0.9);
+        }
+        .cp-hero-shot-tab.is-active {
+            border-color: var(--acc);
+            background: #fff;
+            color: rgba(8, 18, 30, 1);
+            box-shadow:
+                0 6px 18px rgba(8, 18, 30, 0.08),
+                0 0 0 2px rgba(var(--acc-rgb), 0.16);
+        }
+        .cp-hero-shot-tab .tab-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            opacity: 0.55;
+        }
+        .cp-hero-shot-tab.is-active .tab-num { color: var(--acc); opacity: 1; }
+        .cp-hero-shot-tab .tab-label {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            line-height: 1.25;
+        }
+        @media (max-width: 900px) {
+            .cp-hero-shot-grid { grid-template-columns: 1fr; gap: 16px; }
+            .cp-hero-shot-nav { flex-direction: row; overflow-x: auto; }
+            .cp-hero-shot-tab { flex: 0 0 auto; min-width: 160px; }
+        }
         @media (max-width: 720px) {
-            .cp-hero-shot { padding: 36px 16px; }
-            .cp-hero-shot img { border-radius: 6px; }
+            .cp-hero-shot { padding: 28px 14px; }
+            .cp-hero-shot-slide img,
+            .cp-hero-shot-stage { border-radius: 6px; }
         }
 
         /* TLDR */
@@ -7695,8 +7778,41 @@
             </header>
 
             <figure class="cp-hero-shot" data-shot-board>
-                <div class="cp-hero-shot-track" data-shot-track>
-                    <img src="showcase/cs01/main.png" alt="Americor — редизайнённый dashboard">
+                <div class="cp-hero-shot-grid">
+                    <div class="cp-hero-shot-stage">
+                        <div class="cp-hero-shot-track" data-shot-track style="--shot-index:0;">
+                            <div class="cp-hero-shot-slide" data-shot-slide="0">
+                                <img src="showcase/cs01/main.png" alt="Americor — редизайнённый dashboard">
+                            </div>
+                            <div class="cp-hero-shot-slide" data-shot-slide="1">
+                                <div class="cp-hero-shot-stub">// soon · скриншот инфраструктуры</div>
+                            </div>
+                            <div class="cp-hero-shot-slide" data-shot-slide="2">
+                                <div class="cp-hero-shot-stub">// soon · скриншот дизайн-системы</div>
+                            </div>
+                            <div class="cp-hero-shot-slide" data-shot-slide="3">
+                                <div class="cp-hero-shot-stub">// soon · Figma ⇄ Code пайплайн</div>
+                            </div>
+                        </div>
+                    </div>
+                    <nav class="cp-hero-shot-nav" data-shot-nav aria-label="Hero shot switcher">
+                        <button class="cp-hero-shot-tab is-active" type="button" data-shot-target="0">
+                            <span class="tab-num">01 / current</span>
+                            <span class="tab-label">Редизайн</span>
+                        </button>
+                        <button class="cp-hero-shot-tab" type="button" data-shot-target="1">
+                            <span class="tab-num">02</span>
+                            <span class="tab-label">Инфраструктура</span>
+                        </button>
+                        <button class="cp-hero-shot-tab" type="button" data-shot-target="2">
+                            <span class="tab-num">03</span>
+                            <span class="tab-label">Дизайн-система</span>
+                        </button>
+                        <button class="cp-hero-shot-tab" type="button" data-shot-target="3">
+                            <span class="tab-num">04</span>
+                            <span class="tab-label">Figma ⇄ Code</span>
+                        </button>
+                    </nav>
                 </div>
             </figure>
 
@@ -11906,6 +12022,24 @@ See also: Health Samurai Lab: Game of Pools.`,
                         e.preventDefault();
                     }
                 }, { passive: false });
+            });
+        })();
+    </script>
+
+    <!-- cp-hero-shot switcher: clicking a tab on the right slides the corresponding image into view. -->
+    <script>
+        (() => {
+            document.querySelectorAll('[data-shot-board]').forEach(board => {
+                const track = board.querySelector('[data-shot-track]');
+                const tabs = board.querySelectorAll('[data-shot-target]');
+                if (!track || !tabs.length) return;
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const idx = tab.dataset.shotTarget;
+                        track.style.setProperty('--shot-index', idx);
+                        tabs.forEach(t => t.classList.toggle('is-active', t === tab));
+                    });
+                });
             });
         })();
     </script>
