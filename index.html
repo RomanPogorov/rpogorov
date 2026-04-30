@@ -1183,11 +1183,11 @@
             overflow: hidden;
         }
         .cp-hero-shot-grid {
-            max-width: 1480px;
+            max-width: 1680px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 0;
             align-items: stretch;
         }
         .cp-hero-shot-stage {
@@ -1240,6 +1240,9 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 8px 10px;
+            margin-top: -22px;
+            position: relative;
+            z-index: 2;
         }
         .cp-hero-shot-tab {
             --shot-blue: #0065FF;
@@ -12032,34 +12035,60 @@ See also: Health Samurai Lab: Game of Pools.`,
         })();
     </script>
 
-    <!-- cp-hero-shot switcher: click tab or use ←/→ keys to slide between shots. -->
+    <!-- cp-hero-shot switcher: click tab or use ←/→ keys to slide between shots
+         when the board is visible (focus inside or just scrolled into view). -->
     <script>
         (() => {
-            document.querySelectorAll('[data-shot-board]').forEach(board => {
+            const boards = Array.from(document.querySelectorAll('[data-shot-board]'));
+            if (!boards.length) return;
+
+            const setups = boards.map(board => {
                 const track = board.querySelector('[data-shot-track]');
                 const tabsList = Array.from(board.querySelectorAll('[data-shot-target]'));
-                if (!track || !tabsList.length) return;
+                if (!track || !tabsList.length) return null;
 
                 const setActive = (idx, focus) => {
                     const clamped = Math.max(0, Math.min(tabsList.length - 1, idx));
                     track.style.setProperty('--shot-index', clamped);
                     tabsList.forEach((t, i) => t.classList.toggle('is-active', i === clamped));
-                    if (focus) tabsList[clamped].focus();
+                    if (focus) tabsList[clamped].focus({ preventScroll: true });
                 };
-
-                const currentIndex = () => tabsList.findIndex(t => t.classList.contains('is-active'));
+                const currentIndex = () => Math.max(0, tabsList.findIndex(t => t.classList.contains('is-active')));
 
                 tabsList.forEach((tab, i) => {
                     tab.addEventListener('click', () => setActive(i));
                 });
 
-                // Arrow keys navigate when focus is inside the board.
-                board.addEventListener('keydown', (e) => {
-                    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-                    e.preventDefault();
-                    const i = currentIndex();
-                    setActive(e.key === 'ArrowRight' ? i + 1 : i - 1, true);
-                });
+                return { board, setActive, currentIndex, tabsList };
+            }).filter(Boolean);
+            if (!setups.length) return;
+
+            const isInViewport = (el) => {
+                const r = el.getBoundingClientRect();
+                const vh = window.innerHeight;
+                // Consider visible if any part overlaps mid-viewport.
+                return r.bottom > 80 && r.top < vh - 80;
+            };
+
+            const isTypingTarget = (el) => {
+                if (!el) return false;
+                if (el.isContentEditable) return true;
+                const tag = el.tagName;
+                return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+            };
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                if (e.metaKey || e.ctrlKey || e.altKey) return;
+                if (isTypingTarget(document.activeElement)) return;
+
+                // Pick the first board currently visible — usually one at a time on screen.
+                const setup = setups.find(s => isInViewport(s.board));
+                if (!setup) return;
+                e.preventDefault();
+                const i = setup.currentIndex();
+                const focus = setup.tabsList.includes(document.activeElement);
+                setup.setActive(e.key === 'ArrowRight' ? i + 1 : i - 1, focus);
             });
         })();
     </script>
