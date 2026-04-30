@@ -12055,10 +12055,19 @@ See also: Health Samurai Lab: Game of Pools.`,
                         stage.style.setProperty('--ba-pos', pct.toFixed(2) + '%');
                     };
                     stage.addEventListener('mousemove', (e) => {
-                        // Skip when hovering interactive controls (scene picker,
-                        // tabs, fullscreen button) so they remain clickable in
-                        // fullscreen where they overlay the stage.
-                        if (e.target.closest('.am-ba-scenes, .am-ba-tabs, .am-ba-fullscreen')) return;
+                        // Skip when hovering interactive controls.
+                        if (e.target.closest('.am-ba-scenes, .am-ba-tabs, .am-ba-fullscreen')) {
+                            stage.style.cursor = '';
+                            return;
+                        }
+                        // Detach from comparator below the vertical midline so
+                        // controls/scene tiles in the lower half are reachable.
+                        const r = stage.getBoundingClientRect();
+                        if (e.clientY > r.top + r.height / 2) {
+                            stage.style.cursor = 'default';
+                            return;
+                        }
+                        stage.style.cursor = 'ew-resize';
                         setPos(e.clientX);
                     });
                     // Touch: drag with finger
@@ -12101,24 +12110,42 @@ See also: Health Samurai Lab: Game of Pools.`,
                         mobile:  { before: '', after: '' },
                     },
                 };
-                const scenes = block.querySelectorAll('.am-ba-scene');
-                scenes.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const id = btn.dataset.scene;
-                        const data = SCENES[id];
-                        if (!data) return;
-                        scenes.forEach(b => b.classList.toggle('active', b === btn));
-                        block.querySelectorAll('.am-ba-stage').forEach(stage => {
-                            const platform = stage.dataset.platform;
-                            const pair = data[platform];
-                            const beforeImg = stage.querySelector('.am-ba-before-img');
-                            const afterImg  = stage.querySelector('.am-ba-after-wrap img');
-                            if (beforeImg) beforeImg.src = pair?.before || '';
-                            if (afterImg)  afterImg.src  = pair?.after  || '';
-                            stage.classList.toggle('is-scene-empty', !pair?.before && !pair?.after);
-                        });
+                const scenes = Array.from(block.querySelectorAll('.am-ba-scene'));
+                function activateScene(btn) {
+                    if (!btn) return;
+                    const id = btn.dataset.scene;
+                    const data = SCENES[id];
+                    if (!data) return;
+                    scenes.forEach(b => b.classList.toggle('active', b === btn));
+                    block.querySelectorAll('.am-ba-stage').forEach(stage => {
+                        const platform = stage.dataset.platform;
+                        const pair = data[platform];
+                        const beforeImg = stage.querySelector('.am-ba-before-img');
+                        const afterImg  = stage.querySelector('.am-ba-after-wrap img');
+                        if (beforeImg) beforeImg.src = pair?.before || '';
+                        if (afterImg)  afterImg.src  = pair?.after  || '';
+                        stage.classList.toggle('is-scene-empty', !pair?.before && !pair?.after);
                     });
-                });
+                }
+                scenes.forEach(btn => btn.addEventListener('click', () => activateScene(btn)));
+
+                // Track when the block is "active" for keyboard nav: hovered or
+                // fullscreen. ←/→ cycle scenes.
+                let baHovered = false;
+                block.addEventListener('mouseenter', () => { baHovered = true; });
+                block.addEventListener('mouseleave', () => { baHovered = false; });
+                document.addEventListener('keydown', (e) => {
+                    if (e.target?.tagName === 'INPUT' || e.target?.tagName === 'TEXTAREA') return;
+                    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                    if (!baHovered && !block.classList.contains('is-fs')) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const activeIdx = scenes.findIndex(s => s.classList.contains('active'));
+                    const next = e.key === 'ArrowRight'
+                        ? (activeIdx + 1) % scenes.length
+                        : (activeIdx - 1 + scenes.length) % scenes.length;
+                    activateScene(scenes[next]);
+                }, true);
 
                 // Fullscreen toggle. To escape every parent stacking context
                 // (case-page z:35, showcase z:7, etc.) we move the block into
