@@ -12074,23 +12074,29 @@ See also: Health Samurai Lab: Game of Pools.`,
 
                     // FULLSCREEN mode: click + drag like a normal slider.
                     let dragging = false;
-                    stage.addEventListener('mousedown', (e) => {
+                    const startDrag = (e) => {
                         if (!isFs()) return;
                         if (onCtrl(e.target)) return;
                         dragging = true;
                         document.body.style.userSelect = 'none';
                         setPos(e.clientX);
-                    });
-                    document.addEventListener('mousemove', (e) => {
+                        e.preventDefault();
+                    };
+                    const moveDrag = (e) => {
                         if (!dragging) return;
-                        if (onCtrl(e.target)) return;
+                        // Once dragging, follow the cursor regardless of target —
+                        // user might cross over scene tiles, that's fine.
                         setPos(e.clientX);
-                    });
-                    document.addEventListener('mouseup', () => {
+                    };
+                    const endDrag = () => {
                         if (!dragging) return;
                         dragging = false;
                         document.body.style.userSelect = '';
-                    });
+                    };
+                    stage.addEventListener('mousedown', startDrag);
+                    window.addEventListener('mousemove', moveDrag);
+                    window.addEventListener('mouseup', endDrag);
+                    window.addEventListener('blur', endDrag);
 
                     // Touch: drag with finger (works in both modes)
                     stage.addEventListener('touchstart', (e) => {
