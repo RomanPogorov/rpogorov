@@ -3232,13 +3232,28 @@
             max-width: 56ch;
             margin: 0;
         }
+        /* Bento grid — 4-col explicit layout. 03/04 are 2x2 headliners,
+           11/12 close the page as 2x1 wide tiles; remaining 9 cards fill 1x1 rows. */
         .hs-grid-cards {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: minmax(200px, auto);
-            grid-auto-flow: dense;
+            grid-auto-rows: minmax(180px, auto);
             gap: 16px;
         }
+        /* 4-col explicit placements */
+        .hs-grid-card[data-grid-target="hs-03"] { grid-column: 1 / span 2; grid-row: 1 / span 2; }
+        .hs-grid-card[data-grid-target="hs-04"] { grid-column: 3 / span 2; grid-row: 1 / span 2; }
+        .hs-grid-card[data-grid-target="hs-01"] { grid-column: 1; grid-row: 3; }
+        .hs-grid-card[data-grid-target="hs-02"] { grid-column: 2; grid-row: 3; }
+        .hs-grid-card[data-grid-target="hs-05"] { grid-column: 3; grid-row: 3; }
+        .hs-grid-card[data-grid-target="hs-06"] { grid-column: 4; grid-row: 3; }
+        .hs-grid-card[data-grid-target="hs-07"] { grid-column: 1; grid-row: 4; }
+        .hs-grid-card[data-grid-target="hs-08"] { grid-column: 2; grid-row: 4; }
+        .hs-grid-card[data-grid-target="hs-09"] { grid-column: 3; grid-row: 4; }
+        .hs-grid-card[data-grid-target="hs-10"] { grid-column: 4; grid-row: 4; }
+        .hs-grid-card[data-grid-target="hs-11"] { grid-column: 1 / span 2; grid-row: 5; }
+        .hs-grid-card[data-grid-target="hs-12"] { grid-column: 3 / span 2; grid-row: 5; }
+
         .hs-grid-card {
             display: flex;
             flex-direction: column;
@@ -3259,32 +3274,26 @@
             transform: translateY(-2px);
             background: linear-gradient(180deg, var(--hs-bg-elev), rgba(var(--hs-red-rgb), 0.04));
         }
-        /* Feature cards (bento headliners): span 2x2 cells, larger title, extra stat strip. */
+        /* Feature cards (2x2): big halo, gradient bg, larger icon/title, stat strip. */
         .hs-grid-card.is-feature {
-            grid-column: span 2;
-            grid-row: span 2;
             padding: 28px 28px 30px;
             background: linear-gradient(135deg, var(--hs-bg-elev) 0%, rgba(var(--hs-red-rgb), 0.06) 100%);
         }
         .hs-grid-card.is-feature::before {
             content: '';
             position: absolute;
-            top: -40px;
-            right: -40px;
-            width: 200px;
-            height: 200px;
+            top: -40px; right: -40px;
+            width: 220px; height: 220px;
             border-radius: 50%;
             background: radial-gradient(closest-side, rgba(var(--hs-red-rgb), 0.18), rgba(var(--hs-red-rgb), 0));
             pointer-events: none;
         }
         .hs-grid-card.is-feature .hs-grid-card-icon {
-            width: 52px;
-            height: 52px;
+            width: 52px; height: 52px;
             border-radius: 10px;
         }
         .hs-grid-card.is-feature .hs-grid-card-icon svg {
-            width: 26px;
-            height: 26px;
+            width: 26px; height: 26px;
         }
         .hs-grid-card.is-feature .hs-grid-card-title {
             font-size: clamp(1.375rem, 2vw, 1.75rem);
@@ -3295,6 +3304,51 @@
         .hs-grid-card.is-feature .hs-grid-card-desc {
             font-size: 0.9375rem;
             margin-top: 6px;
+        }
+        /* Wide cards (2x1): same gradient + halo language as features but shorter; stat strip optional. */
+        .hs-grid-card.is-wide {
+            padding: 22px 24px 22px;
+            background: linear-gradient(135deg, var(--hs-bg-elev) 0%, rgba(var(--hs-red-rgb), 0.045) 100%);
+            flex-direction: row;
+            align-items: stretch;
+            gap: 22px;
+        }
+        .hs-grid-card.is-wide::before {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 160px; height: 160px;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(var(--hs-red-rgb), 0.14), rgba(var(--hs-red-rgb), 0));
+            pointer-events: none;
+        }
+        .hs-grid-card.is-wide .hs-grid-card-icon {
+            width: 48px; height: 48px;
+            flex-shrink: 0;
+        }
+        .hs-grid-card.is-wide .hs-grid-card-icon svg {
+            width: 24px; height: 24px;
+        }
+        .hs-grid-card.is-wide .is-wide-body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+            flex: 1;
+        }
+        .hs-grid-card.is-wide .hs-grid-card-title {
+            font-size: 1.1875rem;
+            line-height: 1.25;
+            min-height: 0;
+            margin-top: 0;
+        }
+        .hs-grid-card.is-wide .hs-grid-card-desc {
+            font-size: 0.875rem;
+            margin: 4px 0 0;
+        }
+        .hs-grid-card.is-wide .hs-grid-card-stat {
+            margin-top: auto;
+            padding-top: 12px;
         }
         .hs-grid-card-stat {
             margin-top: auto;
@@ -3361,22 +3415,55 @@
             color: var(--hs-text-secondary);
             margin: auto 0 0;
         }
-        @media (max-width: 1100px) {
+        /* 3-col layout — features stay 2 cols wide, single row tall. Natural flow handles the rest. */
+        @media (max-width: 1180px) {
             .hs-grid-cards { grid-template-columns: repeat(3, 1fr); }
-            .hs-grid-card.is-feature { grid-column: span 2; grid-row: span 2; }
+            .hs-grid-card,
+            .hs-grid-card[data-grid-target] {
+                grid-column: auto;
+                grid-row: auto;
+            }
+            .hs-grid-card.is-feature {
+                grid-column: span 2;
+                grid-row: span 1;
+            }
+            .hs-grid-card.is-feature::before {
+                width: 160px; height: 160px;
+                top: -30px; right: -30px;
+            }
+            .hs-grid-card.is-feature .hs-grid-card-icon { width: 44px; height: 44px; }
+            .hs-grid-card.is-feature .hs-grid-card-icon svg { width: 22px; height: 22px; }
+            .hs-grid-card.is-feature .hs-grid-card-title { font-size: 1.25rem; }
+            .hs-grid-card.is-wide { grid-column: span 3; }
+            .hs-grid-card.is-wide.is-wide-body { /* keep row layout */ }
         }
+        /* 2-col layout */
         @media (max-width: 800px) {
             .hs-grid-cards { grid-template-columns: repeat(2, 1fr); }
+            .hs-grid-card,
+            .hs-grid-card[data-grid-target] {
+                grid-column: auto;
+                grid-row: auto;
+            }
             .hs-grid-card.is-feature { grid-column: span 2; grid-row: span 1; padding: 22px 22px 24px; }
+            .hs-grid-card.is-feature::before { width: 140px; height: 140px; }
             .hs-grid-card.is-feature .hs-grid-card-icon { width: 40px; height: 40px; }
             .hs-grid-card.is-feature .hs-grid-card-icon svg { width: 20px; height: 20px; }
             .hs-grid-card.is-feature .hs-grid-card-title { font-size: 1.125rem; }
             .hs-grid-card.is-feature .hs-grid-card-desc { font-size: 0.8125rem; }
+            .hs-grid-card.is-wide { grid-column: span 2; flex-direction: column; gap: 14px; }
             .hs-grid-overview { padding: 0 24px 56px; }
         }
+        /* Single column — flatten everything */
         @media (max-width: 480px) {
             .hs-grid-cards { grid-template-columns: 1fr; }
-            .hs-grid-card.is-feature { grid-column: span 1; }
+            .hs-grid-card,
+            .hs-grid-card[data-grid-target],
+            .hs-grid-card.is-feature,
+            .hs-grid-card.is-wide {
+                grid-column: 1;
+                grid-row: auto;
+            }
         }
 
         @media (max-width: 980px) {
@@ -8913,17 +9000,13 @@
                 <p class="hs-grid-sub">Click any card to jump to the full subcase below — design system, content infrastructure, product redesigns, brand work, and proof artifacts.</p>
             </div>
             <div class="hs-grid-cards">
-                <a class="hs-grid-card is-feature" href="#hs-01" data-grid-target="hs-01">
+                <a class="hs-grid-card" href="#hs-01" data-grid-target="hs-01">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="12" y="2" width="6" height="6" rx="1"/><rect x="2" y="12" width="6" height="6" rx="1"/><rect x="12" y="12" width="6" height="6" rx="1"/></svg>
                     </div>
                     <div class="hs-grid-card-meta">01 · <strong>System</strong></div>
                     <h3 class="hs-grid-card-title">Design system: Figma to Storybook</h3>
-                    <p class="hs-grid-card-desc">Multi-layer DS on shadCN — semantic tokens, custom states, code as source of truth, Figma as representation. Bidirectional sync via custom Claude skill.</p>
-                    <div class="hs-grid-card-stat">
-                        <span class="hs-grid-card-stat-value">All teams</span>
-                        <span class="hs-grid-card-stat-label">use it in production</span>
-                    </div>
+                    <p class="hs-grid-card-desc">Multi-layer DS on shadCN, semantic tokens, bidirectional sync.</p>
                 </a>
                 <a class="hs-grid-card" href="#hs-02" data-grid-target="hs-02">
                     <div class="hs-grid-card-icon">
@@ -8945,13 +9028,17 @@
                         <span class="hs-grid-card-stat-label">cycle time per landing</span>
                     </div>
                 </a>
-                <a class="hs-grid-card" href="#hs-04" data-grid-target="hs-04">
+                <a class="hs-grid-card is-feature" href="#hs-04" data-grid-target="hs-04">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="16" height="11" rx="1"/><line x1="6" y1="17" x2="14" y2="17"/><line x1="10" y1="14" x2="10" y2="17"/></svg>
                     </div>
                     <div class="hs-grid-card-meta">04 · <strong>Process</strong></div>
                     <h3 class="hs-grid-card-title">Presentation generator</h3>
-                    <p class="hs-grid-card-desc">Two entry points, three modes (Normal / Variety / Madness).</p>
+                    <p class="hs-grid-card-desc">Same approach as the landing platform — applied to decks. Two entry points (drop-and-get + visual editor), three generation modes (Normal / Variety / Madness). The team fell in love.</p>
+                    <div class="hs-grid-card-stat">
+                        <span class="hs-grid-card-stat-value">~1 wk → ~1 h</span>
+                        <span class="hs-grid-card-stat-label">cycle time · 30+ generated</span>
+                    </div>
                 </a>
                 <a class="hs-grid-card" href="#hs-05" data-grid-target="hs-05">
                     <div class="hs-grid-card-icon">
@@ -9001,25 +9088,33 @@
                     <h3 class="hs-grid-card-title">Kudos generator</h3>
                     <p class="hs-grid-card-desc">Mascot-trained image gen, ~200 generations, daily use.</p>
                 </a>
-                <a class="hs-grid-card is-feature" href="#hs-11" data-grid-target="hs-11">
+                <a class="hs-grid-card is-wide" href="#hs-11" data-grid-target="hs-11">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 2 L4 11 L9 11 L8 18 L16 8 L11 8 Z"/></svg>
                     </div>
-                    <div class="hs-grid-card-meta">11 · <strong>Proof</strong></div>
-                    <h3 class="hs-grid-card-title">FireCamp app — vibe-coded production</h3>
-                    <p class="hs-grid-card-desc">Annual healthcare-IT gathering in Portugal — Microsoft &amp; industry leaders. Shipped a responsive web app in a week: voting, schedule, subscriptions. The proof point that convinced C-level the code-first approach was real.</p>
-                    <div class="hs-grid-card-stat">
-                        <span class="hs-grid-card-stat-value">1 wk · ~100</span>
-                        <span class="hs-grid-card-stat-label">build · attendees</span>
+                    <div class="is-wide-body">
+                        <div class="hs-grid-card-meta">11 · <strong>Proof</strong></div>
+                        <h3 class="hs-grid-card-title">FireCamp app — vibe-coded production</h3>
+                        <p class="hs-grid-card-desc">Healthcare-IT conference in Portugal. Shipped a responsive web app in a week — voting, schedule, subscriptions. The proof point that convinced C-level.</p>
+                        <div class="hs-grid-card-stat">
+                            <span class="hs-grid-card-stat-value">1 wk · ~100</span>
+                            <span class="hs-grid-card-stat-label">build · attendees</span>
+                        </div>
                     </div>
                 </a>
-                <a class="hs-grid-card" href="#hs-12" data-grid-target="hs-12">
+                <a class="hs-grid-card is-wide" href="#hs-12" data-grid-target="hs-12">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5 L3 10 L7 15"/><path d="M13 5 L17 10 L13 15"/></svg>
                     </div>
-                    <div class="hs-grid-card-meta">12 · <strong>Proof</strong></div>
-                    <h3 class="hs-grid-card-title">JSON Parser &amp; vibe-code as method</h3>
-                    <p class="hs-grid-card-desc">Working prototypes instead of static mockups, from day one.</p>
+                    <div class="is-wide-body">
+                        <div class="hs-grid-card-meta">12 · <strong>Proof</strong></div>
+                        <h3 class="hs-grid-card-title">JSON Parser &amp; vibe-code as method</h3>
+                        <p class="hs-grid-card-desc">Working prototypes instead of static mockups, from day one. Multiple shipped artifacts validate UI hypotheses with code, not Figma.</p>
+                        <div class="hs-grid-card-stat">
+                            <span class="hs-grid-card-stat-value">Code-first</span>
+                            <span class="hs-grid-card-stat-label">default since day one</span>
+                        </div>
+                    </div>
                 </a>
             </div>
         </section>
