@@ -3202,6 +3202,112 @@
             font-weight: 600;
         }
 
+        /* Grid overview — 12 subcase preview cards, click → smooth-scroll to subcase. */
+        .hs-grid-overview {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 64px 80px;
+        }
+        .hs-grid-head { max-width: 720px; margin: 0 0 56px; }
+        .hs-grid-head .hs-eyebrow { margin-bottom: 24px; }
+        .hs-grid-h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.25rem);
+            font-weight: 700;
+            line-height: 1.08;
+            letter-spacing: -0.018em;
+            color: var(--hs-text);
+            margin: 0 0 18px;
+        }
+        .hs-grid-h2 em {
+            color: var(--hs-text-muted);
+            font-style: normal;
+            font-weight: 700;
+            display: block;
+        }
+        .hs-grid-sub {
+            font-size: 1rem;
+            line-height: 1.55;
+            color: var(--hs-text-secondary);
+            max-width: 56ch;
+            margin: 0;
+        }
+        .hs-grid-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .hs-grid-card {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 22px 22px 24px;
+            background: var(--hs-bg-elev);
+            border: 1px solid var(--hs-border);
+            border-radius: 10px;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: border-color 0.18s, transform 0.18s, background 0.18s;
+        }
+        .hs-grid-card:hover {
+            border-color: var(--hs-red);
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, var(--hs-bg-elev), rgba(var(--hs-red-rgb), 0.04));
+        }
+        .hs-grid-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--hs-bg-tint);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--hs-red);
+            flex-shrink: 0;
+        }
+        .hs-grid-card-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        .hs-grid-card-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--hs-text-muted);
+        }
+        .hs-grid-card-meta strong {
+            color: var(--hs-text-secondary);
+            font-weight: 600;
+        }
+        .hs-grid-card-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.0625rem;
+            font-weight: 600;
+            color: var(--hs-text);
+            line-height: 1.25;
+            margin: 0;
+            min-height: 2.5em;
+        }
+        .hs-grid-card-desc {
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            color: var(--hs-text-secondary);
+            margin: auto 0 0;
+        }
+        @media (max-width: 1100px) {
+            .hs-grid-cards { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 800px) {
+            .hs-grid-cards { grid-template-columns: repeat(2, 1fr); }
+            .hs-grid-overview { padding: 0 24px 56px; }
+        }
+        @media (max-width: 480px) {
+            .hs-grid-cards { grid-template-columns: 1fr; }
+        }
+
         @media (max-width: 980px) {
             .hs-hero { padding: 100px 24px 56px; }
             .hs-meta-row { padding: 0 24px 24px; }
@@ -8729,6 +8835,112 @@
             </div>
         </div>
 
+        <section class="hs-grid-overview" aria-label="Subcases overview">
+            <div class="hs-grid-head">
+                <div class="hs-eyebrow">12 subcases · grouped</div>
+                <h2 class="hs-grid-h2">Each track, opened up.<em>Skim the grid or dive in.</em></h2>
+                <p class="hs-grid-sub">Click any card to jump to the full subcase below — design system, content infrastructure, product redesigns, brand work, and proof artifacts.</p>
+            </div>
+            <div class="hs-grid-cards">
+                <a class="hs-grid-card" href="#hs-01" data-grid-target="hs-01">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="12" y="2" width="6" height="6" rx="1"/><rect x="2" y="12" width="6" height="6" rx="1"/><rect x="12" y="12" width="6" height="6" rx="1"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">01 · <strong>System</strong></div>
+                    <h3 class="hs-grid-card-title">Design system: Figma to Storybook</h3>
+                    <p class="hs-grid-card-desc">Multi-layer DS on shadCN, semantic tokens, bidirectional sync.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-02" data-grid-target="hs-02">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5 L3 10 L7 15"/><path d="M13 5 L17 10 L13 15"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">02 · <strong>Tools</strong></div>
+                    <h3 class="hs-grid-card-title">Figma ↔ Code mapping skill</h3>
+                    <p class="hs-grid-card-desc">Custom Claude skill, 70–80% accuracy first run, iteratively improved.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-03" data-grid-target="hs-03">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="16" height="14" rx="1"/><line x1="2" y1="7" x2="18" y2="7"/><line x1="9" y1="7" x2="9" y2="17"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">03 · <strong>Process</strong></div>
+                    <h3 class="hs-grid-card-title">Landing platform &amp; AI pipeline</h3>
+                    <p class="hs-grid-card-desc">3 months → 2–3 days. The site you're on runs on it.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-04" data-grid-target="hs-04">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="16" height="11" rx="1"/><line x1="6" y1="17" x2="14" y2="17"/><line x1="10" y1="14" x2="10" y2="17"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">04 · <strong>Process</strong></div>
+                    <h3 class="hs-grid-card-title">Presentation generator</h3>
+                    <p class="hs-grid-card-desc">Two entry points, three modes (Normal / Variety / Madness).</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-05" data-grid-target="hs-05">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 14 7 10 11 12 17 5"/><line x1="3" y1="17" x2="17" y2="17"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">05 · <strong>Tools</strong></div>
+                    <h3 class="hs-grid-card-title">Embedded analytics on every page</h3>
+                    <p class="hs-grid-card-desc">PostHog inside every page. Zero context switch.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-06" data-grid-target="hs-06">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="10" r="7"/><line x1="3" y1="10" x2="17" y2="10"/><path d="M10 3 C13 7 13 13 10 17 M10 3 C7 7 7 13 10 17"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">06 · <strong>Product</strong></div>
+                    <h3 class="hs-grid-card-title">Aidbox redesign</h3>
+                    <p class="hs-grid-card-desc">Joint redesign of the flagship FHIR platform UI.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-07" data-grid-target="hs-07">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2"/><circle cx="15" cy="10" r="2"/><circle cx="5" cy="15" r="2"/><line x1="6.5" y1="6" x2="13.5" y2="9"/><line x1="6.5" y1="14" x2="13.5" y2="11"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">07 · <strong>Product</strong></div>
+                    <h3 class="hs-grid-card-title">MPI Box redesign</h3>
+                    <p class="hs-grid-card-desc">Master Patient Index — match, merge, audit.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-08" data-grid-target="hs-08">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5 L4 10 L8 15"/><path d="M12 5 L16 10 L12 15"/><line x1="11" y1="4" x2="9" y2="16"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">08 · <strong>Process</strong></div>
+                    <h3 class="hs-grid-card-title">Design support through code</h3>
+                    <p class="hs-grid-card-desc">Designer in production repos, branch-and-merge model.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-09" data-grid-target="hs-09">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 10 Q 6 4 10 10 T 17 10"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">09 · <strong>Brand</strong></div>
+                    <h3 class="hs-grid-card-title">Brand identity &amp; illustrations</h3>
+                    <p class="hs-grid-card-desc">Logos, illustrations, mascots, diagram style.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-10" data-grid-target="hs-10">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 17 L3.5 10.5 C1.5 8.5 3 4.5 6 5 C7.6 5.3 9 6.5 10 8 C11 6.5 12.4 5.3 14 5 C17 4.5 18.5 8.5 16.5 10.5 Z"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">10 · <strong>Tools</strong></div>
+                    <h3 class="hs-grid-card-title">Kudos generator</h3>
+                    <p class="hs-grid-card-desc">Mascot-trained image gen, ~200 generations, daily use.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-11" data-grid-target="hs-11">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 2 L4 11 L9 11 L8 18 L16 8 L11 8 Z"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">11 · <strong>Proof</strong></div>
+                    <h3 class="hs-grid-card-title">FireCamp app — vibe-coded production</h3>
+                    <p class="hs-grid-card-desc">1 week build, ~100 attendees, C-level proof point.</p>
+                </a>
+                <a class="hs-grid-card" href="#hs-12" data-grid-target="hs-12">
+                    <div class="hs-grid-card-icon">
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5 L3 10 L7 15"/><path d="M13 5 L17 10 L13 15"/></svg>
+                    </div>
+                    <div class="hs-grid-card-meta">12 · <strong>Proof</strong></div>
+                    <h3 class="hs-grid-card-title">JSON Parser &amp; vibe-code as method</h3>
+                    <p class="hs-grid-card-desc">Working prototypes instead of static mockups, from day one.</p>
+                </a>
+            </div>
+        </section>
+
         <div class="hs-toc-layout">
             <nav class="hs-toc" aria-label="Subcases">
                 <div class="hs-toc-cat">Design system</div>
@@ -13035,13 +13247,24 @@ See also: Health Samurai Lab: Game of Pools.`,
             }, { root: page, rootMargin: '-20% 0px -40% 0px', threshold: 0 });
             sections.forEach(s => io.observe(s));
 
+            const smoothJump = (id) => {
+                const target = document.getElementById(id);
+                if (!target) return;
+                const top = target.offsetTop - 24;
+                page.scrollTo({ top, behavior: 'smooth' });
+            };
+
             tocLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
-                    const target = document.getElementById(link.dataset.tocTarget);
-                    if (!target) return;
                     e.preventDefault();
-                    const top = target.offsetTop - 24;
-                    page.scrollTo({ top, behavior: 'smooth' });
+                    smoothJump(link.dataset.tocTarget);
+                });
+            });
+
+            page.querySelectorAll('[data-grid-target]').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    smoothJump(card.dataset.gridTarget);
                 });
             });
         })();
