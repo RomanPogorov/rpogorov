@@ -143,9 +143,13 @@
             height: 100%;
             object-fit: cover;
             object-position: center top;
-            filter: contrast(1.15) saturate(1.0) brightness(0.8);
+            filter:
+                contrast(calc(1.15 - (1 - var(--sim-signal, 1)) * 0.4))
+                saturate(calc(0.18 + var(--sim-signal, 1) * 0.82))
+                brightness(calc(0.8 - (1 - var(--sim-signal, 1)) * 0.18))
+                hue-rotate(calc((1 - var(--sim-signal, 1)) * -55deg));
             opacity: 0;
-            transition: opacity 1.2s ease, filter 0.8s ease;
+            transition: opacity 1.2s ease, filter 0.4s ease;
         }
         body.video-revealed .stage video {
             opacity: 1;
@@ -208,8 +212,116 @@
             left: 0;
             right: 0;
             height: 80px;
-            background: linear-gradient(to bottom, transparent, rgba(0, 255, 163, 0.06), transparent);
-            animation: roll 9s linear infinite;
+            background: linear-gradient(to bottom, transparent,
+                rgba(var(--acc-rgb), calc(0.05 + (1 - var(--sim-signal, 1)) * 0.18)),
+                transparent);
+            animation: roll calc(9s - (1 - var(--sim-signal, 1)) * 4s) linear infinite;
+        }
+
+        /* Amplified scanlines layer — fades in as signal drops */
+        .layer-scanlines-amp {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            opacity: calc((1 - var(--sim-signal, 1)) * 1);
+            background: repeating-linear-gradient(to bottom,
+                rgba(0, 0, 0, 0) 0px,
+                rgba(0, 0, 0, 0) 1px,
+                rgba(var(--acc-rgb), 0.18) 2px,
+                rgba(0, 0, 0, 0) 3px);
+            mix-blend-mode: screen;
+            transition: opacity 0.3s ease;
+            will-change: opacity;
+        }
+
+        /* SIGNAL slider — sits next to the settings cog in .corner.bl */
+        .sim-signal {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 12px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(var(--acc-rgb), 0.28);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .sim-signal-label {
+            font-size: 0.5625rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.85);
+        }
+        .sim-signal-track {
+            position: relative;
+            width: 110px;
+            height: 12px;
+            background: rgba(var(--acc-rgb), 0.06);
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            cursor: ew-resize;
+        }
+        .sim-signal-fill {
+            position: absolute;
+            top: 0; bottom: 0; left: 0;
+            width: calc(var(--sim-signal, 1) * 100%);
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0.55),
+                var(--acc));
+            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.55);
+            transition: width 0.08s linear;
+        }
+        .sim-signal-thumb {
+            position: absolute;
+            top: -3px; bottom: -3px;
+            left: calc(var(--sim-signal, 1) * 100% - 1px);
+            width: 2px;
+            background: var(--acc);
+            box-shadow: 0 0 10px var(--acc), 0 0 18px rgba(var(--acc-rgb), 0.6);
+            pointer-events: none;
+            transition: left 0.08s linear;
+        }
+        .sim-signal-track input[type="range"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            cursor: ew-resize;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            z-index: 2;
+        }
+        .sim-signal-track input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 18px;
+            cursor: ew-resize;
+        }
+        .sim-signal-value {
+            font-size: 0.625rem;
+            color: var(--acc);
+            min-width: 32px;
+            text-align: right;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.6);
+        }
+        /* When signal is critical-low, label flickers warning */
+        body[data-sim-state="low"] .sim-signal-label,
+        body[data-sim-state="low"] .sim-signal-value {
+            color: #ff5252;
+            text-shadow: 0 0 8px rgba(255, 82, 82, 0.8);
+            animation: sim-warn 0.7s steps(2) infinite;
+        }
+        @keyframes sim-warn {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.55; }
+        }
+        @media (max-width: 640px) {
+            .sim-signal { display: none; }
         }
 
         @keyframes roll {
@@ -407,6 +519,9 @@
         .hud .bl {
             bottom: 28px;
             left: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .hud .br {
@@ -9309,6 +9424,7 @@
     <div class="horizon"></div>
     <div class="noise"></div>
     <div class="scanlines"></div>
+    <div class="layer-scanlines-amp" aria-hidden="true"></div>
     <div class="vignette"></div>
 
     <!-- Audio gate: requests permission for sound on entry -->
@@ -9524,6 +9640,18 @@
                 </div>
             </div>
             <audio id="ap-audio" loop preload="auto"></audio>
+
+            <!-- Signal-of-the-simulation slider — drives --sim-signal CSS var -->
+            <div class="sim-signal" role="group" aria-label="Simulation signal">
+                <span class="sim-signal-label">// signal</span>
+                <div class="sim-signal-track">
+                    <span class="sim-signal-fill" aria-hidden="true"></span>
+                    <span class="sim-signal-thumb" aria-hidden="true"></span>
+                    <input type="range" id="sim-signal-input" min="0" max="100" step="1" value="100"
+                           aria-label="Simulation signal strength">
+                </div>
+                <span class="sim-signal-value" id="sim-signal-value">100%</span>
+            </div>
         </div>
 
         <!-- Right-side panel: 3D perspective, tilts on mouse -->
@@ -15069,6 +15197,25 @@ See also: Health Samurai Lab: Game of Pools.`,
                 fab.style.setProperty('--ctl-fab-ry', '0deg');
                 fab.style.setProperty('--ctl-fab-rx', '0deg');
             });
+        })();
+    </script>
+
+    <!-- Signal-of-the-simulation slider: drives --sim-signal var on body -->
+    <script>
+        (() => {
+            const input = document.getElementById('sim-signal-input');
+            const valueEl = document.getElementById('sim-signal-value');
+            if (!input) return;
+            function apply(pct) {
+                const norm = Math.max(0, Math.min(100, pct)) / 100;
+                document.body.style.setProperty('--sim-signal', norm);
+                if (valueEl) valueEl.textContent = Math.round(pct) + '%';
+                document.body.dataset.simState =
+                    norm > 0.7 ? 'high' :
+                    norm > 0.35 ? 'mid' : 'low';
+            }
+            input.addEventListener('input', (e) => apply(parseFloat(e.target.value)));
+            apply(parseFloat(input.value));
         })();
     </script>
 
