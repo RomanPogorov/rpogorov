@@ -1185,9 +1185,9 @@
         .cp-hero-shot-grid {
             max-width: 1480px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 4fr 1fr;
-            gap: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
             align-items: stretch;
         }
         .cp-hero-shot-stage {
@@ -1237,24 +1237,25 @@
         }
         .cp-hero-shot-nav {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 10px;
         }
         .cp-hero-shot-tab {
             --shot-blue: #0065FF;
             --shot-blue-rgb: 0, 101, 255;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            text-align: left;
-            padding: 14px 16px;
+            display: inline-flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 10px 16px;
             border: 1px solid rgba(8, 18, 30, 0.14);
             background: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
+            border-radius: 999px;
             cursor: pointer;
             color: rgba(8, 18, 30, 0.85);
             font-family: inherit;
             transition: border-color 0.18s, background 0.18s, color 0.18s, transform 0.18s;
+            white-space: nowrap;
         }
         .cp-hero-shot-tab:hover {
             border-color: rgba(var(--shot-blue-rgb), 0.4);
@@ -1266,32 +1267,34 @@
             background: #fff;
             color: rgba(8, 18, 30, 1);
             box-shadow:
-                0 6px 18px rgba(8, 18, 30, 0.08),
-                0 0 0 2px rgba(var(--shot-blue-rgb), 0.18);
+                0 4px 12px rgba(8, 18, 30, 0.08),
+                0 0 0 2px rgba(var(--shot-blue-rgb), 0.16);
+        }
+        .cp-hero-shot-tab:focus-visible {
+            outline: none;
+            border-color: var(--shot-blue);
+            box-shadow: 0 0 0 3px rgba(var(--shot-blue-rgb), 0.28);
         }
         .cp-hero-shot-tab .tab-num {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.625rem;
             font-weight: 600;
-            letter-spacing: 0.28em;
+            letter-spacing: 0.24em;
             text-transform: uppercase;
             color: rgba(8, 18, 30, 0.55);
         }
         .cp-hero-shot-tab.is-active .tab-num { color: var(--shot-blue); }
         .cp-hero-shot-tab .tab-label {
-            font-size: 0.9375rem;
+            font-size: 0.875rem;
             font-weight: 500;
-            line-height: 1.25;
-        }
-        @media (max-width: 900px) {
-            .cp-hero-shot-grid { grid-template-columns: 1fr; gap: 16px; }
-            .cp-hero-shot-nav { flex-direction: row; overflow-x: auto; }
-            .cp-hero-shot-tab { flex: 0 0 auto; min-width: 160px; }
+            line-height: 1;
         }
         @media (max-width: 720px) {
             .cp-hero-shot { padding: 28px 14px; }
             .cp-hero-shot-slide img,
             .cp-hero-shot-stage { border-radius: 6px; }
+            .cp-hero-shot-nav { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding: 4px 2px; }
+            .cp-hero-shot-tab { flex: 0 0 auto; }
         }
 
         /* TLDR */
@@ -7798,9 +7801,9 @@
                             </div>
                         </div>
                     </div>
-                    <nav class="cp-hero-shot-nav" data-shot-nav aria-label="Hero shot switcher">
+                    <nav class="cp-hero-shot-nav" data-shot-nav aria-label="Hero shot switcher" tabindex="0">
                         <button class="cp-hero-shot-tab is-active" type="button" data-shot-target="0">
-                            <span class="tab-num">01 / current</span>
+                            <span class="tab-num">01</span>
                             <span class="tab-label">Редизайн</span>
                         </button>
                         <button class="cp-hero-shot-tab" type="button" data-shot-target="1">
@@ -12029,19 +12032,33 @@ See also: Health Samurai Lab: Game of Pools.`,
         })();
     </script>
 
-    <!-- cp-hero-shot switcher: clicking a tab on the right slides the corresponding image into view. -->
+    <!-- cp-hero-shot switcher: click tab or use ←/→ keys to slide between shots. -->
     <script>
         (() => {
             document.querySelectorAll('[data-shot-board]').forEach(board => {
                 const track = board.querySelector('[data-shot-track]');
-                const tabs = board.querySelectorAll('[data-shot-target]');
-                if (!track || !tabs.length) return;
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        const idx = tab.dataset.shotTarget;
-                        track.style.setProperty('--shot-index', idx);
-                        tabs.forEach(t => t.classList.toggle('is-active', t === tab));
-                    });
+                const tabsList = Array.from(board.querySelectorAll('[data-shot-target]'));
+                if (!track || !tabsList.length) return;
+
+                const setActive = (idx, focus) => {
+                    const clamped = Math.max(0, Math.min(tabsList.length - 1, idx));
+                    track.style.setProperty('--shot-index', clamped);
+                    tabsList.forEach((t, i) => t.classList.toggle('is-active', i === clamped));
+                    if (focus) tabsList[clamped].focus();
+                };
+
+                const currentIndex = () => tabsList.findIndex(t => t.classList.contains('is-active'));
+
+                tabsList.forEach((tab, i) => {
+                    tab.addEventListener('click', () => setActive(i));
+                });
+
+                // Arrow keys navigate when focus is inside the board.
+                board.addEventListener('keydown', (e) => {
+                    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                    e.preventDefault();
+                    const i = currentIndex();
+                    setActive(e.key === 'ArrowRight' ? i + 1 : i - 1, true);
                 });
             });
         })();
