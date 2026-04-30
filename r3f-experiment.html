@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R3F Signal Experiment — Roman Pogorov</title>
+<style>
+  :root {
+    --acc: #00ff88;
+    --acc-rgb: 0, 255, 136;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #050708;
+    color: var(--acc);
+    font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    overflow: hidden;
+  }
+  #root {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+  }
+  .loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    font-size: 0.6875rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--acc);
+    z-index: 0;
+    pointer-events: none;
+    background: #050708;
+  }
+  body.r3f-ready .loading { display: none; }
+  .loading-bar {
+    width: 200px;
+    height: 2px;
+    background: rgba(var(--acc-rgb), 0.18);
+    overflow: hidden;
+    position: relative;
+  }
+  .loading-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 40%;
+    background: var(--acc);
+    box-shadow: 0 0 12px var(--acc);
+    animation: load-slide 1.4s ease-in-out infinite;
+  }
+  @keyframes load-slide {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+  }
+
+  /* HUD overlays — title (top-left) + slider (bottom-left) */
+  .hud-title {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 10;
+    font-size: 0.625rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(var(--acc-rgb), 0.85);
+    pointer-events: none;
+  }
+  .hud-title b { color: #fff; font-weight: 700; }
+  .hud-back {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 10;
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: none;
+    font-size: 0.625rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    border: 1px solid rgba(var(--acc-rgb), 0.35);
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.4);
+  }
+  .hud-back:hover {
+    color: var(--acc);
+    border-color: var(--acc);
+  }
+
+  /* Signal slider control */
+  .signal-controls {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 10;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 9px 14px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(var(--acc-rgb), 0.32);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .signal-label {
+    font-size: 0.5625rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(var(--acc-rgb), 0.85);
+  }
+  .signal-track {
+    position: relative;
+    width: 140px;
+    height: 14px;
+    background: rgba(var(--acc-rgb), 0.06);
+    border: 1px solid rgba(var(--acc-rgb), 0.22);
+  }
+  .signal-fill {
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: var(--w, 100%);
+    background: linear-gradient(90deg, rgba(var(--acc-rgb), 0.55), var(--acc));
+    box-shadow: 0 0 10px rgba(var(--acc-rgb), 0.55);
+    transition: width 0.08s linear;
+    pointer-events: none;
+  }
+  .signal-thumb {
+    position: absolute;
+    top: -3px; bottom: -3px;
+    left: var(--w, 100%);
+    width: 2px;
+    background: var(--acc);
+    box-shadow: 0 0 10px var(--acc), 0 0 18px rgba(var(--acc-rgb), 0.6);
+    transform: translateX(-1px);
+    pointer-events: none;
+    transition: left 0.08s linear;
+  }
+  .signal-track input[type="range"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    z-index: 2;
+  }
+  .signal-value {
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--acc);
+    min-width: 32px;
+    text-align: right;
+    text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55);
+  }
+
+  .perf-readout {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(var(--acc-rgb), 0.22);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    font-variant-numeric: tabular-nums;
+  }
+  .perf-readout b { color: var(--acc); }
+
+  .error-banner {
+    position: fixed;
+    inset: 24px;
+    display: none;
+    z-index: 100;
+    padding: 18px 22px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid #ff5252;
+    color: #ff5252;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    overflow: auto;
+    white-space: pre-wrap;
+  }
+  body.r3f-error .error-banner { display: block; }
+</style>
+
+<!-- esm.sh import map: pin versions and force shared deps. -->
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "scheduler": "https://esm.sh/scheduler@0.23.2",
+    "three": "https://esm.sh/three@0.160.1",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.17.10?external=react,react-dom,three,scheduler",
+    "@react-three/drei": "https://esm.sh/@react-three/drei@9.117.0?external=react,react-dom,three,@react-three/fiber",
+    "postprocessing": "https://esm.sh/postprocessing@6.36.0?external=three",
+    "@react-three/postprocessing": "https://esm.sh/@react-three/postprocessing@2.16.3?external=react,react-dom,three,@react-three/fiber,postprocessing"
+  }
+}
+</script>
+<!-- Babel standalone for in-browser JSX transform — only for the experiment. -->
+<script src="https://unpkg.com/@babel/standalone@7.25.7/babel.min.js"></script>
+</head>
+<body>
+  <div class="loading">
+    <div>// loading r3f scene</div>
+    <div class="loading-bar"></div>
+  </div>
+
+  <div class="hud-title">// signal · <b>r3f experiment</b> · 2026</div>
+  <a class="hud-back" href="./">← back to portfolio</a>
+
+  <div id="root"></div>
+
+  <div class="signal-controls">
+    <span class="signal-label">// signal</span>
+    <div class="signal-track">
+      <span class="signal-fill" aria-hidden="true"></span>
+      <span class="signal-thumb" aria-hidden="true"></span>
+      <input type="range" id="signal-input" min="0" max="100" step="1" value="100">
+    </div>
+    <span class="signal-value" id="signal-value">100%</span>
+  </div>
+
+  <div class="perf-readout">
+    <span>fps</span> <b id="fps">—</b>
+  </div>
+
+  <div class="error-banner" id="error-banner"></div>
+
+<script type="text/babel" data-type="module" data-presets="react">
+  import * as React from 'react';
+  const { useState, useRef, useEffect, useMemo } = React;
+  import { createRoot } from 'react-dom/client';
+  import { Canvas, useFrame, useThree } from '@react-three/fiber';
+  import { Stars } from '@react-three/drei';
+  import {
+    EffectComposer, Bloom, ChromaticAberration,
+    Glitch, Scanline, Noise, Vignette,
+  } from '@react-three/postprocessing';
+  import { BlendFunction, GlitchMode } from 'postprocessing';
+  import { Vector2, VideoTexture, LinearFilter, SRGBColorSpace } from 'three';
+
+  // ----- 3D pieces -----
+
+  // Loads bg.mp4 as a VideoTexture and pastes it on a giant plane far behind
+  // the wireframe scene. Postprocessing (Glitch / Chromatic / Scanline /
+  // Noise) thus cuts through the video too.
+  function VideoBackdrop() {
+    const texture = useMemo(() => {
+      const v = document.createElement('video');
+      v.src = 'bg.mp4';
+      v.crossOrigin = 'anonymous';
+      v.loop = true;
+      v.muted = true;
+      v.playsInline = true;
+      v.autoplay = true;
+      v.play().catch(() => {});
+      const tex = new VideoTexture(v);
+      tex.minFilter = LinearFilter;
+      tex.magFilter = LinearFilter;
+      tex.colorSpace = SRGBColorSpace;
+      return tex;
+    }, []);
+
+    return (
+      <mesh position={[0, 0, -40]} renderOrder={-1}>
+        <planeGeometry args={[160, 90]} />
+        <meshBasicMaterial map={texture} toneMapped={false} depthWrite={false} fog={false} />
+      </mesh>
+    );
+  }
+
+
+  // Wireframe planar grid that recedes into the distance, Tron-style.
+  function GroundGrid() {
+    const ref = useRef();
+    useFrame((_, dt) => {
+      if (!ref.current) return;
+      // Slow forward drift so the world feels alive.
+      ref.current.position.z = (ref.current.position.z + dt * 0.6) % 4;
+    });
+    return (
+      <group ref={ref} position={[0, -2.4, 0]}>
+        <gridHelper
+          args={[80, 80, '#00ff88', '#00ff88']}
+          position={[0, 0, 0]}
+        />
+        <gridHelper
+          args={[80, 80, '#00ff88', '#00ff88']}
+          position={[0, 0, -4]}
+        />
+      </group>
+    );
+  }
+
+  // A cluster of slowly-rotating wireframe icosahedrons.
+  function FloatingShape({ position, scale = 1, speed = 1 }) {
+    const ref = useRef();
+    useFrame((state, dt) => {
+      if (!ref.current) return;
+      ref.current.rotation.x += dt * 0.18 * speed;
+      ref.current.rotation.y += dt * 0.13 * speed;
+      const t = state.clock.elapsedTime;
+      ref.current.position.y = position[1] + Math.sin(t * 0.5 + position[0]) * 0.3;
+    });
+    return (
+      <mesh ref={ref} position={position} scale={scale}>
+        <icosahedronGeometry args={[1, 1]} />
+        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={0.85} />
+      </mesh>
+    );
+  }
+
+  // A glowing core — solid emissive sphere, picks up bloom.
+  function CoreOrb() {
+    const ref = useRef();
+    useFrame((state) => {
+      if (!ref.current) return;
+      const t = state.clock.elapsedTime;
+      const s = 0.6 + Math.sin(t * 1.5) * 0.05;
+      ref.current.scale.setScalar(s);
+    });
+    return (
+      <mesh ref={ref} position={[0, 0, 0]}>
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshBasicMaterial color="#00ff88" />
+      </mesh>
+    );
+  }
+
+  // Camera slowly orbits the centre.
+  function CameraDance() {
+    const { camera } = useThree();
+    useFrame((state) => {
+      const t = state.clock.elapsedTime;
+      const r = 8;
+      camera.position.x = Math.sin(t * 0.08) * r;
+      camera.position.z = Math.cos(t * 0.08) * r;
+      camera.position.y = 1.5 + Math.sin(t * 0.13) * 0.4;
+      camera.lookAt(0, 0, 0);
+    });
+    return null;
+  }
+
+  // ----- Postprocessing pipeline -----
+
+  function Effects({ signal }) {
+    // Cubic falloff so mid-signal stays calm.
+    const inv = 1 - signal;
+    const fall = inv * inv * inv;
+    // Stable Vector2 instance for chromatic aberration offset.
+    const caOffset = useMemo(() => new Vector2(0, 0), []);
+    useFrame(() => {
+      // Slight wobble even at full signal.
+      const jitter = 0.0002 + inv * 0.012;
+      caOffset.x = (Math.random() - 0.5) * jitter;
+      caOffset.y = (Math.random() - 0.5) * jitter * 0.6;
+    });
+    return (
+      <EffectComposer multisampling={0}>
+        <Bloom
+          intensity={0.6 + inv * 1.4}
+          luminanceThreshold={0.18}
+          luminanceSmoothing={0.4}
+          mipmapBlur
+        />
+        <ChromaticAberration offset={caOffset} radialModulation={false} modulationOffset={0.5} />
+        <Glitch
+          active={signal < 0.5}
+          delay={[Math.max(0.2, 2 - inv * 2), Math.max(0.4, 4 - inv * 3)]}
+          duration={[0.1, 0.2 + inv * 0.4]}
+          strength={[0.05, 0.1 + inv * 0.7]}
+          mode={GlitchMode.SPORADIC}
+          ratio={0.85}
+        />
+        <Scanline
+          density={1.0 + fall * 4.5}
+          opacity={0.04 + fall * 0.45}
+          blendFunction={BlendFunction.OVERLAY}
+        />
+        <Noise
+          opacity={0.04 + fall * 0.30}
+          premultiply
+          blendFunction={BlendFunction.SCREEN}
+        />
+        <Vignette eskil={false} offset={0.2} darkness={0.5 + fall * 0.3} />
+      </EffectComposer>
+    );
+  }
+
+  // ----- App -----
+
+  function App() {
+    const [signal, setSignal] = useState(1);
+    useEffect(() => {
+      const input = document.getElementById('signal-input');
+      const valueEl = document.getElementById('signal-value');
+      const fillEl = document.querySelector('.signal-fill');
+      const thumbEl = document.querySelector('.signal-thumb');
+      const apply = (pct) => {
+        const norm = Math.max(0, Math.min(100, pct)) / 100;
+        setSignal(norm);
+        valueEl.textContent = Math.round(pct) + '%';
+        fillEl.style.setProperty('--w', pct + '%');
+        thumbEl.style.setProperty('--w', pct + '%');
+      };
+      const handler = (e) => apply(parseFloat(e.target.value));
+      input.addEventListener('input', handler);
+      apply(parseFloat(input.value));
+      return () => input.removeEventListener('input', handler);
+    }, []);
+
+    // Mark body as ready so the loading screen hides.
+    useEffect(() => {
+      const t = setTimeout(() => document.body.classList.add('r3f-ready'), 100);
+      return () => clearTimeout(t);
+    }, []);
+
+    // FPS readout.
+    useEffect(() => {
+      let frames = 0, last = performance.now(), raf = 0;
+      const fpsEl = document.getElementById('fps');
+      const tick = () => {
+        frames++;
+        const now = performance.now();
+        if (now - last > 700) {
+          if (fpsEl) fpsEl.textContent = Math.round((frames * 1000) / (now - last));
+          frames = 0;
+          last = now;
+        }
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+      return () => cancelAnimationFrame(raf);
+    }, []);
+
+    return (
+      <Canvas
+        gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+        dpr={[1, 1.5]}
+        camera={{ position: [0, 1.5, 8], fov: 60 }}
+      >
+        <color attach="background" args={['#050708']} />
+        <fog attach="fog" args={['#050708', 12, 32]} />
+        <ambientLight intensity={0.3} />
+
+        <VideoBackdrop />
+        <CameraDance />
+        <GroundGrid />
+        <CoreOrb />
+        <FloatingShape position={[-3, 0.5, -1]} scale={0.9} speed={1.0} />
+        <FloatingShape position={[3, 1.0, -2]} scale={1.2} speed={0.8} />
+        <FloatingShape position={[0, -0.8, 2]} scale={0.7} speed={1.4} />
+        <FloatingShape position={[2.5, -1.5, 1]} scale={0.55} speed={1.6} />
+        <FloatingShape position={[-2.5, 2.0, 0]} scale={0.45} speed={1.2} />
+
+        <Stars radius={60} depth={40} count={1500} factor={2} fade speed={0.5} />
+
+        <Effects signal={signal} />
+      </Canvas>
+    );
+  }
+
+  // Mount with a global error catcher so a runtime crash gets surfaced
+  // visibly instead of silently leaving a black canvas.
+  window.addEventListener('error', (e) => {
+    document.body.classList.add('r3f-error');
+    document.getElementById('error-banner').textContent =
+      '// r3f init error\n\n' + (e.error ? (e.error.stack || e.message) : e.message);
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    document.body.classList.add('r3f-error');
+    document.getElementById('error-banner').textContent =
+      '// r3f promise rejection\n\n' + (e.reason && e.reason.stack ? e.reason.stack : String(e.reason));
+  });
+
+  createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
