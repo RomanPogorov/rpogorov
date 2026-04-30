@@ -1289,6 +1289,7 @@
         }
         .cp-timeline-list {
             display: flex;
+            justify-content: center;
             gap: 6px;
             list-style: none;
             padding: 0;
@@ -1310,16 +1311,12 @@
             display: inline-flex;
             align-items: baseline;
             gap: 10px;
+            white-space: nowrap;
         }
         @media (min-width: 720px) {
             .cp-timeline-list {
                 gap: 8px;
                 overflow-x: visible;
-            }
-            .cp-tl-item {
-                flex: 1 1 0;
-                justify-content: flex-start;
-                white-space: nowrap;
             }
         }
         .cp-tl-item:hover {
