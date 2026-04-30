@@ -2123,6 +2123,39 @@
             letter-spacing: 0.01em;
         }
 
+        /* Rich metric variant — used in TL;DR with description + trend chart */
+        .am-metrics-rich .am-metric {
+            min-height: 200px;
+            padding: 22px 22px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .am-metrics-rich .am-metric-vals { gap: 10px; }
+        .am-metric-desc {
+            font-size: 0.8125rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+            flex: 1;
+        }
+        .am-metric-desc strong {
+            color: var(--acc);
+            font-weight: 600;
+        }
+        .am-metric-trend {
+            display: block;
+            width: 100%;
+            height: 28px;
+            color: var(--acc);
+            opacity: 0.85;
+            margin-top: auto;
+        }
+        .am-metric-now-text {
+            font-size: 1.625rem;
+            letter-spacing: 0.02em;
+        }
+
         /* MediaBlock — image / video / iframe + caption + click-to-lightbox */
         .am-media {
             margin: 22px 0 6px;
@@ -7553,19 +7586,39 @@
                 <div class="cp-tldr-label">// TL;DR</div>
                 <p class="cp-tldr-lead">За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на <em>code-first</em> подход.</p>
                 <p class="cp-tldr-note">Ключевая продуктовая находка — <em>разделение опыта на фазы программы</em>: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.</p>
-                <div class="am-metrics">
-                    <div class="am-metric">
-                        <div class="am-metric-label">NPS</div>
+                <p class="cp-tldr-note">Каждый год бизнес спускает на портал-команду план по NPS и CSAT. <em>Оба раза мы перекрыли его — и заметно.</em></p>
+                <div class="am-metrics am-metrics-rich">
+                    <article class="am-metric">
+                        <div class="am-metric-label">— NPS</div>
                         <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
-                    </div>
-                    <div class="am-metric">
-                        <div class="am-metric-label">CSAT (5)</div>
+                        <p class="am-metric-desc">Net Promoter Score. План бизнеса — <strong>70</strong>, сделали <strong>78</strong>. +33 пункта к стартовой точке после редизайна и системы фаз.</p>
+                        <svg class="am-metric-trend" viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true">
+                            <path d="M0,22 L30,18 L60,15 L90,9 L120,4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M0,22 L30,18 L60,15 L90,9 L120,4 L120,28 L0,28 Z" fill="currentColor" fill-opacity="0.12"/>
+                        </svg>
+                    </article>
+                    <article class="am-metric">
+                        <div class="am-metric-label">— CSAT</div>
                         <div class="am-metric-vals"><span class="am-metric-was">3.6</span><span class="am-metric-arrow">→</span><span class="am-metric-now">4.5</span></div>
-                    </div>
-                    <div class="am-metric">
-                        <div class="am-metric-label">DS coverage</div>
-                        <div class="am-metric-vals"><span class="am-metric-was">0%</span><span class="am-metric-arrow">→</span><span class="am-metric-now">50–60%</span></div>
-                    </div>
+                        <p class="am-metric-desc">Customer Satisfaction по 5-балльной. План — <strong>4.2</strong>, сделали <strong>4.5</strong>. Меньше тревоги — выше доверие.</p>
+                        <svg class="am-metric-trend" viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true">
+                            <path d="M0,21 L30,19 L60,14 L90,10 L120,6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M0,21 L30,19 L60,14 L90,10 L120,6 L120,28 L0,28 Z" fill="currentColor" fill-opacity="0.12"/>
+                        </svg>
+                    </article>
+                    <article class="am-metric am-metric-text">
+                        <div class="am-metric-label">— RECOGNITION</div>
+                        <div class="am-metric-vals"><span class="am-metric-now am-metric-now-text">Премия</span></div>
+                        <p class="am-metric-desc">Команда получила премию по итогам редизайна. Onboarding completion вырос значимо.</p>
+                        <svg class="am-metric-trend" viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true">
+                            <path d="M0,22 L30,21 L60,17 L90,13 L120,9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="0" cy="22" r="1.6" fill="currentColor"/>
+                            <circle cx="30" cy="21" r="1.6" fill="currentColor"/>
+                            <circle cx="60" cy="17" r="1.6" fill="currentColor"/>
+                            <circle cx="90" cy="13" r="1.6" fill="currentColor"/>
+                            <circle cx="120" cy="9" r="1.6" fill="currentColor"/>
+                        </svg>
+                    </article>
                 </div>
             </div>
 
