@@ -3240,19 +3240,20 @@
             grid-auto-rows: minmax(180px, auto);
             gap: 16px;
         }
-        /* 4-col explicit placements */
+        /* 4-col explicit placements — 03 is the single 2x2 headliner, 11 a 2x1 wide.
+           Total cells = 4 (03) + 11×1 (1x1s) + 1 extra (11 wide) = 16, fits 4×4 cleanly. */
         .hs-grid-card[data-grid-target="hs-03"] { grid-column: 1 / span 2; grid-row: 1 / span 2; }
-        .hs-grid-card[data-grid-target="hs-04"] { grid-column: 3 / span 2; grid-row: 1 / span 2; }
-        .hs-grid-card[data-grid-target="hs-01"] { grid-column: 1; grid-row: 3; }
-        .hs-grid-card[data-grid-target="hs-02"] { grid-column: 2; grid-row: 3; }
-        .hs-grid-card[data-grid-target="hs-05"] { grid-column: 3; grid-row: 3; }
-        .hs-grid-card[data-grid-target="hs-06"] { grid-column: 4; grid-row: 3; }
-        .hs-grid-card[data-grid-target="hs-07"] { grid-column: 1; grid-row: 4; }
-        .hs-grid-card[data-grid-target="hs-08"] { grid-column: 2; grid-row: 4; }
-        .hs-grid-card[data-grid-target="hs-09"] { grid-column: 3; grid-row: 4; }
-        .hs-grid-card[data-grid-target="hs-10"] { grid-column: 4; grid-row: 4; }
-        .hs-grid-card[data-grid-target="hs-11"] { grid-column: 1 / span 2; grid-row: 5; }
-        .hs-grid-card[data-grid-target="hs-12"] { grid-column: 3 / span 2; grid-row: 5; }
+        .hs-grid-card[data-grid-target="hs-01"] { grid-column: 3; grid-row: 1; }
+        .hs-grid-card[data-grid-target="hs-02"] { grid-column: 4; grid-row: 1; }
+        .hs-grid-card[data-grid-target="hs-04"] { grid-column: 3; grid-row: 2; }
+        .hs-grid-card[data-grid-target="hs-05"] { grid-column: 4; grid-row: 2; }
+        .hs-grid-card[data-grid-target="hs-06"] { grid-column: 1; grid-row: 3; }
+        .hs-grid-card[data-grid-target="hs-07"] { grid-column: 2; grid-row: 3; }
+        .hs-grid-card[data-grid-target="hs-08"] { grid-column: 3; grid-row: 3; }
+        .hs-grid-card[data-grid-target="hs-09"] { grid-column: 4; grid-row: 3; }
+        .hs-grid-card[data-grid-target="hs-10"] { grid-column: 1; grid-row: 4; }
+        .hs-grid-card[data-grid-target="hs-11"] { grid-column: 2 / span 2; grid-row: 4; }
+        .hs-grid-card[data-grid-target="hs-12"] { grid-column: 4; grid-row: 4; }
 
         .hs-grid-card {
             display: flex;
@@ -3415,7 +3416,7 @@
             color: var(--hs-text-secondary);
             margin: auto 0 0;
         }
-        /* 3-col layout — features stay 2 cols wide, single row tall. Natural flow handles the rest. */
+        /* 3-col layout — feature stays 2 cols, wide 3 cols (full row), rest natural. */
         @media (max-width: 1180px) {
             .hs-grid-cards { grid-template-columns: repeat(3, 1fr); }
             .hs-grid-card,
@@ -3425,17 +3426,16 @@
             }
             .hs-grid-card.is-feature {
                 grid-column: span 2;
-                grid-row: span 1;
+                grid-row: span 2;
             }
             .hs-grid-card.is-feature::before {
                 width: 160px; height: 160px;
                 top: -30px; right: -30px;
             }
-            .hs-grid-card.is-feature .hs-grid-card-icon { width: 44px; height: 44px; }
-            .hs-grid-card.is-feature .hs-grid-card-icon svg { width: 22px; height: 22px; }
-            .hs-grid-card.is-feature .hs-grid-card-title { font-size: 1.25rem; }
+            .hs-grid-card.is-feature .hs-grid-card-icon { width: 48px; height: 48px; }
+            .hs-grid-card.is-feature .hs-grid-card-icon svg { width: 24px; height: 24px; }
+            .hs-grid-card.is-feature .hs-grid-card-title { font-size: 1.375rem; }
             .hs-grid-card.is-wide { grid-column: span 3; }
-            .hs-grid-card.is-wide.is-wide-body { /* keep row layout */ }
         }
         /* 2-col layout */
         @media (max-width: 800px) {
@@ -9028,17 +9028,13 @@
                         <span class="hs-grid-card-stat-label">cycle time per landing</span>
                     </div>
                 </a>
-                <a class="hs-grid-card is-feature" href="#hs-04" data-grid-target="hs-04">
+                <a class="hs-grid-card" href="#hs-04" data-grid-target="hs-04">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="16" height="11" rx="1"/><line x1="6" y1="17" x2="14" y2="17"/><line x1="10" y1="14" x2="10" y2="17"/></svg>
                     </div>
                     <div class="hs-grid-card-meta">04 · <strong>Process</strong></div>
                     <h3 class="hs-grid-card-title">Presentation generator</h3>
-                    <p class="hs-grid-card-desc">Same approach as the landing platform — applied to decks. Two entry points (drop-and-get + visual editor), three generation modes (Normal / Variety / Madness). The team fell in love.</p>
-                    <div class="hs-grid-card-stat">
-                        <span class="hs-grid-card-stat-value">~1 wk → ~1 h</span>
-                        <span class="hs-grid-card-stat-label">cycle time · 30+ generated</span>
-                    </div>
+                    <p class="hs-grid-card-desc">Same engine as landings, applied to decks. Three modes, ~1 hr cycle time.</p>
                 </a>
                 <a class="hs-grid-card" href="#hs-05" data-grid-target="hs-05">
                     <div class="hs-grid-card-icon">
@@ -9102,19 +9098,13 @@
                         </div>
                     </div>
                 </a>
-                <a class="hs-grid-card is-wide" href="#hs-12" data-grid-target="hs-12">
+                <a class="hs-grid-card" href="#hs-12" data-grid-target="hs-12">
                     <div class="hs-grid-card-icon">
                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5 L3 10 L7 15"/><path d="M13 5 L17 10 L13 15"/></svg>
                     </div>
-                    <div class="is-wide-body">
-                        <div class="hs-grid-card-meta">12 · <strong>Proof</strong></div>
-                        <h3 class="hs-grid-card-title">JSON Parser &amp; vibe-code as method</h3>
-                        <p class="hs-grid-card-desc">Working prototypes instead of static mockups, from day one. Multiple shipped artifacts validate UI hypotheses with code, not Figma.</p>
-                        <div class="hs-grid-card-stat">
-                            <span class="hs-grid-card-stat-value">Code-first</span>
-                            <span class="hs-grid-card-stat-label">default since day one</span>
-                        </div>
-                    </div>
+                    <div class="hs-grid-card-meta">12 · <strong>Proof</strong></div>
+                    <h3 class="hs-grid-card-title">JSON Parser &amp; vibe-code as method</h3>
+                    <p class="hs-grid-card-desc">Working prototypes instead of static mockups, from day one.</p>
                 </a>
             </div>
         </section>
