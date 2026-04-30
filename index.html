@@ -1265,6 +1265,26 @@
             max-width: 65ch;
             font-weight: 400;
         }
+        .cp-section .am-h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 0.8125rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--acc);
+            margin: 32px 0 14px;
+        }
+        .cp-section .am-h3.am-h3-sub {
+            color: rgba(255,255,255,0.6);
+            margin-top: 18px;
+        }
+        .cp-section .am-h3:first-child { margin-top: 0; }
+        .am-metrics + .cp-sec-body,
+        .am-metrics + .cp-sec-body-narrow,
+        .am-metrics + .am-h3,
+        .am-award + .am-metrics { margin-top: 24px; }
+        .am-gallery + .am-h3,
+        .am-media + .am-h3 { margin-top: 36px; }
         .cp-sec-body p { margin-bottom: 16px; }
         .cp-sec-body p:last-child { margin-bottom: 0; }
         .cp-sec-body strong { color: #fff; font-weight: 600; }
@@ -7662,7 +7682,7 @@
                     <p>Главная продуктовая находка — <em>разделение опыта на фазы программы</em>. Раньше клиент в разных фазах видел один и тот же UI, хотя его контекст и потребности радикально менялись. Я спроектировал систему фаз и отдельные интерфейсные состояния для каждой.</p>
                     <p>Middle-дизайнер к моменту начала редизайна ушла. Мы работали вдвоём с junior-дизайнером — я вёл редизайн, контролировал качество, менторил.</p>
                 </div>
-                <h3 class="am-h3" style="margin-top:24px;">Ключевые флоу — скринкасты</h3>
+                <h3 class="am-h3">Ключевые флоу — скринкасты</h3>
                 <div class="am-gallery cols-2">
                     <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-offer-acceptance.mp4" data-caption="Принятие нового offer — флоу реструктуризации долга">
                         <div class="am-media-frame" data-aspect="16-10">
@@ -7680,12 +7700,12 @@
                     </figure>
                 </div>
 
-                <h3 class="am-h3" style="margin-top:32px;">Иллюстрации и визуальный язык</h3>
+                <h3 class="am-h3">Иллюстрации и визуальный язык</h3>
                 <div class="cp-sec-body">
                     <p>Параллельно с системной работой решал вопрос с графикой — иллюстрации для пустых состояний, онбординга, ключевых экранов; аватары для коммуникаций.</p>
                     <p>Сначала генерировал десятки вариантов в разных стилях через нейросети — нужно было найти стиль, который ляжет на бренд. Со временем вырос пайплайн через нодовый редактор: <strong>ComfyUI</strong>, позже <strong>Figma Weavy</strong>. Это позволило стабильно генерировать иллюстрации в едином стиле — <em>не один раз случайно угадать, а превратить генерацию в управляемый процесс</em>.</p>
                 </div>
-                <h4 class="am-h3" style="margin-top:14px; color: rgba(255,255,255,0.6);">Поиск стиля</h4>
+                <h4 class="am-h3 am-h3-sub">Поиск стиля</h4>
                 <div class="am-gallery cols-4">
                     <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-1.png" data-caption="Стиль 1 — ранний вариант">
                         <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 1</div></div>
@@ -7700,7 +7720,7 @@
                         <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 4</div></div>
                     </figure>
                 </div>
-                <h4 class="am-h3" style="margin-top:14px; color: rgba(255,255,255,0.6);">Финальный набор</h4>
+                <h4 class="am-h3 am-h3-sub">Финальный набор</h4>
                 <div class="am-gallery cols-3">
                     <figure class="am-media" data-media data-kind="image" data-src="" data-stub="final-illustration-1.png" data-caption="Финальная иллюстрация 1">
                         <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">final · 1</div></div>
@@ -7712,11 +7732,11 @@
                         <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">final · 3</div></div>
                     </figure>
                 </div>
-                <h4 class="am-h3" style="margin-top:14px; color: rgba(255,255,255,0.6);">Аватары</h4>
+                <h4 class="am-h3 am-h3-sub">Аватары</h4>
                 <figure class="am-media" data-media data-kind="image" data-src="" data-stub="avatars.png" data-caption="Сетка аватаров для коммуникаций">
                     <div class="am-media-frame" data-aspect="16-9"><div class="am-media-stub">image · avatars.png</div></div>
                 </figure>
-                <h4 class="am-h3" style="margin-top:14px; color: rgba(255,255,255,0.6);">Пайплайн генерации</h4>
+                <h4 class="am-h3 am-h3-sub">Пайплайн генерации</h4>
                 <figure class="am-media" data-media data-kind="video" data-src="" data-stub="video-generation-pipeline.mp4" data-caption="ComfyUI → Figma Weavy: управляемая генерация в едином стиле">
                     <div class="am-media-frame" data-aspect="16-9">
                         <div class="am-media-stub">video · video-generation-pipeline.mp4</div>
