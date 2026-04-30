@@ -6484,7 +6484,7 @@
             left: 50%;
             z-index: 24;
             width: min(640px, 88vw);
-            padding: 10px 16px 12px;
+            padding: 8px 16px 10px;
             appearance: none;
             background:
                 radial-gradient(ellipse at top right, rgba(var(--acc-rgb), 0.10), transparent 60%),
@@ -6533,19 +6533,6 @@
             opacity: 0;
             pointer-events: none;
         }
-        /* HUD corner brackets */
-        .ctl-fab::before,
-        .ctl-fab::after {
-            content: '';
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border: 1px solid var(--acc);
-            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
-            pointer-events: none;
-        }
-        .ctl-fab::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
-        .ctl-fab::after  { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
         .ctl-fab:hover {
             border-color: rgba(var(--acc-rgb), 0.7);
             box-shadow:
@@ -6559,36 +6546,13 @@
             outline-offset: 4px;
         }
 
-        /* Animated horizontal scan line — sweeps across the strip continuously */
-        .ctl-fab-scan {
-            position: absolute;
-            top: 0; bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom,
-                transparent 0%,
-                rgba(var(--acc-rgb), 0.65) 30%,
-                rgba(var(--acc-rgb), 0.65) 70%,
-                transparent 100%);
-            box-shadow: 0 0 14px var(--acc), 0 0 28px rgba(var(--acc-rgb), 0.5);
-            pointer-events: none;
-            z-index: 4;
-            opacity: 0;
-            animation: ctl-fab-sweep 5.4s ease-in-out infinite;
-        }
-        @keyframes ctl-fab-sweep {
-            0%   { left: -2px; opacity: 0; }
-            8%   { opacity: 1; }
-            92%  { opacity: 1; }
-            100% { left: 100%; opacity: 0; }
-        }
-
-        /* Title strip — eyebrow + CTA */
+        /* Title strip — eyebrow + date range */
         .ctl-fab-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 12px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.5625rem;
             font-weight: 600;
@@ -6598,23 +6562,11 @@
         .ctl-fab-eyebrow { color: rgba(var(--acc-rgb), 0.9); }
         .ctl-fab-eyebrow b { color: #fff; font-weight: 700; }
         .ctl-fab-cta {
-            color: rgba(255,255,255,0.55);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            color: rgba(255,255,255,0.6);
             transition: color 0.2s ease;
         }
-        .ctl-fab-cta-arrow {
-            width: 8px;
-            height: 8px;
-            border-top: 1px solid currentColor;
-            border-right: 1px solid currentColor;
-            transform: rotate(45deg);
-            display: inline-block;
-            transition: transform 0.25s ease;
-        }
+        .ctl-fab-cta b { color: var(--acc); font-weight: 700; }
         .ctl-fab:hover .ctl-fab-cta { color: var(--acc); }
-        .ctl-fab:hover .ctl-fab-cta-arrow { transform: rotate(45deg) translate(2px, -2px); }
 
         /* Mini Gantt track — grid backdrop + bars */
         .ctl-fab-track {
@@ -9447,11 +9399,9 @@
 
     <!-- Top-center mini Gantt strip — opens the full hologram timeline modal -->
     <button type="button" class="ctl-fab" id="career-tl-btn" aria-haspopup="dialog" aria-controls="career-tl-modal" aria-label="Open career track timeline">
-        <span class="ctl-fab-scan" aria-hidden="true"></span>
-
         <div class="ctl-fab-head">
-            <span class="ctl-fab-eyebrow">// my career track · <b>2014 → 2026</b></span>
-            <span class="ctl-fab-cta">click to expand <span class="ctl-fab-cta-arrow" aria-hidden="true"></span></span>
+            <span class="ctl-fab-eyebrow">// my career track</span>
+            <span class="ctl-fab-cta"><b>2014 → 2026</b></span>
         </div>
 
         <div class="ctl-fab-track" aria-hidden="true">
@@ -9460,28 +9410,6 @@
             <span class="ctl-fab-bar" style="--s: 7; --e: 9;"></span>
             <span class="ctl-fab-bar" style="--s: 10; --e: 11;"></span>
             <span class="ctl-fab-bar is-current" style="--s: 12; --e: 13;"></span>
-        </div>
-
-        <div class="ctl-fab-side" aria-hidden="true">
-            <span class="ctl-fab-side-bar" style="--s: 6; --e: 7;"></span>
-            <span class="ctl-fab-side-bar" style="--s: 8; --e: 9;"></span>
-            <span class="ctl-fab-side-bar" style="--s: 10; --e: 11;"></span>
-        </div>
-
-        <div class="ctl-fab-years" aria-hidden="true">
-            <span class="ctl-fab-year show" style="--c: 1">'14</span>
-            <span class="ctl-fab-year" style="--c: 2"></span>
-            <span class="ctl-fab-year" style="--c: 3"></span>
-            <span class="ctl-fab-year show" style="--c: 4">'17</span>
-            <span class="ctl-fab-year" style="--c: 5"></span>
-            <span class="ctl-fab-year" style="--c: 6"></span>
-            <span class="ctl-fab-year show" style="--c: 7">'20</span>
-            <span class="ctl-fab-year" style="--c: 8"></span>
-            <span class="ctl-fab-year" style="--c: 9"></span>
-            <span class="ctl-fab-year show" style="--c: 10">'23</span>
-            <span class="ctl-fab-year" style="--c: 11"></span>
-            <span class="ctl-fab-year" style="--c: 12"></span>
-            <span class="ctl-fab-year show" style="--c: 13">'26</span>
         </div>
     </button>
 
