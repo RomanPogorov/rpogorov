@@ -482,128 +482,22 @@
             pointer-events: none;
         }
 
-        /* Showcase = a futuristic tablet rising from the bottom. Outer .showcase
-           is the device shell (bezel + body), inner .showcase-inner is the
-           screen where the cases carousel lives. */
-        :root {
-            --sheet-top: 56px;
-            --sheet-radius: 32px;        /* outer device corner */
-            --device-bezel: 14px;        /* bezel thickness around the screen */
-            --screen-radius: 18px;       /* inner screen corner */
-            --screen-width: 920px;       /* portrait tablet inner content width */
-        }
+        /* The basement section itself — black, full viewport, slides up into view */
         .showcase {
             position: fixed;
-            /* Slide up from below: collapsed top is just past viewport bottom
-               so nothing of the device peeks above. */
-            top: calc(100vh + 40px);
-            /* Portrait tablet: narrow + centered. Inner content area is
-               --screen-width; outer device adds 2× bezel on the sides. */
-            left: 50%;
-            transform: translateX(-50%);
-            width: min(calc(var(--screen-width) + 2 * var(--device-bezel)), calc(100vw - 64px));
-            /* Tablet extends ALL the way down to viewport bottom (and a bit
-               beyond, so the bottom edge is clipped horizontally by the viewport
-               instead of showing rounded corners — feels like the device goes
-               off-screen at the bottom). */
-            bottom: -40px;
-            height: auto;
-            padding: var(--device-bezel) var(--device-bezel) 0 var(--device-bezel);
-            box-sizing: border-box;
-            /* Brushed-metal-ish bezel: dark with a faint sheen and accent edge. */
-            background:
-                linear-gradient(180deg,
-                    rgba(28, 32, 36, 0.98) 0%,
-                    rgba(14, 16, 18, 1) 24%,
-                    rgba(10, 12, 14, 1) 100%);
-            z-index: 7;
-            overflow: visible;
-            /* Top corners rounded, bottom flat — bottom is clipped by viewport. */
-            border-radius: var(--sheet-radius) var(--sheet-radius) 0 0;
-            box-shadow:
-                /* inner bezel highlight + accent ring (sides + top only) */
-                inset 0 1px 0 rgba(255, 255, 255, 0.06),
-                inset 1px 0 0 rgba(var(--acc-rgb), 0.18),
-                inset -1px 0 0 rgba(var(--acc-rgb), 0.18),
-                inset 0 1px 0 rgba(var(--acc-rgb), 0.18),
-                /* outer accent halo around top + sides */
-                0 -2px 0 rgba(var(--acc-rgb), 0.55),
-                0 0 22px rgba(var(--acc-rgb), 0.28),
-                0 -28px 60px rgba(0, 0, 0, 0.5);
-            transition: top 0.78s cubic-bezier(0.32, 0.72, 0, 1),
-                        bottom 0.78s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        body.showcase-open .showcase {
-            top: var(--sheet-top);
-        }
-        /* Carousel dots live in the top-centre bezel — replaces the old
-           camera-dot detail. */
-        #cases-dots {
-            position: absolute;
-            top: 0;
+            top: 100vh;             /* off-screen below the hero */
             left: 0;
             right: 0;
-            height: var(--device-bezel);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            z-index: 9;
-            pointer-events: auto;
-        }
-        #cases-dots .cases-dot {
-            width: 6px;
-            height: 6px;
-            border: 1px solid rgba(var(--acc-rgb), 0.5);
-            background: transparent;
-            cursor: pointer;
-            padding: 0;
-            border-radius: 50%;
-            transition: background 0.18s, border-color 0.18s, transform 0.15s, box-shadow 0.18s;
-        }
-        #cases-dots .cases-dot.active {
-            background: var(--acc);
-            border-color: var(--acc);
-            box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.7);
-        }
-        #cases-dots .cases-dot:hover { transform: scale(1.3); }
-        /* Status LED + label in the top-right bezel — blinks slowly. */
-        .showcase::after {
-            content: '';
-            position: absolute;
-            top: calc(var(--device-bezel) / 2 - 2px);
-            right: calc(var(--device-bezel) + 6px);
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--acc);
-            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.85);
-            animation: showcase-led-blink 2.4s ease-in-out infinite;
-            z-index: 4;
-            pointer-events: none;
-        }
-        @keyframes showcase-led-blink {
-            0%, 60%, 100% { opacity: 0.95; }
-            70%, 80%      { opacity: 0.25; }
-        }
-        /* Inner screen — holds the case carousel and reads as 'the display'. */
-        .showcase-inner {
-            position: relative;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            border-radius: var(--screen-radius);
-            overflow: hidden;
+            height: 100vh;
             background: #050608;
-            box-shadow:
-                inset 0 0 0 1px rgba(var(--acc-rgb), 0.10),
-                inset 0 0 30px rgba(var(--acc-rgb), 0.04);
+            z-index: 7;
+            overflow: hidden;
+            transition: top 0.85s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
-        /* Hero stays put — just a soft dim while the showcase is over it. */
+        body.showcase-open .showcase {
+            top: 0;
+        }
+        /* And reciprocally push the hero off the top, like sliding to a basement */
         .stage,
         .grid,
         .horizon,
@@ -612,7 +506,7 @@
         .vignette,
         .hud,
         .prompt {
-            transition: opacity 0.5s ease;
+            transition: transform 0.85s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease, filter 0.6s ease;
         }
         body.showcase-open .stage,
         body.showcase-open .grid,
@@ -621,7 +515,9 @@
         body.showcase-open .scanlines,
         body.showcase-open .vignette,
         body.showcase-open .hud {
-            opacity: 0.45;
+            transform: translateY(-12vh) scale(0.96);
+            opacity: 0.3;
+            filter: blur(6px);
             pointer-events: none;
         }
         body.showcase-open .prompt {
@@ -667,123 +563,19 @@
         }
 
         /* Floating intro tag, top-left of basement */
-        /* Terminal bar — pinned to the top of the tablet's screen, content
-           scrolls UNDER it. Solid dark backdrop + accent bottom border. */
         .showcase-intro {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            min-height: 64px;
-            padding: 0 14px 0 26px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            z-index: 12;
-            pointer-events: auto;
-            background: #050608;
-            border-bottom: 1px solid rgba(var(--acc-rgb), 0.32);
-            box-shadow: 0 1px 0 rgba(var(--acc-rgb), 0.18);
+            top: 22px;
+            left: 5vw;
+            right: 5vw;
+            z-index: 5;
+            max-width: 70vw;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
-        .showcase-intro.faded { opacity: 1; }
-        /* nav cluster sits to the LEFT of the Close button */
-        .strip-nav-group {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        }
-        .strip-counter {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.625rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--ink);
-            opacity: 0.78;
-            min-width: 56px;
-            text-align: center;
-            white-space: nowrap;
-        }
-        .strip-counter b {
-            color: var(--acc);
-            font-weight: 700;
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55);
-        }
-        /* Prev/next nav buttons inside the strip */
-        .strip-nav {
-            appearance: none;
-            background: transparent;
-            border: 1px solid rgba(var(--acc-rgb), 0.35);
-            color: var(--acc);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
-            line-height: 1;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
-            transition: border-color 0.18s, background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
-        }
-        .strip-nav:hover {
-            border-color: var(--acc);
-            color: #fff;
-            background: rgba(var(--acc-rgb), 0.18);
-            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.4);
-        }
-        .strip-nav:active { transform: scale(0.92); }
-        .strip-nav:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
-        .strip-nav.pressed {
-            background: rgba(var(--acc-rgb), 0.32);
-            border-color: var(--acc);
-            color: #fff;
-            box-shadow: 0 0 18px rgba(var(--acc-rgb), 0.65);
-            transform: scale(0.92);
-        }
-        /* Reading-time pill on the right of the strip. */
-        .strip-reading-time {
-            flex-shrink: 0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.625rem;
-            letter-spacing: 0.32em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.55);
-            padding: 4px 10px;
-            border: 1px solid rgba(var(--acc-rgb), 0.22);
-            background: rgba(var(--acc-rgb), 0.04);
-            display: none;       /* hidden in grid mode by default */
-        }
-        body.case-detail-active .strip-reading-time { display: inline-block; }
-        .strip-reading-time::before { content: '◷ '; opacity: 0.7; color: var(--acc); }
-
-        /* Live case title in the strip — single line, ellipsis on overflow. */
-        .showcase-title-now {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--ink);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.6875rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.4);
-        }
-        .showcase-title-now .case-no {
-            color: var(--acc);
-            flex-shrink: 0;
-        }
-        .showcase-title-now .case-no::before { content: '◆ '; opacity: 0.7; }
-        .showcase-title-now .title-text {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            opacity: 0.92;
+        .showcase-intro.faded {
+            opacity: 0.18;
+            transform: translateY(-4px);
         }
         .showcase-tag {
             color: var(--acc);
@@ -815,146 +607,31 @@
             color: var(--acc);
         }
 
-        /* ============ CASES: GRID (default) + DETAIL (focused) ============
-           Default mode: 2-column grid of case cards inside the tablet, vertical
-           scroll. Click a card → detail mode (only that case shown, cover +
-           inline article). ←/→ in detail switches case, Esc returns to grid. */
+        /* ============ CARROUSEL: ONE CASE PER VIEWPORT ============ */
         .cases {
             position: absolute;
             inset: 0;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: max-content;        /* row height = content, no equal-fr split */
-            gap: 18px;
-            padding: 88px 22px 28px;
-            overflow-x: hidden;
-            overflow-y: auto;
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
             scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
+            scrollbar-width: none;
             z-index: 2;
         }
-        .cases::-webkit-scrollbar { width: 4px; }
-        .cases::-webkit-scrollbar-thumb { background: rgba(var(--acc-rgb), 0.4); }
+        .cases::-webkit-scrollbar { display: none; }
         .case {
+            flex: 0 0 100vw;
+            height: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 5vw;
+            padding: 12vh 7vw 12vh;
             position: relative;
             box-sizing: border-box;
-            cursor: pointer;
-            display: block;
-            overflow: hidden;
-            border: 1px solid rgba(var(--acc-rgb), 0.18);
-            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.04), rgba(var(--acc-rgb), 0) 60%),
-                        rgba(0, 0, 0, 0.2);
-            transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1),
-                        border-color 0.18s, box-shadow 0.18s;
-        }
-        .case:hover {
-            border-color: rgba(var(--acc-rgb), 0.5);
-            transform: translateY(-2px);
-            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35),
-                        0 0 18px rgba(var(--acc-rgb), 0.15);
-        }
-        /* Inline article hidden inside grid cards — only shows when detail */
-        .case > .case-page.case-article-mode { display: none; }
-        /* Card cover layout — compact, doesn't fill the whole tablet */
-        .case-cover {
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-template-rows: auto auto;
-            gap: 14px;
-            padding: 16px 16px 20px;
-            box-sizing: border-box;
-            align-items: start;
-            align-content: start;
-        }
-        .cases:not(.detail-mode) .case-title { font-size: clamp(1.0625rem, 1.6vw, 1.3125rem); margin: 6px 0 0; }
-        .cases:not(.detail-mode) .case-desc  { font-size: 0.875rem; line-height: 1.5; max-width: none; }
-        .cases:not(.detail-mode) .case-tags li { font-size: 0.5625rem; padding: 4px 8px; }
-        .cases:not(.detail-mode) .case-meta   { font-size: 0.5625rem; }
-        .cases:not(.detail-mode) .case-media  { max-height: 220px; aspect-ratio: 16 / 10; }
-        .cases:not(.detail-mode) .case-media-open-cue { display: none; }
-
-        /* DETAIL MODE — only the active case is shown full-size */
-        .cases.detail-mode {
-            display: block;
-            padding: 0;
-        }
-        .cases.detail-mode > .case { display: none; }
-        .cases.detail-mode > .case.is-detail-active {
-            display: block;
-            cursor: default;
-            border: none;
-            background: transparent;
-            transform: none;
-            box-shadow: none;
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: absolute;
-            inset: 0;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
-            scroll-padding-top: 64px;
-        }
-        .cases.detail-mode > .case.is-detail-active::-webkit-scrollbar { width: 4px; }
-        .cases.detail-mode > .case.is-detail-active::-webkit-scrollbar-thumb { background: rgba(var(--acc-rgb), 0.4); }
-        .cases.detail-mode > .case.is-detail-active:hover {
-            transform: none;
-            box-shadow: none;
-            border: none;
-        }
-        .cases.detail-mode > .case.is-detail-active > .case-page.case-article-mode { display: block; }
-        .cases.detail-mode > .case.is-detail-active .case-cover {
-            min-height: calc(100vh - var(--sheet-top) - var(--device-bezel) - 40px);
-            padding: 88px 56px 32px;
-            gap: 22px;
-        }
-        .cases.detail-mode > .case.is-detail-active .case-cover .case-title { font-size: clamp(1.5rem, 2.2vw, 2.125rem); margin: 8px 0 0; }
-        .cases.detail-mode > .case.is-detail-active .case-cover .case-desc { font-size: clamp(0.875rem, 1.05vw, 1rem); line-height: 1.6; max-width: 56ch; }
-        .cases.detail-mode > .case.is-detail-active .case-cover .case-tags li { font-size: 0.625rem; padding: 6px 10px; }
-        .cases.detail-mode > .case.is-detail-active .case-cover .case-meta { font-size: 0.625rem; }
-        .cases.detail-mode > .case.is-detail-active .case-media-open-cue { display: flex; }
-        .cases.detail-mode > .case.is-detail-active .case-media { max-height: 48vh; aspect-ratio: 16 / 10; }
-
-        @media (max-width: 720px) {
-            .cases { grid-template-columns: 1fr; }
-        }
-        /* Inline case article (was .case-page modal). The case-page DOM is
-           moved into its matching .case at startup via JS — these overrides
-           reset the original fixed/translate positioning so it flows inline. */
-        .case-page.case-article-mode {
-            position: static;
-            transform: none;
-            width: auto;
-            left: auto; right: auto; top: auto; bottom: auto;
-            pointer-events: auto;
-            overflow: visible;
-            border-radius: 0;
-            background: transparent;
-        }
-        .case-page.case-article-mode > .cp-close { display: none; }
-        /* Cover already shows the case image in the slide above — drop the
-           duplicate thumb strip from the inline article. */
-        .case-page.case-article-mode .cp-thumb-strip { display: none; }
-        .case-page.case-article-mode .cp-inner {
-            padding: 24px 40px 96px;
-        }
-        /* Strip already shows 'CS/01 · …' in the terminal bar — kill the
-           duplicate green CS/01 + first divider in the inline meta line so
-           the article opens with the gray uppercase 'AMERICOR · LEAD PD · …'
-           heading right under the strip. */
-        .case-page.case-article-mode .cp-meta-no,
-        .case-page.case-article-mode .cp-meta > .cp-meta-no + .cp-meta-divider {
-            display: none;
-        }
-        /* When user hits ↓ to start reading, the article should land with its
-           first line tucked just under the persistent terminal strip. Use
-           scroll-padding only — scroll-margin would double the offset. */
-        .case { scroll-padding-top: 64px; }
-        /* Light variant inside the dark tablet — make its background fill the
-           inline case so it reads as a clear visual break from the cover. */
-        .case-page.case-article-mode.cp-light {
-            background: #ffffff;
-            color: #0a0a0a;
+            align-items: center;
         }
         /* Faint grid behind every case — same vibe as the hero's .grid */
         .case::before {
@@ -978,13 +655,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Fixed 16:10 frame — every case media reads the same regardless of
-               viewport orientation or the underlying image's aspect ratio.
-               Capped vertically so case-body has room below. */
-            aspect-ratio: 16 / 10;
-            width: 100%;
-            height: auto;
-            max-height: 48vh;
             min-height: 0;
             box-shadow:
                 0 0 60px rgba(var(--acc-rgb), 0.18),
@@ -1002,44 +672,6 @@
             opacity: 1;
             filter: blur(0) brightness(1);
         }
-        /* Grid-mode card sizing — reaches AFTER the legacy carousel rules,
-           wins by source order. Sizes the image, kills the entry transform
-           so cards stand still. Body content stays fully visible. */
-        .cases:not(.detail-mode) .case .case-media {
-            transform: none;
-            opacity: 1;
-            filter: none;
-            aspect-ratio: auto;
-            height: 200px;
-            max-height: 200px;
-            min-height: 200px;
-            width: 100%;
-            box-shadow: none;
-        }
-        .cases:not(.detail-mode) .case .case-media .case-media-open-cue { display: none; }
-        /* Body children get an entry animation tied to .active. In grid mode
-           we don't toggle .active, so the animation never plays — and with
-           fill-mode: backwards each child stayed at opacity:0 (invisible).
-           Force-reset them in grid mode. */
-        .cases:not(.detail-mode) .case .case-body > * {
-            animation: none !important;
-            opacity: 1 !important;
-            transform: none !important;
-            filter: none !important;
-        }
-        /* Dark gradient at the top of the image where the intro tag floats —
-           so the white-on-image text stays legible without being covered. */
-        .case-media .case-media-top-gradient {
-            position: absolute;
-            inset: 0 0 auto 0;
-            height: 64px;
-            z-index: 2;
-            background: linear-gradient(to bottom,
-                rgba(0, 0, 0, 0.7) 0%,
-                rgba(0, 0, 0, 0.3) 60%,
-                transparent 100%);
-            pointer-events: none;
-        }
         /* Corner ticks on media frame */
         .case-media::before, .case-media::after {
             content: '';
@@ -1055,13 +687,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: top center;     /* keep header visible on tall screenshots */
             display: block;
             filter: contrast(1.05) saturate(0.95);
             transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1), filter 0.35s ease;
         }
-        /* Contain mode for media that should never crop (e.g. illustrations). */
-        .case-media.is-contained img { object-fit: contain; }
         /* Image overlay scanlines for that CRT feel */
         .case-media::marker { content: none; }
 
@@ -1110,27 +739,6 @@
             0%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(3px); }
         }
-        /* Same keyboard-key badge as in the body button, scaled for the bar overlay */
-        .case-media-open-cue .case-key {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 22px;
-            height: 22px;
-            padding: 0 6px;
-            border: 1px solid rgba(var(--acc-rgb), 0.7);
-            background: rgba(var(--acc-rgb), 0.12);
-            color: var(--acc);
-            font-size: 0.8125rem;
-            font-weight: 700;
-            line-height: 1;
-            box-shadow:
-                0 0 0 1px rgba(var(--acc-rgb), 0.06),
-                0 0 10px rgba(var(--acc-rgb), 0.3),
-                inset 0 -2px 0 rgba(0, 0, 0, 0.35);
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
-            animation: case-key-pulse 1.6s ease-in-out infinite;
-        }
 
         .case-body {
             display: flex;
@@ -1177,10 +785,10 @@
         .case-no::before { content: '◆ '; opacity: 0.7; }
         .case-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.5rem, 2.2vw, 2.125rem);
+            font-size: clamp(1.75rem, 3.2vw, 3rem);
             font-weight: 700;
-            margin: 8px 0 0;
-            line-height: 1.15;
+            margin: 14px 0 0;
+            line-height: 1.1;
             color: var(--ink);
             letter-spacing: 0.01em;
         }
@@ -1232,84 +840,35 @@
             .case-media { min-height: 38vh; }
         }
 
-        /* Carousel arrows live OUTSIDE the tablet, in the gutter between the
-           tablet and the viewport edges. Dots stay inside, bottom centre. */
+        /* Carousel nav — floating at bottom of basement */
         .cases-nav {
-            position: absolute;
-            inset: 0;
-            display: contents;
-            z-index: 5;
-        }
-        .cases-arrow {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-        body.showcase-open .cases-arrow {
-            opacity: 1;
-            pointer-events: auto;
-            transition-delay: 0.45s;
-        }
-        /* Halfway between viewport edge and tablet edge. Tablet width is
-           min(--screen-width + 2*bezel, 100vw - 64). Half of that is the
-           horizontal radius from screen center. */
-        #cases-prev {
-            right: calc(50% + min((var(--screen-width) + 2 * var(--device-bezel)) / 2, 50vw - 32px) + 18px);
-            left: auto;
-        }
-        #cases-next {
-            left: calc(50% + min((var(--screen-width) + 2 * var(--device-bezel)) / 2, 50vw - 32px) + 18px);
-            right: auto;
-        }
-        .cases-dots {
             position: absolute;
             left: 0;
             right: 0;
-            bottom: 96px;
+            bottom: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 18px;
             z-index: 5;
-            margin: 0;
-            padding: 0;
-            list-style: none;
         }
         .cases-arrow {
             appearance: none;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(var(--acc-rgb), 0.35);
-            color: var(--acc);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9375rem;
-            line-height: 1;
-            width: 44px;
-            height: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--ink);
+            font-size: 0.875rem;
+            padding: 8px 12px;
             cursor: pointer;
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55);
-            box-shadow:
-                0 0 0 1px rgba(0, 0, 0, 0.45),
-                0 0 12px rgba(var(--acc-rgb), 0.18);
-            transition: border-color .18s, color .18s, background .18s, transform .15s, box-shadow .18s;
+            transition: border-color .15s, color .15s, background .15s, transform .12s;
         }
         .cases-arrow:hover {
             border-color: var(--acc);
-            color: #fff;
-            background: rgba(var(--acc-rgb), 0.18);
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 18px rgba(var(--acc-rgb), 0.45);
+            color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
         }
-        .cases-arrow:active { transform: translateY(-50%) scale(0.92); }
-        .cases-arrow:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+        .cases-arrow:active { transform: scale(0.92); }
+        .cases-arrow:disabled { opacity: 0.35; cursor: default; }
         .cases-dots {
             list-style: none;
             margin: 0;
@@ -1333,46 +892,26 @@
         }
         .cases-dot:hover { transform: scale(1.25); }
 
-        /* Close pill — arrow + Esc hint. In grid mode the arrow reads as
-           '× close', in detail mode it switches to '← back'. */
         .showcase-back {
-            position: relative;
-            flex-shrink: 0;
-            cursor: pointer;
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            appearance: none;
             background: transparent;
-            border: 1px solid rgba(var(--acc-rgb), 0.3);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.5625rem;
-            letter-spacing: 0.35em;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 0.6875rem;
+            letter-spacing: 0.2em;
+            padding: 6px 12px;
+            cursor: pointer;
             text-transform: uppercase;
-            color: var(--dim);
-            padding: 6px 10px 6px 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            pointer-events: auto;
-        }
-        .showcase-back::before {
-            content: '×';
-            font-size: 0.875rem;
-            line-height: 1;
-            color: var(--acc);
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
-        }
-        body.case-detail-active .showcase-back::before {
-            content: '←';
-            font-size: 0.875rem;
+            transition: color .15s, border-color .15s, background .15s;
         }
         .showcase-back:hover {
+            color: var(--acc);
             border-color: var(--acc);
-            color: var(--ink);
-            background: rgba(var(--acc-rgb), 0.06);
-            box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.25);
-        }
-        .showcase-back:hover::before {
-            color: #fff;
-            text-shadow: 0 0 10px var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
         }
 
         /* ============ CASE PAGE — full-page case detail (Inter, b/w/blue) ============ */
@@ -1410,53 +949,15 @@
             0%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(3px); }
         }
-        /* Keyboard-key badge inside the open-case button — explicit hint that
-           ↓ is a real keyboard shortcut, not just a decoration. */
-        .case-open-btn .case-key {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 22px;
-            height: 22px;
-            padding: 0 6px;
-            border: 1px solid rgba(var(--acc-rgb), 0.7);
-            background: rgba(var(--acc-rgb), 0.08);
-            color: var(--acc);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8125rem;
-            font-weight: 700;
-            line-height: 1;
-            box-shadow:
-                0 0 0 1px rgba(var(--acc-rgb), 0.06),
-                0 0 10px rgba(var(--acc-rgb), 0.25),
-                inset 0 -2px 0 rgba(0, 0, 0, 0.3);
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.55);
-            animation: case-key-pulse 1.6s ease-in-out infinite;
-        }
-        @keyframes case-key-pulse {
-            0%, 100% { transform: translateY(0); box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.06), 0 0 10px rgba(var(--acc-rgb), 0.25), inset 0 -2px 0 rgba(0, 0, 0, 0.3); }
-            50%      { transform: translateY(2px); box-shadow: 0 0 0 1px rgba(var(--acc-rgb), 0.18), 0 0 18px rgba(var(--acc-rgb), 0.55), inset 0 -2px 0 rgba(0, 0, 0, 0.3); }
-        }
-        .case-open-btn:hover .case-key {
-            border-color: var(--acc);
-            background: rgba(var(--acc-rgb), 0.18);
-        }
 
-        /* Case page lives INSIDE the tablet's screen area now — same width as
-           the screen, slides up from the bottom of the tablet, scrolls within
-           its own bounds. No more fullscreen modal. */
         .case-page {
             position: fixed;
-            top: calc(var(--sheet-top) + var(--device-bezel));
-            left: 50%;
-            bottom: 0;
-            width: min(var(--screen-width), calc(100vw - 64px - 2 * var(--device-bezel)));
-            transform: translate(-50%, 100%);
+            inset: 0;
             z-index: 35;
             background: #050505;
             color: #ffffff;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            border-radius: var(--screen-radius) var(--screen-radius) 0 0;
+            transform: translateY(100%);
             transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
             overflow: hidden;
             pointer-events: none;
@@ -1464,7 +965,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
         body.case-open .case-page.open {
-            transform: translate(-50%, 0);
+            transform: translateY(0);
             pointer-events: auto;
             overflow-y: auto;
             overflow-x: hidden;
@@ -1478,9 +979,9 @@
         }
 
         .cp-close {
-            position: absolute;
-            top: 18px;
-            right: 18px;
+            position: fixed;
+            top: 22px;
+            right: 24px;
             z-index: 50;
             appearance: none;
             background: rgba(5,5,5,0.6);
@@ -1507,65 +1008,6 @@
 
         /* hero */
         .cp-hero { padding-bottom: 56px; }
-        /* Case-page intro thumbnail — small echo of the showcase image so the
-           user knows they're inside the same case they just clicked. */
-        .cp-thumb-strip {
-            position: relative;
-            margin-bottom: 32px;
-            overflow: hidden;
-            height: 200px;
-            border: 1px solid rgba(var(--acc-rgb), 0.22);
-            background: #0a0d10;
-            box-shadow:
-                0 0 30px rgba(var(--acc-rgb), 0.15),
-                inset 0 0 40px rgba(var(--acc-rgb), 0.04);
-        }
-        .cp-thumb-strip::before, .cp-thumb-strip::after {
-            content: '';
-            position: absolute;
-            width: 14px; height: 14px;
-            border: 1px solid var(--acc);
-            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
-            z-index: 2;
-        }
-        .cp-thumb-strip::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-        .cp-thumb-strip::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
-        .cp-thumb {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            filter: contrast(1.05) saturate(0.95);
-        }
-        .cp-thumb-tag {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            z-index: 3;
-            padding: 4px 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.5625rem;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: var(--acc);
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(var(--acc-rgb), 0.4);
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.45);
-        }
-        .cp-light .cp-thumb-strip {
-            border-color: rgba(0, 0, 0, 0.12);
-            background: #f4f4f4;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-        }
-        .cp-light .cp-thumb-strip::before, .cp-light .cp-thumb-strip::after {
-            border-color: var(--acc);
-            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.4);
-        }
-        .cp-light .cp-thumb-tag {
-            background: rgba(255, 255, 255, 0.78);
-            border-color: rgba(var(--acc-rgb), 0.4);
-            color: var(--acc);
-        }
         .cp-meta {
             font-size: 0.6875rem;
             letter-spacing: 0.22em;
@@ -1629,11 +1071,10 @@
             background: var(--acc);
         }
 
-        /* Timeline (sticky nav) — pinned BELOW the persistent terminal strip
-           (64px) so it never overlaps it. */
+        /* Timeline (sticky nav) */
         .cp-timeline {
             position: sticky;
-            top: 64px;
+            top: 0;
             z-index: 5;
             background: rgba(5,5,5,0.92);
             backdrop-filter: blur(14px);
@@ -1834,6 +1275,7 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
+
 
         /* ============ VIBE TERMINAL MODAL — fullscreen with insets ============ */
         /* Backdrop — hard dim layer behind the terminal so the rest of the
@@ -3177,6 +2619,7 @@
             .cp-slide-next { right: 8px; }
             .cp-stat-row { gap: 10px; }
         }
+
 
         /* ============ CUSTOM CURSOR ============ */
         @media (hover: hover) and (pointer: fine) {
@@ -7732,139 +7175,126 @@
     <section class="showcase" id="showcase" aria-label="Recent works">
         <div class="showcase-inner">
             <div class="showcase-intro">
-                <button class="showcase-back" id="showcase-back" type="button" aria-label="Close showcase">ESC</button>
-                <div class="showcase-title-now" id="showcase-title-now" aria-live="polite">
-                    <span class="title-text">Loading…</span>
-                </div>
-                <span class="strip-reading-time" id="strip-reading-time" aria-live="polite"></span>
-                <div class="strip-nav-group" hidden>
-                    <button class="strip-nav strip-prev" id="strip-prev" type="button" aria-label="Previous case">←</button>
-                    <span class="strip-counter" id="strip-counter"></span>
-                    <button class="strip-nav strip-next" id="strip-next" type="button" aria-label="Next case">→</button>
-                </div>
+                <span class="showcase-tag">// archive · 2010 — 2026 · selected works</span>
+                <p class="showcase-sub">scroll · drag · <span class="blink">← →</span></p>
             </div>
 
             <div class="cases" id="cases">
                 <article class="case" data-case="cs01">
-                    <div class="case-cover">
-                        <div class="case-media is-openable" data-open-case="cs01" role="button" tabindex="0" aria-label="Scroll to read Americor case">
-                            <img src="showcase/cases/cs01-americor.png" alt="Americor multi-brand design system">
-                            <div class="case-media-top-gradient" aria-hidden="true"></div>
-                            <div class="case-media-open-cue" aria-hidden="true">
-                                <span>Press</span>
-                                <kbd class="case-key">↓</kbd>
-                                <span>to start reading</span>
-                            </div>
+                    <div class="case-media is-openable" data-open-case="cs01" role="button" tabindex="0" aria-label="Open Americor case study">
+                        <img src="showcase/cases/cs01-americor.png" alt="Americor multi-brand design system">
+                        <div class="case-media-open-cue" aria-hidden="true">
+                            <span class="arrow">↓</span>
+                            <span>Open case</span>
                         </div>
-                        <div class="case-body">
-                            <div class="case-head">
-                                <span class="case-no">CS/01</span>
-                                <span class="case-role">Designer</span>
-                            </div>
-                            <h3 class="case-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h3>
-                            <p class="case-desc">Audited three platforms, unpacked a ghost design system that never existed as components, and shipped a 4-layer token architecture: root → semantic → brand → platform. Every screen now speaks one language across iOS, Android and web.</p>
-                            <ul class="case-tags">
-                                <li>tokens</li><li>multi-brand</li><li>information arch</li><li>figma ↔ code</li>
-                            </ul>
-                            <div class="case-meta">Americor · Lead PD · 2024</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/01</span>
+                            <span class="case-role">Designer</span>
                         </div>
+                        <h3 class="case-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h3>
+                        <p class="case-desc">Audited three platforms, unpacked a ghost design system that never existed as components, and shipped a 4-layer token architecture: root → semantic → brand → platform. Every screen now speaks one language across iOS, Android and web.</p>
+                        <ul class="case-tags">
+                            <li>tokens</li><li>multi-brand</li><li>information arch</li><li>figma ↔ code</li>
+                        </ul>
+                        <div class="case-meta">Americor · Lead PD · 2024</div>
+                        <button class="case-open-btn" data-open-case="cs01" type="button" aria-label="Open full case">
+                            <span class="open-arrow" aria-hidden="true">↓</span>
+                            <span>Open case</span>
+                        </button>
                     </div>
                 </article>
 
                 <article class="case" data-case="cs02">
-                    <div class="case-cover">
-                        <div class="case-media is-openable" data-open-case="cs02" role="button" tabindex="0" aria-label="Scroll to read Health Samurai case">
-                            <img src="showcase/cases/cs02-aidbox.png" alt="Health Samurai design system">
-                            <div class="case-media-top-gradient" aria-hidden="true"></div>
-                            <div class="case-media-open-cue" aria-hidden="true">
-                                <span>Press</span>
-                                <kbd class="case-key">↓</kbd>
-                                <span>to start reading</span>
-                            </div>
+                    <div class="case-media is-openable" data-open-case="cs02" role="button" tabindex="0" aria-label="Open Health Samurai case study">
+                        <img src="showcase/cases/cs02-aidbox.png" alt="Health Samurai design system">
+                        <div class="case-media-open-cue" aria-hidden="true">
+                            <span class="arrow">↓</span>
+                            <span>Open case</span>
                         </div>
-                        <div class="case-body">
-                            <div class="case-head">
-                                <span class="case-no">CS/02</span>
-                                <span class="case-role">Designer</span>
-                            </div>
-                            <h3 class="case-title">A design system for <em>five healthcare products</em>, half of it generated by AI.</h3>
-                            <p class="case-desc">Designed in Figma, shipped in code, synced both ways. Wrote a Claude skill to pull components from Figma back when that pattern didn't exist yet. Every component ships through Storybook review.</p>
-                            <ul class="case-tags">
-                                <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>bi-directional sync</li>
-                            </ul>
-                            <div class="case-meta">Health Samurai · Senior PD · 2023</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/02</span>
+                            <span class="case-role">Designer</span>
                         </div>
+                        <h3 class="case-title">A design system for <em>five healthcare products</em>, half of it generated by AI.</h3>
+                        <p class="case-desc">Designed in Figma, shipped in code, synced both ways. Wrote a Claude skill to pull components from Figma back when that pattern didn't exist yet. Every component ships through Storybook review.</p>
+                        <ul class="case-tags">
+                            <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>bi-directional sync</li>
+                        </ul>
+                        <div class="case-meta">Health Samurai · Senior PD · 2023</div>
+                        <button class="case-open-btn" data-open-case="cs02" type="button" aria-label="Open full case">
+                            <span class="open-arrow" aria-hidden="true">↓</span>
+                            <span>Open case</span>
+                        </button>
                     </div>
                 </article>
 
                 <article class="case" data-case="cs03">
-                    <div class="case-cover">
-                        <div class="case-media">
-                            <img src="showcase/cases/cs03-landings.jpg" alt="Landing page pipeline">
+                    <div class="case-media">
+                        <img src="showcase/cases/cs03-landings.jpg" alt="Landing page pipeline">
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/03</span>
+                            <span class="case-role">Designer</span>
                         </div>
-                        <div class="case-body">
-                            <div class="case-head">
-                                <span class="case-no">CS/03</span>
-                                <span class="case-role">Designer</span>
-                            </div>
-                            <h3 class="case-title">From 1.5 months to <em>4 days</em> — the landing page pipeline.</h3>
-                            <p class="case-desc">C-level was drafting landings by hand. Rebuilt the system around Markdown + a block library non-designers could assemble. Owners edit live in the DOM via an MCP chat. A designer polishes and ships.</p>
-                            <ul class="case-tags">
-                                <li>markdown-first</li><li>block library</li><li>mcp</li><li>dogfooded brand</li>
-                            </ul>
-                            <div class="case-meta">Health Samurai · 2023 — 2025</div>
-                        </div>
+                        <h3 class="case-title">From 1.5 months to <em>4 days</em> — the landing page pipeline.</h3>
+                        <p class="case-desc">C-level was drafting landings by hand. Rebuilt the system around Markdown + a block library non-designers could assemble. Owners edit live in the DOM via an MCP chat. A designer polishes and ships.</p>
+                        <ul class="case-tags">
+                            <li>markdown-first</li><li>block library</li><li>mcp</li><li>dogfooded brand</li>
+                        </ul>
+                        <div class="case-meta">Health Samurai · 2023 — 2025</div>
                     </div>
                 </article>
 
                 <article class="case" data-case="cs04">
-                    <div class="case-cover">
-                        <div class="case-media">
-                            <img src="showcase/cases/cs04-creditor.png" alt="Creditor card lifecycle">
+                    <div class="case-media">
+                        <img src="showcase/cases/cs04-creditor.png" alt="Creditor card lifecycle">
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/04</span>
+                            <span class="case-role">Designer</span>
                         </div>
-                        <div class="case-body">
-                            <div class="case-head">
-                                <span class="case-no">CS/04</span>
-                                <span class="case-role">Designer</span>
-                            </div>
-                            <h3 class="case-title">The creditor card &amp; its <em>lifecycle</em>.</h3>
-                            <p class="case-desc">The central object in the user's universe. Designed 11 states, 5 transitions, and an animated timeline that turns abstract "program progress" into something tangible — without overwhelming first-time users.</p>
-                            <ul class="case-tags">
-                                <li>state design</li><li>micro-interactions</li><li>empty states</li><li>motion</li>
-                            </ul>
-                            <div class="case-meta">Americor · UX · 2024</div>
-                        </div>
+                        <h3 class="case-title">The creditor card &amp; its <em>lifecycle</em>.</h3>
+                        <p class="case-desc">The central object in the user's universe. Designed 11 states, 5 transitions, and an animated timeline that turns abstract "program progress" into something tangible — without overwhelming first-time users.</p>
+                        <ul class="case-tags">
+                            <li>state design</li><li>micro-interactions</li><li>empty states</li><li>motion</li>
+                        </ul>
+                        <div class="case-meta">Americor · UX · 2024</div>
                     </div>
                 </article>
 
                 <article class="case" data-case="cs05">
-                    <div class="case-cover">
-                        <div class="case-media">
-                            <img src="showcase/cases/cs05-databricks.png" alt="Databricks UX exploration">
+                    <div class="case-media">
+                        <img src="showcase/cases/cs05-databricks.png" alt="Databricks UX exploration">
+                    </div>
+                    <div class="case-body">
+                        <div class="case-head">
+                            <span class="case-no">CS/05</span>
+                            <span class="case-role">Consulting</span>
                         </div>
-                        <div class="case-body">
-                            <div class="case-head">
-                                <span class="case-no">CS/05</span>
-                                <span class="case-role">Consulting</span>
-                            </div>
-                            <h3 class="case-title">Databricks — taming the <em>data-platform UX</em>.</h3>
-                            <p class="case-desc">An exploration of how a power-user analytics platform can stay readable for newcomers without losing its density. Reorganized the navigation around what users come to do, not where engineering keeps the code.</p>
-                            <ul class="case-tags">
-                                <li>information density</li><li>onboarding</li><li>nav restructure</li><li>data viz</li>
-                            </ul>
-                            <div class="case-meta">Databricks · Consulting · 2022</div>
-                        </div>
+                        <h3 class="case-title">Databricks — taming the <em>data-platform UX</em>.</h3>
+                        <p class="case-desc">An exploration of how a power-user analytics platform can stay readable for newcomers without losing its density. Reorganized the navigation around what users come to do, not where engineering keeps the code.</p>
+                        <ul class="case-tags">
+                            <li>information density</li><li>onboarding</li><li>nav restructure</li><li>data viz</li>
+                        </ul>
+                        <div class="case-meta">Databricks · Consulting · 2022</div>
                     </div>
                 </article>
             </div>
 
             <nav class="cases-nav" aria-label="Carousel navigation">
                 <button class="cases-arrow" id="cases-prev" type="button" aria-label="Previous case">←</button>
+                <ol class="cases-dots" id="cases-dots"></ol>
                 <button class="cases-arrow" id="cases-next" type="button" aria-label="Next case">→</button>
             </nav>
 
+            <button class="showcase-back" id="showcase-back" type="button" aria-label="Back to top">↑ back</button>
         </div>
-        <ol class="cases-dots" id="cases-dots" aria-hidden="true"></ol>
     </section>
 
     <!-- Case page: full-page detail for cs01 (Americor overall) -->
@@ -7873,364 +7303,147 @@
             <span class="cp-close-arrow" aria-hidden="true">↑</span>
             <span>back to showcase</span>
         </button>
-        <div class="cp-inner am-case">
-            <!-- HERO -->
-            <header class="am-hero">
-                <div class="am-eyebrow">CS/01 · <b>Americor</b> · Lead Product Designer · 2023–2025</div>
-                <h1 class="am-title">Редизайн продукта и <em>дизайн-система</em> для трёх платформ</h1>
-                <p class="am-subtitle">Финтех в сфере debt relief: веб + iOS + Android, несколько брендов, IPO-режим.</p>
-                <div class="am-ba" data-ba>
-                    <button type="button" class="am-ba-fullscreen" data-ba-fullscreen aria-label="Toggle fullscreen">Expand</button>
-                    <div class="am-ba-tabs" role="tablist">
-                        <button class="am-ba-tab active" type="button" data-platform="desktop" role="tab" aria-selected="true">Desktop</button>
-                        <button class="am-ba-tab" type="button" data-platform="mobile" role="tab" aria-selected="false">Mobile</button>
-                    </div>
-                    <div class="am-ba-stage" data-platform="desktop">
-                        <img class="am-ba-img am-ba-before-img" src="showcase/cs01/desktop-before.jpg" alt="Десктоп до редизайна">
-                        <div class="am-ba-after-wrap">
-                            <img class="am-ba-img" src="showcase/cs01/desktop-after.png" alt="Десктоп после редизайна">
-                        </div>
-                        <span class="am-ba-label before">Before</span>
-                        <span class="am-ba-label after">After</span>
-                        <div class="am-ba-divider" aria-hidden="true"></div>
-                        <div class="am-ba-handle" aria-hidden="true"></div>
-                        <input type="range" class="am-ba-range" min="0" max="100" step="0.1" value="50" aria-label="Compare before and after">
-                    </div>
-                    <div class="am-ba-stage" data-platform="mobile" hidden>
-                        <img class="am-ba-img am-ba-before-img" data-stub="mobile-before.png" alt="Мобилка до редизайна">
-                        <div class="am-ba-after-wrap">
-                            <img class="am-ba-img" data-stub="mobile-after.png" alt="Мобилка после редизайна">
-                        </div>
-                        <span class="am-ba-label before">Before</span>
-                        <span class="am-ba-label after">After</span>
-                        <div class="am-ba-divider" aria-hidden="true"></div>
-                        <div class="am-ba-handle" aria-hidden="true"></div>
-                        <input type="range" class="am-ba-range" min="0" max="100" step="0.1" value="50" aria-label="Compare before and after">
-                    </div>
-                    <div class="am-ba-scenes" data-ba-scenes>
-                        <button type="button" class="am-ba-scene active" data-scene="dashboard">
-                            <img src="showcase/cs01/desktop-after.png" alt="">
-                            <span class="am-ba-scene-label">Dashboard</span>
-                        </button>
-                        <button type="button" class="am-ba-scene" data-scene="creditor">
-                            <img src="showcase/cs01/creditor-after.png" alt="">
-                            <span class="am-ba-scene-label">Creditors</span>
-                        </button>
-                        <button type="button" class="am-ba-scene" data-scene="offer">
-                            <img src="showcase/cs01/offer-after.png" alt="">
-                            <span class="am-ba-scene-label">Offer Flow</span>
-                        </button>
-                    </div>
+        <div class="cp-inner">
+            <header class="cp-hero">
+                <div class="cp-meta">
+                    <span class="cp-meta-no">CS/01</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>Americor</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>Lead Product Designer</span>
+                    <span class="cp-meta-divider"></span>
+                    <span>2023 — 2025</span>
                 </div>
+                <h1 class="cp-title">Redesigning how Americans <em>escape debt</em> — a multi-brand fintech rebuild.</h1>
+                <p class="cp-sub">Americor is a fintech in the debt-relief space — a web app plus iOS and Android. I was brought in as Lead PD to bring order to the design process and run a full product redesign ahead of IPO.</p>
             </header>
 
-            <!-- TL;DR -->
-            <section class="am-section">
-                <h2 class="am-h2">TL;DR</h2>
-                <div class="am-tldr-block">
-                    <div class="am-tldr-label">// summary</div>
-                    <p>За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на code-first подход.</p>
-                    <p>Ключевая продуктовая находка — <em>разделение пользовательского опыта на фазы программы</em>: раньше в разных фазах клиент видел один и тот же интерфейс, хотя его потребности и контекст радикально менялись. Я спроектировал систему фаз и отдельные UI-состояния для каждой.</p>
-                    <div class="am-metrics">
-                        <div class="am-metric">
-                            <div class="am-metric-label">NPS</div>
-                            <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
-                        </div>
-                        <div class="am-metric">
-                            <div class="am-metric-label">CSAT (5)</div>
-                            <div class="am-metric-vals"><span class="am-metric-was">3.6</span><span class="am-metric-arrow">→</span><span class="am-metric-now">4.5</span></div>
-                        </div>
-                        <div class="am-metric">
-                            <div class="am-metric-label">Onboarding completion</div>
-                            <div class="am-metric-vals"><span class="am-metric-now txt">▲ TODO</span></div>
-                        </div>
-                    </div>
-                    <p style="margin-top:18px;color:rgba(255,255,255,0.6);font-size:0.875rem;">По результатам редизайна команда получила премию.</p>
-                </div>
-            </section>
-
-            <!-- Company and product -->
-            <section class="am-section">
-                <h2 class="am-h2">Компания и продукт</h2>
-                <p>Americor — финтех в сфере debt relief. Помогает людям выходить из долгов через программы реструктуризации. У компании есть дочерние бренды в разных штатах с собственной визуальной идентификацией — это связано с различиями в законодательстве.</p>
-                <p>Продукт состоит из веб-приложения (десктоп + адаптив) и мобильных приложений для iOS и Android. Через них клиенты отслеживают план погашения, вносят платежи, общаются со службой поддержки и видят прогресс по программе.</p>
-            </section>
-
-            <!-- My role -->
-            <section class="am-section">
-                <h2 class="am-h2">Моя роль</h2>
-                <p>Lead Product Designer. Репортил продакт-менеджеру (→ CPO). В команде — junior-дизайнер, которого менторил и постепенно вовлекал в задачи возрастающей сложности.</p>
-            </section>
-
-            <!-- Task -->
-            <section class="am-section">
-                <h2 class="am-h2">Задача</h2>
-                <p>Меня взяли решить три связанные задачи:</p>
+            <div class="cp-tldr">
+                <div class="cp-tldr-label">// TL;DR</div>
                 <ul>
-                    <li>Редизайн продуктовой линейки — веб- и мобильных приложений. Компания готовилась к IPO, текущий дизайн потерял актуальность.</li>
-                    <li>Поднять <strong>NPS и CSAT</strong> за счёт улучшения пользовательского опыта в ключевых сценариях.</li>
-                    <li>Создать дизайн-систему с нуля и внедрить её в работу — так, чтобы она реально использовалась дизайнерами и разработчиками, а не осталась файлом в Figma.</li>
+                    <li>Designed and shipped a multi-layer design system across three platforms (iOS / Android / Web): root → semantic → brand → platform. Covered ~50–60% of interfaces and gave Americor's multiple brands one shared visual language.</li>
+                    <li>Flipped the process from <em>mockup → handoff → dev</em> to <em>code-first</em>: in the final ~3 months the team worked on a live React prototype + Storybook; new features got assembled directly from code.</li>
+                    <li>To back redesign decisions with real signal, I built a user-interview pipeline and a custom analyzer for the Facebook community feed — decisions ran on data, not assumptions.</li>
                 </ul>
-                <p>И параллельно — навести порядок в дизайн-процессах и вырастить junior-дизайнера.</p>
-            </section>
+            </div>
 
-            <!-- What was at start -->
-            <section class="am-section">
-                <h2 class="am-h2">Что было на старте</h2>
-                <p>Единой дизайн-системы не существовало: переиспользуемые блоки лежали россыпью по файлам Figma, и при создании нового макета дизайнер собирал страницу из разрозненных кусков вручную. Поддерживать и масштабировать интерфейсы при таком подходе было невозможно.</p>
-                <p>Предыдущая попытка привлечь фриланс-дизайнера для разработки фирменного стиля провалилась — за полгода работа была сделана на 40–50%, после чего дизайнер ушёл.</p>
-                <p>Разработчики тратили недели на поиск «источника правды» для компонентов. Визуальная консистентность между платформами отсутствовала.</p>
-                <p>И главное: <strong>никаких артефактов о том, как устроен продукт, не существовало</strong> — ни user flow, ни process maps, ни документации. Понимание жило в головах отдельных людей.</p>
-            </section>
+            <nav class="cp-timeline" aria-label="Case timeline">
+                <ol class="cp-timeline-list">
+                    <li><button class="cp-tl-item active" data-target="cp-sec-01" type="button">
+                        <span class="cp-tl-num">01 / Start</span>
+                        <span class="cp-tl-name">Audit &amp; context</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-02" type="button">
+                        <span class="cp-tl-num">02 / Foundation</span>
+                        <span class="cp-tl-name">Design system</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-03" type="button">
+                        <span class="cp-tl-num">03 / Pre-IPO</span>
+                        <span class="cp-tl-name">Redesign</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-04" type="button">
+                        <span class="cp-tl-num">04 / Tools</span>
+                        <span class="cp-tl-name">Vibecoding tools</span>
+                    </button></li>
+                    <li><button class="cp-tl-item" data-target="cp-sec-05" type="button">
+                        <span class="cp-tl-num">05 / Shift</span>
+                        <span class="cp-tl-name">Code-first prototypes</span>
+                    </button></li>
+                </ol>
+            </nav>
 
-            <!-- Approach -->
-            <section class="am-section">
-                <h2 class="am-h2">Подход</h2>
-
-                <h3 class="am-h3">1. Разобраться в продукте с нуля</h3>
-                <p>Поскольку документации не было, я начал с интервью — с аналитиками, бизнесом, разработчиками. Восстанавливал логику продукта по кускам.</p>
-                <p>Чтобы валидировать своё понимание, собрал <strong>Product Flow Diagram</strong> — end-to-end карту продукта со всеми ключевыми флоу, ветвлениями по бизнес-правилам (например, разделение клиентов по сумме долга — Primary Flow для долгов &gt;$7500 и Secondary Flow для меньших) и состояниями пользователя на каждом этапе. Это стало <em>первым в компании единым источником правды</em> о том, как устроен продукт.</p>
-                <figure class="am-media" data-media data-kind="image" data-src="showcase/cs01/high-level.png" data-stub="high-level.png" data-caption="High-level Product Flow — end-to-end карта продукта Americor со всеми флоу и ветвлениями">
-                    <div class="am-media-frame scroll-x" data-scroll-x>
-                        <img src="showcase/cs01/high-level.png" alt="Product Flow Diagram — end-to-end карта продукта" loading="lazy">
-                    </div>
-                    <div class="am-media-caption"><b>↔</b> Тянуть мышью / drag — диаграмма скроллится в полную ширину. Клик не по диаграмме — lightbox на весь экран.</div>
-                </figure>
-
-                <h3 class="am-h3">2. Аудит существующих макетов и работающего продукта</h3>
-                <p>Зашёл в Figma — обнаружил, что макеты разбросаны: непонятно, где какая версия, что актуально, а что нет. Параллельно поставил тестовые сборки приложений, прошёл реальные флоу в тестовом окружении и собрал карту экранов с плюсами и минусами каждого решения.</p>
-                <p>Опирался на здравый смысл, продуктовый опыт и UX best practices. Часть проблем была очевидной: где-то не хватало информации, где-то мы запутывали пользователя, где-то некорректно показывали данные, где-то не давали достаточной прозрачности по плате за услуги. <em>Проблем накопилось много.</em></p>
-
-                <h3 class="am-h3">3. Параллельный трек: дизайн-система и редизайн</h3>
-                <p>Для дизайн-системы у меня уже было достаточно понимания, чтобы стартовать. С редизайном — другая история: его нельзя начинать без серьёзного ресерча.</p>
-                <p>Поэтому треки пошли параллельно. Дизайн-систему я строил под существующий дизайн — не меняя визуальный язык, а наводя порядок и фикся явные бессистемные моменты. По редизайну параллельно шёл research: рисовали ключевые флоу, тестировали прототипы на пользователях, сравнивали «как было» и «как стало». В компании был отдел исследований, который проводил интервью и собирал данные.</p>
-
-                <h3 class="am-h3">4. Систематизация сбора обратной связи</h3>
-                <p>Кроме интервью, ценный источник данных — пользовательская активность в Facebook-группе компании. Чтобы превратить это в работающий инструмент, я написал на vibe-code приложение, которое:</p>
-                <ul>
-                    <li>парсило все посты и комментарии (обработали <strong>~80 000 сообщений</strong>),</li>
-                    <li>прогоняло каждое сообщение через нейросеть, которая определяла тему (UX, служба поддержки, конкретная фича) и сентимент,</li>
-                    <li>предоставляло UI с фильтрацией и поиском по всей базе.</li>
-                </ul>
-                <p>Эту систему мы использовали для подготовки гипотез к редизайну — опирались на реальные данные о том, что болит у пользователей.</p>
-                <div class="am-gallery cols-2">
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="facebook-parser-ui.png" data-caption="Парсер Facebook-группы — фильтр по теме и сентименту">
-                        <div class="am-media-frame" data-aspect="16-10">
-                            <div class="am-media-stub">image · facebook-parser-ui.png</div>
-                        </div>
-                        <div class="am-media-caption">Парсер Facebook-группы — UI</div>
-                    </figure>
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="feedback-summary-ui.png" data-caption="Сводный UI обратной связи: интервью + Facebook-группа">
-                        <div class="am-media-frame" data-aspect="16-10">
-                            <div class="am-media-stub">image · feedback-summary-ui.png</div>
-                        </div>
-                        <div class="am-media-caption">Сводный UI обратной связи</div>
-                    </figure>
+            <article class="cp-section" id="cp-sec-01">
+                <div class="cp-sec-num">01 — Start</div>
+                <h2 class="cp-sec-title">What I walked into, and where I started</h2>
+                <div class="cp-sec-body">
+                    <p>The team was middle- and junior-level designers. <strong>There was no actual design system.</strong> Reusable elements lived scattered across files — never formalized as components. Every new mockup got hand-assembled from disparate pieces. Maintaining or updating interfaces at scale was impossible this way.</p>
+                    <p>An earlier attempt to bring in a freelancer to define the brand had stalled — six months in, the work was 40–50% done and the designer left. Engineers were spending <em>weeks</em> hunting for a "source of truth" for components. Visual consistency across platforms didn't exist.</p>
+                    <p>I started with an audit: pulled every screen across desktop + responsive, iOS and Android, surfaced the recurring patterns, and decided what had to get systematized first.</p>
                 </div>
+                <div class="cp-figure">image · audit landscape (before)</div>
+                <div class="cp-figure-cap">Audit of the existing mockups — which patterns to unify, which to leave alone.</div>
+            </article>
 
-                <h3 class="am-h3">5. IPO и адаптация дизайн-системы</h3>
-                <p>Через ~3 месяца работы над дизайн-системой пришёл бизнес и сказал: компания готовится к IPO, нужен редизайн. Получилась нетривиальная ситуация — дизайн-система, спроектированная под существующий дизайн, должна была начать поддерживать новый.</p>
-                <p>Сначала это коснулось веб-приложения, потом — мобильных. Архитектура системы (root → semantic → brand с тремя режимами Web/iOS/Android) была заложена достаточно гибко, чтобы обновлять её на лету, не ломая уже сделанного. <em>Это был один из моментов, где правильно выбранная изначальная архитектура окупилась многократно.</em></p>
-                <figure class="am-media" data-media data-kind="image" data-src="" data-stub="design-system-overview.png" data-caption="Структура токенов и компонентов в Figma">
-                    <div class="am-media-frame" data-aspect="16-9">
-                        <div class="am-media-stub">image · design-system-overview.png</div>
-                    </div>
-                    <div class="am-media-caption">Структура дизайн-системы в Figma</div>
-                </figure>
-            </section>
-
-            <!-- What did -->
-            <section class="am-section">
-                <h2 class="am-h2">Что сделал</h2>
-
-                <h3 class="am-h3">Дизайн-система для трёх платформ</h3>
-                <p>Многоуровневая структура:</p>
-                <ul>
-                    <li><strong>Root</strong> — базовые значения: цвета, отступы, типографика</li>
-                    <li><strong>Semantic</strong> — семантический слой с осмысленными названиями токенов</li>
-                    <li><strong>Brand</strong> — уровень брендов (для дочерних компаний с разной идентификацией)</li>
-                    <li><strong>Три режима</strong>: Web, iOS, Android — управление из одного места</li>
-                </ul>
-                <p>Параллельно реорганизовал структуру в Figma: итерации, ветки для разработки, понятная навигация. Покомпонентно раскатывали систему на текущие приложения вместе с командами разработки — покрыли <strong>~50–60% интерфейсов</strong>.</p>
-
-                <h3 class="am-h3">Редизайн веб- и мобильных приложений</h3>
-                <p>Главная продуктовая находка — <em>разделение опыта на фазы программы</em>. Раньше клиент в разных фазах видел один и тот же UI, хотя его контекст и потребности радикально менялись. Я спроектировал систему фаз и отдельные интерфейсные состояния для каждой. Подробнее — в углублённом кейсе ниже.</p>
-                <p>Middle-дизайнер к моменту начала редизайна ушла, и мы работали вдвоём с junior-дизайнером. Я вёл редизайн, контролировал качество, менторил коллегу.</p>
-                <div class="am-gallery cols-2">
-                    <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-offer-acceptance.mp4" data-caption="Флоу принятия нового offer">
-                        <div class="am-media-frame" data-aspect="16-10">
-                            <div class="am-media-stub">video · screencast-offer-acceptance.mp4</div>
-                            <div class="am-media-play"></div>
-                        </div>
-                        <div class="am-media-caption">Флоу принятия нового offer</div>
-                    </figure>
-                    <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-community.mp4" data-caption="Community section — раздел сообщества">
-                        <div class="am-media-frame" data-aspect="16-10">
-                            <div class="am-media-stub">video · screencast-community.mp4</div>
-                            <div class="am-media-play"></div>
-                        </div>
-                        <div class="am-media-caption">Community section</div>
-                    </figure>
+            <article class="cp-section" id="cp-sec-02">
+                <div class="cp-sec-num">02 — Foundation</div>
+                <h2 class="cp-sec-title">A multi-layer design system</h2>
+                <div class="cp-sec-body">
+                    <p>Built on the audit, I designed and shipped a multi-layer token architecture:</p>
+                    <ul>
+                        <li><strong>Root</strong> — primitive values: colors, spacing, typography.</li>
+                        <li><strong>Semantic</strong> — a layer of meaningfully-named tokens.</li>
+                        <li><strong>Brand</strong> — a brand layer: Americor has subsidiaries in different states, each with its own color identity driven by per-state regulation.</li>
+                        <li><strong>Platform modes</strong> — Android, iOS, Web — managed from one place.</li>
+                    </ul>
+                    <p>In parallel I reorganized the whole Figma library: iterations, branches for development, clear navigation across mockups. Together with the teams we started rolling the system out component by component and reached <strong>~50–60% interface coverage</strong>.</p>
                 </div>
+                <div class="cp-figure">image · token architecture diagram (root → semantic → brand → platform)</div>
+                <div class="cp-figure-cap">The four token layers and three platform modes, on one diagram.</div>
+                <div class="cp-figure">image · figma library structure</div>
+                <div class="cp-figure-cap">Figma library reorg: branches, iterations, navigation.</div>
+            </article>
 
-                <h3 class="am-h3">Иллюстрации и визуальный язык</h3>
-                <p>Параллельно с системной работой нужно было решить вопрос с графикой — иллюстрациями для пустых состояний, онбординга, ключевых экранов. Аватарами для коммуникаций.</p>
-                <p>Подход выстраивал итеративно. Сначала генерировал десятки вариантов в разных стилях через нейросети — нужно было найти стиль, который ляжет на бренд и будет узнаваемым. Со временем вырос пайплайн через нодовый редактор: начинал в <strong>ComfyUI</strong>, позже перешёл на <strong>Figma Weavy</strong>. Это позволило стабильно генерировать иллюстрации в едином стиле — <em>не один раз случайно угадать, а превратить генерацию в управляемый процесс</em>.</p>
-                <h4 class="am-h3" style="margin-top:14px;color:rgba(255,255,255,0.7);">Поиск стиля</h4>
-                <div class="am-gallery cols-4">
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-1.png" data-caption="Стиль 1">
-                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 1</div></div>
-                    </figure>
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-2.png" data-caption="Стиль 2">
-                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 2</div></div>
-                    </figure>
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-3.png" data-caption="Стиль 3">
-                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 3</div></div>
-                    </figure>
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="illustration-style-4.png" data-caption="Стиль 4">
-                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">style · 4</div></div>
-                    </figure>
+            <article class="cp-section" id="cp-sec-03">
+                <div class="cp-sec-num">03 — Pre-IPO</div>
+                <h2 class="cp-sec-title">The pre-IPO redesign</h2>
+                <div class="cp-sec-body">
+                    <p>Mid-rollout, leadership decided on a <strong>full redesign of the mobile and web apps</strong> — the company was preparing for IPO and the existing design had aged out.</p>
+                    <p>By that point the middle designer had left and we were down to two — me leading and a junior. I drove the redesign end-to-end and was the quality bar for everything that shipped.</p>
+                    <p>To ground decisions in data rather than assumptions, I built a feedback pipeline: ran user interviews and, in parallel, launched a custom analyzer for the Facebook community feed (see next section).</p>
                 </div>
-                <h4 class="am-h3" style="margin-top:14px;color:rgba(255,255,255,0.7);">Финальный набор</h4>
-                <div class="am-gallery cols-3">
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="final-illustration-1.png" data-caption="Финальная иллюстрация 1">
-                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">final · 1</div></div>
-                    </figure>
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="final-illustration-2.png" data-caption="Финальная иллюстрация 2">
-                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">final · 2</div></div>
-                    </figure>
-                    <figure class="am-media" data-media data-kind="image" data-src="" data-stub="final-illustration-3.png" data-caption="Финальная иллюстрация 3">
-                        <div class="am-media-frame" data-aspect="4-3"><div class="am-media-stub">final · 3</div></div>
-                    </figure>
+                <div class="cp-figure">image · before / after key screens</div>
+                <div class="cp-figure-cap">Before / after of key screens from the redesign.</div>
+            </article>
+
+            <article class="cp-section" id="cp-sec-04">
+                <div class="cp-sec-num">04 — Tools</div>
+                <h2 class="cp-sec-title">Vibecoding: custom tools to back decisions</h2>
+                <div class="cp-sec-body">
+                    <p><strong>Facebook community analyzer.</strong> I wrote a scraper that pulled every post and comment from Americor's Facebook community, then ran each message through an LLM that classified <em>topic</em> (UX, support, a specific feature) and <em>sentiment</em> (complaint, gratitude, request, frustration). On top of that I built a UI with filters by topic and sentiment — the team could surface problem areas in seconds and ground redesign decisions in real signal.</p>
+                    <p><strong>NSF Shortfall simulator.</strong> While designing a tricky shortfall-prediction feature for payment dates, I ran into gnarly business logic. I built an interactive simulator end-to-end myself — it let me reason through the mechanics, verify edge-case scenarios, and ship the design faster.</p>
                 </div>
-                <h4 class="am-h3" style="margin-top:14px;color:rgba(255,255,255,0.7);">Аватары</h4>
-                <figure class="am-media" data-media data-kind="image" data-src="" data-stub="avatars.png" data-caption="Сетка аватаров для коммуникаций">
-                    <div class="am-media-frame" data-aspect="16-9"><div class="am-media-stub">image · avatars.png</div></div>
-                </figure>
-                <h4 class="am-h3" style="margin-top:14px;color:rgba(255,255,255,0.7);">Пайплайн генерации</h4>
-                <figure class="am-media" data-media data-kind="video" data-src="" data-stub="video-generation-pipeline.mp4" data-caption="ComfyUI → Figma Weavy: управляемая генерация в едином стиле">
-                    <div class="am-media-frame" data-aspect="16-9">
-                        <div class="am-media-stub">video · video-generation-pipeline.mp4</div>
-                        <div class="am-media-play"></div>
-                    </div>
-                    <div class="am-media-caption">Процесс генерации в нодовом редакторе</div>
-                </figure>
+                <div class="cp-figure">image · feedback analyzer UI (filters by topic + sentiment)</div>
+                <div class="cp-figure-cap">Feedback analyzer — filters by topic and sentiment.</div>
+                <div class="cp-figure">image · NSF shortfall simulator</div>
+                <div class="cp-figure-cap">Simulator for shortfall business logic on payment dates.</div>
+            </article>
 
-                <h3 class="am-h3">Code-first процесс и Community</h3>
-                <p>На финальном этапе работы — последний крупный проект, раздел <strong>Community</strong>. Группу на Facebook заблокировали, и мы решили построить аналог Reddit/Facebook внутри приложения. Поскольку это была фича с нуля, я попробовал на ней новый подход.</p>
-                <p>Базовый макет собрал в Figma, дальше попросил Claude собрать из этого React-приложение с компонентами в Storybook во всех состояниях. Развитие продолжалось непосредственно в коде: продуктовые гипотезы вшивались прямо в прототип — через иконку шестерёнки можно было переключать варианты и сравнивать.</p>
-                <p>Когда решение было готово, я просил Claude сгенерировать Figma-компоненты для разработчиков и тестировщиков (они работали в своём стеке, отдельном от моего прототипа) — в наших токенах, шрифтах, дизайн-системе. <em>Передача проходила без расхождений.</em></p>
-                <p>Процесс перевернулся: вместо «дизайн → передача → разработка» стало <strong>«прототип в коде → валидация на работающем продукте → передача готовых компонентов»</strong>.</p>
-                <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-figma-claude-pipeline.mp4" data-caption="Двусторонний пайплайн: компонент из Figma → обогащение через Claude → возврат новых состояний обратно в Figma">
-                    <div class="am-media-frame" data-aspect="16-9">
-                        <div class="am-media-stub">video · screencast-figma-claude-pipeline.mp4 (приоритет)</div>
-                        <div class="am-media-play"></div>
-                    </div>
-                    <div class="am-media-caption"><b>★</b> Ключевое видео раздела: Figma ↔ Claude pipeline</div>
-                </figure>
-                <figure class="am-media" data-media data-kind="video" data-src="" data-stub="screencast-community-section.mp4" data-caption="Community section с переключателями гипотез">
-                    <div class="am-media-frame" data-aspect="16-9">
-                        <div class="am-media-stub">video · screencast-community-section.mp4</div>
-                        <div class="am-media-play"></div>
-                    </div>
-                    <div class="am-media-caption">Community section с переключателями гипотез</div>
-                </figure>
-
-                <h3 class="am-h3">Внутренние утилиты</h3>
-                <p>Помимо основной работы, на vibe-code собрал несколько инструментов для команды:</p>
-                <ul>
-                    <li><strong>Facebook-парсер с сентимент-анализом</strong> — стал постоянным инструментом сбора обратной связи.</li>
-                    <li><strong>NSF Shortfall симулятор</strong> — для разбора сложной бизнес-логики прогнозирования платёжной нагрузки. Помог всей команде (не только дизайну) вникнуть в механику.</li>
-                </ul>
-
-                <h3 class="am-h3">Менторство</h3>
-                <p>Обучал junior-дизайнера: давал самостоятельные задачи нарастающей сложности, контролировал результат, помогал расти. К концу моей работы он закрывал значительную часть продуктовых задач самостоятельно.</p>
-            </section>
-
-            <!-- Results -->
-            <section class="am-section">
-                <h2 class="am-h2">Результаты</h2>
-                <h3 class="am-h3">Метрики</h3>
-                <div class="am-metrics">
-                    <div class="am-metric">
-                        <div class="am-metric-label">NPS</div>
-                        <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
-                    </div>
-                    <div class="am-metric">
-                        <div class="am-metric-label">CSAT (5)</div>
-                        <div class="am-metric-vals"><span class="am-metric-was">3.6</span><span class="am-metric-arrow">→</span><span class="am-metric-now">4.5</span></div>
-                    </div>
-                    <div class="am-metric">
-                        <div class="am-metric-label">Onboarding completion</div>
-                        <div class="am-metric-vals"><span class="am-metric-now txt">▲ TODO</span></div>
-                    </div>
+            <article class="cp-section" id="cp-sec-05">
+                <div class="cp-sec-num">05 — Shift</div>
+                <h2 class="cp-sec-title">Code-first: live prototypes instead of mockups</h2>
+                <div class="cp-sec-body">
+                    <p>In the final stretch (~3 months) I moved the entire design process to <strong>code-first</strong>: rebuilt every app screen — including the responsive set — as a real React app. Alongside it lived a Storybook where every component shipped from. The interface was assembled from those components, end of story.</p>
+                    <p>I built new features almost entirely in code with Claude, then <em>generated Figma components from the finished code</em> for engineering handoff. Hypotheses were captured and tested on a real, working prototype — not static mockups.</p>
+                    <p>It flipped the process: from <strong>"design → handoff → dev"</strong> to <strong>"prototype in code → validate → hand over ready components."</strong></p>
                 </div>
-                <p style="margin-top:18px;">Премия команде по итогам работы над редизайном.</p>
+                <div class="cp-figure">image · live React prototype + Storybook side-by-side</div>
+                <div class="cp-figure-cap">Live React prototype and Storybook components — one source of truth.</div>
+                <div class="cp-figure">image · code → figma reverse pipeline</div>
+                <div class="cp-figure-cap">Reverse pipeline: components from code into Figma for handoff.</div>
+            </article>
 
-                <h3 class="am-h3">Качественные результаты</h3>
-                <ul>
-                    <li><strong>Покрытие дизайн-системой</strong>: ~50–60% интерфейсов переведены на новую систему</li>
-                    <li>Единый визуальный язык для нескольких брендов компании</li>
-                    <li><strong>Скорость разработки</strong>: команды веб- и мобильной разработки отметили, что работать стало заметно проще — пропали недельные поиски актуальных компонентов</li>
-                    <li>Систематизация обратной связи: <strong>80&nbsp;000+</strong> обработанных сообщений из Facebook-группы стали базой решений по редизайну</li>
-                </ul>
-            </section>
-
-            <!-- Deep cases -->
-            <section class="am-section">
-                <h2 class="am-h2">Углублённые кейсы</h2>
-                <p>Ниже — отдельные продуктовые истории, которые я раскрываю в самостоятельных кейсах.</p>
-                <div class="am-deeplinks">
-                    <a class="am-deeplink" data-deeplink="program-phases">
-                        <div class="am-deeplink-num">DEEP / 01</div>
-                        <h3 class="am-deeplink-title">Разделение опыта на фазы программы</h3>
-                        <p class="am-deeplink-desc">Главное продуктовое решение редизайна — отдельные UI для разных фаз клиента.</p>
-                    </a>
-                    <a class="am-deeplink" data-deeplink="offer-acceptance">
-                        <div class="am-deeplink-num">DEEP / 02</div>
-                        <h3 class="am-deeplink-title">Принятие офера</h3>
-                        <p class="am-deeplink-desc">Как пользователь принимает предложение по реструктуризации долга.</p>
-                    </a>
-                    <a class="am-deeplink" data-deeplink="creditor-card">
-                        <div class="am-deeplink-num">DEEP / 03</div>
-                        <h3 class="am-deeplink-title">Карточка кредитора</h3>
-                        <p class="am-deeplink-desc">Дизайн ключевого элемента интерфейса — карточки конкретного долга.</p>
-                    </a>
-                    <a class="am-deeplink" data-deeplink="creditor-lifecycle">
-                        <div class="am-deeplink-num">DEEP / 04</div>
-                        <h3 class="am-deeplink-title">Жизненный цикл карточки кредитора</h3>
-                        <p class="am-deeplink-desc">Состояния и переходы карточки на разных этапах программы.</p>
-                    </a>
-                    <a class="am-deeplink" data-deeplink="waiting-frustration">
-                        <div class="am-deeplink-num">DEEP / 05</div>
-                        <h3 class="am-deeplink-title">Снижение фрустрации на этапе ожидания</h3>
-                        <p class="am-deeplink-desc">Самый длительный и стрессовый этап клиента — как с ним работали.</p>
-                    </a>
-                    <a class="am-deeplink" data-deeplink="communication">
-                        <div class="am-deeplink-num">DEEP / 06</div>
-                        <h3 class="am-deeplink-title">Communication</h3>
-                        <p class="am-deeplink-desc">Раздел коммуникаций: уведомления, чаты, статусы.</p>
-                    </a>
-                    <a class="am-deeplink" data-deeplink="community-codefirst">
-                        <div class="am-deeplink-num">DEEP / 07</div>
-                        <h3 class="am-deeplink-title">Community + code-first</h3>
-                        <p class="am-deeplink-desc">Раздел сообщества и переход на code-first процесс.</p>
-                    </a>
-                    <a class="am-deeplink" data-deeplink="nsf-shortfall">
-                        <div class="am-deeplink-num">DEEP / 08</div>
-                        <h3 class="am-deeplink-title">NSF Shortfall симулятор</h3>
-                        <p class="am-deeplink-desc">Внутренний инструмент для разбора платёжной логики.</p>
-                    </a>
-                </div>
-            </section>
-
-            <!-- Internal TODO (only visible in dev) -->
-            <aside class="am-todo" data-dev-only>
-                <span class="am-todo-label">// TODO</span>
-                Прислать финальные ассеты: 4× before/after, product-flow-diagram, fb-parser/feedback-summary UI, design-system-overview, набор иллюстраций (стили + финал + аватары), 4× screencasts (offer-acceptance, community, figma↔claude pipeline, community-section), video-generation-pipeline, 8× превью для углублённых кейсов.
-            </aside>
         </div>
+
+        <section class="cp-gallery" aria-label="Visual gallery">
+            <div class="cp-gallery-head">
+                <div class="cp-gallery-label">// gallery</div>
+                <h3 class="cp-gallery-title">Visual selection</h3>
+                <p class="cp-gallery-hint">Drop screenshots of the system, redesign frames and tools here — they'll tile across the full width.</p>
+            </div>
+            <div class="cp-gallery-grid" id="cp-gallery-grid-cs01">
+                <div class="cp-gallery-tile">image · slot 01</div>
+                <div class="cp-gallery-tile">image · slot 02</div>
+                <div class="cp-gallery-tile">image · slot 03</div>
+                <div class="cp-gallery-tile">image · slot 04</div>
+                <div class="cp-gallery-tile">image · slot 05</div>
+                <div class="cp-gallery-tile">image · slot 06</div>
+                <div class="cp-gallery-tile">image · slot 07</div>
+                <div class="cp-gallery-tile">image · slot 08</div>
+                <div class="cp-gallery-tile">image · slot 09</div>
+            </div>
+        </section>
     </section>
+
 
     <!-- Vibe Terminal modal — slides down from the top when a Vibed Case is opened -->
     <div class="vibe-term-backdrop" id="vibe-term-backdrop" aria-hidden="true"></div>
@@ -8266,10 +7479,6 @@
             <span>back to showcase</span>
         </button>
         <div class="cp-inner">
-            <div class="cp-thumb-strip" aria-hidden="true">
-                <span class="cp-thumb-tag">CS/02 · Cover</span>
-                <img class="cp-thumb" src="showcase/cases/cs02-aidbox.png" alt="">
-            </div>
             <header class="cp-hero">
                 <div class="cp-meta">
                     <span class="cp-meta-no">CS/02</span>
@@ -8536,6 +7745,7 @@
             </div>
         </section>
     </section>
+
 
     <!-- Detail holographic window: opens for agent / release clicks -->
     <aside class="dw" id="dw" aria-hidden="true">
@@ -9768,6 +8978,7 @@
         })();
     </script>
 
+
     <!-- Showcase: down-arrow opens basement section with cases carousel -->
     <script>
         (() => {
@@ -9806,26 +9017,13 @@
             }
             function close() {
                 document.body.classList.remove('showcase-open');
-                document.body.classList.remove('case-detail-active');
                 window.__sfx?.disengage?.();
             }
             cue.addEventListener('click', open);
             cue.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
             });
-            // Close button is context-aware: in detail → return to grid, in
-            // grid → close the showcase. Same for click-outside.
-            back.addEventListener('click', () => {
-                if (mode === 'detail') exitDetail();
-                else close();
-            });
-            const showcase = document.getElementById('showcase');
-            document.addEventListener('mousedown', (e) => {
-                if (!document.body.classList.contains('showcase-open')) return;
-                if (showcase && showcase.contains(e.target)) return;
-                if (mode === 'detail') exitDetail();
-                else close();
-            });
+            back.addEventListener('click', close);
 
             // IntersectionObserver: which case is in viewport → .active for entry anim
             const intro = document.querySelector('.showcase-intro');
@@ -9844,144 +9042,49 @@
             }, { root: cases, threshold: [0.5, 0.75] });
             items.forEach((el) => io.observe(el));
 
-            // ============ MODE STATE ============
-            // 'grid'   — list of case cards (default when showcase opens)
-            // 'detail' — one case is opened, content scrolls vertically inside
-            let mode = 'grid';
-            let detailIdx = -1;
-
-            function enterDetail(idx) {
-                idx = Math.max(0, Math.min(items.length - 1, idx));
-                mode = 'detail';
-                detailIdx = idx;
-                items.forEach((el, i) => el.classList.toggle('is-detail-active', i === idx));
-                cases.classList.add('detail-mode');
-                document.body.classList.add('case-detail-active');
-                items[idx].scrollTop = 0;
-                updateStripState();
-                window.__sfx?.engage?.();
+            function currentIndex() {
+                const sl = cases.scrollLeft;
+                const w = cases.clientWidth;
+                let bestIdx = 0, bestDist = Infinity;
+                items.forEach((el, i) => {
+                    const elCenter = el.offsetLeft + el.offsetWidth / 2;
+                    const viewCenter = sl + w / 2;
+                    const d = Math.abs(elCenter - viewCenter);
+                    if (d < bestDist) { bestDist = d; bestIdx = i; }
+                });
+                return bestIdx;
             }
-            function exitDetail() {
-                mode = 'grid';
-                detailIdx = -1;
-                items.forEach(el => el.classList.remove('is-detail-active'));
-                cases.classList.remove('detail-mode');
-                document.body.classList.remove('case-detail-active');
-                updateStripState();
-                window.__sfx?.disengage?.();
-            }
-            function gotoCase(idx) {
-                idx = Math.max(0, Math.min(items.length - 1, idx));
-                if (mode === 'detail') {
-                    enterDetail(idx);
-                } else {
-                    // grid mode — scroll the card into view
-                    const el = items[idx];
-                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+            function scrollTo(idx) {
+                const el = items[Math.max(0, Math.min(items.length - 1, idx))];
+                if (!el) return;
+                const target = el.offsetLeft - (cases.clientWidth - el.offsetWidth) / 2;
+                cases.scrollTo({ left: target, behavior: 'smooth' });
                 window.__sfx?.tick?.();
             }
-            function currentIndex() {
-                if (mode === 'detail') return detailIdx;
-                return 0;
-            }
 
-            // Card click → enter detail
-            items.forEach((card, i) => {
-                card.addEventListener('click', (e) => {
-                    if (mode === 'detail') return;
-                    e.preventDefault();
-                    enterDetail(i);
-                });
-            });
+            prev.addEventListener('click', () => scrollTo(currentIndex() - 1));
+            next.addEventListener('click', () => scrollTo(currentIndex() + 1));
 
-            // Outside arrows
-            prev.addEventListener('click', () => gotoCase(currentIndex() - 1));
-            next.addEventListener('click', () => gotoCase(currentIndex() + 1));
-
-            // Strip arrows + counter + title
-            const stripPrev = document.getElementById('strip-prev');
-            const stripNext = document.getElementById('strip-next');
-            const stripTitleText = document.querySelector('#showcase-title-now .title-text');
-            const stripCounter = document.getElementById('strip-counter');
-            stripPrev?.addEventListener('click', () => gotoCase(currentIndex() - 1));
-            stripNext?.addEventListener('click', () => gotoCase(currentIndex() + 1));
-
-            function flashStripNav(btn) {
-                if (!btn) return;
-                btn.classList.add('pressed');
-                setTimeout(() => btn.classList.remove('pressed'), 220);
-            }
-
-            const stripReadingTime = document.getElementById('strip-reading-time');
-            function readingTimeFor(slide) {
-                const article = slide?.querySelector('.case-page.case-article-mode');
-                if (!article) return 0;
-                const text = article.textContent || '';
-                const words = text.trim().split(/\s+/).length;
-                return Math.max(1, Math.round(words / 200));
-            }
-            function updateStripState() {
-                if (mode === 'grid') {
-                    if (stripTitleText) stripTitleText.textContent = 'Selected works';
-                    if (stripReadingTime) stripReadingTime.textContent = '';
-                    [prev, next].forEach(b => { if (b) { b.disabled = true; b.style.display = ''; } });
-                    Array.from(dotsList.children).forEach(d => { d.classList.remove('active'); d.style.display = ''; });
-                } else {
-                    const idx = detailIdx;
-                    const slide = items[idx];
-                    const titleEl = slide?.querySelector('.case-title');
-                    if (stripTitleText) stripTitleText.textContent = titleEl ? titleEl.textContent.trim().replace(/\s+/g, ' ') : '';
-                    if (stripReadingTime) {
-                        const m = readingTimeFor(slide);
-                        stripReadingTime.textContent = m ? `${m} min read` : '';
-                    }
-                    [prev, next].forEach(b => { if (b) b.style.display = 'none'; });
-                    Array.from(dotsList.children).forEach(d => { d.style.display = 'none'; });
-                }
-            }
-            // Boot
-            updateStripState();
+            cases.addEventListener('scroll', () => {
+                const idx = currentIndex();
+                Array.from(dotsList.children).forEach((d, i) => d.classList.toggle('active', i === idx));
+                prev.disabled = idx === 0;
+                next.disabled = idx === items.length - 1;
+                if (intro) intro.classList.toggle('faded', idx > 0);
+            }, { passive: true });
 
             document.addEventListener('keydown', (e) => {
-                const body = document.body;
-                // Main page → ↓ opens showcase (grid first)
-                if (e.key === 'ArrowDown'
-                    && !body.classList.contains('showcase-open')
-                    && !body.classList.contains('case-open')
-                    && !body.classList.contains('engaged')
-                    && !body.classList.contains('dw-open')
-                    && !body.classList.contains('chat-fullscreen')
-                    && !body.classList.contains('reader-open')) {
-                    const tag = e.target?.tagName;
-                    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
-                    e.preventDefault();
-                    open();
-                    return;
-                }
-                if (!body.classList.contains('showcase-open')) return;
-                if (e.key === 'Escape') {
-                    if (mode === 'detail') { exitDetail(); return; }
-                    close();
-                    return;
-                }
-                // No ←/→ case-switching: inside detail the only way out is back
-                // to the lobby (grid). Only ↑/↓ scrolls the article.
-                if (mode !== 'detail') return;
-                if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-                    const active = items[detailIdx];
-                    if (!active) return;
-                    e.preventDefault();
-                    if (e.key === 'ArrowDown') {
-                        const article = active.querySelector('.case-page.case-article-mode');
-                        if (article && active.scrollTop < article.offsetTop - 40) {
-                            article.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            return;
-                        }
-                        active.scrollBy({ top: active.clientHeight * 0.85, behavior: 'smooth' });
-                    } else {
-                        active.scrollBy({ top: -active.clientHeight * 0.85, behavior: 'smooth' });
-                    }
+                if (!document.body.classList.contains('showcase-open')) return;
+                if (document.body.classList.contains('case-open')) return; // case-page handles its own ESC
+                if (e.key === 'Escape') { close(); return; }
+                if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
+                if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
+                if (e.key === 'ArrowDown') {
+                    const active = items[currentIndex()];
+                    const id = active?.dataset.case;
+                    if (!id) return;
+                    const trigger = document.querySelector(`[data-open-case="${id}"]`);
+                    if (trigger) { e.preventDefault(); trigger.click(); }
                 }
             });
 
@@ -10005,63 +9108,62 @@
         })();
     </script>
 
-    <!-- Case page: inlined into the corresponding .case slide so the article
-         lives inside the tablet from the start. Reading happens via vertical
-         scroll within the case — no modal transition. -->
+    <!-- Case page: open/close + sticky timeline navigation -->
     <script>
         (() => {
+            const body = document.body;
+            const openButtons = document.querySelectorAll('[data-open-case]');
             const pages = document.querySelectorAll('.case-page');
-            if (!pages.length) return;
+            if (!openButtons.length || !pages.length) return;
             const initialized = new WeakSet();
 
-            // Move each case-page into its matching .case slide as inline article
-            pages.forEach(page => {
-                const id = page.dataset.casePage;
-                const slide = document.querySelector(`.case[data-case="${id}"]`);
-                if (!slide) return;
-                page.classList.add('case-article-mode');
-                slide.appendChild(page);
+            function openCase(id) {
+                const page = document.querySelector(`.case-page[data-case-page="${id}"]`);
+                if (!page) return;
+                pages.forEach(p => p.classList.toggle('open', p === page));
+                page.scrollTop = 0;
+                body.classList.add('case-open');
+                window.__sfx?.engage?.();
                 requestAnimationFrame(() => {
                     initTimeline(page);
                     page.querySelectorAll('.cp-slideshow').forEach(initSlideshow);
                 });
-            });
+            }
 
-            // [data-open-case] (cover image, button) scrolls into the article
-            // — but only when already in detail mode. In grid mode the case
-            // card click handler enters detail; we don't want to double-fire
-            // a scrollIntoView while the case is still display:none.
-            const openButtons = document.querySelectorAll('[data-open-case]');
+            function closeCase() {
+                body.classList.remove('case-open');
+                pages.forEach(p => p.classList.remove('open'));
+                window.__sfx?.disengage?.();
+            }
+
             openButtons.forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const slide = btn.closest('.case');
-                    if (!slide) return;
-                    const inDetail = slide.classList.contains('is-detail-active');
-                    if (!inDetail) return;        // grid click is handled upstream
                     e.stopPropagation();
-                    const article = slide.querySelector('.case-page.case-article-mode');
-                    if (!article) return;
-                    article.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    window.__sfx?.engage?.();
+                    openCase(btn.dataset.openCase);
                 });
+                // Keyboard support for non-button elements (e.g. clickable .case-media)
                 if (btn.tagName !== 'BUTTON') {
                     btn.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
-                            btn.click();
+                            openCase(btn.dataset.openCase);
                         }
                     });
                 }
             });
 
-            // [data-cp-close] no longer used since there's no modal — left as
-            // a no-op for any inline back-to-top button.
             document.querySelectorAll('[data-cp-close]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const slide = btn.closest('.case');
-                    if (slide) slide.scrollTo({ top: 0, behavior: 'smooth' });
-                });
+                btn.addEventListener('click', closeCase);
             });
+
+            // ESC closes case-page first; capture-phase so it runs before the showcase handler
+            document.addEventListener('keydown', (e) => {
+                if (!body.classList.contains('case-open')) return;
+                if (e.key === 'Escape') {
+                    e.stopPropagation();
+                    closeCase();
+                }
+            }, true);
 
             function initTimeline(page) {
                 if (initialized.has(page)) return;
@@ -10069,7 +9171,6 @@
                 const items = Array.from(page.querySelectorAll('.cp-tl-item'));
                 const sections = Array.from(page.querySelectorAll('.cp-section'));
                 if (!items.length || !sections.length) return;
-                const slide = page.closest('.case');
 
                 items.forEach(item => {
                     item.addEventListener('click', () => {
@@ -10084,24 +9185,15 @@
                     items.forEach(i => i.classList.toggle('active', i.dataset.target === id));
                 };
 
-                // The slide is the scroll container now; the sticky header
-                // (~64 strip + ~64 timeline) covers the top, so we exclude
-                // those pixels from the active zone via rootMargin.
                 const io = new IntersectionObserver((entries) => {
+                    // Pick the entry closest to the top (most visible at the sticky-nav threshold)
                     const visible = entries.filter(e => e.isIntersecting);
                     if (!visible.length) return;
                     visible.sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
                     setActive(visible[0].target.id);
-                }, {
-                    root: slide || page,
-                    rootMargin: '-140px 0px -55% 0px',
-                    threshold: 0,
-                });
+                }, { root: page, rootMargin: '-30% 0px -55% 0px', threshold: 0 });
 
                 sections.forEach(s => io.observe(s));
-
-                // Set initial active state to the first section.
-                setActive(sections[0].id);
             }
 
             function initSlideshow(el) {
