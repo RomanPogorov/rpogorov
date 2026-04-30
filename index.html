@@ -359,12 +359,12 @@
             z-index: 1;
             opacity: 0;
             background-image:
-                linear-gradient(rgba(var(--acc-rgb), 0.22) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(var(--acc-rgb), 0.22) 1px, transparent 1px);
+                linear-gradient(rgba(var(--acc-rgb), 0.085) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(var(--acc-rgb), 0.085) 1px, transparent 1px);
             background-size: 20px 20px;
             mask-image: radial-gradient(ellipse at center, black 20%, transparent 78%);
             -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 78%);
-            mix-blend-mode: screen;
+            mix-blend-mode: overlay;
             transition: opacity 0.2s ease;
             will-change: opacity, transform;
         }
@@ -377,12 +377,12 @@
         }
         @keyframes interference-flicker {
             0%, 100% { opacity: 0;     transform: translate(0, 0);  }
-            14%      { opacity: 0.30;  transform: translate(-2px, 0); }
-            28%      { opacity: 0;     transform: translate(0, 0);  }
-            42%      { opacity: 0.55;  transform: translate(2px, 0); }
-            56%      { opacity: 0.05;  transform: translate(0, -1px); }
-            70%      { opacity: 0.65;  transform: translate(-3px, 0); }
-            84%      { opacity: 0.12;  transform: translate(1px, 0); }
+            14%      { opacity: 0.55;  transform: translate(-2px, 0); }
+            28%      { opacity: 0.10;  transform: translate(0, 0);  }
+            42%      { opacity: 0.85;  transform: translate(2px, 0); }
+            56%      { opacity: 0.20;  transform: translate(0, -1px); }
+            70%      { opacity: 1.00;  transform: translate(-3px, 0); }
+            84%      { opacity: 0.30;  transform: translate(1px, 0); }
         }
         /* Random horizontal tear-bars — JS-spawned, RGB-split look, brief flicker. */
         .layer-tear {
