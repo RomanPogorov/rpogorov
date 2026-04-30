@@ -2253,6 +2253,44 @@
             opacity: 0.18;
             transition: opacity 0.35s ease;
         }
+        /* Native <input type="range"> drives --ba-pos. It sits on top, fully
+           transparent, and the browser handles drag / touch / keyboard /
+           accessibility for free. */
+        .am-ba-range {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            border: 0;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: ew-resize;
+            z-index: 5;
+            touch-action: pan-y;
+            opacity: 1;     /* invisible thumb/track via per-pseudo styles */
+        }
+        .am-ba-range:focus { outline: none; }
+        .am-ba-range::-webkit-slider-runnable-track { background: transparent; height: 100%; border: 0; }
+        .am-ba-range::-moz-range-track             { background: transparent; height: 100%; border: 0; }
+        .am-ba-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 44px;
+            height: 100%;
+            background: transparent;
+            border: 0;
+            cursor: ew-resize;
+        }
+        .am-ba-range::-moz-range-thumb {
+            width: 44px;
+            height: 100%;
+            background: transparent;
+            border: 0;
+            cursor: ew-resize;
+        }
         .am-ba-label {
             opacity: 0.18;
             transition: opacity 0.35s ease;
@@ -7846,7 +7884,8 @@
                         <span class="am-ba-label before">Before</span>
                         <span class="am-ba-label after">After</span>
                         <div class="am-ba-divider" aria-hidden="true"></div>
-                        <button class="am-ba-handle" type="button" aria-label="Drag to compare"></button>
+                        <div class="am-ba-handle" aria-hidden="true"></div>
+                        <input type="range" class="am-ba-range" min="0" max="100" step="0.1" value="50" aria-label="Compare before and after">
                     </div>
                     <div class="am-ba-stage" data-platform="mobile" hidden>
                         <img class="am-ba-img am-ba-before-img" data-stub="mobile-before.png" alt="Мобилка до редизайна">
@@ -7856,7 +7895,8 @@
                         <span class="am-ba-label before">Before</span>
                         <span class="am-ba-label after">After</span>
                         <div class="am-ba-divider" aria-hidden="true"></div>
-                        <button class="am-ba-handle" type="button" aria-label="Drag to compare"></button>
+                        <div class="am-ba-handle" aria-hidden="true"></div>
+                        <input type="range" class="am-ba-range" min="0" max="100" step="0.1" value="50" aria-label="Compare before and after">
                     </div>
                     <div class="am-ba-scenes" data-ba-scenes>
                         <button type="button" class="am-ba-scene active" data-scene="dashboard">
@@ -12049,80 +12089,16 @@ See also: Health Samurai Lab: Game of Pools.`,
 
                 // Hover-to-compare: mousemove over the stage live-tracks --ba-pos.
                 // Touch still works via finger drag. Keyboard arrows on the handle.
+                // Native <input type="range"> per stage — browser handles
+                // drag, touch, keyboard ←/→, ARIA. We just sync --ba-pos.
                 stages.forEach(stage => {
                     stage.style.setProperty('--ba-pos', '50%');
-                    const setPos = (clientX) => {
-                        const r = stage.getBoundingClientRect();
-                        const pct = Math.min(100, Math.max(0, ((clientX - r.left) / r.width) * 100));
-                        stage.style.setProperty('--ba-pos', pct.toFixed(2) + '%');
-                    };
-                    const onCtrl = (target) => target?.closest?.('.am-ba-scenes, .am-ba-tabs, .am-ba-fullscreen');
-                    const isFs = () => block.classList.contains('is-fs');
-
-                    // INLINE mode: hover follows cursor in upper half.
-                    stage.addEventListener('mousemove', (e) => {
-                        if (isFs()) return;          // fullscreen uses click-drag
-                        if (onCtrl(e.target)) { stage.style.cursor = ''; return; }
-                        const r = stage.getBoundingClientRect();
-                        if (e.clientY > r.top + r.height / 2) {
-                            stage.style.cursor = 'default';
-                            return;
-                        }
-                        stage.style.cursor = 'ew-resize';
-                        setPos(e.clientX);
-                    });
-
-                    // FULLSCREEN mode: click + drag like a normal slider.
-                    let dragging = false;
-                    const startDrag = (e) => {
-                        if (!isFs()) return;
-                        if (onCtrl(e.target)) return;
-                        dragging = true;
-                        document.body.style.userSelect = 'none';
-                        setPos(e.clientX);
-                        e.preventDefault();
-                    };
-                    const moveDrag = (e) => {
-                        if (!dragging) return;
-                        // Once dragging, follow the cursor regardless of target —
-                        // user might cross over scene tiles, that's fine.
-                        setPos(e.clientX);
-                    };
-                    const endDrag = () => {
-                        if (!dragging) return;
-                        dragging = false;
-                        document.body.style.userSelect = '';
-                    };
-                    stage.addEventListener('mousedown', startDrag);
-                    window.addEventListener('mousemove', moveDrag);
-                    window.addEventListener('mouseup', endDrag);
-                    window.addEventListener('blur', endDrag);
-
-                    // Touch: drag with finger (works in both modes)
-                    stage.addEventListener('touchstart', (e) => {
-                        if (!e.touches[0]) return;
-                        if (onCtrl(e.target)) return;
-                        setPos(e.touches[0].clientX);
-                    }, { passive: true });
-                    stage.addEventListener('touchmove', (e) => {
-                        if (!e.touches[0]) return;
-                        if (onCtrl(e.target)) return;
-                        setPos(e.touches[0].clientX);
-                        e.preventDefault();
-                    }, { passive: false });
-
-                    // Keyboard: ←/→ on focused handle moves 5%
-                    const handle = stage.querySelector('.am-ba-handle');
-                    handle?.addEventListener('keydown', (e) => {
-                        const cur = parseFloat(getComputedStyle(stage).getPropertyValue('--ba-pos')) || 50;
-                        let next = cur;
-                        if (e.key === 'ArrowLeft')  next = Math.max(0, cur - 5);
-                        if (e.key === 'ArrowRight') next = Math.min(100, cur + 5);
-                        if (next !== cur) {
-                            stage.style.setProperty('--ba-pos', next + '%');
-                            e.preventDefault();
-                        }
-                    });
+                    const range = stage.querySelector('.am-ba-range');
+                    if (!range) return;
+                    const apply = () => stage.style.setProperty('--ba-pos', range.value + '%');
+                    range.addEventListener('input', apply);
+                    range.addEventListener('change', apply);
+                    apply();
                 });
 
                 // Scene picker — swaps BA images per scene without rebuilding DOM.
