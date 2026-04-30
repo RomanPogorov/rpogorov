@@ -2815,6 +2815,332 @@
         }
         .cp-light .cp-kicker { color: #2962ff; }
 
+        /* ============ CS02 — HEALTH SAMURAI THEME (dark slate + red) ============ */
+        .cp-hs {
+            --hs-bg:           #161B26;
+            --hs-bg-elev:      #1F2533;
+            --hs-bg-tint:      rgba(235, 82, 52, 0.08);
+            --hs-text:         #F2F4F7;
+            --hs-text-secondary: #B5BCC9;
+            --hs-text-muted:   #6F7889;
+            --hs-red:          #EB5234;
+            --hs-red-rgb:      235, 82, 52;
+            --hs-red-hover:    #FF6B4D;
+            --hs-border:       rgba(255, 255, 255, 0.08);
+            --hs-border-strong:rgba(255, 255, 255, 0.16);
+            background: var(--hs-bg);
+            color: var(--hs-text);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .cp-hs .cp-close {
+            color: var(--hs-text);
+            background: rgba(31, 37, 51, 0.85);
+            border: 1px solid var(--hs-border-strong);
+            backdrop-filter: blur(10px);
+        }
+        .cp-hs .cp-close:hover { color: var(--hs-red); border-color: var(--hs-red); }
+
+        .hs-hero {
+            position: relative;
+            padding: 130px 64px 80px;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        .hs-eyebrow {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--hs-red);
+            margin: 0 0 28px;
+        }
+        .hs-h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2.5rem, 5.4vw, 4.75rem);
+            font-weight: 800;
+            line-height: 1.04;
+            letter-spacing: -0.022em;
+            color: var(--hs-text);
+            margin: 0 0 28px;
+            max-width: 14ch;
+        }
+        .hs-h1 em { color: var(--hs-red); font-style: normal; }
+        .hs-lead {
+            font-size: 1.1875rem;
+            line-height: 1.55;
+            color: var(--hs-text-secondary);
+            max-width: 60ch;
+            margin: 0 0 36px;
+        }
+        .hs-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 26px;
+            background: var(--hs-red);
+            color: #fff;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.15s;
+        }
+        .hs-cta:hover { background: var(--hs-red-hover); transform: translateX(2px); }
+        .hs-cta-arrow { transition: transform 0.15s; }
+        .hs-cta:hover .hs-cta-arrow { transform: translateX(4px); }
+
+        .hs-toc-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 64px;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 64px 120px;
+        }
+        .hs-toc {
+            position: sticky;
+            top: 32px;
+            align-self: start;
+            max-height: calc(100vh - 64px);
+            overflow-y: auto;
+            padding: 8px 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--hs-border-strong) transparent;
+        }
+        .hs-toc::-webkit-scrollbar { width: 4px; }
+        .hs-toc::-webkit-scrollbar-thumb { background: var(--hs-border-strong); border-radius: 2px; }
+        .hs-toc-cat {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--hs-red);
+            margin: 28px 0 12px;
+        }
+        .hs-toc-cat:first-child { margin-top: 0; }
+        .hs-toc a {
+            display: block;
+            padding: 8px 0 8px 16px;
+            border-left: 2px solid var(--hs-border);
+            color: var(--hs-text-secondary);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            line-height: 1.4;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .hs-toc a:hover { color: var(--hs-text); border-color: var(--hs-border-strong); }
+        .hs-toc a.is-active {
+            color: var(--hs-red);
+            border-color: var(--hs-red);
+            font-weight: 500;
+        }
+
+        .hs-content { min-width: 0; }
+        .hs-subcase {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--hs-border);
+            scroll-margin-top: 32px;
+        }
+        .hs-subcase:first-child { padding-top: 8px; }
+        .hs-subcase:last-child { border-bottom: none; padding-bottom: 40px; }
+        .hs-subcase-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .hs-subcase-meta .hs-eyebrow { margin: 0; }
+        .hs-tag {
+            display: inline-flex;
+            padding: 4px 10px;
+            background: var(--hs-bg-tint);
+            color: var(--hs-red);
+            border: 1px solid rgba(var(--hs-red-rgb), 0.32);
+            border-radius: 999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+        .hs-h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.75rem, 3vw, 2.625rem);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.015em;
+            color: var(--hs-text);
+            margin: 0 0 18px;
+        }
+        .hs-subcase-lead {
+            font-size: 1.0625rem;
+            line-height: 1.55;
+            color: var(--hs-text-secondary);
+            margin: 0 0 32px;
+            max-width: 64ch;
+        }
+
+        /* Media placeholder — hero panel waiting for an image/video. */
+        .hs-media { margin: 24px 0; }
+        .hs-media-placeholder {
+            position: relative;
+            background: var(--hs-bg-elev);
+            border: 1px solid var(--hs-border);
+            border-radius: 8px;
+            overflow: hidden;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--hs-text-muted);
+            text-align: center;
+            padding: 24px;
+        }
+        .hs-media-placeholder[data-aspect="16-9"] { aspect-ratio: 16 / 9; }
+        .hs-media-placeholder[data-aspect="4-3"] { aspect-ratio: 4 / 3; }
+        .hs-media-placeholder[data-aspect="1-1"] { aspect-ratio: 1 / 1; }
+        .hs-media-placeholder::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M20 16 L20 24 M16 20 L24 20' stroke='rgba(255,255,255,0.05)' stroke-width='1' fill='none'/></svg>");
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+        .hs-media-placeholder-icon {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+            color: var(--hs-red);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .hs-media-placeholder-caption {
+            position: relative;
+            z-index: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            color: var(--hs-text-muted);
+            max-width: 60ch;
+            line-height: 1.5;
+        }
+        .hs-media-caption {
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.1em;
+            color: var(--hs-text-muted);
+        }
+        .hs-gallery {
+            display: grid;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .hs-gallery.cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .hs-gallery.cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .hs-gallery.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+        .hs-body {
+            font-size: 1rem;
+            line-height: 1.65;
+            color: var(--hs-text-secondary);
+            max-width: 64ch;
+        }
+        .hs-body p { margin: 0 0 16px; }
+        .hs-body p:last-child { margin-bottom: 0; }
+        .hs-body strong { color: var(--hs-text); font-weight: 600; }
+        .hs-body em { color: var(--hs-red); font-style: normal; font-weight: 500; }
+        .hs-body ul { list-style: none; padding: 0; margin: 12px 0 16px; }
+        .hs-body li { padding: 6px 0 6px 22px; position: relative; }
+        .hs-body li::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 17px;
+            width: 12px; height: 1px;
+            background: var(--hs-red);
+        }
+        .hs-body h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--hs-text);
+            margin: 28px 0 12px;
+        }
+
+        .hs-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px 56px;
+            margin: 36px 0;
+            padding: 28px 0;
+            border-top: 1px solid var(--hs-border);
+            border-bottom: 1px solid var(--hs-border);
+        }
+        .hs-metric {
+            flex: 1 1 140px;
+            min-width: 140px;
+        }
+        .hs-metric-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--hs-text);
+            line-height: 1;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+        .hs-metric-value em { color: var(--hs-red); font-style: normal; }
+        .hs-metric-label {
+            font-size: 0.8125rem;
+            line-height: 1.4;
+            color: var(--hs-text-muted);
+        }
+
+        .hs-closing {
+            background: var(--hs-bg-elev);
+            padding: 96px 64px;
+            margin: 0 calc(-50vw + 50%);
+            width: 100vw;
+            max-width: 100vw;
+            text-align: center;
+            border-top: 1px solid var(--hs-border);
+        }
+        .hs-closing .hs-eyebrow { display: block; }
+        .hs-closing .hs-h2 {
+            margin: 0 auto 18px;
+            max-width: 16ch;
+        }
+        .hs-closing .hs-lead {
+            margin: 0 auto 28px;
+        }
+
+        @media (max-width: 980px) {
+            .hs-hero { padding: 100px 24px 56px; }
+            .hs-toc-layout { grid-template-columns: 1fr; gap: 24px; padding: 0 24px 80px; }
+            .hs-toc {
+                position: relative;
+                top: 0;
+                max-height: none;
+                overflow: visible;
+                padding: 16px 0 24px;
+                border-bottom: 1px solid var(--hs-border);
+            }
+            .hs-closing { padding: 64px 24px; }
+        }
+        @media (max-width: 720px) {
+            .hs-gallery { grid-template-columns: 1fr !important; }
+            .hs-metrics { gap: 20px 32px; }
+        }
+
         .cp-pullquote {
             margin: 56px 0 64px;
             padding: 32px 0;
@@ -8283,277 +8609,821 @@
     </div>
 
     <!-- Case page: full-page detail for cs02 (Health Samurai overall) — light theme -->
-    <section class="case-page cp-light" id="case-page-cs02" data-case-page="cs02" aria-label="Health Samurai case study">
+    <section class="case-page cp-hs" id="case-page-cs02" data-case-page="cs02" aria-label="Health Samurai case study">
         <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
             <span class="cp-close-arrow" aria-hidden="true">↑</span>
             <span>back to showcase</span>
         </button>
-        <div class="cp-inner">
-            <header class="cp-hero">
-                <div class="cp-meta">
-                    <span class="cp-meta-no">CS/02</span>
-                    <span class="cp-meta-divider"></span>
-                    <span>Health Samurai</span>
-                    <span class="cp-meta-divider"></span>
-                    <span>Senior Product Designer</span>
-                    <span class="cp-meta-divider"></span>
-                    <span>2024 — present</span>
-                </div>
-                <h1 class="cp-title">A design system for <em>five healthcare products</em>, half of it generated by AI.</h1>
-                <p class="cp-sub">Health Samurai is a healthcare-IT company building FHIR-native infrastructure: Aidbox, Aidbox Forms, Audit Box, MPI Box, MDM Box. Flat org — no QAs, no PMs, only senior T-shape engineers and Friday seminars where designers and engineers cross-train.</p>
-            </header>
 
-            <div class="cp-tldr">
-                <div class="cp-tldr-label">// TL;DR</div>
-                <ul>
-                    <li>Stood up a shadCN-based design system end-to-end — Figma + code + Storybook in lockstep, plus a Claude skill that pulled components straight out of Figma <em>before that tooling existed elsewhere</em>.</li>
-                    <li>Built a markdown-first landing platform with an in-browser MCP chat: product owners draft in MD, point-and-edit in the live DOM, and ship in days. Time-to-landing dropped from <em>1–1.5 months to 3–4 days</em>.</li>
-                    <li>Generators on top of the same primitives — presentation generator for any teammate, kudos image generator trained on the brand mascot, all wired through the design system.</li>
-                    <li>Vibecoded the FireCamp conference app in a week — voting, schedule, subscriptions. It became the proof point that convinced C-level the code-first approach was real.</li>
-                </ul>
-            </div>
+        <header class="hs-hero">
+            <div class="hs-eyebrow">Health Samurai · 2024 — present · 12 deep dives</div>
+            <h1 class="hs-h1">Built the system. <em>Now look inside.</em></h1>
+            <p class="hs-lead">Design system, AI-pipeline content ecosystem, product redesigns and infrastructure work — broken into twelve deep dives. Each subcase covers what was built, how, and what changed.</p>
+            <a class="hs-cta" href="#hs-01">
+                <span>Start with the system</span>
+                <span class="hs-cta-arrow">→</span>
+            </a>
+        </header>
 
-            <nav class="cp-timeline" aria-label="Case timeline">
-                <ol class="cp-timeline-list">
-                    <li><button class="cp-tl-item active" data-target="cp-sec-02-01" type="button">
-                        <span class="cp-tl-num">01 / Start</span>
-                        <span class="cp-tl-name">Joining HS</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-02-02" type="button">
-                        <span class="cp-tl-num">02 / System</span>
-                        <span class="cp-tl-name">Design system</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-02-03" type="button">
-                        <span class="cp-tl-num">03 / Products</span>
-                        <span class="cp-tl-name">Product redesign</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-02-04" type="button">
-                        <span class="cp-tl-num">04 / Platform</span>
-                        <span class="cp-tl-name">Landing platform</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-02-05" type="button">
-                        <span class="cp-tl-num">05 / Generators</span>
-                        <span class="cp-tl-name">Decks &amp; tools</span>
-                    </button></li>
-                    <li><button class="cp-tl-item" data-target="cp-sec-02-06" type="button">
-                        <span class="cp-tl-num">06 / Vibecoding</span>
-                        <span class="cp-tl-name">FireCamp &amp; proof</span>
-                    </button></li>
-                </ol>
+        <div class="hs-toc-layout">
+            <nav class="hs-toc" aria-label="Subcases">
+                <div class="hs-toc-cat">Design system</div>
+                <a href="#hs-01" data-toc-target="hs-01">01 · Design system: Figma to Storybook</a>
+                <a href="#hs-02" data-toc-target="hs-02">02 · Figma ↔ Code mapping skill</a>
+
+                <div class="hs-toc-cat">Content ecosystem</div>
+                <a href="#hs-03" data-toc-target="hs-03">03 · Landing platform &amp; AI pipeline</a>
+                <a href="#hs-04" data-toc-target="hs-04">04 · Presentation generator</a>
+                <a href="#hs-05" data-toc-target="hs-05">05 · Embedded analytics on every page</a>
+
+                <div class="hs-toc-cat">Product work</div>
+                <a href="#hs-06" data-toc-target="hs-06">06 · Aidbox redesign</a>
+                <a href="#hs-07" data-toc-target="hs-07">07 · MPI Box redesign</a>
+                <a href="#hs-08" data-toc-target="hs-08">08 · Design support through code</a>
+
+                <div class="hs-toc-cat">Culture &amp; brand</div>
+                <a href="#hs-09" data-toc-target="hs-09">09 · Brand identity &amp; illustrations</a>
+                <a href="#hs-10" data-toc-target="hs-10">10 · Kudos generator</a>
+
+                <div class="hs-toc-cat">Proof</div>
+                <a href="#hs-11" data-toc-target="hs-11">11 · FireCamp app</a>
+                <a href="#hs-12" data-toc-target="hs-12">12 · JSON Parser &amp; vibe-code as method</a>
             </nav>
 
-            <article class="cp-section" id="cp-sec-02-01">
-                <div class="cp-kicker">01 — Start</div>
-                <h2 class="cp-sec-title">Joining as the second designer</h2>
-                <div class="cp-sec-body">
-                    <p>I joined Health Samurai as the second designer. The brief was wide: stand up the design function, ship a system, redesign the existing product line, and lay AI-first design infrastructure. The company was already pointed that way — I started experimenting with code-first from day one.</p>
-                </div>
+            <div class="hs-content">
 
-                <div class="cp-aside-row">
-                    <div class="cp-sec-body">
-                        <p>The starting state was honest: every product had been built by engineers without a designer. They worked, but carried real UX/UI debt. There was no design system. Landings were authored by C-level — content duplicated, scattered across pages, and unfocused. The blog and docs were just as scattered.</p>
-                        <p>A single landing took <strong>1–1.5 months</strong> end-to-end, mostly because the approval chain was long and the surface to edit was hand-rolled.</p>
+                <article class="hs-subcase" id="hs-01">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">System · 2024 Q3 — ongoing · 4 layers, multi-product</span>
+                        <span class="hs-tag">System</span>
                     </div>
-                    <aside class="cp-aside-card">
-                        <div class="cp-aside-card-label">// the team</div>
-                        <p>Flat org by design: no QAs, no PMs, only senior T-shape engineers. Every Friday the company runs internal seminars — designers teach engineers visual fundamentals, engineers teach designers how to read code. Cross-training is the culture, not a perk.</p>
-                    </aside>
-                </div>
-            </article>
-
-            <article class="cp-section" id="cp-sec-02-02">
-                <div class="cp-kicker">02 — System</div>
-                <h2 class="cp-sec-title">A design system on shadCN, mirrored in Figma and code</h2>
-                <div class="cp-sec-body">
-                    <p>Built the design system on <strong>shadCN</strong> — not raw Tailwind, but a styled, extended layer with custom components for tighter control. Each component lived twice: in Figma and in code. Every one of them shipped through Storybook for engineering review before landing in production.</p>
-                </div>
-
-                <p class="cp-pullquote">The Claude skill pulled components straight out of Figma — at a moment when this kind of tooling didn't exist yet.</p>
-
-                <div class="cp-sec-body">
-                    <p>I iteratively tightened the prompt so the agent parsed component anatomy correctly, and set up a sync script: a change on either side propagated to the other in seconds. <em>One source of truth, two surfaces.</em></p>
-                </div>
-
-                <div class="cp-figure">image · figma library + storybook side-by-side</div>
-                <div class="cp-figure-cap">Components mirrored across Figma and Storybook — single source of truth, two surfaces.</div>
-            </article>
-
-            <article class="cp-section" id="cp-sec-02-03">
-                <div class="cp-kicker">03 — Products</div>
-                <h2 class="cp-sec-title">Redesigning what engineers had built</h2>
-                <div class="cp-sec-body">
-                    <p>Improved UX and UI across five products that had been assembled without a designer. I rebuilt mockups in Figma, prototyped, ran reviews with engineers and customers, and worked out what stuck. Phase two — migrating the products onto the new design system — is still in flight.</p>
-                </div>
-
-                <div class="cp-product-grid">
-                    <div class="cp-product">
-                        <div class="cp-product-name">Aidbox</div>
-                        <div class="cp-product-blurb">The core FHIR data platform — flagship product.</div>
-                    </div>
-                    <div class="cp-product">
-                        <div class="cp-product-name">Aidbox Forms</div>
-                        <div class="cp-product-blurb">Clinical form builder on top of Aidbox.</div>
-                    </div>
-                    <div class="cp-product">
-                        <div class="cp-product-name">MPI Box</div>
-                        <div class="cp-product-blurb">Master patient index — identity reconciliation.</div>
-                    </div>
-                    <div class="cp-product">
-                        <div class="cp-product-name">MDM Box</div>
-                        <div class="cp-product-blurb">Master data management for healthcare entities.</div>
-                    </div>
-                    <div class="cp-product">
-                        <div class="cp-product-name">Audit Box</div>
-                        <div class="cp-product-blurb">Audit trail tool — events, queries, compliance.</div>
-                    </div>
-                </div>
-
-                <div class="cp-figure">image · before / after for one of the products</div>
-                <div class="cp-figure-cap">Before / after of a product UI brought onto the new system.</div>
-            </article>
-
-            <article class="cp-section" id="cp-sec-02-04">
-                <div class="cp-kicker">04 — Platform</div>
-                <h2 class="cp-sec-title">Landings: from 1.5 months to 3–4 days</h2>
-                <div class="cp-sec-body">
-                    <p>The old way was a chain: brief, design, review, dev, review, ship — each handoff burning days. I rebuilt the surface around <strong>markdown</strong> and a small set of agents.</p>
-                    <ul>
-                        <li><strong>Step 1.</strong> Product owner writes content in Markdown.</li>
-                        <li><strong>Step 2.</strong> System auto-assembles a draft landing from the MD.</li>
-                        <li><strong>Step 3.</strong> Owner uses an in-browser MCP chat to point at any DOM element and say what to change — live.</li>
-                        <li><strong>Step 4.</strong> Designer polishes; landing ships in 3–4 days.</li>
-                    </ul>
-                    <p>All legacy landings ran through this pipeline — single visual style, one place to edit.</p>
-                </div>
-
-                <div class="cp-stat-row">
-                    <div class="cp-stat">
-                        <div class="cp-stat-num">1.5<small>mo</small> <span class="cp-stat-arrow">→</span> 3–4<small>d</small></div>
-                        <div class="cp-stat-label">Time to ship a landing — from a 1–1.5-month chain to 3–4 days end-to-end.</div>
-                    </div>
-                    <div class="cp-stat">
-                        <div class="cp-stat-num">100<small>%</small></div>
-                        <div class="cp-stat-label">All legacy landings migrated onto a single visual system.</div>
-                    </div>
-                </div>
-
-                <!-- Slideshow: landing platform — flip through stages of the pipeline -->
-                <div class="cp-slideshow" data-slideshow="cs02-landing-platform">
-                    <div class="cp-slideshow-head">
-                        <span class="cp-slideshow-tag">// landing platform · click through</span>
-                        <span class="cp-slideshow-counter">01 / 06</span>
-                    </div>
-                    <div class="cp-slideshow-frame">
-                        <div class="cp-slides">
-                            <div class="cp-slide active">image · slide 01 · markdown source</div>
-                            <div class="cp-slide">image · slide 02 · auto-assembled draft</div>
-                            <div class="cp-slide">image · slide 03 · MCP chat picking a DOM element</div>
-                            <div class="cp-slide">image · slide 04 · live edit suggestion</div>
-                            <div class="cp-slide">image · slide 05 · designer polish in figma/code</div>
-                            <div class="cp-slide">image · slide 06 · shipped landing</div>
+                    <h2 class="hs-h2">Design system from Figma to Storybook</h2>
+                    <p class="hs-subcase-lead">Multi-layer design system on top of shadCN with semantic tokens, custom states and bidirectional Figma ↔ code synchronization. Used in production by all product teams.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Storybook overview — components, tokens, documentation</div>
+                            </div>
                         </div>
-                        <button class="cp-slide-arrow cp-slide-prev" type="button" aria-label="Previous slide">‹</button>
-                        <button class="cp-slide-arrow cp-slide-next" type="button" aria-label="Next slide">›</button>
+                    </figure>
+                    <div class="hs-body">
+                        <p>shadCN was chosen as the base — it provides components and freedom without imposing a visual language. But shadCN is "free": one team takes a button and adds Tailwind utilities to make their version, another team makes their own. With multiple products and teams, this freedom needed limits.</p>
+                        <p>The solution — <strong>a semantic layer underneath shadCN</strong>:</p>
+                        <ul>
+                            <li>Unified typography styles</li>
+                            <li>Semantic color layer</li>
+                            <li>Rewritten components (with Claude) — our state set, additional states not present in shadCN out of the box, enriched inputs and selects</li>
+                            <li>Storybook — also serves as documentation</li>
+                        </ul>
+                        <p>Architecturally: teams use only our components with our tokens. shadCN remains the foundation, but not the extension point — extension happens only through the semantic layer.</p>
+                        <h3>Bidirectional Figma ↔ Code pipeline</h3>
+                        <p>Components were built in code first, then returned to Figma. Opposite of the usual order, and intentional: <em>code is the source of truth, Figma is the representation.</em></p>
                     </div>
-                    <div class="cp-slideshow-foot">
-                        <p class="cp-slideshow-cap">Drop screenshots of the markdown source, the auto-assembled draft, the MCP chat, and the shipped landing — they'll flip through with the arrows.</p>
-                        <ol class="cp-slideshow-dots" aria-hidden="true">
-                            <li class="active"></li><li></li><li></li><li></li><li></li><li></li>
-                        </ol>
+                    <div class="hs-gallery cols-2">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Token architecture — Root → Semantic → Brand → Platform</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Public Figma library</div>
+                                </div>
+                            </div>
+                        </figure>
                     </div>
-                </div>
-            </article>
-
-            <article class="cp-section" id="cp-sec-02-05">
-                <div class="cp-kicker">05 — Generators</div>
-                <h2 class="cp-sec-title">Decks, blocks, and a kudos image generator</h2>
-                <div class="cp-sec-body">
-                    <p><strong>A block library for non-tech.</strong> Built a library of blocks and "organisms" any non-technical employee can use. They open the system, snap a page together like Lego, fill the copy, and download an MD or hand it to an agent.</p>
-                    <p><strong>Presentation generator.</strong> On top of the same primitives I built a deck generator. Anyone — sales, support, tech — drops in an MD file and gets a fully styled presentation in the company's identity. It quietly killed the chronic shortage of decent decks across the org.</p>
-                    <p><strong>Kudos image generator.</strong> Health Samurai runs an internal "kudos" currency through a Telegram bot. Wrote a generator that takes the gratitude text and an LLM trained on the brand's mascot — and renders the mascot acting out the scene. Every kudos gets its own picture.</p>
-                </div>
-
-                <!-- Slideshow: presentation generator — flip through generated decks -->
-                <div class="cp-slideshow" data-slideshow="cs02-deck-generator">
-                    <div class="cp-slideshow-head">
-                        <span class="cp-slideshow-tag">// presentation generator · click through</span>
-                        <span class="cp-slideshow-counter">01 / 06</span>
-                    </div>
-                    <div class="cp-slideshow-frame">
-                        <div class="cp-slides">
-                            <div class="cp-slide active">image · slide 01 · markdown input</div>
-                            <div class="cp-slide">image · slide 02 · cover + agenda</div>
-                            <div class="cp-slide">image · slide 03 · content slide</div>
-                            <div class="cp-slide">image · slide 04 · diagram slide (mermaid-styled)</div>
-                            <div class="cp-slide">image · slide 05 · kudos generator UI</div>
-                            <div class="cp-slide">image · slide 06 · kudos sample render</div>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// video · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Storybook walkthrough</div>
+                            </div>
                         </div>
-                        <button class="cp-slide-arrow cp-slide-prev" type="button" aria-label="Previous slide">‹</button>
-                        <button class="cp-slide-arrow cp-slide-next" type="button" aria-label="Next slide">›</button>
+                    </figure>
+                    <div class="hs-metrics">
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">All<em>.</em></div>
+                            <div class="hs-metric-label">Product teams use it in production</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">Public</div>
+                            <div class="hs-metric-label">Figma library (link TBD)</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">shadCN</div>
+                            <div class="hs-metric-label">Compatible ecosystem</div>
+                        </div>
                     </div>
-                    <div class="cp-slideshow-foot">
-                        <p class="cp-slideshow-cap">Slides for the deck generator and a couple of kudos samples — drop renders in and they'll flip with the arrows.</p>
-                        <ol class="cp-slideshow-dots" aria-hidden="true">
-                            <li class="active"></li><li></li><li></li><li></li><li></li><li></li>
-                        </ol>
+                </article>
+
+                <article class="hs-subcase" id="hs-02">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Tools · custom Claude skill · 70–80% accuracy on first run</span>
+                        <span class="hs-tag">Tools</span>
                     </div>
-                </div>
-
-                <div class="cp-sec-body">
-                    <p><strong>Blog &amp; docs.</strong> Reworked the blog and documentation: everything systematized, all served from MD, single style. Wired analytics directly into the page — a logged-in employee sees PostHog data in a right-side drawer on every page, no context switch.</p>
-                </div>
-                <div class="cp-figure">image · blog post with posthog drawer open</div>
-                <div class="cp-figure-cap">PostHog data sits inside the page — logged-in employees never leave the article.</div>
-            </article>
-
-            <article class="cp-section" id="cp-sec-02-06">
-                <div class="cp-kicker">06 — Vibecoding</div>
-                <h2 class="cp-sec-title">FireCamp — the proof point</h2>
-                <div class="cp-sec-body">
-                    <p>FireCamp is Health Samurai's annual healthcare-IT gathering in Portugal. In 2023–2024 the whole event — round tables, topics, navigation — was running on paper.</p>
-                    <p>In a week I shipped a responsive web app: <em>voting on talks, section subscriptions, schedule</em>. It became the "star of the day" at the conference — and the first serious vibecoded production story that convinced C-level the code-first approach was real, not a side project.</p>
-                </div>
-
-                <p class="cp-pullquote">The first serious vibecoded production story that convinced C-level the approach was real.</p>
-
-                <div class="cp-aside-row">
-                    <div class="cp-aside-card">
-                        <div class="cp-aside-card-label">// BOF Application</div>
-                        <p>UI for an internal product, built in code. Validated component patterns we then folded back into the system.</p>
+                    <h2 class="hs-h2">Figma ↔ Code mapping skill</h2>
+                    <p class="hs-subcase-lead">Custom Claude skill that takes a Figma interface as input, maps it to design-system components, identifies states, builds a correspondence table, and asks clarifying questions when uncertain. Used by developers in production.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// video · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Skill in action — input Figma frame, output mapping table + component list</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>Built when no similar tools existed. The pipeline:</p>
+                        <ul>
+                            <li>Designer hands the assembled Figma interface to Claude.</li>
+                            <li>Claude scans the registry, sees what components are available, what maps to what it sees, what states each component should use.</li>
+                            <li>Builds a correspondence table: what was found, what was mapped, which state where.</li>
+                            <li>If anything is unclear — asks a question.</li>
+                        </ul>
+                        <p>First-run accuracy was <strong>70–80%</strong>. Sometimes wrong on state, padding, or layout. Iteratively improved instructions — quality grew. Now developers use the skill in their work.</p>
                     </div>
-                    <div class="cp-aside-card">
-                        <div class="cp-aside-card-label">// JSON Parser</div>
-                        <p>A working concept built to validate a UI hypothesis for Aidbox — easier to ship the prototype than to argue from a mockup.</p>
+                    <div class="hs-gallery cols-2">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Example input: Figma frame</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Example output: mapping table generated by Claude</div>
+                                </div>
+                            </div>
+                        </figure>
                     </div>
-                </div>
+                    <div class="hs-metrics">
+                        <div class="hs-metric">
+                            <div class="hs-metric-value"><em>70–80%</em></div>
+                            <div class="hs-metric-label">First-run accuracy, growing through iteration</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">Used</div>
+                            <div class="hs-metric-label">By developers in production</div>
+                        </div>
+                    </div>
+                </article>
 
-                <div class="cp-sec-body">
-                    <p>From day one I built every non-trivial design — anything beyond a single screen or flow — in React first and demoed it as a working prototype. Not a mockup, not a Figma file: a thing that ran. That's the standard now.</p>
-                </div>
+                <article class="hs-subcase" id="hs-03">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Process shift · 3 months → 2–3 days · 15+ live landings</span>
+                        <span class="hs-tag">Process shift</span>
+                    </div>
+                    <h2 class="hs-h2">Landing platform &amp; AI pipeline</h2>
+                    <p class="hs-subcase-lead">Turned landing-page production from manual and chaotic (3 months per landing through C-level alignment) into infrastructure: any non-tech employee drops Claude any text format and gets a brand-styled landing in 2–3 days.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// video · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Full cycle: MD → Claude → landing → Fixik adjustment → deploy</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>The CTO said: <em>"Guys, this is bullshit. Let's automate this."</em> So I started building the system step by step.</p>
+                        <h3>v1 — generator on a block library</h3>
+                        <ul>
+                            <li>Block library in code, designed and assembled by me</li>
+                            <li>Claude skill trained on the library</li>
+                            <li>Accepts MD / Word / HTML / PDF / archives — any input</li>
+                            <li>Locally generates a landing in 10–20 minutes</li>
+                            <li>ACP feature "Fixik" — DOM inspector + Claude chat panel through Chrome CLI for live tweaks</li>
+                            <li>PR → my design review → release engineer → deploy. Eventually linters and code review tightened — release engineer left the chain.</li>
+                        </ul>
+                        <h3>v2 — visual block library</h3>
+                        <p>After v1, people complained: "We don't have enough visual feedback, we don't understand which blocks exist, we don't see how content lays out."</p>
+                        <p>So I added a separate page with all blocks visible, an edit mode, a "cart" for blocks, JSON/MD export → import to Claude. For people who want visual control instead of "drop MD and get something."</p>
+                        <h3>Then the pipeline absorbed more</h3>
+                        <ul>
+                            <li>Company blog (MD render with brand typography)</li>
+                            <li>Documentation — separate repos, developers commit MD → distilled → production</li>
+                            <li>Schemas and diagrams — branded style described in a skill</li>
+                            <li>Mermaid diagrams — stylization and systematization</li>
+                        </ul>
+                        <p><strong>The whole company website now runs on this system.</strong> Presented at conferences.</p>
+                    </div>
+                    <div class="hs-gallery cols-2">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// video · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Fixik in action — DOM inspect + Claude chat live edit</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Block library UI with edit mode</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Cart drawer with assembled landing structure</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Before / after — old landing vs new</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                    <div class="hs-metrics">
+                        <div class="hs-metric">
+                            <div class="hs-metric-value"><em>3 mo</em> → 2–3 d</div>
+                            <div class="hs-metric-label">Cycle time per landing</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">15+</div>
+                            <div class="hs-metric-label">Live landings on the platform</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">All</div>
+                            <div class="hs-metric-label">Of the company website runs on this</div>
+                        </div>
+                    </div>
+                </article>
 
-                <div class="cp-figure">image · firecamp app · home + schedule</div>
-                <div class="cp-figure-cap">FireCamp app — voting, schedule, section subscriptions. Shipped in a week.</div>
-            </article>
+                <article class="hs-subcase" id="hs-04">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Process shift · ~1 week → ~1 hour · 30+ presentations generated</span>
+                        <span class="hs-tag">Process shift</span>
+                    </div>
+                    <h2 class="hs-h2">Presentation generator</h2>
+                    <p class="hs-subcase-lead">Same approach as the landing platform, applied to presentations. Two entry points (drop-and-get + visual editor), three generation modes (Normal / Variety / Madness). About 30 presentations generated, team in love.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// video · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Generation walkthrough across all three modes</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>The problem: lots of sales pitches, lots of presentations. Everyone made them in different tools (Google Slides, Figma, PowerPoint, online services), with different styles. No system, no shared style constants, no reuse.</p>
+                        <p>Took about a month to build.</p>
+                        <h3>Entry point 1 — drop-and-get</h3>
+                        <p>Drop MD / text / HTML / PDF into Claude → "make a presentation using Presentation Builder Skill". Three modes:</p>
+                        <ul>
+                            <li><strong>Normal</strong> — built on the block registry. The skill looks at registered blocks and tries to use them. Everything anchored to design tokens, design system, single style.</li>
+                            <li><strong>Variety</strong> — for non-standard input. Generates from content, not from blocks. Still in our style, but inventive — leverages base constants without imitating predefined blocks.</li>
+                            <li><strong>Madness</strong> — total goof-around. Whatever it wants. Mostly for fun, but it's there.</li>
+                        </ul>
+                        <h3>Entry point 2 — visual editor</h3>
+                        <p>Slides + modules + JSON structure → Claude renders a controlled solution. For people who like control: ready page patterns, different elements (text, icons, text-with-icon, cards, dividers), per-slide data import.</p>
+                        <p>The structure is flexible: each module is a JSON node with fields, the visual representation lets you edit content right there or download generated JSON, edit it in your own editor, and feed it back to Claude.</p>
+                    </div>
+                    <div class="hs-gallery cols-2">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Visual editor — slide canvas with module library</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Generated presentation examples grid</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// video · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Madness mode demo (for fun)</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-metrics">
+                        <div class="hs-metric">
+                            <div class="hs-metric-value"><em>1 wk</em> → 1 h</div>
+                            <div class="hs-metric-label">Cycle time per presentation</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">30+</div>
+                            <div class="hs-metric-label">Presentations generated</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">3 / 2</div>
+                            <div class="hs-metric-label">Modes / entry points</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">~1 mo</div>
+                            <div class="hs-metric-label">To build</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="hs-subcase" id="hs-05">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Tools · PostHog inside every page · zero context switch</span>
+                        <span class="hs-tag">Tools</span>
+                    </div>
+                    <h2 class="hs-h2">Embedded analytics on every page</h2>
+                    <p class="hs-subcase-lead">A "Stats" button visible only to logged-in employees on every page of the ecosystem — landing, article, case study, documentation. Click opens a drawer with PostHog data sliced for that specific page. No tool switching, no searching for the page in a global list.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Stats drawer open on a landing page</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>Standard analytics workflow: open separate tool → find the page in a list of all pages → load the dashboard for it. For a company with hundreds of articles, landings, case studies, and docs — that's friction.</p>
+                        <p>The fix: every page knows its own analytics scope. Logged-in employees see a small "Stats" button. Click — drawer slides in with PostHog data filtered to that page: traffic, sources, behavior, conversions, multiple slices.</p>
+                        <p><strong>The cultural impact</strong> — analytics became part of daily browsing. People look at performance data while reading their own articles or landings. <em>Authors see their readership without effort.</em></p>
+                    </div>
+                    <div class="hs-gallery cols-3">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Stats button placement (zoom on UI)</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Drawer with sliced metrics — traffic, sources, behavior</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Different slice — page conversions</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                </article>
+
+                <article class="hs-subcase" id="hs-06">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Product · joint with co-designer · ongoing migration to DS</span>
+                        <span class="hs-tag">Product</span>
+                    </div>
+                    <h2 class="hs-h2">Aidbox redesign</h2>
+                    <p class="hs-subcase-lead">Improving the UX and UI of Aidbox — the company's flagship FHIR platform — built originally by engineers without a designer. Working in a pair with the co-designer; gradual migration to the new design system continues.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Aidbox interface — before / after comparison</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>Pair work model: my co-designer leads the wireframes and primary UX exploration; I join for sessions, design-system migration, and specific flows. Several hours of focused pair work daily.</p>
+                        <h3>Approach</h3>
+                        <ul>
+                            <li>Reassemble screens in Figma using the new DS components</li>
+                            <li>Prototype critical flows</li>
+                            <li>Review with developers and clients — dogfooding helps, internal users are real users</li>
+                            <li>Iterate, ship, migrate next module</li>
+                        </ul>
+                        <p>Concrete improvements — TBD per subcase, but key directions: <em>information architecture cleanup, primary navigation patterns, data-dense view UX, form UX.</em></p>
+                    </div>
+                    <div class="hs-gallery cols-3">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Information architecture before / after</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Key flows redesigned</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">DS migration progress</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                </article>
+
+                <article class="hs-subcase" id="hs-07">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Product · MDM Box / Master Patient Index</span>
+                        <span class="hs-tag">Product</span>
+                    </div>
+                    <h2 class="hs-h2">MPI Box redesign</h2>
+                    <p class="hs-subcase-lead">Redesign of the Master Patient Index product — handling probabilistic patient matching, merge / unmerge workflows, and audit trails. Complex domain, dense data, real workflow constraints.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">MPI Box main interface — before / after</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>MPI Box manages patient identity reconciliation across systems. Core workflows:</p>
+                        <ul>
+                            <li>Probabilistic matching review (typo handling, incomplete data)</li>
+                            <li>Merge / unmerge operations with full audit history</li>
+                            <li>Custom scoring algorithms configuration</li>
+                            <li>Scaling to millions of records — UI has to stay performant and clear</li>
+                        </ul>
+                        <p>Approach: <em>redesign existing flows, prototype new ones, validate with engineering team and customers, migrate to new DS.</em></p>
+                    </div>
+                    <div class="hs-gallery cols-3">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Match review flow — before / after</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Merge workflow with audit trail</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Configuration UI</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                </article>
+
+                <article class="hs-subcase" id="hs-08">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Process shift · designer in production repos · review-and-merge</span>
+                        <span class="hs-tag">Process shift</span>
+                    </div>
+                    <h2 class="hs-h2">Design support through code</h2>
+                    <p class="hs-subcase-lead">Started with traditional design sessions — "team implements after." Evolved into a model where I clone the team's repository, branch, refactor and fix UI directly in code. Team reviews and merges. Made possible by the AI-first culture of the company.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">PR review — design changes in product repo</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <h3>Initial model</h3>
+                        <ul>
+                            <li>Design session with the team.</li>
+                            <li>We discuss what to fix.</li>
+                            <li>They go implement.</li>
+                            <li>Maybe it ships. Maybe drift.</li>
+                        </ul>
+                        <h3>Newer model</h3>
+                        <ul>
+                            <li>Pull the team's repo.</li>
+                            <li>Branch.</li>
+                            <li>Refactor — port components to the new DS, fix UI bugs, polish.</li>
+                            <li>Open PR. Team reviews and merges.</li>
+                        </ul>
+                        <p>This works because:</p>
+                        <ul>
+                            <li>Company is AI-first → designer with code skills isn't an anomaly</li>
+                            <li>DS in code → my changes use the same source of truth as their code</li>
+                            <li>Pair-work culture → review is fast and trust is built</li>
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="hs-subcase" id="hs-09">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Brand · joint with co-designer · logos, illustrations, mascots, diagrams</span>
+                        <span class="hs-tag">Brand</span>
+                    </div>
+                    <h2 class="hs-h2">Brand identity &amp; illustrations</h2>
+                    <p class="hs-subcase-lead">Full brand redesign in pair with the co-designer — logos for all products, illustration system, mascots, diagram style, marketing templates. The visual language now used across the entire ecosystem.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Brand system overview — logos, palette, illustrations</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>Built together with the co-designer. Outputs:</p>
+                        <ul>
+                            <li>New corporate visual identity</li>
+                            <li>Logos for all products in the lineup (Aidbox, Formbox, Termbox, MDMbox, Payerbox, eRxbox, Smartbox, RCMbox)</li>
+                            <li>Illustration system — for landings, articles, empty states</li>
+                            <li>Mascots</li>
+                            <li>Diagram style — translated into a Claude skill for automatic generation</li>
+                            <li>Mermaid diagram stylization</li>
+                            <li>Marketing templates — LinkedIn, downloads, events</li>
+                        </ul>
+                    </div>
+                    <div class="hs-gallery cols-2">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Product logos lineup</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Illustrations grid</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Mascots collection</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Diagram style — before / after</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Mermaid diagrams — before / after stylization</div>
+                            </div>
+                        </div>
+                    </figure>
+                </article>
+
+                <article class="hs-subcase" id="hs-10">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Tools · trained on brand mascot · ~200 generations · daily use</span>
+                        <span class="hs-tag">Tools</span>
+                    </div>
+                    <h2 class="hs-h2">Kudos generator</h2>
+                    <p class="hs-subcase-lead">Internal "kudos" currency for thanks between employees runs through a Telegram bot. Built an image generator on a neural network trained on the company's brand mascot — employees write the gist of their thanks, the network generates a picture of the mascot in that scenario. Used daily.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Kudos generations grid — variety of scenarios with brand mascot</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>The kudos system was already running through Telegram, but the messages were text-only. Adding an image per kudos made the gesture more memorable and personal.</p>
+                        <p>The generator:</p>
+                        <ul>
+                            <li>Neural network fine-tuned on the brand mascot character</li>
+                            <li>Employee writes the kudos message — what they're thanking for, context</li>
+                            <li>Generator produces an image of the mascot acting out the scenario</li>
+                            <li>Image goes into the Telegram bot's response</li>
+                        </ul>
+                    </div>
+                    <div class="hs-gallery cols-4">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="1-1">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// 1:1</div>
+                                    <div class="hs-media-placeholder-caption">Sample 1</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="1-1">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// 1:1</div>
+                                    <div class="hs-media-placeholder-caption">Sample 2</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="1-1">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// 1:1</div>
+                                    <div class="hs-media-placeholder-caption">Sample 3</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="1-1">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// 1:1</div>
+                                    <div class="hs-media-placeholder-caption">Sample 4</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                    <div class="hs-metrics">
+                        <div class="hs-metric">
+                            <div class="hs-metric-value"><em>~200</em></div>
+                            <div class="hs-metric-label">Generations to date</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">Daily</div>
+                            <div class="hs-metric-label">Use across the company</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">Mascot</div>
+                            <div class="hs-metric-label">Trained on brand character</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="hs-subcase" id="hs-11">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Proof · 1-week build · ~100 attendees · FireCamp 2025, October</span>
+                        <span class="hs-tag">Proof</span>
+                    </div>
+                    <h2 class="hs-h2">FireCamp app — vibe-coded production</h2>
+                    <p class="hs-subcase-lead">FireCamp is a major gathering of healthcare-IT leaders organized by Health Samurai in Portugal — Microsoft and other industry leaders attend. In previous years, the entire organization (round tables, discussion topics, navigation) ran on paper. Built a responsive web app in a week. ~100 people used it. The first major vibe-code production story for the company.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">FireCamp app — main schedule view</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>Features shipped in a week:</p>
+                        <ul>
+                            <li>Talk voting</li>
+                            <li>Section subscriptions</li>
+                            <li>Schedule view</li>
+                            <li>Navigation across rooms and topics</li>
+                            <li>Responsive — worked on every attendee's phone</li>
+                        </ul>
+                        <h3>Why it mattered beyond the conference</h3>
+                        <p>This was the first big proof for C-level that vibe-code can ship production work. <em>After FireCamp, support for scaling AI-pipeline work expanded.</em></p>
+                    </div>
+                    <div class="hs-gallery cols-3">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Voting screen</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Schedule</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="4-3">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 4:3</div>
+                                    <div class="hs-media-placeholder-caption">Section subscriptions</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                <div class="hs-media-placeholder-caption">Attendees using the app at the venue (if available)</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-metrics">
+                        <div class="hs-metric">
+                            <div class="hs-metric-value"><em>1 wk</em></div>
+                            <div class="hs-metric-label">From zero to production</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">~100</div>
+                            <div class="hs-metric-label">Attendees used the app</div>
+                        </div>
+                        <div class="hs-metric">
+                            <div class="hs-metric-value">First</div>
+                            <div class="hs-metric-label">Major vibe-code production proof</div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="hs-subcase" id="hs-12">
+                    <div class="hs-subcase-meta">
+                        <span class="hs-eyebrow">Proof · vibe-code as a default tool · multiple prototypes</span>
+                        <span class="hs-tag">Proof</span>
+                    </div>
+                    <h2 class="hs-h2">JSON Parser &amp; vibe-code as method</h2>
+                    <p class="hs-subcase-lead">From day one, complex tasks (more than a single screen or simple flow) were assembled in code on React. Working demos instead of static mockups. JSON Parser was one of the visible artifacts — a UI hypothesis prototype for Aidbox, used to validate direction and present to the team.</p>
+                    <figure class="hs-media">
+                        <div class="hs-media-placeholder" data-aspect="16-9">
+                            <div>
+                                <div class="hs-media-placeholder-icon">// video · 16:9</div>
+                                <div class="hs-media-placeholder-caption">JSON Parser — interactive prototype walkthrough</div>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="hs-body">
+                        <p>Vibe-code became the default way to validate hypotheses. Static mockups skip questions that show up only in interaction — performance, edge cases, real keyboard input, scroll behavior. Working prototypes catch them.</p>
+                        <h3>Examples</h3>
+                        <ul>
+                            <li><strong>Global menu prototypes</strong> — testing the observability hypothesis for the main product pattern. Multiple variants in code.</li>
+                            <li><strong>BOF Application</strong> — UI for one of the products.</li>
+                            <li><strong>JSON Parser</strong> — concept presentation and UI hypothesis validation for Aidbox.</li>
+                        </ul>
+                        <h3>Why this matters culturally</h3>
+                        <p>In a company without designers in the room every day, working code prototypes gave product conversations real artifacts to react to. <em>"Look at this" beats "imagine this."</em></p>
+                    </div>
+                    <div class="hs-gallery cols-3">
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">JSON Parser interface</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">Global menu variants</div>
+                                </div>
+                            </div>
+                        </figure>
+                        <figure class="hs-media">
+                            <div class="hs-media-placeholder" data-aspect="16-9">
+                                <div>
+                                    <div class="hs-media-placeholder-icon">// image · 16:9</div>
+                                    <div class="hs-media-placeholder-caption">BOF Application</div>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                </article>
+
+            </div>
         </div>
 
-        <section class="cp-gallery" aria-label="Visual gallery">
-            <div class="cp-gallery-head">
-                <div class="cp-gallery-label">// gallery</div>
-                <h3 class="cp-gallery-title">Visual selection</h3>
-                <p class="cp-gallery-hint">Drop screenshots of the system, redesigns, generators and FireCamp here — they'll tile across the full width.</p>
-            </div>
-            <div class="cp-gallery-grid" id="cp-gallery-grid-cs02">
-                <div class="cp-gallery-tile">image · slot 01</div>
-                <div class="cp-gallery-tile">image · slot 02</div>
-                <div class="cp-gallery-tile">image · slot 03</div>
-                <div class="cp-gallery-tile">image · slot 04</div>
-                <div class="cp-gallery-tile">image · slot 05</div>
-                <div class="cp-gallery-tile">image · slot 06</div>
-                <div class="cp-gallery-tile">image · slot 07</div>
-                <div class="cp-gallery-tile">image · slot 08</div>
-                <div class="cp-gallery-tile">image · slot 09</div>
-            </div>
+        <section class="hs-closing">
+            <div class="hs-eyebrow">Want to talk about any of this?</div>
+            <h2 class="hs-h2">Let's discuss the work</h2>
+            <p class="hs-lead">Each subcase has more depth than fits on a page. Happy to walk through any of them — process, decisions, what worked, what didn't, what I'd do differently.</p>
+            <a class="hs-cta">
+                <span>Get in touch</span>
+                <span class="hs-cta-arrow">→</span>
+            </a>
         </section>
+
     </section>
 
 
@@ -12023,6 +12893,52 @@ See also: Health Samurai Lab: Game of Pools.`,
                         e.preventDefault();
                     }
                 }, { passive: false });
+            });
+        })();
+    </script>
+
+    <!-- HS subcases page (cs02): sticky-TOC active link highlight via IntersectionObserver. -->
+    <script>
+        (() => {
+            const page = document.getElementById('case-page-cs02');
+            if (!page) return;
+            const tocLinks = Array.from(page.querySelectorAll('.hs-toc a[data-toc-target]'));
+            if (!tocLinks.length) return;
+            const sections = tocLinks
+                .map(a => document.getElementById(a.dataset.tocTarget))
+                .filter(Boolean);
+            if (!sections.length) return;
+
+            const states = new Map(sections.map(s => [s.id, false]));
+            const recompute = () => {
+                let activeId = null;
+                let bestTop = -Infinity;
+                for (const s of sections) {
+                    if (states.get(s.id)) {
+                        const top = s.getBoundingClientRect().top;
+                        if (top <= window.innerHeight * 0.4 && top > bestTop) {
+                            bestTop = top;
+                            activeId = s.id;
+                        }
+                    }
+                }
+                tocLinks.forEach(a => a.classList.toggle('is-active', a.dataset.tocTarget === activeId));
+            };
+
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(e => states.set(e.target.id, e.isIntersecting));
+                recompute();
+            }, { root: page, rootMargin: '-20% 0px -40% 0px', threshold: 0 });
+            sections.forEach(s => io.observe(s));
+
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const target = document.getElementById(link.dataset.tocTarget);
+                    if (!target) return;
+                    e.preventDefault();
+                    const top = target.offsetTop - 24;
+                    page.scrollTo({ top, behavior: 'smooth' });
+                });
             });
         })();
     </script>
