@@ -1126,6 +1126,34 @@
             font-weight: 400;
         }
 
+        /* Hero shot — single static "new state" image after the hero header */
+        .cp-hero-shot {
+            position: relative;
+            margin: 8px 0 0;
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+        .cp-hero-shot img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .cp-hero-shot-tag {
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: var(--acc);
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            padding: 5px 10px;
+            z-index: 2;
+        }
+
         /* TLDR */
         .cp-tldr {
             margin: 64px 0 80px;
@@ -7504,6 +7532,32 @@
                 <p class="cp-sub">Финтех в сфере debt relief: веб + iOS + Android, несколько брендов, IPO-режим. Главная находка редизайна — разделение пользовательского опыта на фазы программы.</p>
             </header>
 
+            <figure class="cp-hero-shot">
+                <span class="cp-hero-shot-tag">// new</span>
+                <img src="showcase/cs01/desktop-after.png" alt="Americor — редизайнённый dashboard">
+            </figure>
+
+            <!-- TL;DR -->
+            <div class="cp-tldr">
+                <div class="cp-tldr-label">// TL;DR</div>
+                <p class="cp-tldr-lead">За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на <em>code-first</em> подход.</p>
+                <p class="cp-tldr-note">Ключевая продуктовая находка — <em>разделение опыта на фазы программы</em>: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.</p>
+                <div class="am-metrics">
+                    <div class="am-metric">
+                        <div class="am-metric-label">NPS</div>
+                        <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
+                    </div>
+                    <div class="am-metric">
+                        <div class="am-metric-label">CSAT (5)</div>
+                        <div class="am-metric-vals"><span class="am-metric-was">3.6</span><span class="am-metric-arrow">→</span><span class="am-metric-now">4.5</span></div>
+                    </div>
+                    <div class="am-metric">
+                        <div class="am-metric-label">DS coverage</div>
+                        <div class="am-metric-vals"><span class="am-metric-was">0%</span><span class="am-metric-arrow">→</span><span class="am-metric-now">50–60%</span></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- HERO COMPARATOR — column-width, 3 scenes, fullscreen breakout -->
             <div class="am-ba" data-ba>
                 <button type="button" class="am-ba-fullscreen" data-ba-fullscreen aria-label="Toggle fullscreen">Expand</button>
@@ -7546,27 +7600,6 @@
                         <img src="showcase/cs01/offer-after.png" alt="">
                         <span class="am-ba-scene-label">Offer Flow</span>
                     </button>
-                </div>
-            </div>
-
-            <!-- TL;DR -->
-            <div class="cp-tldr">
-                <div class="cp-tldr-label">// TL;DR</div>
-                <p class="cp-tldr-lead">За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на <em>code-first</em> подход.</p>
-                <p class="cp-tldr-note">Ключевая продуктовая находка — <em>разделение опыта на фазы программы</em>: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.</p>
-                <div class="am-metrics">
-                    <div class="am-metric">
-                        <div class="am-metric-label">NPS</div>
-                        <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
-                    </div>
-                    <div class="am-metric">
-                        <div class="am-metric-label">CSAT (5)</div>
-                        <div class="am-metric-vals"><span class="am-metric-was">3.6</span><span class="am-metric-arrow">→</span><span class="am-metric-now">4.5</span></div>
-                    </div>
-                    <div class="am-metric">
-                        <div class="am-metric-label">DS coverage</div>
-                        <div class="am-metric-vals"><span class="am-metric-was">0%</span><span class="am-metric-arrow">→</span><span class="am-metric-now">50–60%</span></div>
-                    </div>
                 </div>
             </div>
 
