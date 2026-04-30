@@ -2132,6 +2132,17 @@
             box-shadow: none;
         }
         .am-ba.is-fs .am-ba-img { background: #000; }
+        /* In fullscreen the Before / After labels float at the vertical centre
+           on each side, away from the floating tabs strip at the top. */
+        .am-ba.is-fs .am-ba-label {
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 6px 14px;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+        }
+        .am-ba.is-fs .am-ba-label.before { left: 18px; right: auto; }
+        .am-ba.is-fs .am-ba-label.after  { right: 18px; left: auto; }
         .am-ba.is-fs .am-ba-scenes {
             position: absolute;
             bottom: 14px;
@@ -12043,7 +12054,13 @@ See also: Health Samurai Lab: Game of Pools.`,
                         const pct = Math.min(100, Math.max(0, ((clientX - r.left) / r.width) * 100));
                         stage.style.setProperty('--ba-pos', pct.toFixed(2) + '%');
                     };
-                    stage.addEventListener('mousemove', (e) => setPos(e.clientX));
+                    stage.addEventListener('mousemove', (e) => {
+                        // Skip when hovering interactive controls (scene picker,
+                        // tabs, fullscreen button) so they remain clickable in
+                        // fullscreen where they overlay the stage.
+                        if (e.target.closest('.am-ba-scenes, .am-ba-tabs, .am-ba-fullscreen')) return;
+                        setPos(e.clientX);
+                    });
                     // Touch: drag with finger
                     stage.addEventListener('touchstart', (e) => {
                         if (!e.touches[0]) return;
