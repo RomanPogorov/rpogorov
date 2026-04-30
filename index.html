@@ -1020,6 +1020,57 @@
             -webkit-user-drag: none;
             pointer-events: none;
         }
+
+        /* Scroll-pin pan — vertical page scroll drives horizontal pan,
+           then continues vertical when image fully revealed. Reusable. */
+        .cp-pan-pin {
+            position: relative;
+            /* JS sets height = 100vh + horizontal_overflow */
+        }
+        .cp-pan-pin .cp-pan {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            cursor: default;
+        }
+        .cp-pan-pin .cp-pan > img,
+        .cp-pan-pin .cp-pan > video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: auto;
+            min-width: 0;
+            max-width: none;
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+        }
+        .cp-pan-pin .cp-pan-caption {
+            position: absolute;
+            left: 0; right: 0; bottom: 18px;
+            margin: 0;
+            padding: 0 40px;
+            text-align: center;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .cp-pan-pin .cp-pan-progress {
+            position: absolute;
+            left: 24px; right: 24px; bottom: 8px;
+            height: 2px;
+            background: rgba(0, 0, 0, 0.08);
+            z-index: 2;
+            overflow: hidden;
+        }
+        .cp-pan-pin .cp-pan-progress::after {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: var(--pan-progress, 0%);
+            background: var(--acc);
+            transition: width 0.05s linear;
+        }
         .cp-pan-caption {
             margin: 10px auto 0;
             max-width: 980px;
@@ -1228,8 +1279,11 @@
             background: rgba(5,5,5,0.92);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
-            margin: 0 -40px;
-            padding: 16px 40px;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            width: 100vw;
+            max-width: 100vw;
+            padding: 14px 24px;
             border-top: 1px solid rgba(255,255,255,0.06);
             border-bottom: 1px solid rgba(255,255,255,0.08);
         }
@@ -1256,6 +1310,17 @@
             display: inline-flex;
             align-items: baseline;
             gap: 10px;
+        }
+        @media (min-width: 720px) {
+            .cp-timeline-list {
+                gap: 8px;
+                overflow-x: visible;
+            }
+            .cp-tl-item {
+                flex: 1 1 0;
+                justify-content: flex-start;
+                white-space: nowrap;
+            }
         }
         .cp-tl-item:hover {
             color: #fff;
@@ -7752,12 +7817,13 @@
                     <p>Чтобы валидировать понимание, собрал <strong>Product Flow Diagram</strong> — end-to-end карту со всеми флоу, ветвлениями по бизнес-правилам (Primary Flow для долгов &gt; $7500, Secondary для меньших) и состояниями пользователя на каждом этапе. Это стало <em>первым в компании единым источником правды</em>.</p>
                 </div>
 
-                <!-- Full-bleed Product Flow with horizontal pan -->
-                <figure class="cp-fullbleed">
+                <!-- Full-bleed Product Flow with scroll-pin: vertical scroll drives horizontal pan -->
+                <figure class="cp-fullbleed cp-pan-pin" data-pan-pin>
                     <div class="cp-pan">
                         <img src="showcase/cs01/high-level.png" alt="Product Flow Diagram — end-to-end карта продукта">
+                        <figcaption class="cp-pan-caption"><b>↔</b> Product Flow Diagram. Скролль вниз — диаграмма едет вправо, дальше скролл продолжается.</figcaption>
+                        <div class="cp-pan-progress" aria-hidden="true"></div>
                     </div>
-                    <figcaption class="cp-pan-caption"><b>↔</b> Product Flow Diagram. Перетащи мышкой / drag — диаграмма скроллится в полную ширину.</figcaption>
                 </figure>
 
                 <div class="cp-sec-body">
@@ -11824,10 +11890,12 @@ See also: Health Samurai Lab: Game of Pools.`,
         })();
     </script>
 
-    <!-- cp-pan drag-to-scroll: full-bleed horizontal-scroll figures (diagrams). -->
+    <!-- cp-pan drag-to-scroll: full-bleed horizontal-scroll figures (diagrams).
+         Skip panes inside .cp-pan-pin — those use vertical-scroll-driven panning. -->
     <script>
         (() => {
             document.querySelectorAll('.cp-pan').forEach(pan => {
+                if (pan.closest('.cp-pan-pin')) return;
                 let down = false, startX = 0, startScroll = 0;
                 pan.addEventListener('mousedown', (e) => {
                     down = true;
@@ -11843,13 +11911,92 @@ See also: Health Samurai Lab: Game of Pools.`,
                 pan.addEventListener('mouseup', stop);
                 pan.addEventListener('mouseleave', stop);
                 window.addEventListener('blur', stop);
-                // Wheel: convert vertical wheel to horizontal scroll for trackpads
                 pan.addEventListener('wheel', (e) => {
                     if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
                         pan.scrollLeft += e.deltaY;
                         e.preventDefault();
                     }
                 }, { passive: false });
+            });
+        })();
+    </script>
+
+    <!-- cp-pan-pin: vertical scroll inside .case-page drives horizontal pan of an oversized figure.
+         Pin sits sticky for the duration of its overflow distance, then page scroll continues. -->
+    <script>
+        (() => {
+            const pins = document.querySelectorAll('[data-pan-pin]');
+            if (!pins.length) return;
+
+            const setup = (pin) => {
+                const pan = pin.querySelector('.cp-pan');
+                const media = pan && pan.querySelector('img, video');
+                const progressEl = pan && pan.querySelector('.cp-pan-progress');
+                if (!pan || !media) return null;
+
+                const measure = () => {
+                    // imagined rendered width of the media at sticky height (height: 100% via CSS).
+                    // For <img>: use naturalWidth/Height ratio. For <video>: videoWidth/Height.
+                    const natW = media.naturalWidth || media.videoWidth || media.offsetWidth;
+                    const natH = media.naturalHeight || media.videoHeight || media.offsetHeight;
+                    if (!natW || !natH) return 0;
+                    const renderedH = pan.offsetHeight;
+                    const renderedW = (natW / natH) * renderedH;
+                    return Math.max(0, renderedW - pan.offsetWidth);
+                };
+
+                let overflow = 0;
+                const recalc = () => {
+                    overflow = measure();
+                    if (overflow > 0) {
+                        pin.style.height = `calc(100vh + ${overflow}px)`;
+                    } else {
+                        pin.style.height = '';
+                    }
+                    update();
+                };
+
+                const update = () => {
+                    const rect = pin.getBoundingClientRect();
+                    const total = pin.offsetHeight - window.innerHeight;
+                    if (total <= 0) {
+                        media.style.transform = 'translate3d(0,0,0)';
+                        if (progressEl) progressEl.style.setProperty('--pan-progress', '0%');
+                        return;
+                    }
+                    const raw = -rect.top;
+                    const progress = Math.max(0, Math.min(1, raw / total));
+                    media.style.transform = `translate3d(${-progress * overflow}px, 0, 0)`;
+                    if (progressEl) progressEl.style.setProperty('--pan-progress', (progress * 100).toFixed(2) + '%');
+                };
+
+                if (media.complete || media.readyState >= 2) recalc();
+                else media.addEventListener('load', recalc, { once: true });
+                media.addEventListener('loadedmetadata', recalc, { once: true });
+                window.addEventListener('resize', recalc, { passive: true });
+
+                return { pin, update, recalc };
+            };
+
+            const watchers = [];
+            pins.forEach(p => {
+                const w = setup(p);
+                if (w) watchers.push(w);
+            });
+            if (!watchers.length) return;
+
+            const onScroll = () => watchers.forEach(w => w.update());
+
+            // Bind to each .case-page (it scrolls when open). Window scroll for safety.
+            document.querySelectorAll('.case-page').forEach(cp => {
+                cp.addEventListener('scroll', onScroll, { passive: true });
+            });
+            window.addEventListener('scroll', onScroll, { passive: true });
+
+            // Force recalc when a case opens (size of pan changes once visible).
+            const mo = new MutationObserver(() => watchers.forEach(w => w.recalc()));
+            document.querySelectorAll('.case-page').forEach(cp => {
+                mo.observe(cp, { attributes: true, attributeFilter: ['class'] });
             });
         })();
     </script>
