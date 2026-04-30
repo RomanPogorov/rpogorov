@@ -12212,6 +12212,16 @@ See also: Health Samurai Lab: Game of Pools.`,
                         }
                     }, true);
                 }
+                // While fullscreen, stop every pointer event inside the block
+                // from bubbling to document-level handlers (case-page outside
+                // click, showcase outside click, etc.) — they'd close things
+                // behind the active BA otherwise.
+                ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(ev => {
+                    block.addEventListener(ev, (e) => {
+                        if (!block.classList.contains('is-fs')) return;
+                        e.stopPropagation();
+                    });
+                });
             });
 
             // -------- 2. Lightbox --------
