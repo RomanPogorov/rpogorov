@@ -1128,7 +1128,7 @@
 
         /* TLDR */
         .cp-tldr {
-            margin: 0 0 80px;
+            margin: 64px 0 80px;
             padding: 30px 36px 32px;
             background: rgba(var(--acc-rgb),0.05);
             border-left: 2px solid var(--acc);
@@ -1183,16 +1183,18 @@
         }
         .cp-timeline-list::-webkit-scrollbar { display: none; }
         .cp-tl-item {
-            flex: 1 0 auto;
-            min-width: 168px;
+            flex: 0 0 auto;
             text-align: left;
-            padding: 11px 16px;
+            padding: 10px 14px;
             border: 1px solid rgba(255,255,255,0.12);
             background: transparent;
             color: rgba(255,255,255,0.65);
             cursor: pointer;
             font-family: inherit;
             transition: color 0.2s, border-color 0.2s, background 0.2s;
+            display: inline-flex;
+            align-items: baseline;
+            gap: 10px;
         }
         .cp-tl-item:hover {
             color: #fff;
@@ -1204,14 +1206,12 @@
             background: rgba(var(--acc-rgb),0.07);
         }
         .cp-tl-num {
-            display: block;
             font-size: 0.625rem;
             letter-spacing: 0.25em;
-            opacity: 0.65;
-            margin-bottom: 4px;
+            opacity: 0.55;
             font-weight: 500;
         }
-        .cp-tl-name { font-size: 0.8125rem; font-weight: 500; }
+        .cp-tl-name { font-size: 0.875rem; font-weight: 500; letter-spacing: 0.01em; }
 
         /* Sections */
         .cp-section {
@@ -1348,7 +1348,7 @@
         @media (max-width: 700px) {
             .cp-inner { padding: 76px 22px 110px; }
             .cp-timeline { margin: 0 -22px; padding: 14px 22px; }
-            .cp-tl-item { min-width: 144px; padding: 10px 14px; }
+            .cp-tl-item { padding: 9px 12px; }
             .cp-tldr { padding: 24px 22px; }
             .cp-gallery { padding: 80px 22px 90px; }
             .cp-gallery-head { margin: 0 0 24px; }
@@ -7475,36 +7475,36 @@
             <nav class="cp-timeline" aria-label="Case timeline">
                 <ol class="cp-timeline-list">
                     <li><button class="cp-tl-item active" data-target="cp-sec-01" type="button">
-                        <span class="cp-tl-num">01 / Контекст</span>
-                        <span class="cp-tl-name">Компания и роль</span>
+                        <span class="cp-tl-num">01</span>
+                        <span class="cp-tl-name">Контекст</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-02" type="button">
-                        <span class="cp-tl-num">02 / Старт</span>
-                        <span class="cp-tl-name">Что было до меня</span>
+                        <span class="cp-tl-num">02</span>
+                        <span class="cp-tl-name">Старт</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-03" type="button">
-                        <span class="cp-tl-num">03 / Подход</span>
-                        <span class="cp-tl-name">Как разбирался</span>
+                        <span class="cp-tl-num">03</span>
+                        <span class="cp-tl-name">Подход</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-04" type="button">
-                        <span class="cp-tl-num">04 / Система</span>
-                        <span class="cp-tl-name">Дизайн-система × 3 платформы</span>
+                        <span class="cp-tl-num">04</span>
+                        <span class="cp-tl-name">Система</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-05" type="button">
-                        <span class="cp-tl-num">05 / Редизайн</span>
-                        <span class="cp-tl-name">IPO-релиз</span>
+                        <span class="cp-tl-num">05</span>
+                        <span class="cp-tl-name">Редизайн</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-06" type="button">
-                        <span class="cp-tl-num">06 / Tools</span>
-                        <span class="cp-tl-name">Vibe-coded инструменты</span>
+                        <span class="cp-tl-num">06</span>
+                        <span class="cp-tl-name">Tools</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-07" type="button">
-                        <span class="cp-tl-num">07 / Shift</span>
-                        <span class="cp-tl-name">Code-first процесс</span>
+                        <span class="cp-tl-num">07</span>
+                        <span class="cp-tl-name">Shift</span>
                     </button></li>
                     <li><button class="cp-tl-item" data-target="cp-sec-08" type="button">
-                        <span class="cp-tl-num">08 / Итоги</span>
-                        <span class="cp-tl-name">Метрики и решения</span>
+                        <span class="cp-tl-num">08</span>
+                        <span class="cp-tl-name">Итоги</span>
                     </button></li>
                 </ol>
             </nav>
