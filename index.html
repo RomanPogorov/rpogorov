@@ -3188,20 +3188,20 @@
             top: 0;
             left: 0;
             pointer-events: none;
-            z-index: 100000;          /* always above BA fullscreen (9999) and lightbox */
+            z-index: 100000;          /* always above BA fullscreen + lightbox */
             will-change: transform;
-            /* difference auto-inverts vs whatever's behind — visible on both
-               dark hero AND white case-page / before-after screenshots. */
-            mix-blend-mode: difference;
         }
         .cur-dot {
-            width: 4px;
-            height: 4px;
-            margin: -2px 0 0 -2px;
-            /* Stays plain white at all times — no theme/accent recolor when held */
+            width: 6px;
+            height: 6px;
+            margin: -3px 0 0 -3px;
             background: #fff;
             border-radius: 50%;
-            box-shadow: 0 0 6px rgba(255, 255, 255, 0.75);
+            /* Hard 1px dark outline + soft white halo — readable on both
+               dark hero and the white case page / screenshots. */
+            box-shadow:
+                0 0 0 1px rgba(0, 0, 0, 0.55),
+                0 0 8px rgba(255, 255, 255, 0.55);
         }
         .cur-ring {
             width: 24px;
