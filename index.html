@@ -2193,7 +2193,7 @@
             inset: 0;
             clip-path: inset(0 0 0 var(--ba-pos, 50%));
             -webkit-clip-path: inset(0 0 0 var(--ba-pos, 50%));
-            transition: clip-path 0.05s linear;
+            /* No transition: clip-path follows mousemove 1:1, no lag/draw-up. */
         }
         .am-ba-divider {
             position: absolute;
