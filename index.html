@@ -1836,15 +1836,31 @@
             transition: opacity 0.3s ease;
         }
 
-        /* ============ VIBE TERMINAL MODAL — slides down from above ============ */
+        /* ============ VIBE TERMINAL MODAL — fullscreen with insets ============ */
+        /* Backdrop — hard dim layer behind the terminal so the rest of the
+           page reads as background. */
+        .vibe-term-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 4, 6, 0.78);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 79;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.45s ease;
+        }
+        .vibe-term-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
         .vibe-term {
             position: fixed;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%) translateY(-110%);
-            width: min(880px, calc(100vw - 64px));
-            height: min(540px, calc(100vh - 96px));
-            margin-top: 60px;
+            top: 32px;
+            left: 64px;
+            right: 64px;
+            bottom: 32px;
+            transform: translateY(-110%);
             z-index: 80;
             display: flex;
             flex-direction: column;
@@ -1862,7 +1878,7 @@
                         opacity 0.4s ease;
         }
         .vibe-term.open {
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
             opacity: 1;
             pointer-events: auto;
         }
@@ -1984,7 +2000,7 @@
             margin-right: 4px;
         }
         @media (max-width: 720px) {
-            .vibe-term { width: calc(100vw - 28px); height: calc(100vh - 80px); margin-top: 40px; }
+            .vibe-term { top: 16px; left: 16px; right: 16px; bottom: 16px; }
         }
 
         /* ============ AMERICOR CASE — namespaced .am-* ============ */
@@ -7936,6 +7952,7 @@
     </section>
 
     <!-- Vibe Terminal modal — slides down from the top when a Vibed Case is opened -->
+    <div class="vibe-term-backdrop" id="vibe-term-backdrop" aria-hidden="true"></div>
     <div class="vibe-term" id="vibe-term" role="dialog" aria-modal="true" aria-hidden="true">
         <header class="vibe-term-titlebar">
             <div class="vibe-term-buttons">
@@ -11647,6 +11664,7 @@ See also: Health Samurai Lab: Game of Pools.`,
         (() => {
             const term  = document.getElementById('vibe-term');
             if (!term) return;
+            const backdrop = document.getElementById('vibe-term-backdrop');
             const log   = document.getElementById('vibe-term-log');
             const frame = document.getElementById('vibe-term-iframe');
             const title = document.getElementById('vibe-term-title');
@@ -11689,6 +11707,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 activeId = c.id;
                 term.classList.remove('deployed');
                 term.classList.add('open');
+                backdrop?.classList.add('open');
                 term.setAttribute('aria-hidden', 'false');
                 document.body.classList.add('vibe-term-open');
                 title.textContent = `~/projects/${c.id} — bash`;
@@ -11741,6 +11760,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             function close() {
                 term.classList.remove('open');
                 term.classList.remove('deployed');
+                backdrop?.classList.remove('open');
                 term.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('vibe-term-open');
                 activeId = null;
@@ -11755,6 +11775,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             }
 
             closeBtn.addEventListener('click', close);
+            backdrop?.addEventListener('click', close);
             // Esc closes — capture phase so it wins over showcase ESC
             document.addEventListener('keydown', (e) => {
                 if (!term.classList.contains('open')) return;
