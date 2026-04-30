@@ -16612,13 +16612,13 @@ See also: Health Samurai Lab: Game of Pools.`,
             return s;
         }
 
-        // Mount bg.mp4 as scene.background — Three renders it as a full-screen
-        // quad regardless of camera position, so the video shows entirely.
-        // Postprocessing cuts through it; signal also drives periodic
-        // geometric tear (texture.offset bursts) at low signal.
+        // Mount bg.mp4 on a fullscreen plane in front of the LowPolyCity.
+        // As signal drops near zero, plane fades out and the underlying
+        // low-poly mesh of the same scene reveals — like the simulation
+        // dropped its texture and you see the wireframe city beneath.
         function VideoBackdrop() {
             const signal = useSignal();
-            const { scene } = useThree();
+            const matRef = useRef();
             const texture = useMemo(() => {
                 const v = document.createElement('video');
                 v.src = 'bg.mp4';
@@ -16634,15 +16634,12 @@ See also: Health Samurai Lab: Game of Pools.`,
                 tex.colorSpace = SRGBColorSpace;
                 return tex;
             }, []);
-            // Burst state: when active, texture is shoved by some px-equivalent.
             const burst = useRef({ until: 0, ox: 0, oy: 0 });
             useFrame((state) => {
                 const t = state.clock.elapsedTime;
                 const inv = 1 - signal;
-                // Probability of firing a burst this frame, only above mid signal.
                 if (signal < 0.6 && t > burst.current.until) {
                     if (Math.random() < 0.004 + inv * 0.025) {
-                        // Strong horizontal jump, occasionally vertical.
                         const mag = 0.05 + inv * 0.18;
                         burst.current.ox = (Math.random() - 0.5) * mag;
                         burst.current.oy = (Math.random() < 0.3 ? (Math.random() - 0.5) * mag * 0.4 : 0);
@@ -16657,12 +16654,145 @@ See also: Health Samurai Lab: Game of Pools.`,
                 }
                 texture.offset.x = burst.current.ox;
                 texture.offset.y = burst.current.oy;
+                // Fade: opacity 1 above signal=0.30, linear down to 0 at signal=0.04.
+                if (matRef.current) {
+                    const op = Math.max(0, Math.min(1, (signal - 0.04) / 0.26));
+                    matRef.current.opacity = op;
+                }
             });
-            useEffect(() => {
-                const prev = scene.background;
-                scene.background = texture;
-                return () => { scene.background = prev; };
-            }, [scene, texture]);
+            // Plane: 40x22.5 at z=-10 with cam at z=5 fov=60 covers viewport.
+            return (
+                <mesh position={[0, 0, -10]} renderOrder={-1}>
+                    <planeGeometry args={[40, 22.5]} />
+                    <meshBasicMaterial
+                        ref={matRef}
+                        map={texture}
+                        toneMapped={false}
+                        transparent
+                        depthWrite={false}
+                        fog={false}
+                    />
+                </mesh>
+            );
+        }
+
+        // Low-poly mesh that mirrors the city's silhouette from the bg.mp4 —
+        // central tower, jagged structures, ground plane, distant horizon.
+        // All wireframe in accent green, pulsing window-dots on buildings,
+        // fades in as signal drops below ~0.3.
+        function Tower({ position, opacity, scale = 1 }) {
+            const ref = useRef();
+            useFrame((state, dt) => {
+                if (!ref.current) return;
+                ref.current.rotation.y += dt * 0.05;
+            });
+            return (
+                <group ref={ref} position={position} scale={scale}>
+                    {/* Wide base */}
+                    <mesh position={[0, 0.5, 0]}>
+                        <boxGeometry args={[1.6, 1, 1.6]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity} />
+                    </mesh>
+                    {/* Lower body */}
+                    <mesh position={[0, 2.5, 0]}>
+                        <boxGeometry args={[1.2, 3, 1.2]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity} />
+                    </mesh>
+                    {/* Upper body */}
+                    <mesh position={[0, 5.0, 0]}>
+                        <boxGeometry args={[0.8, 2, 0.8]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity} />
+                    </mesh>
+                    {/* Spire — narrow cone */}
+                    <mesh position={[0, 6.6, 0]}>
+                        <coneGeometry args={[0.32, 1.2, 6]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity} />
+                    </mesh>
+                    {/* Antenna */}
+                    <mesh position={[0, 7.7, 0]}>
+                        <cylinderGeometry args={[0.04, 0.04, 1.4, 5]} />
+                        <meshBasicMaterial color="#a8ffd9" transparent opacity={opacity * 0.9} />
+                    </mesh>
+                    {/* Beacon at top */}
+                    <mesh position={[0, 8.5, 0]}>
+                        <sphereGeometry args={[0.10, 8, 8]} />
+                        <meshBasicMaterial color="#ccffe0" transparent opacity={opacity} />
+                    </mesh>
+                </group>
+            );
+        }
+
+        function Building({ position, height, width = 1, depth = 1, opacity, twinkleSeed = 0 }) {
+            const ref = useRef();
+            const winRef = useRef();
+            useFrame((state) => {
+                if (!winRef.current) return;
+                // Twinkling window dot opacity
+                const t = state.clock.elapsedTime + twinkleSeed;
+                winRef.current.material.opacity = opacity * (0.5 + Math.abs(Math.sin(t * 1.7)) * 0.5);
+            });
+            return (
+                <group position={position}>
+                    <mesh ref={ref} position={[0, height / 2, 0]}>
+                        <boxGeometry args={[width, height, depth]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.85} />
+                    </mesh>
+                    <mesh ref={winRef} position={[width * 0.45, height * 0.6, depth * 0.51]}>
+                        <planeGeometry args={[0.08, 0.08]} />
+                        <meshBasicMaterial color="#a8ffd9" transparent opacity={opacity} />
+                    </mesh>
+                </group>
+            );
+        }
+
+        function LowPolyCity() {
+            const signal = useSignal();
+            // Fade in: 0 above signal=0.30, full at signal=0.04.
+            const op = Math.max(0, Math.min(1, (0.30 - signal) / 0.26));
+            const opacity = op * 0.95;
+            if (op <= 0.01) return null;
+            return (
+                <group position={[0, -2.5, -8]}>
+                    {/* Ground plane — wireframe disc receding in fog */}
+                    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+                        <planeGeometry args={[60, 40, 24, 16]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.30} />
+                    </mesh>
+                    {/* Horizon glow strip */}
+                    <mesh position={[0, 0.6, -18]}>
+                        <planeGeometry args={[80, 0.5]} />
+                        <meshBasicMaterial color="#00ff88" transparent opacity={opacity * 0.5} />
+                    </mesh>
+                    {/* Central tower */}
+                    <Tower position={[0, 0, -1]} opacity={opacity} scale={1} />
+                    {/* Foreground / nearby buildings */}
+                    <Building position={[-3.2, 0, 1]}  height={2.0} width={1.1} depth={1.1} opacity={opacity} twinkleSeed={1} />
+                    <Building position={[ 3.6, 0, 0.5]} height={2.6} width={1.2} depth={1.0} opacity={opacity} twinkleSeed={2.3} />
+                    <Building position={[-5.0, 0, -2]}  height={3.4} width={1.3} depth={1.3} opacity={opacity} twinkleSeed={3.7} />
+                    <Building position={[ 5.0, 0, -2.5]} height={3.0} width={1.0} depth={1.0} opacity={opacity} twinkleSeed={1.9} />
+                    {/* Mid-distance ring */}
+                    <Building position={[-2.5, 0, -4]}  height={1.4} width={0.7} depth={0.7} opacity={opacity * 0.7} twinkleSeed={0.4} />
+                    <Building position={[ 2.4, 0, -4.5]} height={1.7} width={0.7} depth={0.7} opacity={opacity * 0.7} twinkleSeed={2.7} />
+                    <Building position={[-7.5, 0, -5]}  height={2.0} width={0.9} depth={0.9} opacity={opacity * 0.6} twinkleSeed={4.1} />
+                    <Building position={[ 7.0, 0, -5]}  height={2.4} width={0.9} depth={0.9} opacity={opacity * 0.6} twinkleSeed={5.0} />
+                    {/* Far skyline — small dim boxes */}
+                    <Building position={[-9.5, 0, -8]}  height={1.6} width={0.7} depth={0.7} opacity={opacity * 0.4} twinkleSeed={6.3} />
+                    <Building position={[ 9.5, 0, -8]}  height={1.4} width={0.6} depth={0.6} opacity={opacity * 0.4} twinkleSeed={7.7} />
+                    <Building position={[-4,    0, -10]} height={1.0} width={0.5} depth={0.5} opacity={opacity * 0.35} twinkleSeed={8.4} />
+                    <Building position={[ 4,    0, -10]} height={0.9} width={0.5} depth={0.5} opacity={opacity * 0.35} twinkleSeed={9.1} />
+                </group>
+            );
+        }
+
+        function CameraDrift() {
+            const { camera } = useThree();
+            useFrame((state) => {
+                const t = state.clock.elapsedTime;
+                camera.position.x = Math.sin(t * 0.12) * 0.18;
+                camera.position.y = 0.4 + Math.sin(t * 0.16) * 0.10;
+                camera.position.z = 5 + Math.cos(t * 0.08) * 0.15;
+                camera.lookAt(0, 0.5, -8);
+            });
             return null;
         }
 
@@ -16782,11 +16912,14 @@ See also: Health Samurai Lab: Game of Pools.`,
                 <Canvas
                     gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
                     dpr={[1, 1.5]}
-                    camera={{ position: [0, 0, 5], fov: 60 }}
+                    camera={{ position: [0, 0.4, 5], fov: 60 }}
                 >
+                    <color attach="background" args={['#050708']} />
+                    <fog attach="fog" args={['#050708', 8, 22]} />
                     <ambientLight intensity={0.3} />
+                    <CameraDrift />
+                    <LowPolyCity />
                     <VideoBackdrop />
-                    {/* Step 2 will spawn polygons here as signal drops. */}
                     <Effects />
                 </Canvas>
             );
