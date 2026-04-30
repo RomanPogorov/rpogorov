@@ -218,21 +218,201 @@
             animation: roll calc(9s - (1 - var(--sim-signal, 1)) * 4s) linear infinite;
         }
 
-        /* Amplified scanlines layer — fades in as signal drops */
+        /* Amplified scanlines on the CITY (above video, below noise) — gets
+           dense and bright as signal drops. Two layers: dense static scan
+           plus a fast-rolling thick band. */
         .layer-scanlines-amp {
             position: fixed;
             inset: 0;
             pointer-events: none;
-            z-index: 3;
-            opacity: calc((1 - var(--sim-signal, 1)) * 1);
+            z-index: 2;
+            opacity: calc((1 - var(--sim-signal, 1)) * 1.5);
             background: repeating-linear-gradient(to bottom,
                 rgba(0, 0, 0, 0) 0px,
                 rgba(0, 0, 0, 0) 1px,
-                rgba(var(--acc-rgb), 0.18) 2px,
+                rgba(var(--acc-rgb), 0.42) 2px,
                 rgba(0, 0, 0, 0) 3px);
             mix-blend-mode: screen;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s ease;
             will-change: opacity;
+        }
+        .layer-scanlines-amp::after {
+            /* Thick rolling band — only visible past low-signal threshold */
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            height: 180px;
+            background: linear-gradient(to bottom,
+                transparent,
+                rgba(var(--acc-rgb), 0.28),
+                rgba(255, 255, 255, 0.18),
+                rgba(var(--acc-rgb), 0.28),
+                transparent);
+            mix-blend-mode: screen;
+            animation: city-scan-roll calc(1.6s + var(--sim-signal, 1) * 6s) linear infinite;
+        }
+        @keyframes city-scan-roll {
+            from { top: -180px; }
+            to   { top: 100%;   }
+        }
+        /* Burn the grid background as signal drops — heavy override of
+           --grid alpha via a sibling layer with stronger lines. */
+        .layer-grid-burn {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            opacity: calc((1 - var(--sim-signal, 1)) * 1.6);
+            background-image:
+                linear-gradient(rgba(var(--acc-rgb), 0.55) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(var(--acc-rgb), 0.55) 1px, transparent 1px);
+            background-size: 80px 80px;
+            mask-image: radial-gradient(ellipse at center, black 25%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 25%, transparent 80%);
+            mix-blend-mode: screen;
+            filter: drop-shadow(0 0 4px rgba(var(--acc-rgb), 0.6));
+            animation: grid-burn-pulse 1.2s ease-in-out infinite;
+            transition: opacity 0.25s ease;
+            will-change: opacity, filter;
+        }
+        @keyframes grid-burn-pulse {
+            0%, 100% { filter: drop-shadow(0 0 4px rgba(var(--acc-rgb), 0.5)); }
+            50%      { filter: drop-shadow(0 0 12px rgba(var(--acc-rgb), 0.95)); }
+        }
+        /* Random horizontal tear-bars — JS-spawned, RGB-split look, brief flicker. */
+        .layer-tear {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 6;
+            overflow: hidden;
+        }
+        .tear-bar {
+            position: absolute;
+            left: 0; right: 0;
+            height: var(--h, 3px);
+            background: rgba(255, 255, 255, 0.16);
+            box-shadow:
+                0 -1px 0 rgba(255, 0, 84, 0.85),
+                0 1px 0 rgba(0, 220, 255, 0.85),
+                0 -2px 6px rgba(255, 0, 84, 0.5),
+                0 2px 6px rgba(0, 220, 255, 0.5);
+            animation: tear-flicker 0.22s steps(4, end) forwards;
+            mix-blend-mode: screen;
+        }
+        @keyframes tear-flicker {
+            0%   { opacity: 0; transform: translateX(0)     scaleY(0.4); }
+            18%  { opacity: 1; transform: translateX(-6px)  scaleY(1.3); }
+            36%  { opacity: 0.55; transform: translateX(4px) scaleY(0.7); }
+            58%  { opacity: 1; transform: translateX(-2px)  scaleY(1.1); }
+            80%  { opacity: 0.4; transform: translateX(2px) scaleY(0.6); }
+            100% { opacity: 0; transform: translateX(0)     scaleY(0.4); }
+        }
+        /* Glitch cells — bigger and brighter when signal is low. */
+        .grid-glitch-cell {
+            position: fixed;
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, calc(0.06 + (1 - var(--sim-signal, 1)) * 0.30));
+            border: 1px solid rgba(var(--acc-rgb), calc((1 - var(--sim-signal, 1)) * 0.6));
+            pointer-events: none;
+            z-index: 1;
+            mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+            opacity: 0;
+            animation: grid-glitch-flicker 0.42s steps(3, end) forwards;
+            will-change: opacity;
+        }
+        @keyframes grid-glitch-flicker {
+            0%   { opacity: 0;    }
+            20%  { opacity: 0.95; }
+            40%  { opacity: 0.18; }
+            60%  { opacity: 1;    }
+            80%  { opacity: 0.45; }
+            100% { opacity: 0;    }
+        }
+        /* Chromatic aberration on key text once signal drops below mid */
+        body[data-sim-state="low"] .name,
+        body[data-sim-state="low"] .ctl-fab-eyebrow,
+        body[data-sim-state="low"] .ctl-fab-cta,
+        body[data-sim-state="low"] .am-title,
+        body[data-sim-state="low"] .ctl-title,
+        body[data-sim-state="low"] .agents-clock {
+            text-shadow:
+                -2px 0 rgba(255, 0, 84, 0.85),
+                 2px 0 rgba(0, 220, 255, 0.85),
+                 0 0 12px rgba(var(--acc-rgb), 0.6) !important;
+            animation: chrom-jitter 0.13s steps(3) infinite;
+        }
+        @keyframes chrom-jitter {
+            0%, 100% { text-shadow: -2px 0 rgba(255, 0, 84, 0.85),  2px 0 rgba(0, 220, 255, 0.85), 0 0 12px rgba(var(--acc-rgb), 0.6); }
+            33%      { text-shadow:  2px 0 rgba(255, 0, 84, 0.85), -2px 0 rgba(0, 220, 255, 0.85), 0 0 12px rgba(var(--acc-rgb), 0.6); }
+            66%      { text-shadow: -3px 1px rgba(255, 0, 84, 0.85), 3px -1px rgba(0, 220, 255, 0.85), 0 0 12px rgba(var(--acc-rgb), 0.6); }
+        }
+        /* Holo flicker — city blinks in/out like a broken hologram, exposing
+           the grid behind it. A black overlay between video (z:0) and grid
+           (z:1) — wait, grid is z:1, so layer must be z:1 BUT below grid.
+           Solution: put the dark flicker as part of stage video container. */
+        .layer-holo-flicker {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background: #050708;
+            opacity: 0;
+            mix-blend-mode: multiply;
+            animation: holo-flicker 0.55s steps(7, end) infinite;
+            transition: opacity 0.2s ease;
+            will-change: opacity;
+        }
+        @keyframes holo-flicker {
+            0%, 100% { opacity: calc((1 - var(--sim-signal, 1)) * 0.45); }
+            14%      { opacity: calc((1 - var(--sim-signal, 1)) * 0.85); }
+            28%      { opacity: calc((1 - var(--sim-signal, 1)) * 0.10); }
+            42%      { opacity: calc((1 - var(--sim-signal, 1)) * 0.70); }
+            56%      { opacity: calc((1 - var(--sim-signal, 1)) * 0.20); }
+            70%      { opacity: calc((1 - var(--sim-signal, 1)) * 0.78); }
+            84%      { opacity: calc((1 - var(--sim-signal, 1)) * 0.32); }
+        }
+        /* Apply the SVG distortion filter to the bg video when signal is low.
+           Defined as a hidden SVG <filter id="city-distort"> at body root. */
+        body[data-sim-state="mid"] .stage video {
+            filter:
+                contrast(0.95) saturate(0.5) brightness(0.7) hue-rotate(-30deg)
+                url(#city-distort-mid);
+        }
+        body[data-sim-state="low"] .stage video {
+            filter:
+                contrast(0.75) saturate(0.18) brightness(0.55) hue-rotate(-55deg)
+                url(#city-distort-low);
+            animation: city-jitter 0.18s steps(4) infinite;
+        }
+        @keyframes city-jitter {
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            25%      { transform: translate3d(-2px, 1px, 0); }
+            50%      { transform: translate3d(3px, -2px, 0); }
+            75%      { transform: translate3d(-1px, 2px, 0); }
+        }
+
+        /* Sequential glitch sweep — JS adds .is-el-glitch to a UI element for
+           ~220ms when signal is low, picking them in turn so the page feels
+           like it's tearing apart piece by piece. */
+        .is-el-glitch {
+            animation: el-glitch 0.22s steps(5, end) forwards;
+            will-change: transform, clip-path, filter;
+        }
+        @keyframes el-glitch {
+            0%   { transform: translate(0, 0);     filter: hue-rotate(0deg);   clip-path: none; }
+            20%  { transform: translate(-5px, 2px); filter: hue-rotate(60deg);  clip-path: polygon(0 14%, 100% 14%, 100% 42%, 0 42%, 0 70%, 100% 70%, 100% 100%, 0 100%); }
+            40%  { transform: translate(4px, -1px); filter: hue-rotate(-40deg); clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%, 0 64%, 100% 64%, 100% 86%, 0 86%); }
+            60%  { transform: translate(-2px, 1px); filter: hue-rotate(80deg);  clip-path: polygon(0 30%, 100% 30%, 100% 100%, 0 100%); }
+            80%  { transform: translate(3px, -2px); filter: hue-rotate(-20deg); }
+            100% { transform: translate(0, 0);     filter: hue-rotate(0deg);   clip-path: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .layer-scanlines-amp, .layer-grid-burn, .layer-holo-flicker,
+            .grid-glitch-cell, .tear-bar { animation: none; }
+            body[data-sim-state="low"] .stage video { animation: none; }
         }
 
         /* SIGNAL slider — sits next to the settings cog in .corner.bl */
@@ -9420,12 +9600,32 @@
                 type="video/mp4">
         </video>
     </div>
+    <div class="layer-holo-flicker" aria-hidden="true"></div>
     <div class="grid"></div>
+    <div class="layer-grid-burn" aria-hidden="true"></div>
     <div class="horizon"></div>
     <div class="noise"></div>
     <div class="scanlines"></div>
     <div class="layer-scanlines-amp" aria-hidden="true"></div>
+    <div class="layer-tear" aria-hidden="true"></div>
     <div class="vignette"></div>
+
+    <!-- SVG filters for city distortion at mid/low signal -->
+    <svg width="0" height="0" style="position:absolute;visibility:hidden" aria-hidden="true">
+        <filter id="city-distort-mid">
+            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="3">
+                <animate attributeName="seed" values="3;9;15;21;5;3" dur="2.2s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" scale="14" />
+        </filter>
+        <filter id="city-distort-low">
+            <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="3" seed="7">
+                <animate attributeName="seed" values="7;19;33;11;7" dur="0.8s" repeatCount="indefinite"/>
+                <animate attributeName="baseFrequency" values="0.04;0.08;0.05;0.04" dur="1.2s" repeatCount="indefinite"/>
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" scale="40" />
+        </filter>
+    </svg>
 
     <!-- Audio gate: requests permission for sound on entry -->
     <div class="audio-gate" id="audio-gate" role="dialog" aria-label="Audio permission">
@@ -15200,14 +15400,19 @@ See also: Health Samurai Lab: Game of Pools.`,
         })();
     </script>
 
-    <!-- Signal-of-the-simulation slider: drives --sim-signal var on body -->
+    <!-- Signal-of-the-simulation slider: drives --sim-signal var on body,
+         plus signal-driven JS effects (tear bars, glitch cells, element sweep). -->
     <script>
         (() => {
             const input = document.getElementById('sim-signal-input');
             const valueEl = document.getElementById('sim-signal-value');
+            const tearLayer = document.querySelector('.layer-tear');
             if (!input) return;
+
+            let signal = 1;
             function apply(pct) {
                 const norm = Math.max(0, Math.min(100, pct)) / 100;
+                signal = norm;
                 document.body.style.setProperty('--sim-signal', norm);
                 if (valueEl) valueEl.textContent = Math.round(pct) + '%';
                 document.body.dataset.simState =
@@ -15216,6 +15421,86 @@ See also: Health Samurai Lab: Game of Pools.`,
             }
             input.addEventListener('input', (e) => apply(parseFloat(e.target.value)));
             apply(parseFloat(input.value));
+
+            const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reducedMotion) return;
+
+            // ------ Tear-bars: horizontal RGB-split slices ------
+            function spawnTear() {
+                if (signal > 0.85 || document.hidden) return;
+                const bar = document.createElement('div');
+                bar.className = 'tear-bar';
+                bar.style.top = (Math.random() * window.innerHeight) + 'px';
+                bar.style.setProperty('--h', (1 + Math.random() * 9) + 'px');
+                tearLayer && tearLayer.appendChild(bar);
+                setTimeout(() => bar.remove(), 240);
+            }
+            function tearLoop() {
+                if (!document.hidden && signal < 0.85) {
+                    // Burst sometimes
+                    const burst = Math.random() < 0.18 + (1 - signal) * 0.4
+                        ? 2 + Math.floor(Math.random() * 3) : 1;
+                    for (let i = 0; i < burst; i++) setTimeout(spawnTear, i * 38);
+                }
+                // Frequency: 1.6s at signal=1, ~80ms at signal=0
+                const interval = 80 + signal * signal * 1500 + Math.random() * 600;
+                setTimeout(tearLoop, interval);
+            }
+            setTimeout(tearLoop, 2000);
+
+            // ------ Glitch cells: 80x80 random squares on the grid ------
+            const CELL = 80;
+            function spawnGlitchCell() {
+                if (document.hidden) return;
+                const cell = document.createElement('div');
+                cell.className = 'grid-glitch-cell';
+                const cols = Math.floor(window.innerWidth  / CELL);
+                const rows = Math.floor(window.innerHeight / CELL);
+                cell.style.left = (Math.floor(Math.random() * cols) * CELL) + 'px';
+                cell.style.top  = (Math.floor(Math.random() * rows) * CELL) + 'px';
+                document.body.appendChild(cell);
+                setTimeout(() => cell.remove(), 480);
+            }
+            function cellLoop() {
+                if (!document.hidden && signal < 0.95) {
+                    const burst = Math.random() < 0.22 + (1 - signal) * 0.5
+                        ? 2 + Math.floor(Math.random() * 3) : 1;
+                    for (let i = 0; i < burst; i++) setTimeout(spawnGlitchCell, i * 60);
+                }
+                // 4s pause at signal=1, ~140ms at signal=0
+                const interval = 140 + signal * signal * 3500 + Math.random() * 800;
+                setTimeout(cellLoop, interval);
+            }
+            setTimeout(cellLoop, 2300);
+
+            // ------ Sequential element-glitch sweep ------
+            const GLITCH_SELECTORS = [
+                '.name', '.ctl-fab', '.am-title', '.welcome-block',
+                '.agents-clock', '.releases-block', '.experience-block',
+                '.ctl-fab-eyebrow', '.hud-left-articles', '.agents-list',
+                '.am-eyebrow', '.tasks-block', '.showcase-tip',
+            ];
+            let glitchIdx = 0;
+            function elementGlitchLoop() {
+                if (!document.hidden && signal < 0.45) {
+                    const sel = GLITCH_SELECTORS[glitchIdx % GLITCH_SELECTORS.length];
+                    glitchIdx++;
+                    const els = document.querySelectorAll(sel);
+                    els.forEach(el => {
+                        if (el.classList.contains('is-el-glitch')) return;
+                        el.classList.add('is-el-glitch');
+                        setTimeout(() => el.classList.remove('is-el-glitch'), 260);
+                    });
+                }
+                // 1.5s at signal=0.45, ~80ms at signal=0
+                const interval = 80 + signal * signal * 2000 + Math.random() * 200;
+                setTimeout(elementGlitchLoop, interval);
+            }
+            setTimeout(elementGlitchLoop, 2600);
+
+            document.addEventListener('visibilitychange', () => {
+                // No-op: loops self-skip when hidden, resume on next tick.
+            });
         })();
     </script>
 
