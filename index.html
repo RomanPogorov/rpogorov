@@ -1836,6 +1836,157 @@
             transition: opacity 0.3s ease;
         }
 
+        /* ============ VIBE TERMINAL MODAL — slides down from above ============ */
+        .vibe-term {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(-110%);
+            width: min(880px, calc(100vw - 64px));
+            height: min(540px, calc(100vh - 96px));
+            margin-top: 60px;
+            z-index: 80;
+            display: flex;
+            flex-direction: column;
+            background: #0d0f12;
+            border: 1px solid rgba(var(--acc-rgb), 0.35);
+            border-radius: 10px;
+            box-shadow:
+                0 24px 80px rgba(0, 0, 0, 0.65),
+                0 0 50px rgba(var(--acc-rgb), 0.18),
+                0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1),
+                        opacity 0.4s ease;
+        }
+        .vibe-term.open {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .vibe-term-titlebar {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 9px 14px;
+            background: linear-gradient(180deg, #1f2228 0%, #16181c 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+        .vibe-term-buttons { display: flex; gap: 8px; align-items: center; }
+        .vt-btn {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            padding: 0;
+            position: relative;
+            transition: filter 0.15s;
+        }
+        .vt-btn:hover { filter: brightness(1.1); }
+        .vt-btn.vt-close { background: #ff5f57; }
+        .vt-btn.vt-min   { background: #febc2e; }
+        .vt-btn.vt-max   { background: #28c840; }
+        .vt-btn.vt-close::after,
+        .vt-btn.vt-min::after,
+        .vt-btn.vt-max::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .vibe-term-buttons:hover .vt-btn::after { opacity: 1; }
+        .vt-btn.vt-close::after {
+            background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'><line x1='4' y1='4' x2='9' y2='9' stroke='%23000' stroke-width='1.4'/><line x1='9' y1='4' x2='4' y2='9' stroke='%23000' stroke-width='1.4'/></svg>") center/8px no-repeat;
+        }
+        .vt-btn.vt-min::after {
+            background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'><line x1='3.5' y1='6.5' x2='9.5' y2='6.5' stroke='%23000' stroke-width='1.4'/></svg>") center/8px no-repeat;
+        }
+        .vt-btn.vt-max::after {
+            background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 13 13'><polygon points='4,9 4,4 9,4' fill='%23000'/><polygon points='9,4 9,9 4,9' fill='%23000'/></svg>") center/8px no-repeat;
+        }
+        .vibe-term-title {
+            flex: 1;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            color: rgba(255, 255, 255, 0.55);
+            letter-spacing: 0.06em;
+            margin-right: 56px;            /* counterweight for the buttons block */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .vibe-term-body {
+            flex: 1;
+            position: relative;
+            background: #0a0b0e;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .vibe-term-log {
+            position: absolute;
+            inset: 0;
+            margin: 0;
+            padding: 18px 22px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(var(--acc-rgb), 0.45) transparent;
+            transition: opacity 0.4s ease;
+        }
+        .vibe-term-log .l-cmd  { color: #fff; }
+        .vibe-term-log .l-ok   { color: #28c840; }
+        .vibe-term-log .l-warn { color: #febc2e; }
+        .vibe-term-log .l-err  { color: #ff5f57; }
+        .vibe-term-log .l-acc  { color: var(--acc); }
+        .vibe-term-log .l-dim  { color: rgba(255, 255, 255, 0.45); }
+        .vibe-term-log .caret::after {
+            content: '▌';
+            color: var(--acc);
+            animation: vt-caret 1s steps(2, start) infinite;
+        }
+        @keyframes vt-caret { to { opacity: 0; } }
+        .vibe-term-iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #fff;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+        .vibe-term.deployed .vibe-term-log {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .vibe-term.deployed .vibe-term-iframe {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        /* When live, swap the title bar to look like a browser address bar */
+        .vibe-term.deployed .vibe-term-title {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .vibe-term.deployed .vibe-term-title::before {
+            content: '🔒 ';
+            opacity: 0.6;
+            margin-right: 4px;
+        }
+        @media (max-width: 720px) {
+            .vibe-term { width: calc(100vw - 28px); height: calc(100vh - 80px); margin-top: 40px; }
+        }
+
         /* ============ AMERICOR CASE — namespaced .am-* ============ */
         .am-case {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -7784,6 +7935,22 @@
         </div>
     </section>
 
+    <!-- Vibe Terminal modal — slides down from the top when a Vibed Case is opened -->
+    <div class="vibe-term" id="vibe-term" role="dialog" aria-modal="true" aria-hidden="true">
+        <header class="vibe-term-titlebar">
+            <div class="vibe-term-buttons">
+                <button class="vt-btn vt-close" type="button" aria-label="Close" data-vt-close></button>
+                <button class="vt-btn vt-min" type="button" aria-label="Minimize"></button>
+                <button class="vt-btn vt-max" type="button" aria-label="Maximize"></button>
+            </div>
+            <span class="vibe-term-title" id="vibe-term-title">~/projects/loading — bash</span>
+        </header>
+        <div class="vibe-term-body">
+            <pre class="vibe-term-log" id="vibe-term-log"></pre>
+            <iframe class="vibe-term-iframe" id="vibe-term-iframe" title="Project demo" loading="lazy"></iframe>
+        </div>
+    </div>
+
     <!-- Lightbox (shared across the page; opens images & videos at fullscreen with scrubbing) -->
     <div class="am-lightbox" id="am-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
         <button class="am-lb-close" id="am-lb-close" type="button">close · esc</button>
@@ -11034,12 +11201,14 @@ See also: Health Samurai Lab: Game of Pools.`,
         ];
 
         // Cases (placeholder list) — opens the showcase basement at the matching case index
+        // Vibed Cases — vibe-coded projects, deployed somewhere, opened in the
+        // terminal modal as iframes. URLs filled as projects go live.
         const CASES = [
-            { id: 'cs01', no: 'CS/01', role: 'Lead PD',     name: 'Americor · FinTech',           blurb: 'Multi-brand debt-relief platform — 4-layer DS, IPO redesign, code-first prototypes.', tags: ['FinTech', 'DS', 'Mobile'] },
-            { id: 'cs02', no: 'CS/02', role: 'Senior PD',   name: 'Health Samurai · Healthcare IT', blurb: 'shadCN DS Figma↔code, landing platform 1.5mo→3-4d, generators + FireCamp app.', tags: ['Healthcare', 'AI', 'Tooling'] },
-            { id: 'cs03', no: 'CS/03', role: 'Designer',    name: 'Landing Pipeline',              blurb: 'Markdown-first system replacing the old hand-rolled landings — 4-day cycle.', tags: ['Markdown', 'Pipeline'] },
-            { id: 'cs04', no: 'CS/04', role: 'UX',          name: 'Creditor Card · Lifecycle',     blurb: '11 states, 5 transitions and a programmer-friendly state design for the central object.', tags: ['State Design', 'Motion'] },
-            { id: 'cs05', no: 'CS/05', role: 'Consulting',  name: 'Databricks · Data UX',          blurb: 'Density without overload — navigation reorganized around what users come to do.', tags: ['Data Viz', 'Onboarding'] },
+            { id: 'vb-firecamp',   no: 'VB/01', role: 'React + PWA',  name: 'FireCamp Event App',           blurb: 'Healthcare-IT conference companion built end-to-end in a week — voting, schedule, chat.', tags: ['React', 'PWA', 'Realtime'], stack: 'Vite + React + Cloudflare Pages', url: '' },
+            { id: 'vb-fb-analyzer', no: 'VB/02', role: 'NLP · React',  name: 'FB Community Analyzer',       blurb: '80k+ posts → topic + sentiment classification. Drove the Americor pre-IPO redesign.', tags: ['NLP', 'Sentiment', 'Tooling'], stack: 'Vibe-coded React + LLM pipeline', url: '' },
+            { id: 'vb-landing',    no: 'VB/03', role: 'MD-first',     name: 'Landing Pipeline',             blurb: 'MD → live page with embedded MCP product chat. Cycle 1.5mo → 3–4 days.', tags: ['Markdown', 'MCP', 'AI'], stack: 'Astro + MCP + Markdown', url: '' },
+            { id: 'vb-nsf-sim',    no: 'VB/04', role: 'Sim · React',  name: 'NSF Shortfall Simulator',      blurb: 'Interactive payment-date prediction for tricky business logic — explored end-to-end.', tags: ['React', 'FinSim'], stack: 'React + custom state engine', url: '' },
+            { id: 'vb-kudos',      no: 'VB/05', role: 'GenAI',        name: 'Kudos Image Generator',        blurb: 'Trained on company mascot, ships via TG bot — anyone in the company can generate a kudos card.', tags: ['ComfyUI', 'GenAI', 'TG bot'], stack: 'ComfyUI + Telegram bot', url: '' },
         ];
 
         (() => {
@@ -11089,12 +11258,13 @@ See also: Health Samurai Lab: Game of Pools.`,
                 articlesList.appendChild(li);
             });
 
-            // Build case cards
+            // Build vibed case cards — clicking opens the terminal modal,
+            // which fakes a deploy log then loads the project in an iframe.
             CASES.forEach((c) => {
                 const li = document.createElement('li');
                 li.className = 'case-item';
                 li.tabIndex = 0;
-                li.dataset.openShowcase = c.id;
+                li.dataset.vibeCase = c.id;
                 li.innerHTML = `
                     <div class="case-meta-row">
                         <span class="case-no">${escapeHTML(c.no)}</span>
@@ -11103,10 +11273,9 @@ See also: Health Samurai Lab: Game of Pools.`,
                     <h3 class="case-name">${escapeHTML(c.name)}</h3>
                     <p class="case-blurb">${escapeHTML(c.blurb)}</p>
                     <ul class="case-tags">${c.tags.map(t => `<li class="case-tag">${escapeHTML(t)}</li>`).join('')}</ul>`;
-                // The existing showcase IIFE listens for [data-open-showcase] clicks globally — so a click here
-                // will close any modal, open the showcase, and scroll-snap to the matching case.
+                li.addEventListener('click', () => window.__vibeTerm?.open(c));
                 li.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); li.click(); }
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.__vibeTerm?.open(c); }
                 });
                 casesList.appendChild(li);
             });
@@ -11469,6 +11638,133 @@ See also: Health Samurai Lab: Game of Pools.`,
                     window.__sfx?.tick?.();
                 });
             }
+        })();
+    </script>
+
+    <!-- Vibe Terminal modal: macOS-chrome window, deploy emulation → iframe -->
+    <script>
+        (() => {
+            const term  = document.getElementById('vibe-term');
+            if (!term) return;
+            const log   = document.getElementById('vibe-term-log');
+            const frame = document.getElementById('vibe-term-iframe');
+            const title = document.getElementById('vibe-term-title');
+            const closeBtn = term.querySelector('[data-vt-close]');
+
+            let typeTimer = null;
+            let activeId = null;
+
+            function clearTimers() {
+                if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
+            }
+
+            function buildScript(c) {
+                // Fake deploy log; pretty close to a real Vercel/Cloudflare run.
+                const slug = c.id.replace(/^vb-/, '');
+                return [
+                    { delay: 0,    line: `<span class="l-cmd">$ git push deploy main</span>` },
+                    { delay: 220,  line: `<span class="l-dim">Counting objects: 142, done.</span>` },
+                    { delay: 360,  line: `<span class="l-dim">Compressing objects: 100% (118/118), done.</span>` },
+                    { delay: 460,  line: `<span class="l-dim">Writing objects: 100% (142/142), 1.84 MiB | 6.42 MiB/s, done.</span>` },
+                    { delay: 580,  line: `<span class="l-dim">Total 142 (delta 76), reused 23 (delta 9)</span>` },
+                    { delay: 720,  line: `` },
+                    { delay: 820,  line: `<span class="l-acc">▸ deploy.sh starting…</span>` },
+                    { delay: 940,  line: `<span class="l-dim">→ install dependencies</span>` },
+                    { delay: 1240, line: `<span class="l-ok">✓ pnpm install · 218 packages · 4.2s</span>` },
+                    { delay: 1380, line: `<span class="l-dim">→ build production bundle</span>` },
+                    { delay: 1840, line: `<span class="l-ok">✓ vite build · ${ (Math.random()*120+80).toFixed(0) } modules · ${(Math.random()*1.6+0.8).toFixed(1)}s</span>` },
+                    { delay: 2000, line: `<span class="l-dim">→ optimize assets, generate sourcemap</span>` },
+                    { delay: 2280, line: `<span class="l-ok">✓ output: dist/ · 184 kB gzipped · cdn ready</span>` },
+                    { delay: 2440, line: `<span class="l-dim">→ uploading to edge nodes…</span>` },
+                    { delay: 2900, line: `<span class="l-ok">✓ deployed: 14 regions · cold-start ≈ 38ms</span>` },
+                    { delay: 3060, line: `` },
+                    { delay: 3160, line: `<span class="l-acc">▸ live at: https://${slug}.clauderunner.dev</span>` },
+                    { delay: 3300, line: `<span class="l-dim">opening preview…</span>` },
+                ];
+            }
+
+            function open(c) {
+                if (!c) return;
+                activeId = c.id;
+                term.classList.remove('deployed');
+                term.classList.add('open');
+                term.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('vibe-term-open');
+                title.textContent = `~/projects/${c.id} — bash`;
+                log.innerHTML = '';
+                frame.removeAttribute('src');
+
+                // Type out the deploy log
+                const script = buildScript(c);
+                clearTimers();
+                script.forEach(step => {
+                    const t = setTimeout(() => {
+                        if (activeId !== c.id) return;
+                        log.insertAdjacentHTML('beforeend', step.line + '\n');
+                        log.scrollTop = log.scrollHeight;
+                    }, step.delay);
+                });
+
+                // After the log finishes, swap to iframe (use the project URL or
+                // a stub page if not configured yet).
+                const totalDelay = script[script.length - 1].delay + 600;
+                typeTimer = setTimeout(() => {
+                    if (activeId !== c.id) return;
+                    title.textContent = c.url
+                        ? c.url.replace(/^https?:\/\//, '')
+                        : `${c.id}.clauderunner.dev — preview unavailable yet`;
+                    if (c.url) {
+                        frame.src = c.url;
+                    } else {
+                        // Inline placeholder using srcdoc so we don't fetch a real page
+                        const html = `<!doctype html><html><head><meta charset="utf-8"><title>${c.name}</title>
+                            <style>
+                                body{margin:0;font-family:'JetBrains Mono',monospace;background:#0d0f12;color:#cbd5e1;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:18px;padding:32px;text-align:center;}
+                                h1{margin:0;font-size:20px;letter-spacing:0.04em;color:#e2e8f0;}
+                                p{margin:0;color:#94a3b8;font-size:13px;line-height:1.6;max-width:540px;}
+                                .badge{display:inline-flex;gap:8px;align-items:center;padding:8px 14px;border:1px solid rgba(0,255,136,0.4);border-radius:24px;color:#00ff88;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;}
+                                .stack{font-size:12px;color:#64748b;}
+                            </style></head>
+                            <body>
+                                <span class="badge">▸ deployed</span>
+                                <h1>${c.name}</h1>
+                                <p>${c.blurb}</p>
+                                <p class="stack">${c.stack || ''}</p>
+                                <p style="font-size:11px;color:#475569;">live URL drops in soon — for now this is the preview shell.</p>
+                            </body></html>`;
+                        frame.srcdoc = html;
+                    }
+                    term.classList.add('deployed');
+                }, totalDelay);
+            }
+            function close() {
+                term.classList.remove('open');
+                term.classList.remove('deployed');
+                term.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('vibe-term-open');
+                activeId = null;
+                clearTimers();
+                // Stop iframe + log
+                setTimeout(() => {
+                    if (term.classList.contains('open')) return;
+                    log.innerHTML = '';
+                    frame.removeAttribute('src');
+                    frame.removeAttribute('srcdoc');
+                }, 700);
+            }
+
+            closeBtn.addEventListener('click', close);
+            // Esc closes — capture phase so it wins over showcase ESC
+            document.addEventListener('keydown', (e) => {
+                if (!term.classList.contains('open')) return;
+                if (e.key === 'Escape') {
+                    e.stopImmediatePropagation();
+                    e.preventDefault();
+                    close();
+                }
+            }, true);
+
+            window.__vibeTerm = { open, close };
         })();
     </script>
 
