@@ -4062,7 +4062,9 @@
         .am-media-frame {
             position: relative;
             width: 100%;
-            background: #0a0d10;
+            background-color: #16191e;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><path d='M20 16 L20 24 M16 20 L24 20' stroke='rgba(255,255,255,0.06)' stroke-width='1' fill='none'/></svg>");
+            background-size: 40px 40px;
             border: 1px solid rgba(var(--acc-rgb), 0.22);
             overflow: hidden;
             cursor: zoom-in;
@@ -11930,6 +11932,143 @@
                 </div>
             </div>
 
+            <!-- Roadmap recap — Gantt-style timeline of all parallel workstreams -->
+            <article class="cp-section">
+                <div class="cp-sec-num">— Roadmap recap</div>
+                <h2 class="cp-sec-title">Хронология — c Q1 2024 по&nbsp;сейчас</h2>
+                <div class="cp-sec-body cp-sec-body-narrow">
+                    <p>Восемь параллельных линий работы. Цвет полоски — про интенсивность: <em>основное направление</em>, продуктовая работа, фон или короткий заход. Многое шло параллельно — поэтому редизайн, дизайн-система и code-first процесс пересекаются в одних кварталах.</p>
+                </div>
+
+                <div class="cp-fullbleed am-tl-bleed">
+                    <div class="am-tl-frame">
+                        <div class="am-tl-headstrip">
+                            <div class="am-tl-stamp">// timeline · <b>Q1 2024 → Q4 2025</b> · 8 streams</div>
+                            <div class="am-tl-legend">
+                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--primary"></i> Основное направление</span>
+                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--product"></i> Работа над продуктом</span>
+                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--bg"></i> Идёт фоном</span>
+                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--short"></i> Короткий проект</span>
+                            </div>
+                        </div>
+
+                        <div class="am-tl-grid" style="--am-tl-cols: 8;" data-am-tl>
+                            <div class="am-tl-row am-tl-row--head">
+                                <div class="am-tl-label" aria-hidden="true"></div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-quarter" style="--c: 1">Q1 24</div>
+                                    <div class="am-tl-quarter" style="--c: 2">Q2 24</div>
+                                    <div class="am-tl-quarter" style="--c: 3">Q3 24</div>
+                                    <div class="am-tl-quarter" style="--c: 4">Q4 24</div>
+                                    <div class="am-tl-quarter" style="--c: 5">Q1 25</div>
+                                    <div class="am-tl-quarter" style="--c: 6">Q2 25</div>
+                                    <div class="am-tl-quarter" style="--c: 7">Q3 25</div>
+                                    <div class="am-tl-quarter is-now" style="--c: 8">Q4 25 <span class="am-tl-now">NOW</span></div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 60ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Онбординг и аудит</span>
+                                    <span class="am-tl-sub">01</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 1; --e: 1;" title="Q1 2024 — погружение в продукт, аудит UX/визуала, карта стейкхолдеров">Аудит</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 120ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Дизайн-система</span>
+                                    <span class="am-tl-sub">02</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 1; --e: 2;" title="4-слойная архитектура: root → semantic → brand → platform">4 слоя · root → platform</div>
+                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 3; --e: 6;" title="Внедрение DS: iOS / Android / Web, синхронизация Figma ↔ код">Внедрение iOS / Android / Web</div>
+                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 7; --e: 8;" title="Покрытие 50–60% → 100% к концу года">Покрытие → 100%</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 180ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Pre-IPO редизайн</span>
+                                    <span class="am-tl-sub">03</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 2; --e: 3;" title="Четыре варианта концепции, тестирование на реальных пользователях">4 варианта концепции</div>
+                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 4; --e: 5;" title="v3 (адаптивный флоу) — shipped at +18.2% conversion">v3 · shipped +18.2%</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 240ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Мультибренд</span>
+                                    <span class="am-tl-sub">04</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 3; --e: 7;" title="Subsidiaries — отдельные визуальные идентификации по штатам, унифицированный фундамент">Subsidiaries · цвета по штатам</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 300ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Code-first процесс</span>
+                                    <span class="am-tl-sub">05</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--bg" style="--s: 4; --e: 8;" title="Прототип в коде → handover. React + Storybook как source of truth">React + Storybook · prototype → handover</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 360ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Vibe-code прототипы</span>
+                                    <span class="am-tl-sub">06</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 5; --e: 5;" title="Анализатор Facebook-сообщества: 80k+ сообщений → topic + sentiment">FB Analyzer · 80k msg</div>
+                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 6; --e: 6;" title="NSF Shortfall simulator — для логики проблемных дат списания">NSF Simulator</div>
+                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 7; --e: 7;" title="Code-first прототип Community-раздела для валидации">Community demo</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 420ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Раздел Community</span>
+                                    <span class="am-tl-sub">07</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 7; --e: 8;" title="Reddit-style лента внутри приложения, целиком собран в коде, в продакшене">Reddit-style → prod</div>
+                                </div>
+                            </div>
+
+                            <div class="am-tl-row" style="--am-tl-delay: 480ms;">
+                                <div class="am-tl-label">
+                                    <span class="am-tl-dot"></span>
+                                    <span class="am-tl-name">Раздел Webinars</span>
+                                    <span class="am-tl-sub">08</span>
+                                </div>
+                                <div class="am-tl-track">
+                                    <div class="am-tl-bar am-tl-bar--planned" style="--s: 8; --e: 8;" title="Новый раздел для образовательного контента — в работе">В работе</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="am-tl-foot">
+                            <span>// 8 streams · 8 quarters · <b>shipped + ongoing</b></span>
+                            <span>scroll ↓ before / after</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
             <nav class="cp-timeline" aria-label="Case timeline">
                 <ol class="cp-timeline-list">
                     <li><button class="cp-tl-item active" data-target="cp-sec-01" type="button">
@@ -12225,142 +12364,6 @@
                 </div>
             </article>
 
-            <!-- Roadmap recap — Gantt-style timeline of all parallel workstreams -->
-            <article class="cp-section">
-                <div class="cp-sec-num">— Roadmap recap</div>
-                <h2 class="cp-sec-title">Хронология — c Q1 2024 по&nbsp;сейчас</h2>
-                <div class="cp-sec-body cp-sec-body-narrow">
-                    <p>Восемь параллельных линий работы. Цвет полоски — про интенсивность: <em>основное направление</em>, продуктовая работа, фон или короткий заход. Многое шло параллельно — поэтому редизайн, дизайн-система и code-first процесс пересекаются в одних кварталах.</p>
-                </div>
-
-                <div class="cp-fullbleed am-tl-bleed">
-                    <div class="am-tl-frame">
-                        <div class="am-tl-headstrip">
-                            <div class="am-tl-stamp">// timeline · <b>Q1 2024 → Q4 2025</b> · 8 streams</div>
-                            <div class="am-tl-legend">
-                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--primary"></i> Основное направление</span>
-                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--product"></i> Работа над продуктом</span>
-                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--bg"></i> Идёт фоном</span>
-                                <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--short"></i> Короткий проект</span>
-                            </div>
-                        </div>
-
-                        <div class="am-tl-grid" style="--am-tl-cols: 8;" data-am-tl>
-                            <div class="am-tl-row am-tl-row--head">
-                                <div class="am-tl-label" aria-hidden="true"></div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-quarter" style="--c: 1">Q1 24</div>
-                                    <div class="am-tl-quarter" style="--c: 2">Q2 24</div>
-                                    <div class="am-tl-quarter" style="--c: 3">Q3 24</div>
-                                    <div class="am-tl-quarter" style="--c: 4">Q4 24</div>
-                                    <div class="am-tl-quarter" style="--c: 5">Q1 25</div>
-                                    <div class="am-tl-quarter" style="--c: 6">Q2 25</div>
-                                    <div class="am-tl-quarter" style="--c: 7">Q3 25</div>
-                                    <div class="am-tl-quarter is-now" style="--c: 8">Q4 25 <span class="am-tl-now">NOW</span></div>
-                                </div>
-                            </div>
-
-                            <div class="am-tl-row" style="--am-tl-delay: 60ms;">
-                                <div class="am-tl-label">
-                                    <span class="am-tl-dot"></span>
-                                    <span class="am-tl-name">Онбординг и аудит</span>
-                                    <span class="am-tl-sub">01</span>
-                                </div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 1; --e: 1;" title="Q1 2024 — погружение в продукт, аудит UX/визуала, карта стейкхолдеров">Аудит</div>
-                                </div>
-                            </div>
-
-                            <div class="am-tl-row" style="--am-tl-delay: 120ms;">
-                                <div class="am-tl-label">
-                                    <span class="am-tl-dot"></span>
-                                    <span class="am-tl-name">Дизайн-система</span>
-                                    <span class="am-tl-sub">02</span>
-                                </div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 1; --e: 2;" title="4-слойная архитектура: root → semantic → brand → platform">4 слоя · root → platform</div>
-                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 3; --e: 6;" title="Внедрение DS: iOS / Android / Web, синхронизация Figma ↔ код">Внедрение iOS / Android / Web</div>
-                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 7; --e: 8;" title="Покрытие 50–60% → 100% к концу года">Покрытие → 100%</div>
-                                </div>
-                            </div>
-
-                            <div class="am-tl-row" style="--am-tl-delay: 180ms;">
-                                <div class="am-tl-label">
-                                    <span class="am-tl-dot"></span>
-                                    <span class="am-tl-name">Pre-IPO редизайн</span>
-                                    <span class="am-tl-sub">03</span>
-                                </div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 2; --e: 3;" title="Четыре варианта концепции, тестирование на реальных пользователях">4 варианта концепции</div>
-                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 4; --e: 5;" title="v3 (адаптивный флоу) — shipped at +18.2% conversion">v3 · shipped +18.2%</div>
-                                </div>
-                            </div>
-
-                            <div class="am-tl-row" style="--am-tl-delay: 240ms;">
-                                <div class="am-tl-label">
-                                    <span class="am-tl-dot"></span>
-                                    <span class="am-tl-name">Мультибренд</span>
-                                    <span class="am-tl-sub">04</span>
-                                </div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-bar am-tl-bar--product" style="--s: 3; --e: 7;" title="Subsidiaries — отдельные визуальные идентификации по штатам, унифицированный фундамент">Subsidiaries · цвета по штатам</div>
-                                </div>
-                            </div>
-
-                            <div class="am-tl-row" style="--am-tl-delay: 300ms;">
-                                <div class="am-tl-label">
-                                    <span class="am-tl-dot"></span>
-                                    <span class="am-tl-name">Code-first процесс</span>
-                                    <span class="am-tl-sub">05</span>
-                                </div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-bar am-tl-bar--bg" style="--s: 4; --e: 8;" title="Прототип в коде → handover. React + Storybook как source of truth">React + Storybook · prototype → handover</div>
-                                </div>
-                            </div>
-
-                            <div class="am-tl-row" style="--am-tl-delay: 360ms;">
-                                <div class="am-tl-label">
-                                    <span class="am-tl-dot"></span>
-                                    <span class="am-tl-name">Vibe-code прототипы</span>
-                                    <span class="am-tl-sub">06</span>
-                                </div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 5; --e: 5;" title="Анализатор Facebook-сообщества: 80k+ сообщений → topic + sentiment">FB Analyzer · 80k msg</div>
-                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 6; --e: 6;" title="NSF Shortfall simulator — для логики проблемных дат списания">NSF Simulator</div>
-                                    <div class="am-tl-bar am-tl-bar--short" style="--s: 7; --e: 7;" title="Code-first прототип Community-раздела для валидации">Community demo</div>
-                                </div>
-                            </div>
-
-                            <div class="am-tl-row" style="--am-tl-delay: 420ms;">
-                                <div class="am-tl-label">
-                                    <span class="am-tl-dot"></span>
-                                    <span class="am-tl-name">Раздел Community</span>
-                                    <span class="am-tl-sub">07</span>
-                                </div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-bar am-tl-bar--primary" style="--s: 7; --e: 8;" title="Reddit-style лента внутри приложения, целиком собран в коде, в продакшене">Reddit-style → prod</div>
-                                </div>
-                            </div>
-
-                            <div class="am-tl-row" style="--am-tl-delay: 480ms;">
-                                <div class="am-tl-label">
-                                    <span class="am-tl-dot"></span>
-                                    <span class="am-tl-name">Раздел Webinars</span>
-                                    <span class="am-tl-sub">08</span>
-                                </div>
-                                <div class="am-tl-track">
-                                    <div class="am-tl-bar am-tl-bar--planned" style="--s: 8; --e: 8;" title="Новый раздел для образовательного контента — в работе">В работе</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="am-tl-foot">
-                            <span>// 8 streams · 8 quarters · <b>shipped + ongoing</b></span>
-                            <span>scroll ↓ before / after</span>
-                        </div>
-                    </div>
-                </div>
-            </article>
 
             <!-- Before/After comparator — moved to bottom, after §08 metrics -->
             <article class="cp-section">
