@@ -9869,20 +9869,20 @@
         .perf-fps.bad  { color: #ff5252; }
         .perf-jank.bad { color: #ff5252; }
 
-        /* R3F bg — sits where .stage was. Fades in only once BOTH the
-           react-three-fiber scene has mounted AND body.video-revealed is set.
-           That preserves the original "bare gradient + grid" beat before the
-           video joins, then the WebGL canvas takes over with a 1.2s fade. */
+        /* R3F bg — sits where .stage was. ONLY active while the user is
+           pulling the signal slider down (body.sim-engaged). At idle the
+           original HTML video plays straight, no WebGL load, no fan noise.
+           Fades crossover gracefully when engaging or relaxing the slider. */
         .r3f-bg {
             position: fixed;
             inset: 0;
             z-index: 0;
             opacity: 0;
-            transition: opacity 1.2s ease;
+            transition: opacity 0.6s ease;
             pointer-events: none;
         }
-        body.r3f-active.video-revealed .r3f-bg { opacity: 1; }
-        body.r3f-active.video-revealed .stage video { opacity: 0 !important; }
+        body.r3f-active.video-revealed.sim-engaged .r3f-bg { opacity: 1; }
+        body.r3f-active.video-revealed.sim-engaged .stage video { opacity: 0 !important; }
         .r3f-bg canvas { display: block; }
     </style>
 
@@ -15898,6 +15898,10 @@ See also: Health Samurai Lab: Game of Pools.`,
                 const norm = Math.max(0, Math.min(100, pct)) / 100;
                 signal = norm;
                 document.body.style.setProperty('--sim-signal', norm);
+                // Engaged means the user has touched the slider enough to
+                // need WebGL effects. Idle (>0.95) just shows the original
+                // HTML video bg — R3F frameloop pauses, GPU stays cool.
+                document.body.classList.toggle('sim-engaged', norm < 0.95);
                 // Cubic falloff so heavy layers stay nearly invisible above
                 // mid-signal and only ramp up sharply near zero.
                 const inv = 1 - norm;
@@ -17485,32 +17489,38 @@ See also: Health Samurai Lab: Game of Pools.`,
             );
         }
 
-        // Watch body class for overlay states. Used to pause the WebGL frame
-        // loop when something else covers the canvas, freeing up GPU.
-        function useOverlayState() {
+        // Watch body class for overlay states + signal-engaged. Used to
+        // pause the WebGL frame loop when nothing visible is using it.
+        function useFrameloopState() {
             const overlays = ['showcase-open', 'case-open', 'dw-open', 'reader-open',
                               'left-pane-open', 'vibe-term-open', 'chat-fullscreen', 'ctl-open'];
-            const compute = () => overlays.some(c => document.body.classList.contains(c));
-            const [open, setOpen] = useState(compute);
+            const compute = () => {
+                const cls = document.body.classList;
+                const overlayOpen = overlays.some(c => cls.contains(c));
+                const simEngaged = cls.contains('sim-engaged');
+                // Render only when the WebGL canvas is the visible bg.
+                return !overlayOpen && simEngaged;
+            };
+            const [active, setActive] = useState(compute);
             useEffect(() => {
-                const update = () => setOpen(compute());
+                const update = () => setActive(compute());
                 const obs = new MutationObserver(update);
                 obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
                 update();
                 return () => obs.disconnect();
             }, []);
-            return open;
+            return active;
         }
 
         function App() {
-            const overlayOpen = useOverlayState();
+            const renderActive = useFrameloopState();
             useEffect(() => {
                 document.body.classList.add('r3f-active');
                 return () => document.body.classList.remove('r3f-active');
             }, []);
             return (
                 <Canvas
-                    frameloop={overlayOpen ? 'never' : 'always'}
+                    frameloop={renderActive ? 'always' : 'never'}
                     gl={{ antialias: false, alpha: false, powerPreference: 'high-performance' }}
                     dpr={[1, 1]}
                     camera={{ position: [0, 1.5, 7.6], fov: 62 }}
