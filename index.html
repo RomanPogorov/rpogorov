@@ -2589,32 +2589,14 @@
             color: #4a5160;
             margin: 0;
         }
-        /* Iteration / decision blocks — Inter eyebrow, no // prefix */
-        .dc-page[data-deep-id="engagement-bright"] .dc-iter {
-            border-top-color: #e8ebf0;
-            padding: 22px 0 8px;
-            margin: 22px 0;
-        }
-        .dc-page[data-deep-id="engagement-bright"] .dc-iter:first-of-type { padding-top: 8px; }
-        .dc-page[data-deep-id="engagement-bright"] .dc-iter .label {
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--acc);
-            margin: 0 0 10px;
-        }
-        .dc-page[data-deep-id="engagement-bright"] .dc-iter .label::before { content: ''; }
-        .dc-page[data-deep-id="engagement-bright"] .dc-iter .body {
-            color: #2a313e;
-            max-width: 760px;
-        }
+        /* Iteration / decision blocks — inherit the global .dc-bright card
+           style (soft fill, border, 20x24 padding); just bump body type. */
         .dc-page[data-deep-id="engagement-bright"] .dc-iter .body p {
             font-size: 17px;
             line-height: 1.6;
             margin: 0 0 8px;
         }
+        .dc-page[data-deep-id="engagement-bright"] .dc-iter .body p:last-child { margin-bottom: 0; }
         /* Figures — generous breathing room, centered editorial captions */
         .dc-page[data-deep-id="engagement-bright"] .dc-figure {
             margin: 32px 0 64px;
@@ -17200,12 +17182,16 @@
         (() => {
             const ids = ['offer-acceptance', 'engagement'];
             // Strip the `// ` cyberpunk eyebrow prefix from rich body content
-            // so the bright twin reads as plain editorial typography.
+            // and capitalise the first letter of every h2/h3 so the bright
+            // twin reads as plain editorial typography (Sentence case).
+            const capFirst = (s) => s.length ? s.charAt(0).toUpperCase() + s.slice(1) : s;
             const stripEyebrows = (body) => body
                 .replace(/<h2([^>]*)>\/\/\s+/g, '<h2$1>')
                 .replace(/<h3([^>]*)>\/\/\s+/g, '<h3$1>')
                 .replace(/<figcaption([^>]*)>\/\/\s+/g, '<figcaption$1>')
-                .replace(/<span class="icon">\/\/\s+/g, '<span class="icon">');
+                .replace(/<span class="icon">\/\/\s+/g, '<span class="icon">')
+                .replace(/<(h2|h3)([^>]*)>([^<]+)<\/\1>/g,
+                    (_m, tag, attrs, content) => `<${tag}${attrs}>${capFirst(content)}</${tag}>`);
             for (const id of ids) {
                 const idx = DEEP_CASES.findIndex(c => c.id === id);
                 if (idx < 0) continue;
@@ -17323,6 +17309,20 @@
                 page.classList.toggle('dc-rich', !!(c.body && c.body.trimStart().startsWith('<')));
                 page.classList.toggle('dc-bright', c.theme === 'bright');
                 page.dataset.deepId = c.id;
+                // Auto-tag portrait media so .dc-figure-portrait caps it to a
+                // phone-sized column (~360px) instead of full-width.
+                elBody.querySelectorAll('.dc-figure img, .dc-figure video').forEach(media => {
+                    const tag = () => {
+                        const w = media.naturalWidth || media.videoWidth || 0;
+                        const h = media.naturalHeight || media.videoHeight || 0;
+                        if (w && h && h > w * 1.25) {
+                            media.closest('.dc-figure')?.classList.add('dc-figure-portrait');
+                        }
+                    };
+                    if ((media.naturalWidth || media.videoWidth) > 0) tag();
+                    else media.addEventListener('loadedmetadata', tag, { once: true })
+                      || media.addEventListener('load', tag, { once: true });
+                });
                 renderCrumbs(c);
             }
 
