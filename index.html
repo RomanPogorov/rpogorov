@@ -2199,12 +2199,17 @@
         }
         .dc-page.dc-bright .dc-tradeoff .label { color: var(--acc); }
         .dc-page.dc-bright .dc-tradeoff p { color: #2d3340; }
-        /* Figures */
+        /* Figures — bright theme strips the cyberpunk frame; media sits
+           naked on the page background, only a small caption underneath. */
         .dc-page.dc-bright .dc-figure {
-            background: #fff;
-            border-color: #e2e6ec;
+            background: transparent;
+            border: 0;
+            padding: 0;
         }
-        .dc-page.dc-bright .dc-figure figcaption { color: #6b7280; }
+        .dc-page.dc-bright .dc-figure figcaption {
+            color: #6b7280;
+            padding: 10px 0 0;
+        }
         /* Callout */
         .dc-page.dc-bright .dc-callout {
             background: rgba(29, 78, 216, 0.05);
