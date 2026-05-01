@@ -16612,10 +16612,10 @@ See also: Health Samurai Lab: Game of Pools.`,
             return s;
         }
 
-        // Mount bg.mp4 on a fullscreen plane in front of the LowPolyCity.
-        // As signal drops near zero, plane fades out and the underlying
-        // low-poly mesh of the same scene reveals — like the simulation
-        // dropped its texture and you see the wireframe city beneath.
+        // Mount bg.mp4 on a fullscreen plane in front of the LowPolyScene.
+        // Plane is opaque from signal=1 down to signal=0.10, then fades sharp
+        // to zero by signal=0 — so the wireframe scene only reveals at the
+        // very bottom of the slider.
         function VideoBackdrop() {
             const signal = useSignal();
             const matRef = useRef();
@@ -16654,9 +16654,9 @@ See also: Health Samurai Lab: Game of Pools.`,
                 }
                 texture.offset.x = burst.current.ox;
                 texture.offset.y = burst.current.oy;
-                // Fade: opacity 1 above signal=0.30, linear down to 0 at signal=0.04.
+                // Fade: opacity 1 above signal=0.10, fades to 0 at signal=0.
                 if (matRef.current) {
-                    const op = Math.max(0, Math.min(1, (signal - 0.04) / 0.26));
+                    const op = Math.max(0, Math.min(1, signal / 0.10));
                     matRef.current.opacity = op;
                 }
             });
@@ -16676,45 +16676,91 @@ See also: Health Samurai Lab: Game of Pools.`,
             );
         }
 
-        // Low-poly mesh that mirrors the city's silhouette from the bg.mp4 —
-        // central tower, jagged structures, ground plane, distant horizon.
-        // All wireframe in accent green, pulsing window-dots on buildings,
-        // fades in as signal drops below ~0.3.
-        function Tower({ position, opacity, scale = 1 }) {
+        // ---- Low-poly mesh of the actual bg.mp4 scene ----
+        // Foreground: cyberpunk lounge (sofas + coffee table + lamp + ceiling
+        // arch). Mid-ground: gazebo dome with a tree. Background: mushroom-
+        // headed cyber towers + city skyline. All in accent-green wireframe.
+
+        // Helper — wire box with a single twinkling window-dot on the +z face.
+        function WireBox({ size = [1, 1, 1], position = [0, 0, 0], rotation = [0, 0, 0],
+                           opacity = 1, fillTone = 0.85, twinkleSeed = null, twinkleScale = 0.08 }) {
             const ref = useRef();
-            useFrame((state, dt) => {
-                if (!ref.current) return;
-                ref.current.rotation.y += dt * 0.05;
+            const winRef = useRef();
+            useFrame((state) => {
+                if (twinkleSeed !== null && winRef.current) {
+                    const t = state.clock.elapsedTime + twinkleSeed;
+                    winRef.current.material.opacity =
+                        opacity * (0.5 + Math.abs(Math.sin(t * 1.7)) * 0.5);
+                }
             });
             return (
-                <group ref={ref} position={position} scale={scale}>
-                    {/* Wide base */}
-                    <mesh position={[0, 0.5, 0]}>
-                        <boxGeometry args={[1.6, 1, 1.6]} />
-                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity} />
+                <group position={position} rotation={rotation}>
+                    <mesh>
+                        <boxGeometry args={size} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * fillTone} />
                     </mesh>
-                    {/* Lower body */}
-                    <mesh position={[0, 2.5, 0]}>
-                        <boxGeometry args={[1.2, 3, 1.2]} />
-                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity} />
+                    {twinkleSeed !== null && (
+                        <mesh ref={winRef} position={[size[0] * 0.32, size[1] * 0.18, size[2] * 0.51]}>
+                            <planeGeometry args={[twinkleScale, twinkleScale]} />
+                            <meshBasicMaterial color="#a8ffd9" transparent opacity={opacity} />
+                        </mesh>
+                    )}
+                </group>
+            );
+        }
+
+        // Sofa: low rectangular base + back rest behind it.
+        function Sofa({ position = [0, 0, 0], rotation = [0, 0, 0], length = 2.4, opacity = 1 }) {
+            return (
+                <group position={position} rotation={rotation}>
+                    <mesh position={[0, 0.30, 0]}>
+                        <boxGeometry args={[length, 0.55, 0.85]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.9} />
                     </mesh>
-                    {/* Upper body */}
-                    <mesh position={[0, 5.0, 0]}>
-                        <boxGeometry args={[0.8, 2, 0.8]} />
-                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity} />
+                    {/* Back rest, slightly tilted */}
+                    <mesh position={[0, 0.75, -0.32]}>
+                        <boxGeometry args={[length, 0.65, 0.18]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.9} />
                     </mesh>
-                    {/* Spire — narrow cone */}
-                    <mesh position={[0, 6.6, 0]}>
-                        <coneGeometry args={[0.32, 1.2, 6]} />
-                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity} />
+                </group>
+            );
+        }
+
+        // Coffee table — long flat box with a candle (small bright sphere) on top.
+        function CoffeeTable({ position = [0, 0, 0], opacity = 1 }) {
+            const candleRef = useRef();
+            useFrame((state) => {
+                if (!candleRef.current) return;
+                const t = state.clock.elapsedTime;
+                candleRef.current.material.opacity = opacity * (0.7 + Math.sin(t * 5) * 0.25);
+            });
+            return (
+                <group position={position}>
+                    <mesh position={[0, 0.32, 0]}>
+                        <boxGeometry args={[1.6, 0.10, 0.9]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.85} />
                     </mesh>
-                    {/* Antenna */}
-                    <mesh position={[0, 7.7, 0]}>
-                        <cylinderGeometry args={[0.04, 0.04, 1.4, 5]} />
-                        <meshBasicMaterial color="#a8ffd9" transparent opacity={opacity * 0.9} />
+                    <mesh ref={candleRef} position={[0, 0.50, 0]}>
+                        <sphereGeometry args={[0.07, 8, 8]} />
+                        <meshBasicMaterial color="#ccffe0" transparent opacity={opacity} />
                     </mesh>
-                    {/* Beacon at top */}
-                    <mesh position={[0, 8.5, 0]}>
+                </group>
+            );
+        }
+
+        // Floor lamp — thin pole + cone shade + emissive bulb sphere.
+        function FloorLamp({ position = [0, 0, 0], opacity = 1 }) {
+            return (
+                <group position={position}>
+                    <mesh position={[0, 0.85, 0]}>
+                        <cylinderGeometry args={[0.04, 0.04, 1.7, 6]} />
+                        <meshBasicMaterial color="#00ff88" transparent opacity={opacity * 0.7} />
+                    </mesh>
+                    <mesh position={[0, 1.7, 0]}>
+                        <coneGeometry args={[0.30, 0.45, 8]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.85} />
+                    </mesh>
+                    <mesh position={[0, 1.55, 0]}>
                         <sphereGeometry args={[0.10, 8, 8]} />
                         <meshBasicMaterial color="#ccffe0" transparent opacity={opacity} />
                     </mesh>
@@ -16722,76 +16768,190 @@ See also: Health Samurai Lab: Game of Pools.`,
             );
         }
 
-        function Building({ position, height, width = 1, depth = 1, opacity, twinkleSeed = 0 }) {
+        // Vaulted ceiling arch — stacked rotated boxes forming a curve overhead.
+        function CeilingArch({ position = [0, 4, 0], width = 12, opacity = 1 }) {
+            const segs = 9;
+            const halfW = width / 2;
+            const meshes = [];
+            for (let i = 0; i < segs; i++) {
+                const a = (i / (segs - 1)) * Math.PI;     // 0..π
+                const x = -halfW + (i / (segs - 1)) * width;
+                const y = Math.sin(a) * 1.0;              // arch height
+                meshes.push(
+                    <mesh key={i} position={[x, y, 0]} rotation={[0, 0, Math.cos(a) * 0.4]}>
+                        <boxGeometry args={[width / segs * 1.05, 0.30, 1.2]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.55} />
+                    </mesh>
+                );
+            }
+            return <group position={position}>{meshes}</group>;
+        }
+
+        // Octagonal cage gazebo with a small dome on top.
+        function Gazebo({ position = [0, 0, 0], opacity = 1 }) {
             const ref = useRef();
-            const winRef = useRef();
+            useFrame((state, dt) => { if (ref.current) ref.current.rotation.y += dt * 0.04; });
+            return (
+                <group ref={ref} position={position}>
+                    {/* 8 vertical posts on a circle of radius 0.9 */}
+                    {Array.from({ length: 8 }).map((_, i) => {
+                        const a = (i / 8) * Math.PI * 2;
+                        const x = Math.cos(a) * 0.9;
+                        const z = Math.sin(a) * 0.9;
+                        return (
+                            <mesh key={i} position={[x, 0.7, z]}>
+                                <cylinderGeometry args={[0.025, 0.025, 1.4, 5]} />
+                                <meshBasicMaterial color="#00ff88" transparent opacity={opacity * 0.7} />
+                            </mesh>
+                        );
+                    })}
+                    {/* Roof — flat octagon ring + dome */}
+                    <mesh position={[0, 1.4, 0]}>
+                        <cylinderGeometry args={[0.95, 0.95, 0.06, 8]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.7} />
+                    </mesh>
+                    <mesh position={[0, 1.55, 0]}>
+                        <sphereGeometry args={[0.7, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.5]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.65} />
+                    </mesh>
+                </group>
+            );
+        }
+
+        // Tree silhouette — trunk cylinder + sphere canopy.
+        function Tree({ position = [0, 0, 0], opacity = 1 }) {
+            return (
+                <group position={position}>
+                    <mesh position={[0, 0.6, 0]}>
+                        <cylinderGeometry args={[0.07, 0.10, 1.2, 5]} />
+                        <meshBasicMaterial color="#00ff88" transparent opacity={opacity * 0.7} />
+                    </mesh>
+                    <mesh position={[0, 1.5, 0]}>
+                        <icosahedronGeometry args={[0.85, 0]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.55} />
+                    </mesh>
+                </group>
+            );
+        }
+
+        // Mushroom cyber-tower — cylinder shaft + flat dome cap on top.
+        function MushroomTower({ position = [0, 0, 0], height = 6, capRadius = 1.2, opacity = 1, seed = 0 }) {
+            const blinkRef = useRef();
             useFrame((state) => {
-                if (!winRef.current) return;
-                // Twinkling window dot opacity
-                const t = state.clock.elapsedTime + twinkleSeed;
-                winRef.current.material.opacity = opacity * (0.5 + Math.abs(Math.sin(t * 1.7)) * 0.5);
+                if (!blinkRef.current) return;
+                const t = state.clock.elapsedTime + seed;
+                blinkRef.current.material.opacity = opacity * (0.4 + Math.abs(Math.sin(t * 0.9)) * 0.6);
             });
             return (
                 <group position={position}>
-                    <mesh ref={ref} position={[0, height / 2, 0]}>
-                        <boxGeometry args={[width, height, depth]} />
+                    <mesh position={[0, height / 2, 0]}>
+                        <cylinderGeometry args={[0.4, 0.5, height, 6]} />
                         <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.85} />
                     </mesh>
-                    <mesh ref={winRef} position={[width * 0.45, height * 0.6, depth * 0.51]}>
-                        <planeGeometry args={[0.08, 0.08]} />
-                        <meshBasicMaterial color="#a8ffd9" transparent opacity={opacity} />
+                    {/* Cap — wide disc with thickness */}
+                    <mesh position={[0, height + 0.18, 0]}>
+                        <cylinderGeometry args={[capRadius, capRadius * 0.9, 0.30, 8]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.85} />
+                    </mesh>
+                    {/* Beacon under the cap */}
+                    <mesh ref={blinkRef} position={[0, height + 0.05, 0]}>
+                        <sphereGeometry args={[0.12, 8, 8]} />
+                        <meshBasicMaterial color="#ccffe0" transparent opacity={opacity} />
                     </mesh>
                 </group>
             );
         }
 
-        function LowPolyCity() {
-            const signal = useSignal();
-            // Fade in: 0 above signal=0.30, full at signal=0.04.
-            const op = Math.max(0, Math.min(1, (0.30 - signal) / 0.26));
-            const opacity = op * 0.95;
-            if (op <= 0.01) return null;
+        // Single tall spire tower (the central one in the background).
+        function SpireTower({ position = [0, 0, 0], opacity = 1 }) {
             return (
-                <group position={[0, -2.5, -8]}>
-                    {/* Ground plane — wireframe disc receding in fog */}
-                    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-                        <planeGeometry args={[60, 40, 24, 16]} />
-                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.30} />
+                <group position={position}>
+                    <mesh position={[0, 4, 0]}>
+                        <boxGeometry args={[1.0, 8, 1.0]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.85} />
                     </mesh>
-                    {/* Horizon glow strip */}
-                    <mesh position={[0, 0.6, -18]}>
-                        <planeGeometry args={[80, 0.5]} />
-                        <meshBasicMaterial color="#00ff88" transparent opacity={opacity * 0.5} />
+                    <mesh position={[0, 8.6, 0]}>
+                        <coneGeometry args={[0.30, 1.2, 6]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * 0.85} />
                     </mesh>
-                    {/* Central tower */}
-                    <Tower position={[0, 0, -1]} opacity={opacity} scale={1} />
-                    {/* Foreground / nearby buildings */}
-                    <Building position={[-3.2, 0, 1]}  height={2.0} width={1.1} depth={1.1} opacity={opacity} twinkleSeed={1} />
-                    <Building position={[ 3.6, 0, 0.5]} height={2.6} width={1.2} depth={1.0} opacity={opacity} twinkleSeed={2.3} />
-                    <Building position={[-5.0, 0, -2]}  height={3.4} width={1.3} depth={1.3} opacity={opacity} twinkleSeed={3.7} />
-                    <Building position={[ 5.0, 0, -2.5]} height={3.0} width={1.0} depth={1.0} opacity={opacity} twinkleSeed={1.9} />
-                    {/* Mid-distance ring */}
-                    <Building position={[-2.5, 0, -4]}  height={1.4} width={0.7} depth={0.7} opacity={opacity * 0.7} twinkleSeed={0.4} />
-                    <Building position={[ 2.4, 0, -4.5]} height={1.7} width={0.7} depth={0.7} opacity={opacity * 0.7} twinkleSeed={2.7} />
-                    <Building position={[-7.5, 0, -5]}  height={2.0} width={0.9} depth={0.9} opacity={opacity * 0.6} twinkleSeed={4.1} />
-                    <Building position={[ 7.0, 0, -5]}  height={2.4} width={0.9} depth={0.9} opacity={opacity * 0.6} twinkleSeed={5.0} />
-                    {/* Far skyline — small dim boxes */}
-                    <Building position={[-9.5, 0, -8]}  height={1.6} width={0.7} depth={0.7} opacity={opacity * 0.4} twinkleSeed={6.3} />
-                    <Building position={[ 9.5, 0, -8]}  height={1.4} width={0.6} depth={0.6} opacity={opacity * 0.4} twinkleSeed={7.7} />
-                    <Building position={[-4,    0, -10]} height={1.0} width={0.5} depth={0.5} opacity={opacity * 0.35} twinkleSeed={8.4} />
-                    <Building position={[ 4,    0, -10]} height={0.9} width={0.5} depth={0.5} opacity={opacity * 0.35} twinkleSeed={9.1} />
+                    <mesh position={[0, 9.6, 0]}>
+                        <cylinderGeometry args={[0.04, 0.04, 1.4, 5]} />
+                        <meshBasicMaterial color="#a8ffd9" transparent opacity={opacity * 0.9} />
+                    </mesh>
+                    <mesh position={[0, 10.4, 0]}>
+                        <sphereGeometry args={[0.10, 8, 8]} />
+                        <meshBasicMaterial color="#ccffe0" transparent opacity={opacity} />
+                    </mesh>
                 </group>
             );
         }
 
+        function LowPolyScene() {
+            const signal = useSignal();
+            // Hard threshold — only at the very bottom of the slider.
+            // op=0 above signal=0.10, op=1 at signal=0.
+            const op = Math.max(0, Math.min(1, (0.10 - signal) / 0.10));
+            if (op <= 0.005) return null;
+            const o = op * 0.95;
+            return (
+                <group>
+                    {/* Ground plane (subdivided) so we can see fog falloff */}
+                    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, -8]}>
+                        <planeGeometry args={[60, 40, 30, 20]} />
+                        <meshBasicMaterial color="#00ff88" wireframe transparent opacity={o * 0.25} />
+                    </mesh>
+
+                    {/* --- FOREGROUND lounge --- */}
+                    {/* Ceiling arch overhead */}
+                    <CeilingArch position={[0, 3.8, 5.0]} width={12} opacity={o} />
+
+                    {/* U-shape sofas around coffee table. Camera looks from
+                        ~+z toward -z, so foreground sofa sits closest. */}
+                    <Sofa position={[0, 0, 5.6]}     rotation={[0, 0, 0]}              length={2.6} opacity={o} />
+                    <Sofa position={[-2.6, 0, 4.2]}  rotation={[0, Math.PI * 0.5, 0]}  length={2.0} opacity={o} />
+                    <Sofa position={[ 2.6, 0, 4.2]}  rotation={[0, -Math.PI * 0.5, 0]} length={2.0} opacity={o} />
+                    <CoffeeTable position={[0, 0, 4.2]} opacity={o} />
+                    <FloorLamp   position={[-3.6, 0, 4.6]} opacity={o} />
+                    <FloorLamp   position={[ 3.6, 0, 4.6]} opacity={o * 0.6} />
+
+                    {/* --- MIDGROUND garden --- */}
+                    <Gazebo position={[-1.4, 0, 0.5]} opacity={o} />
+                    <Tree   position={[-2.8, 0, -0.2]} opacity={o} />
+                    <Tree   position={[ 3.0, 0, -0.4]} opacity={o * 0.8} />
+
+                    {/* --- BACKGROUND city skyline ---
+                        Mushroom-headed towers + the tall central spire from
+                        the actual bg.mp4 frame. Right-of-centre tall spire
+                        matches Roman's reference image. */}
+                    <SpireTower      position={[ 2.4, 0, -14]} opacity={o * 0.95} />
+                    <MushroomTower   position={[-3.5, 0, -12]} height={6.2} capRadius={1.3} opacity={o * 0.9}  seed={0.3} />
+                    <MushroomTower   position={[ 4.8, 0, -16]} height={5.4} capRadius={1.1} opacity={o * 0.85} seed={1.5} />
+                    <MushroomTower   position={[-1.6, 0, -18]} height={4.6} capRadius={0.95} opacity={o * 0.8}  seed={2.7} />
+                    <MushroomTower   position={[ 0.8, 0, -22]} height={3.8} capRadius={0.85} opacity={o * 0.65} seed={3.9} />
+                    <MushroomTower   position={[-5.5, 0, -22]} height={4.2} capRadius={0.9}  opacity={o * 0.6}  seed={4.5} />
+                    <MushroomTower   position={[ 6.5, 0, -24]} height={3.4} capRadius={0.8}  opacity={o * 0.55} seed={5.7} />
+
+                    {/* Filler boxy buildings between mushrooms — give density */}
+                    <WireBox size={[1.2, 4, 1.2]}  position={[-7,  2,  -14]} opacity={o * 0.7}  twinkleSeed={1.1} />
+                    <WireBox size={[1.0, 3.2, 1.0]} position={[ 7.4,1.6, -13]} opacity={o * 0.75} twinkleSeed={2.3} />
+                    <WireBox size={[0.9, 2.6, 0.9]} position={[-9,  1.3, -16]} opacity={o * 0.55} twinkleSeed={3.4} />
+                    <WireBox size={[0.8, 2.0, 0.8]} position={[ 9.5,1.0, -16]} opacity={o * 0.5}  twinkleSeed={4.5} />
+                    <WireBox size={[0.7, 1.6, 0.7]} position={[-3,  0.8, -25]} opacity={o * 0.4}  twinkleSeed={5.6} />
+                    <WireBox size={[0.6, 1.4, 0.6]} position={[ 3,  0.7, -26]} opacity={o * 0.35} twinkleSeed={6.7} />
+                </group>
+            );
+        }
+
+        // Eye-level camera "sitting" behind the lounge, looking out toward
+        // the city. Subtle bob so it feels alive but doesn't drift far.
         function CameraDrift() {
             const { camera } = useThree();
             useFrame((state) => {
                 const t = state.clock.elapsedTime;
-                camera.position.x = Math.sin(t * 0.12) * 0.18;
-                camera.position.y = 0.4 + Math.sin(t * 0.16) * 0.10;
-                camera.position.z = 5 + Math.cos(t * 0.08) * 0.15;
-                camera.lookAt(0, 0.5, -8);
+                camera.position.x = Math.sin(t * 0.12) * 0.20;
+                camera.position.y = 1.50 + Math.sin(t * 0.16) * 0.08;
+                camera.position.z = 7.6 + Math.cos(t * 0.08) * 0.15;
+                camera.lookAt(0, 1.6, -12);
             });
             return null;
         }
@@ -16912,13 +17072,13 @@ See also: Health Samurai Lab: Game of Pools.`,
                 <Canvas
                     gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
                     dpr={[1, 1.5]}
-                    camera={{ position: [0, 0.4, 5], fov: 60 }}
+                    camera={{ position: [0, 1.5, 7.6], fov: 62 }}
                 >
                     <color attach="background" args={['#050708']} />
                     <fog attach="fog" args={['#050708', 8, 22]} />
                     <ambientLight intensity={0.3} />
                     <CameraDrift />
-                    <LowPolyCity />
+                    <LowPolyScene />
                     <VideoBackdrop />
                     <Effects />
                 </Canvas>
