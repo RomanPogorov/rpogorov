@@ -1973,6 +1973,13 @@
             color: rgba(255, 255, 255, 0.5);
             padding: 8px 6px 4px;
         }
+        /* Portrait/mobile single-shot: don't blow up to full container width
+           when shown alone — cap and center to keep readable proportions. */
+        .dc-figure-portrait {
+            max-width: 360px;
+            margin-left: auto;
+            margin-right: auto;
+        }
         .dc-callout {
             background: rgba(var(--acc-rgb), 0.06);
             border-left: 2px solid var(--acc);
@@ -2015,6 +2022,70 @@
         /* Rich-body cases skip the generic placeholder hero (their body
            starts with .dc-impact metrics + .dc-meta-grid project info). */
         .dc-page.dc-rich .dc-hero { display: none; }
+
+        /* === Lightbox: any .dc-figure media (img/video) opens fullscreen === */
+        .dc-figure img,
+        .dc-figure video { cursor: zoom-in; }
+        .dc-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(2, 4, 6, 0.94);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 56px 36px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease;
+        }
+        .dc-lightbox.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .dc-lightbox-stage {
+            position: relative;
+            max-width: 100%;
+            max-height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        .dc-lightbox-stage img,
+        .dc-lightbox-stage video {
+            display: block;
+            max-width: 100%;
+            max-height: calc(100vh - 112px);
+            object-fit: contain;
+            background: #000;
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.85),
+                        0 0 0 1px rgba(var(--acc-rgb), 0.25);
+        }
+        .dc-lightbox-close {
+            position: absolute;
+            top: 18px;
+            right: 36px;
+            appearance: none;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(var(--acc-rgb), 0.35);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 2;
+        }
+        .dc-lightbox-close:hover {
+            color: #fff;
+            background: rgba(var(--acc-rgb), 0.15);
+            border-color: var(--acc);
+        }
 
         /* Breadcrumbs on the existing case-page (cs01/cs02) header — sticky */
         .cp-crumbs-bar {
@@ -13338,6 +13409,14 @@
         </div>
     </section>
 
+    <!-- Lightbox overlay — fullscreen view of any .dc-figure media on click.
+         Higher z-index than .dc-page; ESC closes lightbox first (dc-page
+         keydown handler skips while lightbox is-open). -->
+    <div class="dc-lightbox" id="dc-lightbox" aria-hidden="true" role="dialog">
+        <button type="button" class="dc-lightbox-close" id="dc-lightbox-close" aria-label="Close lightbox">ESC</button>
+        <div class="dc-lightbox-stage" id="dc-lightbox-stage"></div>
+    </div>
+
     <!-- Reader modal — long-form article reading window, MD rendered via marked.js -->
     <aside class="reader" id="reader" aria-hidden="true" role="dialog">
         <div class="reader-frame">
@@ -15932,16 +16011,16 @@
     <div class="dc-pillar"><span class="dc-pillar-num">03 / urgency</span><p>Creating urgency and reminders through fixed banners visible on every screen.</p></div>
 </div>
 
-<div class="dc-grid-3">
+<div class="dc-grid-2">
     <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-01-appealing-ui.png" alt="Appealing offer UI"><figcaption>// pillar 01 — appealing UI</figcaption></figure>
     <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-02-clarity-rejection.png" alt="Rejection guidance"><figcaption>// pillar 02 — rejection guidance</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-03-banners-tokenized.png" alt="Banners and tokenized flow"><figcaption>// pillar 03 — touchpoints across the program</figcaption></figure>
 </div>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-03-banners-tokenized.png" alt="Banners and tokenized flow"><figcaption>// pillar 03 — touchpoints across the program (web)</figcaption></figure>
 
 <h2>// motion design — bringing offer UI to life</h2>
 <p>Animated transitions and microinteractions across all three platforms — making the moment of an incoming offer feel premium and intentional, not just another popup.</p>
 
-<div class="dc-grid-3">
+<div class="dc-grid-2">
     <figure class="dc-figure">
         <video src="cases/cs01/offer-acceptance/motion-pillar-mobile-1.mp4"
                poster="cases/cs01/offer-acceptance/poster-motion-pillar-mobile-1.png"
@@ -15949,28 +16028,26 @@
         <figcaption>// motion 01 — iOS</figcaption>
     </figure>
     <figure class="dc-figure">
-        <video src="cases/cs01/offer-acceptance/motion-pillar-desktop.mp4"
-               poster="cases/cs01/offer-acceptance/poster-motion-pillar-desktop.png"
-               autoplay muted loop playsinline preload="metadata"></video>
-        <figcaption>// motion 02 — desktop</figcaption>
-    </figure>
-    <figure class="dc-figure">
         <video src="cases/cs01/offer-acceptance/motion-pillar-mobile-2.mp4"
                poster="cases/cs01/offer-acceptance/poster-motion-pillar-mobile-2.png"
                autoplay muted loop playsinline preload="metadata"></video>
-        <figcaption>// motion 03 — Android</figcaption>
+        <figcaption>// motion 02 — Android</figcaption>
     </figure>
 </div>
+<figure class="dc-figure">
+    <video src="cases/cs01/offer-acceptance/motion-pillar-desktop.mp4"
+           poster="cases/cs01/offer-acceptance/poster-motion-pillar-desktop.png"
+           autoplay muted loop playsinline preload="metadata"></video>
+    <figcaption>// motion 03 — desktop</figcaption>
+</figure>
 
 <h2>// design process</h2>
 
 <h3>Analyzing issues with the original design</h3>
 <p>The original design was an MVP that failed to account for user pain points and used outdated UI/interaction patterns.</p>
 
-<div class="dc-grid-2">
-    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/original-desktop.png" alt="Original desktop offer"><figcaption>// original — desktop</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/original-mobile.png" alt="Original mobile offer"><figcaption>// original — mobile</figcaption></figure>
-</div>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/original-desktop.png" alt="Original desktop offer"><figcaption>// original — desktop</figcaption></figure>
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/original-mobile.png" alt="Original mobile offer"><figcaption>// original — mobile</figcaption></figure>
 
 <div class="dc-pain">
     <div class="dc-pain-card">
@@ -16489,6 +16566,8 @@
             document.addEventListener('keydown', (e) => {
                 if (e.key !== 'Escape') return;
                 if (!document.body.classList.contains('dc-open')) return;
+                // Lightbox open? ESC closes it first; leave dc-page alone.
+                if (document.getElementById('dc-lightbox')?.classList.contains('is-open')) return;
                 e.stopPropagation();
                 close();
             }, true);
@@ -16508,6 +16587,69 @@
             window.addEventListener('popstate', syncFromHash);
             // Defer initial sync slightly so DEEP_CASES + __cp / __sc are ready.
             setTimeout(syncFromHash, 80);
+        })();
+
+        // ===== Lightbox: click any .dc-figure media to open fullscreen =====
+        (() => {
+            const lb = document.getElementById('dc-lightbox');
+            const stage = document.getElementById('dc-lightbox-stage');
+            const closeBtn = document.getElementById('dc-lightbox-close');
+            const dcBody = document.getElementById('dc-body');
+            if (!lb || !stage || !dcBody) return;
+
+            function open(media) {
+                stage.innerHTML = '';
+                let node;
+                if (media.tagName === 'VIDEO') {
+                    node = document.createElement('video');
+                    node.src = media.currentSrc || media.src;
+                    if (media.poster) node.poster = media.poster;
+                    node.controls = true;
+                    node.autoplay = true;
+                    node.loop = true;
+                    node.playsInline = true;
+                    // Allow sound by default in lightbox (motion videos are silent
+                    // anyway, but if any has audio user can hear it).
+                    node.muted = false;
+                } else {
+                    node = document.createElement('img');
+                    node.src = media.currentSrc || media.src;
+                    node.alt = media.alt || '';
+                }
+                stage.appendChild(node);
+                lb.classList.add('is-open');
+                lb.setAttribute('aria-hidden', 'false');
+            }
+
+            function close() {
+                lb.classList.remove('is-open');
+                lb.setAttribute('aria-hidden', 'true');
+                stage.innerHTML = '';
+            }
+
+            // Delegate clicks inside dc-body to .dc-figure media.
+            dcBody.addEventListener('click', (e) => {
+                const fig = e.target.closest('.dc-figure');
+                if (!fig) return;
+                const media = fig.querySelector('img, video');
+                if (!media) return;
+                e.preventDefault();
+                e.stopPropagation();
+                open(media);
+            });
+
+            closeBtn.addEventListener('click', close);
+            // Click anywhere outside the media (on the dim backdrop or stage padding)
+            // closes the lightbox.
+            lb.addEventListener('click', (e) => {
+                if (e.target === lb || e.target === stage) close();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                if (!lb.classList.contains('is-open')) return;
+                e.stopPropagation();
+                close();
+            }, true);
         })();
     </script>
 
