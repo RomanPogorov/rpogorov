@@ -44,4 +44,18 @@ const cases = defineCollection({
   }),
 });
 
-export const collections = { cases };
+const articles = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/articles' }),
+  schema: z.object({
+    id: z.string(),
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    author: z.string().default('Roman Pogorov'),
+    readingTime: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    status: z.enum(['live', 'draft', 'soon']).default('live'),
+  }),
+});
+
+export const collections = { cases, articles };

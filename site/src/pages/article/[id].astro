@@ -1,0 +1,250 @@
+---
+/**
+ * Article reader — /rpogorov-dev/article/{id}/
+ *
+ * One static page per live article in the content collection. Drafts and
+ * "coming soon" entries are still listed on /articles/ but do not get a
+ * dedicated reader page until they're flipped to status=live.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+
+export const getStaticPaths = (async () => {
+  const articles = await getCollection('articles');
+  return articles.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const data = entry.data;
+const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
+const fmtDate = data.date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout title={`${data.title} — Roman Pogorov`} description={data.description} theme="dark">
+  <main class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={`${baseUrl}/`}>Showcase</a>
+      <span class="sep">/</span>
+      <a href={`${baseUrl}/articles/`}>Articles</a>
+      <span class="sep">/</span>
+      <span class="current">{data.title}</span>
+    </nav>
+
+    <header class="hero">
+      <div class="meta">
+        <time datetime={data.date.toISOString()}>{fmtDate}</time>
+        {data.readingTime && <span class="rt">{data.readingTime}</span>}
+        <span class="author">{data.author}</span>
+      </div>
+      <h1 class="title">{data.title}</h1>
+      <p class="lead">{data.description}</p>
+      <ul class="tags">
+        {data.tags.map((t) => <li>{t}</li>)}
+      </ul>
+    </header>
+
+    <article class="body">
+      <Content />
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: var(--measure-content);
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-8) var(--space-24);
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-10);
+  }
+  .crumbs a { color: var(--acc); text-decoration: none; }
+  .crumbs a:hover { text-decoration: underline; }
+  .sep { opacity: 0.55; }
+  .current { color: var(--text-strong); max-width: 60ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .hero { margin-bottom: var(--space-12); }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-5);
+  }
+  .meta time { color: var(--acc); }
+  .meta .author { margin-left: auto; }
+
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--type-h1);
+    font-weight: 700;
+    line-height: var(--line-tight);
+    letter-spacing: var(--track-display);
+    color: var(--text-strong);
+    margin: 0 0 var(--space-5);
+  }
+  .lead {
+    font-size: var(--type-lg);
+    line-height: 1.55;
+    color: var(--text-base);
+    max-width: var(--measure-narrow);
+    margin: 0 0 var(--space-6);
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--acc);
+    border: 1px solid rgba(var(--acc-rgb), 0.32);
+    padding: 3px var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+
+  .body :global(h2) {
+    font-family: var(--font-body);
+    font-size: var(--type-h2);
+    font-weight: 700;
+    line-height: var(--line-snug);
+    letter-spacing: var(--track-h2);
+    color: var(--text-strong);
+    margin: var(--space-16) 0 var(--space-5);
+  }
+  .body :global(h3) {
+    font-family: var(--font-body);
+    font-size: var(--type-h3);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: var(--track-h3);
+    color: var(--text-strong);
+    margin: var(--space-12) 0 var(--space-3);
+  }
+  .body :global(p) {
+    margin: 0 0 var(--space-5);
+    max-width: var(--measure-body);
+    font-size: var(--type-base);
+    line-height: var(--line-body);
+    color: var(--text-base);
+  }
+  .body :global(ul),
+  .body :global(ol) {
+    margin: 0 0 var(--space-6);
+    padding-left: 0;
+    max-width: var(--measure-body);
+  }
+  .body :global(li) {
+    list-style: none;
+    position: relative;
+    padding-left: var(--space-6);
+    margin-bottom: var(--space-3);
+    line-height: var(--line-body);
+  }
+  .body :global(li::before) {
+    content: '';
+    position: absolute;
+    left: var(--space-2);
+    top: 11px;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--acc);
+  }
+  .body :global(strong) { color: var(--text-strong); font-weight: 600; }
+  .body :global(em) { color: var(--text-base); font-style: italic; }
+  .body :global(blockquote) {
+    margin: var(--space-6) 0;
+    padding: var(--space-4) var(--space-6);
+    border-left: 3px solid var(--acc);
+    background: rgba(var(--acc-rgb), 0.05);
+    color: var(--text-base);
+    font-style: italic;
+    max-width: var(--measure-body);
+  }
+  .body :global(blockquote p) { margin: 0; }
+  .body :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--acc);
+    background: rgba(var(--acc-rgb), 0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .body :global(pre) {
+    background: var(--surface-frame);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    overflow-x: auto;
+    margin: 0 0 var(--space-6);
+    max-width: var(--measure-body);
+  }
+  .body :global(pre code) {
+    background: none;
+    padding: 0;
+    color: var(--text-base);
+  }
+  .body :global(table) {
+    width: 100%;
+    max-width: var(--measure-body);
+    border-collapse: collapse;
+    margin: var(--space-6) 0;
+    font-size: var(--type-sm);
+    font-family: var(--font-mono);
+  }
+  .body :global(th),
+  .body :global(td) {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-soft);
+    text-align: left;
+  }
+  .body :global(th) {
+    color: var(--acc);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    font-size: var(--type-2xs);
+  }
+  .body :global(td) {
+    color: var(--text-base);
+  }
+  .body :global(a) {
+    color: var(--acc);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(var(--acc-rgb), 0.4);
+  }
+  .body :global(a:hover) {
+    border-bottom-color: var(--acc);
+  }
+</style>

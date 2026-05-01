@@ -1,0 +1,213 @@
+---
+/**
+ * Articles index — /rpogorov-dev/articles/
+ *
+ * Lists every article in the content collection, newest first. Status badges
+ * differentiate live posts from drafts and "coming soon" placeholders so the
+ * archive can grow incrementally without lying about what's actually there.
+ */
+import { getCollection } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+
+const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
+const articles = (await getCollection('articles')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<Layout title="Articles — Roman Pogorov" theme="dark">
+  <main class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={`${baseUrl}/`}>Showcase</a>
+      <span class="sep">/</span>
+      <span class="current">Articles</span>
+    </nav>
+
+    <header class="hero">
+      <span class="eyebrow">// archive · articles</span>
+      <h1 class="title">Articles</h1>
+      <p class="lead">
+        Devlogs, experiments, and notes on design + code workflows. Some are
+        full write-ups, some are still drafts. Click a card to read.
+      </p>
+    </header>
+
+    <ul class="list">
+      {
+        articles.map((a) => {
+          const href = `${baseUrl}/article/${a.id}/`;
+          return (
+            <li class:list={["row", `is-${a.data.status}`]}>
+              <a href={href} class="row-link">
+                <div class="row-meta">
+                  <time datetime={a.data.date.toISOString()}>{fmtDate(a.data.date)}</time>
+                  {a.data.readingTime && <span class="rt">{a.data.readingTime}</span>}
+                  {a.data.status !== 'live' && (
+                    <span class:list={["badge", `badge-${a.data.status}`]}>
+                      {a.data.status}
+                    </span>
+                  )}
+                </div>
+                <h2 class="row-title">{a.data.title}</h2>
+                <p class="row-desc">{a.data.description}</p>
+                <ul class="row-tags">
+                  {a.data.tags.map((t) => <li>{t}</li>)}
+                  {a.data.author !== 'Roman Pogorov' && (
+                    <li class="author">by {a.data.author}</li>
+                  )}
+                </ul>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: var(--measure-page);
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-8) var(--space-24);
+  }
+
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-10);
+  }
+  .crumbs a {
+    color: var(--acc);
+    text-decoration: none;
+  }
+  .crumbs a:hover { text-decoration: underline; }
+  .sep { opacity: 0.55; }
+  .current { color: var(--text-strong); }
+
+  .hero { margin-bottom: var(--space-12); max-width: var(--measure-content); }
+  .eyebrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: var(--space-4);
+  }
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--type-h1);
+    font-weight: 800;
+    line-height: var(--line-tight);
+    letter-spacing: var(--track-display);
+    color: var(--text-strong);
+    text-transform: uppercase;
+    margin: 0 0 var(--space-4);
+  }
+  .lead {
+    font-size: var(--type-lg);
+    line-height: 1.55;
+    color: var(--text-base);
+    max-width: var(--measure-narrow);
+    margin: 0;
+  }
+
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .row {
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    backdrop-filter: blur(8px);
+    transition: border-color 200ms, transform 200ms;
+  }
+  .row:hover { border-color: var(--acc); transform: translateY(-1px); }
+  .row.is-draft, .row.is-soon { opacity: 0.7; }
+
+  .row-link {
+    display: block;
+    padding: var(--space-6) var(--space-7);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .row-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+  }
+  .row-meta time { color: var(--acc); }
+  .row-meta .rt { opacity: 0.85; }
+  .badge {
+    border: 1px solid currentColor;
+    border-radius: var(--radius-sm);
+    padding: 2px var(--space-2);
+    font-size: var(--type-2xs);
+  }
+  .badge-draft { color: #ffb84d; }
+  .badge-soon { color: var(--acc); }
+
+  .row-title {
+    font-family: var(--font-body);
+    font-size: var(--type-h3);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+    color: var(--text-strong);
+    margin: 0 0 var(--space-3);
+  }
+  .row-desc {
+    font-size: var(--type-base);
+    line-height: 1.55;
+    color: var(--text-base);
+    margin: 0 0 var(--space-4);
+    max-width: 64ch;
+  }
+  .row-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .row-tags li {
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--acc);
+    border: 1px solid rgba(var(--acc-rgb), 0.32);
+    padding: 3px var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+  .row-tags li.author {
+    color: var(--text-muted);
+    border-color: var(--border-soft);
+  }
+</style>
