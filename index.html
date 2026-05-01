@@ -16681,30 +16681,65 @@ See also: Health Samurai Lab: Game of Pools.`,
         // arch). Mid-ground: gazebo dome with a tree. Background: mushroom-
         // headed cyber towers + city skyline. All in accent-green wireframe.
 
-        // Helper — wire box with a single twinkling window-dot on the +z face.
+        // Helper — wire box with a generated grid of window dots on the +z face.
+        // Window pattern is deterministic per `seed` so it doesn't reshuffle on
+        // re-render, and a few of them twinkle individually.
         function WireBox({ size = [1, 1, 1], position = [0, 0, 0], rotation = [0, 0, 0],
-                           opacity = 1, fillTone = 0.85, twinkleSeed = null, twinkleScale = 0.08 }) {
-            const ref = useRef();
-            const winRef = useRef();
-            useFrame((state) => {
-                if (twinkleSeed !== null && winRef.current) {
-                    const t = state.clock.elapsedTime + twinkleSeed;
-                    winRef.current.material.opacity =
-                        opacity * (0.5 + Math.abs(Math.sin(t * 1.7)) * 0.5);
+                           opacity = 1, fillTone = 0.85, seed = 0, density = 0.55, lightColor = '#a8ffd9' }) {
+            const winsRef = useRef([]);
+            // Build a deterministic pseudo-random window pattern.
+            const windows = useMemo(() => {
+                const cols = Math.max(2, Math.floor(size[0] * 3.5));
+                const rows = Math.max(3, Math.floor(size[1] * 3.5));
+                const arr = [];
+                let s = seed;
+                const rnd = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < cols; c++) {
+                        if (rnd() < density) {
+                            arr.push({
+                                x: -size[0] * 0.5 + (c + 0.5) * (size[0] / cols) + (rnd() - 0.5) * 0.03,
+                                y: -size[1] * 0.5 + (r + 0.5) * (size[1] / rows) + (rnd() - 0.5) * 0.03,
+                                w: 0.05 + rnd() * 0.04,
+                                h: 0.04 + rnd() * 0.05,
+                                phase: rnd() * Math.PI * 2,
+                                twinkles: rnd() < 0.25,
+                            });
+                        }
+                    }
                 }
+                return arr;
+            }, [size[0], size[1], size[2], seed, density]);
+
+            useFrame((state) => {
+                const t = state.clock.elapsedTime;
+                windows.forEach((w, i) => {
+                    const m = winsRef.current[i];
+                    if (!m) return;
+                    if (w.twinkles) {
+                        m.material.opacity = opacity * (0.4 + Math.abs(Math.sin(t * 1.7 + w.phase)) * 0.6);
+                    } else {
+                        m.material.opacity = opacity * 0.78;
+                    }
+                });
             });
+
             return (
                 <group position={position} rotation={rotation}>
                     <mesh>
                         <boxGeometry args={size} />
                         <meshBasicMaterial color="#00ff88" wireframe transparent opacity={opacity * fillTone} />
                     </mesh>
-                    {twinkleSeed !== null && (
-                        <mesh ref={winRef} position={[size[0] * 0.32, size[1] * 0.18, size[2] * 0.51]}>
-                            <planeGeometry args={[twinkleScale, twinkleScale]} />
-                            <meshBasicMaterial color="#a8ffd9" transparent opacity={opacity} />
+                    {windows.map((w, i) => (
+                        <mesh
+                            key={i}
+                            ref={(el) => (winsRef.current[i] = el)}
+                            position={[w.x, w.y, size[2] * 0.5 + 0.01]}
+                        >
+                            <planeGeometry args={[w.w, w.h]} />
+                            <meshBasicMaterial color={lightColor} transparent opacity={opacity * 0.78} />
                         </mesh>
-                    )}
+                    ))}
                 </group>
             );
         }
@@ -16886,27 +16921,95 @@ See also: Health Samurai Lab: Game of Pools.`,
             );
         }
 
+        // Rain particles — falling diagonal streaks across the scene.
+        function Rain({ opacity = 1, count = 800 }) {
+            const ref = useRef();
+            const positions = useMemo(() => {
+                const arr = new Float32Array(count * 6); // 2 verts per line
+                for (let i = 0; i < count; i++) {
+                    const x = (Math.random() - 0.5) * 40;
+                    const y = Math.random() * 22 - 2;
+                    const z = -2 - Math.random() * 22;
+                    arr[i * 6 + 0] = x;
+                    arr[i * 6 + 1] = y;
+                    arr[i * 6 + 2] = z;
+                    arr[i * 6 + 3] = x + 0.10;     // slight diagonal
+                    arr[i * 6 + 4] = y - 0.55;
+                    arr[i * 6 + 5] = z;
+                }
+                return arr;
+            }, [count]);
+            useFrame((_, dt) => {
+                if (!ref.current) return;
+                const arr = ref.current.geometry.attributes.position.array;
+                const len = arr.length;
+                for (let i = 0; i < len; i += 6) {
+                    arr[i + 1] -= dt * 14;
+                    arr[i + 4] -= dt * 14;
+                    if (arr[i + 1] < -3) {
+                        const dy = 22 + Math.random() * 4;
+                        arr[i + 1] += dy;
+                        arr[i + 4] += dy;
+                    }
+                }
+                ref.current.geometry.attributes.position.needsUpdate = true;
+            });
+            return (
+                <lineSegments ref={ref}>
+                    <bufferGeometry>
+                        <bufferAttribute
+                            attach="attributes-position"
+                            args={[positions, 3]}
+                        />
+                    </bufferGeometry>
+                    <lineBasicMaterial color="#a8ffd9" transparent opacity={opacity * 0.35} />
+                </lineSegments>
+            );
+        }
+
         function LowPolyScene() {
             const signal = useSignal();
             // Hard threshold — only at the very bottom of the slider.
-            // op=0 above signal=0.10, op=1 at signal=0.
             const op = Math.max(0, Math.min(1, (0.10 - signal) / 0.10));
             if (op <= 0.005) return null;
             const o = op * 0.95;
+
+            // Dense skyline definition — many buildings spread across the
+            // whole width, varying heights, depths and seeds. NOT split into
+            // "clusters with empty middle"; it's a continuous city.
+            const skyline = [
+                // x       y   z      w    h    d    seed  opTone
+                [-9.5,    0, -22,   1.0, 2.2, 1.0,  101, 0.55],
+                [-8.0,    0, -16,   1.1, 3.0, 1.1,  202, 0.70],
+                [-7.0,    0, -22,   0.9, 1.8, 0.9,  303, 0.45],
+                [-6.0,    0, -14,   1.3, 4.6, 1.3,  404, 0.85],
+                [-5.0,    0, -19,   1.0, 2.8, 1.0,  505, 0.65],
+                [-4.0,    0, -12,   1.2, 5.0, 1.2,  606, 0.90],
+                [-3.0,    0, -17,   0.9, 2.4, 0.9,  707, 0.55],
+                [-2.2,    0, -22,   0.8, 1.6, 0.8,  808, 0.40],
+                [-1.5,    0, -14,   1.0, 3.6, 1.0,  909, 0.78],
+                [-0.5,    0, -19,   0.85, 2.4, 0.85, 1010, 0.55],
+                [ 0.6,    0, -16,   0.9, 2.8, 0.9, 1111, 0.62],
+                [ 1.6,    0, -22,   0.85, 2.0, 0.85, 1212, 0.45],
+                [ 2.5,    0, -14,   1.2, 4.0, 1.2, 1313, 0.85],
+                [ 3.6,    0, -19,   0.9, 2.6, 0.9, 1414, 0.60],
+                [ 4.5,    0, -22,   1.0, 2.4, 1.0, 1515, 0.55],
+                [ 5.8,    0, -16,   1.1, 3.2, 1.1, 1616, 0.78],
+                [ 7.0,    0, -22,   0.9, 1.8, 0.9, 1717, 0.45],
+                [ 8.2,    0, -14,   1.0, 3.4, 1.0, 1818, 0.78],
+                [ 9.0,    0, -20,   0.8, 2.0, 0.8, 1919, 0.50],
+            ];
+
             return (
                 <group>
-                    {/* Ground plane (subdivided) so we can see fog falloff */}
+                    {/* Ground plane (subdivided) so fog falloff reads */}
                     <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, -8]}>
                         <planeGeometry args={[60, 40, 30, 20]} />
                         <meshBasicMaterial color="#00ff88" wireframe transparent opacity={o * 0.25} />
                     </mesh>
 
                     {/* --- FOREGROUND lounge --- */}
-                    {/* Ceiling arch overhead */}
                     <CeilingArch position={[0, 3.8, 5.0]} width={12} opacity={o} />
-
-                    {/* U-shape sofas around coffee table. Camera looks from
-                        ~+z toward -z, so foreground sofa sits closest. */}
                     <Sofa position={[0, 0, 5.6]}     rotation={[0, 0, 0]}              length={2.6} opacity={o} />
                     <Sofa position={[-2.6, 0, 4.2]}  rotation={[0, Math.PI * 0.5, 0]}  length={2.0} opacity={o} />
                     <Sofa position={[ 2.6, 0, 4.2]}  rotation={[0, -Math.PI * 0.5, 0]} length={2.0} opacity={o} />
@@ -16916,30 +17019,35 @@ See also: Health Samurai Lab: Game of Pools.`,
 
                     {/* --- MIDGROUND garden --- */}
                     <Gazebo position={[-1.4, 0, 0.5]} opacity={o} />
-                    <Tree   position={[-2.8, 0, -0.2]} opacity={o} />
-                    <Tree   position={[ 3.0, 0, -0.4]} opacity={o * 0.8} />
+                    <Tree   position={[-3.2, 0, -0.2]} opacity={o} />
+                    <Tree   position={[-4.8, 0, -1.0]} opacity={o * 0.85} />
+                    <Tree   position={[ 3.2, 0, -0.4]} opacity={o * 0.85} />
+                    <Tree   position={[ 4.8, 0, -1.2]} opacity={o * 0.7} />
 
-                    {/* --- BACKGROUND city skyline ---
-                        Two clusters left + right of centre so the prompt
-                        sits in clear sky between them, matching the actual
-                        bg.mp4 silhouette. */}
+                    {/* --- BACKGROUND mushroom-headed signature towers ---
+                        Tall mushrooms sit further out, signature shapes from
+                        the bg.mp4 silhouette. */}
+                    <MushroomTower position={[-7.5, 0, -13]} height={6.5} capRadius={1.3}  opacity={o * 0.92} seed={0.3} />
+                    <SpireTower    position={[ 6.0, 0, -13]} opacity={o * 0.95} />
+                    <MushroomTower position={[ 4.0, 0, -19]} height={5.0} capRadius={1.1}  opacity={o * 0.80} seed={1.5} />
+                    <MushroomTower position={[-3.5, 0, -22]} height={4.2} capRadius={0.95} opacity={o * 0.65} seed={2.7} />
+                    <MushroomTower position={[ 8.5, 0, -22]} height={4.6} capRadius={1.0}  opacity={o * 0.65} seed={3.9} />
 
-                    {/* LEFT CLUSTER */}
-                    <MushroomTower   position={[-4.2, 0, -12]} height={6.2} capRadius={1.3} opacity={o * 0.9}  seed={0.3} />
-                    <MushroomTower   position={[-3.4, 0, -18]} height={4.6} capRadius={0.95} opacity={o * 0.8}  seed={2.7} />
-                    <MushroomTower   position={[-6.2, 0, -22]} height={4.2} capRadius={0.9}  opacity={o * 0.6}  seed={4.5} />
-                    <WireBox size={[1.2, 4.2, 1.2]} position={[-6.4, 2.1, -14]} opacity={o * 0.75} twinkleSeed={1.1} />
-                    <WireBox size={[0.9, 2.8, 0.9]} position={[-8.6, 1.4, -16]} opacity={o * 0.55} twinkleSeed={3.4} />
-                    <WireBox size={[0.7, 1.8, 0.7]} position={[-5.0, 0.9, -25]} opacity={o * 0.4}  twinkleSeed={5.6} />
+                    {/* --- BACKGROUND skyline — dense band of buildings with
+                        deterministic window grids. Spans -9.5 .. 9.0. */}
+                    {skyline.map((b, i) => (
+                        <WireBox
+                            key={i}
+                            size={[b[3], b[4], b[5]]}
+                            position={[b[0], b[1] + b[4] * 0.5, b[2]]}
+                            opacity={o * b[7]}
+                            seed={b[6]}
+                            density={0.45 + (b[7] * 0.25)}
+                        />
+                    ))}
 
-                    {/* RIGHT CLUSTER — the central tall spire from the bg sits here */}
-                    <SpireTower      position={[ 4.8, 0, -14]} opacity={o * 0.95} />
-                    <MushroomTower   position={[ 6.0, 0, -16]} height={5.4} capRadius={1.1} opacity={o * 0.85} seed={1.5} />
-                    <MushroomTower   position={[ 3.6, 0, -22]} height={3.8} capRadius={0.85} opacity={o * 0.65} seed={3.9} />
-                    <MushroomTower   position={[ 7.2, 0, -24]} height={3.4} capRadius={0.8}  opacity={o * 0.55} seed={5.7} />
-                    <WireBox size={[1.0, 3.4, 1.0]} position={[ 6.6, 1.7, -13]} opacity={o * 0.75} twinkleSeed={2.3} />
-                    <WireBox size={[0.8, 2.2, 0.8]} position={[ 8.6, 1.1, -16]} opacity={o * 0.5}  twinkleSeed={4.5} />
-                    <WireBox size={[0.6, 1.4, 0.6]} position={[ 5.2, 0.7, -26]} opacity={o * 0.35} twinkleSeed={6.7} />
+                    {/* Rain — only at signal=0 (rendering ~800 line segments). */}
+                    {op > 0.6 && <Rain opacity={op} count={800} />}
                 </group>
             );
         }
