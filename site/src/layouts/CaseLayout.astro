@@ -45,4 +45,15 @@ const {
   @import '../styles/tokens.css';
   @import '../styles/content.css';
   @import '../styles/legacy.css';
+
+  /* Legacy main-page resets that don't make sense on standalone case
+     pages: full-page crosshair cursor and locked overflow are for the
+     R3F hero, not for reading a case write-up. */
+  html, body {
+    cursor: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+  a, button { cursor: pointer; }
 </style>
