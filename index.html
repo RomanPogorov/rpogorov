@@ -8095,6 +8095,38 @@
 
         /* No × prefix — close pill stays as just "ESC". */
 
+        /* Wrapper for prev / next / close in the panel header. */
+        .panel-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .panel-nav {
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1;
+            color: var(--dim);
+            padding: 4px 10px;
+            transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.12s, box-shadow 0.2s;
+        }
+        .panel-nav:hover:not(:disabled) {
+            color: var(--acc);
+            border-color: rgba(var(--acc-rgb), 0.65);
+            background: rgba(var(--acc-rgb), 0.06);
+        }
+        .panel-nav:active:not(:disabled) {
+            transform: scale(0.93);
+            background: rgba(var(--acc-rgb), 0.18);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.45);
+        }
+        .panel-nav:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+
         .panel-header .close:hover {
             border-color: var(--acc);
             color: var(--ink);
@@ -12136,7 +12168,11 @@
             <header class="panel-header">
                 <span class="panel-title">ROMAN.POGOROV / OS</span>
                 <span class="id">SESSION · <span id="panel-id">0xA3F4-9C</span></span>
-                <button class="close" id="close">ESC</button>
+                <div class="panel-actions">
+                    <button class="panel-nav" id="panel-prev" type="button" aria-label="Previous tab">←</button>
+                    <button class="panel-nav" id="panel-next" type="button" aria-label="Next tab">→</button>
+                    <button class="close" id="close">ESC</button>
+                </div>
             </header>
 
             <div class="panel-content">
@@ -12556,16 +12592,36 @@
         // ===== tabs =====
         const tabs = document.querySelectorAll('.tab');
         const views = document.querySelectorAll('.view');
+        function activateTab(tab) {
+            const target = tab.dataset.view;
+            tabs.forEach(t => t.classList.toggle('active', t === tab));
+            views.forEach(v => v.classList.toggle('active', v.dataset.view === target));
+        }
         tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.dataset.view;
-                tabs.forEach(t => t.classList.toggle('active', t === tab));
-                views.forEach(v => v.classList.toggle('active', v.dataset.view === target));
-                // (was: body.classList.add('glitching') for 250ms — fired glitchOnce filter
-                // animation on bg.mp4. The flicker was visible through the dim .backdrop and
-                // read as a bug. Removed.)
-            });
+            tab.addEventListener('click', () => activateTab(tab));
         });
+        // Prev / next nav in the panel header — cycles through the tabs
+        // (with edge clamp), matches the dw-modal arrow pattern.
+        const panelPrev = document.getElementById('panel-prev');
+        const panelNext = document.getElementById('panel-next');
+        function activeTabIdx() {
+            return Array.from(tabs).findIndex(t => t.classList.contains('active'));
+        }
+        function syncNavDisabled() {
+            const i = activeTabIdx();
+            if (panelPrev) panelPrev.disabled = i <= 0;
+            if (panelNext) panelNext.disabled = i >= tabs.length - 1;
+        }
+        panelPrev?.addEventListener('click', () => {
+            const i = activeTabIdx();
+            if (i > 0) { activateTab(tabs[i - 1]); syncNavDisabled(); window.__sfx?.tick?.(); }
+        });
+        panelNext?.addEventListener('click', () => {
+            const i = activeTabIdx();
+            if (i < tabs.length - 1) { activateTab(tabs[i + 1]); syncNavDisabled(); window.__sfx?.tick?.(); }
+        });
+        tabs.forEach(tab => tab.addEventListener('click', syncNavDisabled));
+        syncNavDisabled();
 
         // ===== draw bevelled border that matches the clip-path =====
         const borderPath = document.getElementById('border-path');
