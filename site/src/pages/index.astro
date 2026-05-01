@@ -1,137 +1,300 @@
 ---
 /**
- * Phase 0 sandbox — proves the Astro scaffold + CSS-token + component
- * pipeline works end to end. Renders a bright editorial preview that uses
- * every base component once. Cases will replace this in phase 1.
+ * Showcase home — Phase 2 migration. Pulls cases from the content collection
+ * and renders a 4-tile grid against an ambient bg.mp4 backdrop. Each tile
+ * deeplinks to /case/{company}/{deeplink}/.
+ *
+ * Audio toggle and full R3F WebGL post-processing are intentionally out of
+ * scope here — they live in the legacy index.html on agent-ui and can be
+ * layered back in once the structural migration lands.
  */
-import Layout from '../layouts/Layout.astro';
-import ImpactStrip from '../components/case/ImpactStrip.astro';
-import MetaGrid from '../components/case/MetaGrid.astro';
-import Pillar from '../components/case/Pillar.astro';
-import IterCard from '../components/case/IterCard.astro';
-import Figure from '../components/case/Figure.astro';
-import PainCard from '../components/case/PainCard.astro';
+import { getCollection } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+
+const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
+const cases = (await getCollection('cases')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const fallbackThumb = `${baseUrl}/bg-wireframe.jpg`;
+
+function caseHref(c: (typeof cases)[number]) {
+  return `${baseUrl}/case/${c.data.company}/${c.data.deeplink}/`;
+}
 ---
 
-<Layout title="rpogorov.dev — Astro sandbox" theme="bright">
+<Layout title="Roman Pogorov — Product Design Showcase" theme="dark">
+  <video class="bg" autoplay muted loop playsinline preload="auto" poster={fallbackThumb}>
+    <source src={`${baseUrl}/bg.mp4`} type="video/mp4" />
+  </video>
+  <div class="bg-veil" aria-hidden="true"></div>
+
   <main class="page">
-    <header class="header">
-      <span class="eyebrow">Astro phase 0</span>
-      <h1 class="title">Component sandbox</h1>
+    <header class="hero">
+      <span class="eyebrow">// archive · 2010 — 2026 · selected works</span>
+      <h1 class="title">Roman Pogorov</h1>
       <p class="lead">
-        First Astro build — design tokens in <code>src/styles/tokens.css</code>,
-        component primitives in <code>src/components/case/</code>. Every block
-        below is a real reusable Astro component pulled from the same library
-        the migrated cases will use.
+        Product designer, mostly fintech. Lead PD at Americor, Senior PD at
+        Health Samurai. Below — four deep cases from the current run, with
+        more landing as the migration continues.
       </p>
     </header>
 
-    <ImpactStrip
-      cells={[
-        { num: '4', lbl: 'base components shipped' },
-        { num: '2', lbl: 'themes (dark / bright)' },
-        { num: '0', lbl: 'utility classes used' },
-      ]}
-    />
-
-    <MetaGrid
-      items={[
-        { label: 'Stack', value: 'Astro 6 · pure CSS · MDX content' },
-        { label: 'Branch', value: 'astro-migration' },
-        { label: 'Theme', value: 'bright (default)' },
-        { label: 'Status', value: 'Phase 0 — scaffold only' },
-      ]}
-    />
-
-    <h2 class="section">Pillars</h2>
-    <div class="row-3">
-      <Pillar num="01" label="tokens">Typed semantic colour layer in tokens.css. Components reference names, never raw hex.</Pillar>
-      <Pillar num="02" label="components">One Astro file per primitive, scoped CSS, zero utility classes.</Pillar>
-      <Pillar num="03" label="content">Cases and articles live in MDX content collections (added in phase 1).</Pillar>
-    </div>
-
-    <h2 class="section">Decisions &amp; iterations</h2>
-    <IterCard label="decision">
-      <p>Use Astro content collections for cases instead of a flat JS array — typed schema, zero rebuild noise when adding a new case.</p>
-    </IterCard>
-    <IterCard label="trade-off">
-      <p>Migration is a few days of focused work. The payoff is that adding case #5 is a single MDX file and an entry in the schema — no copy-paste of HTML.</p>
-    </IterCard>
-
-    <h2 class="section">Pain points</h2>
-    <div class="row-2">
-      <PainCard tag="before" title="Vanilla index.html">All 17K lines of styles, scripts, and content in one file. Adding a case meant copy-pasting.</PainCard>
-      <PainCard tag="after" title="Astro components">Tokens, layouts, primitives split. New case = one MDX + one schema row.</PainCard>
-    </div>
-
-    <h2 class="section">Figure (placeholder)</h2>
-    <Figure
-      src="https://placehold.co/1280x720/16191e/ffffff?text=Figure+placeholder"
-      alt="Phase 0 placeholder figure"
-      caption="Real case figures will land in phase 1 from cases/cs01/* assets"
-    />
+    <section class="cases" aria-label="Selected cases">
+      {
+        cases.map((c) => (
+          <a class:list={["card", `is-${c.data.status}`]} href={caseHref(c)}>
+            <div class="thumb">
+              {c.data.thumb ? (
+                <img src={c.data.thumb} alt="" loading="lazy" />
+              ) : (
+                <div class="thumb-glyph" aria-hidden="true">
+                  <span>{c.data.companyLabel}</span>
+                  <span class="glyph">◆</span>
+                </div>
+              )}
+              {c.data.status === 'soon' && (
+                <span class="ribbon">soon</span>
+              )}
+            </div>
+            <div class="body">
+              <div class="head">
+                <span class="no">{c.data.no ?? ''}</span>
+                <span class="role">{c.data.role ?? ''}</span>
+              </div>
+              <h3 class="name">{c.data.title}</h3>
+              <p class="desc">{c.data.desc}</p>
+              <ul class="tags">
+                {c.data.tags.map((t) => <li>{t}</li>)}
+              </ul>
+              <div class="meta">
+                <span>{c.data.companyLabel}</span>
+                {c.data.year && <span class="sep">·</span>}
+                {c.data.year && <span>{c.data.year}</span>}
+                {c.data.metric && <span class="sep">·</span>}
+                {c.data.metric && <span class="metric">{c.data.metric}</span>}
+              </div>
+            </div>
+          </a>
+        ))
+      }
+    </section>
   </main>
 </Layout>
 
 <style>
-  .page {
-    max-width: var(--measure-content);
-    margin: 0 auto;
-    padding: var(--space-12) var(--space-8);
+  .bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.55;
   }
-  .header {
-    margin-bottom: var(--space-12);
+  .bg-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(
+        ellipse at top,
+        rgba(10, 13, 16, 0.55) 0%,
+        rgba(10, 13, 16, 0.85) 60%,
+        rgba(10, 13, 16, 0.96) 100%
+      );
+    pointer-events: none;
+  }
+
+  .page {
+    position: relative;
+    z-index: 2;
+    max-width: var(--measure-page);
+    margin: 0 auto;
+    padding: var(--space-20) var(--space-8) var(--space-24);
+  }
+
+  .hero {
+    margin-bottom: var(--space-16);
+    max-width: var(--measure-content);
   }
   .eyebrow {
+    display: inline-block;
     font-family: var(--font-mono);
     font-size: var(--type-xs);
     font-weight: 600;
     letter-spacing: var(--track-mono);
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--acc);
+    margin-bottom: var(--space-5);
   }
   .title {
     font-family: var(--font-display);
     font-size: var(--type-h1);
-    font-weight: 700;
+    font-weight: 800;
     line-height: var(--line-tight);
     letter-spacing: var(--track-display);
     color: var(--text-strong);
-    margin: var(--space-4) 0 var(--space-5);
+    margin: 0 0 var(--space-5);
+    text-transform: uppercase;
   }
   .lead {
+    font-family: var(--font-body);
     font-size: var(--type-lg);
     line-height: 1.55;
     color: var(--text-base);
     max-width: var(--measure-narrow);
-    margin: 0 0 var(--space-8);
+    margin: 0;
   }
-  .lead code {
-    font-family: var(--font-mono);
-    font-size: 0.875em;
-    color: var(--acc);
-    background: rgba(var(--acc-rgb), 0.06);
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-  .section {
-    font-family: var(--font-body);
-    font-size: var(--type-h2);
-    font-weight: 700;
-    line-height: var(--line-snug);
-    letter-spacing: var(--track-h2);
-    color: var(--text-strong);
-    margin: var(--space-16) 0 var(--space-5);
-  }
-  .row-2,
-  .row-3 {
+
+  .cases {
     display: grid;
-    gap: var(--space-4);
-    margin-bottom: var(--space-8);
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
   }
-  .row-2 { grid-template-columns: repeat(2, 1fr); }
-  .row-3 { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 720px) {
-    .row-2, .row-3 { grid-template-columns: 1fr; }
+  @media (max-width: 880px) {
+    .cases { grid-template-columns: 1fr; }
   }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+    backdrop-filter: blur(8px);
+  }
+  .card:hover {
+    border-color: var(--acc);
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px -20px rgba(var(--acc-rgb), 0.45);
+  }
+  .card.is-soon {
+    opacity: 0.78;
+  }
+
+  .thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--surface-frame);
+    overflow: hidden;
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.92) contrast(1.02);
+  }
+  .thumb-glyph {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    background:
+      linear-gradient(135deg, rgba(var(--acc-rgb), 0.14), transparent 60%),
+      var(--surface-frame);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+  }
+  .thumb-glyph .glyph {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    color: var(--acc);
+    opacity: 0.7;
+  }
+  .ribbon {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    background: rgba(var(--acc-rgb), 0.18);
+    color: var(--acc);
+    border: 1px solid rgba(var(--acc-rgb), 0.4);
+    padding: 4px var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+
+  .body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .head .no { color: var(--acc); }
+  .name {
+    font-family: var(--font-body);
+    font-size: var(--type-h3);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+    color: var(--text-strong);
+    margin: 0;
+  }
+  .desc {
+    font-family: var(--font-body);
+    font-size: var(--type-base);
+    line-height: 1.55;
+    color: var(--text-base);
+    margin: 0;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--acc);
+    border: 1px solid rgba(var(--acc-rgb), 0.32);
+    padding: 3px var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+  .meta {
+    margin-top: auto;
+    padding-top: var(--space-3);
+    border-top: 1px dashed var(--border-soft);
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .meta .sep { opacity: 0.5; }
+  .meta .metric { color: var(--acc); }
 </style>

@@ -12,3 +12,12 @@ dist-astro/
 site/node_modules/
 site/.astro/
 site/dist/
+
+# Dev-time symlinks into Astro public/ — point back to legacy assets at repo
+# root (cases/, showcase/, bg.mp4, audio.opus, bg-wireframe.jpg). Recreate
+# locally with: cd site/public && ln -sf ../../{cases,showcase,bg.mp4,audio.opus,bg-wireframe.jpg} .
+site/public/cases
+site/public/showcase
+site/public/bg.mp4
+site/public/audio.opus
+site/public/bg-wireframe.jpg

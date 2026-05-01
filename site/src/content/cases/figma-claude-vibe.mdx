@@ -1,0 +1,34 @@
+---
+id: figma-claude-vibe
+company: cs01
+companyLabel: Americor
+title: Figma ↔ Claude vibe-coding pipeline
+desc: Vibe-coded the round-trip between Figma and Claude — config and component spec moves both ways without handoff drift. Coming soon.
+tags: [Vibe Code, Automation, Figma]
+theme: bright
+deeplink: figma-claude-vibe
+no: CS/04
+role: Designer · Builder
+year: '2025'
+order: 4
+status: soon
+---
+
+import IterCard from '@components/case/IterCard.astro';
+
+## Coming soon
+
+<IterCard label="status">
+  <p>Case write-up in progress. The pipeline itself is live: a Claude skill pulls components from Figma, edits config and spec inline, then pushes back through Code Connect — no manual handoff in either direction.</p>
+</IterCard>
+
+## What it does
+
+- Reads design tokens and component specs from Figma via the API + Code Connect
+- Lets Claude propose changes in natural language, executes edits as Figma plugin commands
+- Roundtrips back: edits in code reflect in Figma so designers see the change in their normal tool
+- Eliminates "designer changed the spec, dev didn't see it" drift — both sides edit one source
+
+## Why
+
+Designer-to-engineer handoff was the slowest part of any token or component change. Every spec tweak became a ticket, a meeting, a re-export. Vibe-coding the pipeline collapses that into one conversation.

@@ -19,6 +19,12 @@ const cases = defineCollection({
     tags: z.array(z.string()),
     theme: z.enum(['dark', 'bright']).default('bright'),
     deeplink: z.string(),
+    no: z.string().optional(),
+    role: z.string().optional(),
+    year: z.string().optional(),
+    thumb: z.string().optional(),
+    order: z.number().default(0),
+    status: z.enum(['live', 'soon']).default('live'),
     impact: z
       .array(
         z.object({
