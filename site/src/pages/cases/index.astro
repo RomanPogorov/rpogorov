@@ -1,0 +1,378 @@
+---
+/**
+ * /rpogorov-dev/app/cases/ — flat index of every case in the collections.
+ *
+ * Two sections: top-level companies (cs01-cs05) as the primary "By Company"
+ * archive, then deep Americor sub-cases (offer-acceptance, engagement, etc.)
+ * as the "By Cases" group. Mirrors the showcase-tabs structure from the
+ * legacy main page but as a static, deeplinkable list.
+ */
+import { getCollection } from 'astro:content';
+import ContentLayout from '@layouts/ContentLayout.astro';
+
+const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
+
+const companies = (await getCollection('companies')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const subCases = (await getCollection('cases')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<ContentLayout title="Cases — Roman Pogorov" theme="dark">
+  <main class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={`${baseUrl}/`}>Showcase</a>
+      <span class="sep">/</span>
+      <span class="current">Cases</span>
+    </nav>
+
+    <header class="hero">
+      <span class="eyebrow">// archive · 2010 — 2026 · selected works</span>
+      <h1 class="title">Cases</h1>
+      <p class="lead">
+        Five top-level engagements and four Americor deep dives. Every entry
+        opens a full write-up — overview prose for company-level work, deep
+        process notes for the sub-case tabs.
+      </p>
+    </header>
+
+    <section class="block">
+      <header class="block-head">
+        <span class="block-num">01</span>
+        <h2 class="block-title">By Company</h2>
+        <p class="block-sub">5 engagements, ordered by recency on the company timeline.</p>
+      </header>
+      <ul class="grid">
+        {
+          companies.map((c) => (
+            <li class="card">
+              <a class="card-link" href={`${baseUrl}/company/${c.id}/`}>
+                <div class="card-thumb">
+                  {c.data.thumb ? (
+                    <img src={c.data.thumb} alt="" loading="lazy" />
+                  ) : (
+                    <div class="card-thumb-fallback">
+                      <span>{c.data.name}</span>
+                    </div>
+                  )}
+                </div>
+                <div class="card-body">
+                  <div class="card-head">
+                    <span class="no">{c.id.toUpperCase().replace('CS', 'CS/')}</span>
+                    <span class="role">{c.data.role}</span>
+                  </div>
+                  <h3 class="card-title">{c.data.title}</h3>
+                  <p class="card-desc">{c.data.desc}</p>
+                  <ul class="card-tags">
+                    {c.data.tags.slice(0, 4).map((t) => <li>{t}</li>)}
+                  </ul>
+                  <div class="card-meta">
+                    <span>{c.data.name}</span>
+                    <span class="dot">·</span>
+                    <span>{c.data.year}</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="block">
+      <header class="block-head">
+        <span class="block-num">02</span>
+        <h2 class="block-title">By Cases</h2>
+        <p class="block-sub">Americor deep dives — process, decisions, iterations.</p>
+      </header>
+      <ul class="grid">
+        {
+          subCases.map((c) => (
+            <li class:list={["card", `is-${c.data.status}`]}>
+              <a
+                class="card-link"
+                href={`${baseUrl}/case/${c.data.company}/${c.data.deeplink}/`}
+              >
+                <div class="card-thumb">
+                  {c.data.thumb ? (
+                    <img src={c.data.thumb} alt="" loading="lazy" />
+                  ) : (
+                    <div class="card-thumb-fallback">
+                      <span>{c.data.companyLabel}</span>
+                    </div>
+                  )}
+                  {c.data.status === 'soon' && <span class="ribbon">soon</span>}
+                </div>
+                <div class="card-body">
+                  <div class="card-head">
+                    <span class="no">{c.data.no ?? c.data.companyLabel}</span>
+                    {c.data.metric && <span class="metric">{c.data.metric}</span>}
+                  </div>
+                  <h3 class="card-title">{c.data.title}</h3>
+                  <p class="card-desc">{c.data.desc}</p>
+                  <ul class="card-tags">
+                    {c.data.tags.slice(0, 4).map((t) => <li>{t}</li>)}
+                  </ul>
+                  <div class="card-meta">
+                    <span>{c.data.companyLabel}</span>
+                    {c.data.year && (
+                      <>
+                        <span class="dot">·</span>
+                        <span>{c.data.year}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</ContentLayout>
+
+<style>
+  .page {
+    max-width: var(--measure-page);
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-8) var(--space-24);
+  }
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: var(--space-10);
+  }
+  .crumbs a { color: var(--acc); text-decoration: none; border-bottom: none; }
+  .crumbs a:hover { text-decoration: underline; }
+  .sep { opacity: 0.5; }
+  .current { color: var(--ink-strong); }
+
+  .hero {
+    margin-bottom: var(--space-16);
+    max-width: var(--measure-content);
+  }
+  .eyebrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: var(--space-4);
+  }
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--type-h1);
+    font-weight: 800;
+    line-height: var(--line-tight);
+    letter-spacing: var(--track-display);
+    color: var(--ink-strong);
+    text-transform: uppercase;
+    margin: 0 0 var(--space-4);
+  }
+  .lead {
+    font-size: var(--type-lg);
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: var(--measure-narrow);
+    margin: 0;
+  }
+
+  .block { margin-bottom: var(--space-20); }
+  .block-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: var(--space-5);
+    align-items: baseline;
+    margin-bottom: var(--space-8);
+    border-bottom: 1px dashed var(--border-soft);
+    padding-bottom: var(--space-5);
+  }
+  .block-num {
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-family: var(--font-mono);
+    font-size: var(--type-h2);
+    font-weight: 700;
+    color: var(--acc);
+    letter-spacing: var(--track-mono);
+  }
+  .block-title {
+    grid-column: 2;
+    grid-row: 1;
+    font-family: var(--font-display);
+    font-size: var(--type-h2);
+    font-weight: 800;
+    letter-spacing: var(--track-h2);
+    color: var(--ink-strong);
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .block-sub {
+    grid-column: 2;
+    grid-row: 2;
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin: var(--space-1) 0 0;
+  }
+
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+  @media (max-width: 880px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: border-color 200ms, transform 200ms, box-shadow 200ms;
+  }
+  .card:hover {
+    border-color: var(--acc);
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px -22px rgba(var(--acc-rgb), 0.45);
+  }
+  .card.is-soon { opacity: 0.78; }
+  .card-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: none;
+  }
+  .card-thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--surface-frame);
+    overflow: hidden;
+  }
+  .card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+    border: none;
+  }
+  .card-thumb-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.14), transparent 60%) var(--surface-frame);
+  }
+  .ribbon {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    background: rgba(var(--acc-rgb), 0.18);
+    color: var(--acc);
+    border: 1px solid rgba(var(--acc-rgb), 0.4);
+    padding: 4px var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+  .card-body {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .card-head .no { color: var(--acc); }
+  .card-head .metric { color: var(--acc); }
+  .card-head .role { color: var(--ink-muted); }
+  .card-title {
+    font-family: var(--font-body);
+    font-size: var(--type-h3);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.012em;
+    color: var(--ink-strong);
+    margin: 0;
+  }
+  .card-desc {
+    font-size: var(--type-base);
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0;
+  }
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .card-tags li {
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--acc);
+    border: 1px solid rgba(var(--acc-rgb), 0.32);
+    padding: 3px var(--space-2);
+    border-radius: var(--radius-sm);
+    background: rgba(var(--acc-rgb), 0.05);
+  }
+  .card-meta {
+    margin-top: auto;
+    padding-top: var(--space-3);
+    border-top: 1px dashed var(--border-soft);
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .card-meta .dot { opacity: 0.5; }
+</style>
