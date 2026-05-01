@@ -17436,12 +17436,23 @@ See also: Health Samurai Lab: Game of Pools.`,
             const signal = useSignal();
             const inv = 1 - signal;
             const fall = inv * inv * inv;
+            const idle = signal > 0.95;
             const caOffset = useMemo(() => new Vector2(0, 0), []);
             useFrame(() => {
+                if (idle) { caOffset.x = 0; caOffset.y = 0; return; }
                 const jitter = 0.0002 + inv * 0.012;
                 caOffset.x = (Math.random() - 0.5) * jitter;
                 caOffset.y = (Math.random() - 0.5) * jitter * 0.6;
             });
+            // At idle (signal ~= 1) keep only Vignette so the postprocess
+            // pipeline isn't doing 6 fullscreen passes on a hot GPU.
+            if (idle) {
+                return (
+                    <EffectComposer multisampling={0}>
+                        <Vignette eskil={false} offset={0.2} darkness={0.5} />
+                    </EffectComposer>
+                );
+            }
             return (
                 <EffectComposer multisampling={0}>
                     <Bloom
@@ -17500,8 +17511,8 @@ See also: Health Samurai Lab: Game of Pools.`,
             return (
                 <Canvas
                     frameloop={overlayOpen ? 'never' : 'always'}
-                    gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
-                    dpr={[1, 1.5]}
+                    gl={{ antialias: false, alpha: false, powerPreference: 'high-performance' }}
+                    dpr={[1, 1]}
                     camera={{ position: [0, 1.5, 7.6], fov: 62 }}
                 >
                     <color attach="background" args={['#050708']} />
