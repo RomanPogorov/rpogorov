@@ -1,0 +1,67 @@
+---
+/**
+ * BeforeAfter — drag-the-divider comparison slider. Markup is a single
+ * scene per component instance (multi-scene multi-platform with scene
+ * picker is heavier — kept simple for the rebuild). CSS in legacy.css
+ * (.am-ba-*).
+ *
+ * Usage in MDX:
+ *   <BeforeAfter
+ *     before="/path/before.jpg"
+ *     after="/path/after.png"
+ *     beforeAlt="..."
+ *     afterAlt="..."
+ *   />
+ */
+interface Props {
+  before: string;
+  after: string;
+  beforeAlt?: string;
+  afterAlt?: string;
+}
+const { before, after, beforeAlt = '', afterAlt = '' } = Astro.props;
+const id = `ba-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class="am-ba" data-ba data-ba-id={id}>
+  <div class="am-ba-stage" data-platform="default">
+    <img class="am-ba-img am-ba-before-img" src={before} alt={beforeAlt} />
+    <div class="am-ba-after-wrap">
+      <img class="am-ba-img" src={after} alt={afterAlt} />
+    </div>
+    <span class="am-ba-label before">Before</span>
+    <span class="am-ba-label after">After</span>
+    <div class="am-ba-divider" aria-hidden="true"></div>
+    <div class="am-ba-handle" aria-hidden="true"></div>
+    <input
+      type="range"
+      class="am-ba-range"
+      min="0"
+      max="100"
+      step="0.1"
+      value="50"
+      aria-label="Compare before and after"
+    />
+  </div>
+</div>
+
+<script is:inline>
+  // Wire each before/after on the page once.
+  document.querySelectorAll('[data-ba]').forEach((ba) => {
+    const stage = ba.querySelector('.am-ba-stage');
+    if (!stage) return;
+    const range = stage.querySelector('.am-ba-range');
+    const after = stage.querySelector('.am-ba-after-wrap');
+    const divider = stage.querySelector('.am-ba-divider');
+    const handle = stage.querySelector('.am-ba-handle');
+    if (!range || !after || !divider || !handle) return;
+    function set(v) {
+      const pct = Math.max(0, Math.min(100, Number(v)));
+      after.style.clipPath = `inset(0 0 0 ${pct}%)`;
+      divider.style.left = `${pct}%`;
+      handle.style.left = `${pct}%`;
+    }
+    set(range.value);
+    range.addEventListener('input', (e) => set(e.target.value));
+  });
+</script>

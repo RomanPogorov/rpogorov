@@ -1,0 +1,41 @@
+---
+id: cs02
+name: Health Samurai
+role: Senior Product Designer
+year: 2024 — present
+title: Built the system. <em>Now look inside.</em>
+desc: Дизайн-система, AI-pipeline, контент-экосистема, продуктовые редизайны и инфраструктура — разбито на 12 deep dives. Каждый sub-case описывает что построил, как это работает и что изменилось.
+tags: [Design System, Figma ↔ Code, AI Pipeline, FHIR]
+thumb: /rpogorov-dev/app/showcase/cases/cs02-aidbox.png
+order: 2
+---
+
+import Metric from '@components/case-rich/Metric.astro';
+import Metrics from '@components/case-rich/Metrics.astro';
+
+## TL;DR
+
+- Stood up a **shadCN-based design system** end-to-end — Figma + code + Storybook in lockstep, plus a Claude skill that pulled components straight out of Figma before that tooling existed elsewhere.
+- Built a markdown-first **landing platform** with an in-browser DOM-aware Claude chat — time-to-landing dropped from 1.5 months to 2–3 days. The whole company website now runs on it.
+- Generators on top of the same primitives — **presentation generator** for any teammate, **kudos image generator** trained on the brand mascot, embedded analytics on every page.
+- Vibe-coded the **FireCamp conference app** in a week — voting, schedule, subscriptions. Became the proof point that convinced C-level the code-first approach was net positive, not a side experiment.
+
+<Metrics>
+  <Metric label="LANDING CYCLE" was="1.5 mo" now="3 d" description="Median time from MD draft → live landing. <strong>30×</strong> faster turnaround for marketing." points="0,24 30,16 60,9 90,5 120,3" />
+  <Metric label="DS COVERAGE" was="0" now="5 products" description="One component library, five healthcare products: admin console, dev portal, FireCamp app, internal tooling, marketing." points="0,25 30,21 60,14 90,9 120,5" />
+  <Metric label="AI-ASSISTED" was="manual" now="round-trip" description="Claude skill handles Figma → code component scaffolds, devs review, ship through Storybook. <strong>No</strong> raw handoff." points="0,22 30,18 60,12 90,7 120,4" />
+</Metrics>
+
+## Each track, opened up
+
+Click any sub-case below to jump into the full write-up — design system, content infrastructure, product redesigns, brand work, and proof artifacts. Every track is self-contained: what was built, how, and what changed.
+
+- **Landing platform & AI pipeline** — MD + block library → live page with embedded MCP chat, 3-day cycle replacing month-long figma → review → ship loops.
+- **Design system: Figma to Storybook** — shadCN-based, FHIR-aware variants (resource pickers, value-set autocompletes), bidirectional sync via Code Connect.
+- **Figma — Code mapping skill** — a Claude skill that pulls component specs from Figma before official Code Connect was viable.
+- **Presentation generator** — internal tool: any teammate types markdown, gets a brand-consistent deck.
+- **Embedded analytics on every page** — engagement signals captured in-flow without retro instrumentation.
+
+## Под-кейсы (in progress)
+
+Detailed write-ups for FireCamp PWA, the landing-pipeline migration, and the FB community analyzer (which drove the Americor pre-IPO redesign) live in the [articles archive](/rpogorov-dev/app/articles/).

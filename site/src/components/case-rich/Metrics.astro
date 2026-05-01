@@ -1,0 +1,15 @@
+---
+/**
+ * Metrics — grid wrapper for `<Metric>` cards. `rich` enables the larger
+ * variant with description + trend used inside TL;DR (legacy
+ * `.am-metrics-rich .am-metric`).
+ */
+interface Props {
+  rich?: boolean;
+}
+const { rich = true } = Astro.props;
+const cls = rich ? 'am-metrics am-metrics-rich' : 'am-metrics';
+---
+<div class={cls}>
+  <slot />
+</div>

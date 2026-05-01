@@ -1,0 +1,81 @@
+---
+/**
+ * HeroShot — multi-slide preview board with tab nav. Lifts the legacy
+ * cs01 cp-hero-shot markup. CSS in legacy.css (.cp-hero-shot-*). Slides
+ * are images by default; pass `stub` text to render a placeholder slide.
+ *
+ * Usage in MDX:
+ *   <HeroShot
+ *     slides={[
+ *       { kind: 'img', src: '/path/main.png', alt: 'Americor dashboard', tabNum: '01', tabLabel: 'Редизайн' },
+ *       { kind: 'stub', text: 'soon · Figma ⇄ Code', tabNum: '04', tabLabel: 'Figma ⇄ Code' },
+ *     ]}
+ *   />
+ */
+interface ImgSlide {
+  kind: 'img';
+  src: string;
+  alt: string;
+  tabNum: string;
+  tabLabel: string;
+}
+interface StubSlide {
+  kind: 'stub';
+  text: string;
+  tabNum: string;
+  tabLabel: string;
+}
+type Slide = ImgSlide | StubSlide;
+
+interface Props {
+  slides: Slide[];
+}
+const { slides } = Astro.props;
+const id = `shot-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<figure class="cp-hero-shot" data-shot-board data-shot-id={id}>
+  <div class="cp-hero-shot-grid">
+    <div class="cp-hero-shot-stage">
+      <div class="cp-hero-shot-track" data-shot-track style="--shot-index: 0;">
+        {
+          slides.map((s, i) => (
+            <div class="cp-hero-shot-slide" data-shot-slide={i}>
+              {s.kind === 'img' ? (
+                <img src={s.src} alt={s.alt} />
+              ) : (
+                <div class="cp-hero-shot-stub">// {s.text}</div>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <nav class="cp-hero-shot-nav" data-shot-nav aria-label="Hero shot switcher" tabindex="0">
+      {
+        slides.map((s, i) => (
+          <button class:list={['cp-hero-shot-tab', i === 0 ? 'is-active' : '']} type="button" data-shot-target={i}>
+            <span class="tab-num">{s.tabNum}</span>
+            <span class="tab-label">{s.tabLabel}</span>
+          </button>
+        ))
+      }
+    </nav>
+  </div>
+</figure>
+
+<script is:inline>
+  // Wire up every shot board on the page (each may have multiple slides).
+  document.querySelectorAll('[data-shot-board]').forEach((board) => {
+    const track = board.querySelector('[data-shot-track]');
+    const tabs = board.querySelectorAll('[data-shot-target]');
+    if (!track || !tabs.length) return;
+    tabs.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = Number(btn.dataset.shotTarget);
+        track.style.setProperty('--shot-index', String(target));
+        tabs.forEach((b) => b.classList.toggle('is-active', b === btn));
+      });
+    });
+  });
+</script>

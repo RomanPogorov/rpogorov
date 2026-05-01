@@ -1,0 +1,90 @@
+---
+/**
+ * Timeline — Gantt-style multi-stream roadmap. Markup lifted 1:1 from the
+ * legacy cs01 case-page. CSS lives in legacy.css (.am-tl-*); this just
+ * accepts streams data and renders the rows + bars.
+ *
+ * Usage in MDX:
+ *   <Timeline
+ *     stamp="// timeline · Q1 2024 → Q4 2025 · 8 streams"
+ *     quarters={['Q1 24','Q2 24','Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25']}
+ *     nowIdx={7}
+ *     streams={[
+ *       { name: 'Онбординг и аудит', sub: '01', bars: [{ kind: 'product', s: 1, e: 1, label: 'Аудит' }] },
+ *       …
+ *     ]}
+ *   />
+ */
+interface Bar {
+  kind: 'primary' | 'product' | 'bg' | 'short';
+  s: number;
+  e: number;
+  label: string;
+  title?: string;
+}
+
+interface Stream {
+  name: string;
+  sub: string;
+  bars: Bar[];
+}
+
+interface Props {
+  stamp?: string;
+  quarters: string[];
+  nowIdx?: number;
+  streams: Stream[];
+}
+
+const { stamp, quarters, nowIdx, streams } = Astro.props;
+const cols = quarters.length;
+---
+
+<div class="cp-fullbleed am-tl-bleed">
+  <div class="am-tl-frame">
+    <div class="am-tl-headstrip">
+      {stamp && <div class="am-tl-stamp" set:html={stamp} />}
+      <div class="am-tl-legend">
+        <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--primary"></i> Основное направление</span>
+        <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--product"></i> Работа над продуктом</span>
+        <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--bg"></i> Идёт фоном</span>
+        <span class="am-tl-legend-item"><i class="am-tl-sw am-tl-sw--short"></i> Короткий проект</span>
+      </div>
+    </div>
+
+    <div class="am-tl-grid" style={`--am-tl-cols: ${cols};`} data-am-tl>
+      <div class="am-tl-row am-tl-row--head">
+        <div class="am-tl-label" aria-hidden="true"></div>
+        <div class="am-tl-track">
+          {
+            quarters.map((q, i) => (
+              <div class:list={['am-tl-quarter', i === nowIdx ? 'is-now' : '']} style={`--c: ${i + 1}`}>
+                {q}
+                {i === nowIdx && <span class="am-tl-now">NOW</span>}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      {
+        streams.map((stream, i) => (
+          <div class="am-tl-row" style={`--am-tl-delay: ${(i + 1) * 60}ms;`}>
+            <div class="am-tl-label">
+              <span class="am-tl-dot"></span>
+              <span class="am-tl-name">{stream.name}</span>
+              <span class="am-tl-sub">{stream.sub}</span>
+            </div>
+            <div class="am-tl-track">
+              {stream.bars.map((b) => (
+                <div class:list={['am-tl-bar', `am-tl-bar--${b.kind}`]} style={`--s: ${b.s}; --e: ${b.e};`} title={b.title ?? b.label}>
+                  {b.label}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

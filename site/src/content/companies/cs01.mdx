@@ -1,0 +1,97 @@
+---
+id: cs01
+name: Americor
+role: Lead Product Designer
+year: 2023 — 2025
+title: Редизайн продукта и <em>дизайн-система</em> для трёх платформ.
+desc: Финтех в сфере debt relief — веб + iOS + Android, несколько брендов, IPO-режим. Главная находка редизайна — разделение пользовательского опыта на фазы программы.
+tags: [tokens, multi-brand, information arch, figma ↔ code]
+thumb: /rpogorov-dev/app/showcase/cases/cs01-americor.png
+order: 1
+---
+
+import HeroShot from '@components/case-rich/HeroShot.astro';
+import Metric from '@components/case-rich/Metric.astro';
+import Metrics from '@components/case-rich/Metrics.astro';
+import Timeline from '@components/case-rich/Timeline.astro';
+import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
+
+<HeroShot slides={[
+  { kind: 'img', src: '/rpogorov-dev/app/showcase/cs01/main.png', alt: 'Americor — редизайнённый dashboard', tabNum: '01', tabLabel: 'Редизайн' },
+  { kind: 'img', src: '/rpogorov-dev/app/showcase/cs01/infra.png', alt: 'Americor — дизайн-инфраструктура в Figma', tabNum: '02', tabLabel: 'Инфраструктура' },
+  { kind: 'img', src: '/rpogorov-dev/app/showcase/cs01/ds.png', alt: 'Дизайн-система — компоненты + variables по платформам', tabNum: '03', tabLabel: 'Дизайн-система' },
+  { kind: 'stub', text: 'soon · Figma ⇄ Code пайплайн', tabNum: '04', tabLabel: 'Figma ⇄ Code' },
+]} />
+
+## TL;DR
+
+За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на **code-first** подход.
+
+Ключевая продуктовая находка — *разделение опыта на фазы программы*: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.
+
+Каждый год бизнес спускает на портал-команду план по NPS и CSAT. **Оба раза мы перекрыли его — и заметно.** По итогам редизайна команда получила премию.
+
+<Metrics>
+  <Metric label="NPS" was="45" now="78" description="Net Promoter Score. План бизнеса — <strong>70</strong>, сделали <strong>78</strong>. +33 пункта к стартовой точке после редизайна и системы фаз." points="0,22 30,18 60,15 90,9 120,4" />
+  <Metric label="CSAT" was="3.6" now="4.5" description="Customer Satisfaction по 5-балльной. План — <strong>4.2</strong>, сделали <strong>4.5</strong>. Меньше тревоги — выше доверие." points="0,21 30,19 60,14 90,10 120,6" />
+  <Metric label="DS COVERAGE" was="0%" now="50–60%" description="Покомпонентно раскатили дизайн-систему вместе с командами разработки. Покрыли больше половины интерфейсов на трёх платформах." points="0,25 30,23 60,18 90,11 120,7" />
+</Metrics>
+
+## Roadmap recap — Q1 2024 по сейчас
+
+Восемь параллельных линий работы. Цвет полоски — про интенсивность: *основное направление*, продуктовая работа, фон или короткий заход. Многое шло параллельно — поэтому редизайн, дизайн-система и code-first процесс пересекаются в одних кварталах.
+
+<Timeline
+  stamp="// timeline · <b>Q1 2024 → Q4 2025</b> · 8 streams"
+  quarters={['Q1 24','Q2 24','Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25']}
+  nowIdx={7}
+  streams={[
+    { name: 'Онбординг и аудит', sub: '01', bars: [{ kind: 'product', s: 1, e: 1, label: 'Аудит', title: 'Q1 2024 — погружение в продукт, аудит UX/визуала, карта стейкхолдеров' }] },
+    { name: 'Дизайн-система', sub: '02', bars: [
+      { kind: 'primary', s: 1, e: 2, label: '4 слоя · root → platform', title: '4-слойная архитектура: root → semantic → brand → platform' },
+      { kind: 'product', s: 3, e: 6, label: 'Внедрение iOS / Android / Web', title: 'Внедрение DS: iOS / Android / Web, синхронизация Figma ↔ код' },
+      { kind: 'product', s: 7, e: 8, label: 'Покрытие → 100%', title: 'Покрытие 50–60% → 100% к концу года' }
+    ]},
+    { name: 'Pre-IPO редизайн', sub: '03', bars: [
+      { kind: 'primary', s: 2, e: 3, label: '4 варианта концепции', title: 'Четыре варианта концепции, тестирование на реальных пользователях' },
+      { kind: 'primary', s: 4, e: 5, label: 'v3 · shipped +18.2%', title: 'v3 (адаптивный флоу) — shipped at +18.2% conversion' }
+    ]},
+    { name: 'Мультибренд', sub: '04', bars: [
+      { kind: 'product', s: 3, e: 7, label: 'Subsidiaries · цвета по штатам', title: 'Subsidiaries — отдельные визуальные идентификации по штатам' }
+    ]},
+    { name: 'Code-first процесс', sub: '05', bars: [
+      { kind: 'bg', s: 4, e: 8, label: 'React + Storybook · prototype → handover', title: 'React + Storybook как source of truth' }
+    ]},
+    { name: 'Vibe-code прототипы', sub: '06', bars: [
+      { kind: 'short', s: 5, e: 5, label: 'FB Analyzer · 80k msg', title: 'Анализатор Facebook-сообщества: 80k+ сообщений → topic + sentiment' },
+      { kind: 'short', s: 6, e: 6, label: 'NSF Simulator', title: 'NSF Shortfall simulator — для логики проблемных дат списания' },
+      { kind: 'short', s: 7, e: 7, label: 'Community demo', title: 'Code-first прототип Community-раздела для валидации' }
+    ]},
+    { name: 'UXR + Feedback loops', sub: '07', bars: [
+      { kind: 'bg', s: 2, e: 8, label: 'Опросы, интервью, логирование' }
+    ]},
+    { name: 'Менторство дизайнеров', sub: '08', bars: [
+      { kind: 'bg', s: 3, e: 8, label: '2 PD · 1:1 ревью + DS контрибьюция' }
+    ]},
+  ]}
+/>
+
+## Сравнение редизайна
+
+Перетащи разделитель — слева как было, справа как стало.
+
+<BeforeAfter
+  before="/rpogorov-dev/app/showcase/cs01/desktop-before.jpg"
+  after="/rpogorov-dev/app/showcase/cs01/desktop-after.png"
+  beforeAlt="Desktop до редизайна"
+  afterAlt="Desktop после редизайна"
+/>
+
+## Под-кейсы
+
+Глубокие материалы по конкретным продуктовым направлениям внутри Americor:
+
+- [Increasing Settlement Offer Acceptance](/rpogorov-dev/app/case/cs01/offer-acceptance/) — +175% online acceptance, +44% overall, 300k users impacted
+- [Engaging Early-Stage Users](/rpogorov-dev/app/case/cs01/engagement/) — +72% NPS, +15% early-user retention
+- [Americor Design System](/rpogorov-dev/app/case/cs01/design-system/) — 3 platforms, 2 brands, 3-tier tokens
+- [Figma ↔ Claude vibe-coding pipeline](/rpogorov-dev/app/case/cs01/figma-claude-vibe/) — designer-to-engineer roundtrip без handoff drift

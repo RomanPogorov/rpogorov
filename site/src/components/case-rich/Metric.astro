@@ -1,0 +1,53 @@
+---
+/**
+ * Metric — single before/after metric card with trend sparkline.
+ *
+ * Lifts the legacy `.am-metric` markup + CSS 1:1 from index.html (TL;DR
+ * block). Used inside `<Metrics>` wrapper for the rich variant. Trend SVG
+ * draws a polyline from the `points` prop (normalized 0–120 x, 0–28 y).
+ *
+ * Usage in MDX:
+ *   <Metric
+ *     label="NPS"
+ *     was="45"
+ *     now="78"
+ *     description="Net Promoter Score. План бизнеса — <strong>70</strong>, сделали <strong>78</strong>."
+ *     points="0,22 30,18 60,15 90,9 120,4"
+ *   />
+ */
+interface Props {
+  label: string;
+  was?: string;
+  now: string;
+  description?: string;
+  points?: string;
+}
+
+const { label, was, now, description, points } = Astro.props;
+
+function buildPath(p: string): { line: string; fill: string } {
+  const coords = p.trim().split(/\s+/).map((pair) => pair.split(',').map(Number));
+  const line = coords.map((c, i) => `${i === 0 ? 'M' : 'L'}${c[0]},${c[1]}`).join(' ');
+  const last = coords[coords.length - 1];
+  const fill = `${line} L${last[0]},28 L${coords[0][0]},28 Z`;
+  return { line, fill };
+}
+
+const trend = points ? buildPath(points) : null;
+---
+
+<article class="am-metric">
+  <div class="am-metric-label">— {label}</div>
+  <div class="am-metric-vals">
+    {was && <span class="am-metric-was">{was}</span>}
+    {was && <span class="am-metric-arrow">→</span>}
+    <span class="am-metric-now">{now}</span>
+  </div>
+  {description && <p class="am-metric-desc" set:html={description} />}
+  {trend && (
+    <svg class="am-metric-trend" viewBox="0 0 120 28" preserveAspectRatio="none" aria-hidden="true">
+      <path d={trend.line} fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+      <path d={trend.fill} fill="currentColor" fill-opacity="0.12" />
+    </svg>
+  )}
+</article>
