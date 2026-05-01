@@ -49,3 +49,18 @@ a:hover {
 
 /* Webfonts — pulled from Google Fonts in Layout.astro <link>. Names listed
    here match what tokens.css references. */
+
+/* ---- MDX layout helpers ---- */
+/* `.row-2` / `.row-3` are wrappers MDX content uses to put two or three
+   PainCards / Pillars / Figures side by side. */
+.row-2,
+.row-3 {
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 var(--space-8);
+}
+.row-2 { grid-template-columns: repeat(2, 1fr); }
+.row-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 720px) {
+  .row-2, .row-3 { grid-template-columns: 1fr; }
+}

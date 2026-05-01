@@ -1,0 +1,192 @@
+---
+/**
+ * Dynamic case route — /rpogorov-dev/case/{company}/{id}/
+ *
+ * One Astro page per case in the content collection. Astro's getStaticPaths
+ * walks every MDX in src/content/cases/ and emits a static HTML file per
+ * case at build time. URL pattern matches what cases will eventually link to
+ * from the showcase grid.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import Layout from '@layouts/Layout.astro';
+import ImpactStrip from '@components/case/ImpactStrip.astro';
+import MetaGrid from '@components/case/MetaGrid.astro';
+
+export const getStaticPaths = (async () => {
+  const cases = await getCollection('cases');
+  return cases.map((entry) => ({
+    params: { company: entry.data.company, id: entry.data.deeplink },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const data = entry.data;
+const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
+const showcaseUrl = `${baseUrl}/`;
+const companyUrl = `${baseUrl}/case/${data.company}/`;
+---
+
+<Layout title={`${data.title} — ${data.companyLabel}`} description={data.desc} theme={data.theme}>
+  <main class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={showcaseUrl}>Showcase</a>
+      <span class="sep">/</span>
+      <a href={companyUrl}>{data.companyLabel}</a>
+      <span class="sep">/</span>
+      <span class="current">{data.title}</span>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-meta">
+        <span class="company">{data.companyLabel}</span>
+        {data.metric && <span class="metric">{data.metric}</span>}
+      </div>
+      <h1 class="title">{data.title}</h1>
+      <ul class="tags">
+        {data.tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+      <p class="desc">{data.desc}</p>
+    </header>
+
+    {data.impact.length > 0 && <ImpactStrip cells={data.impact} />}
+    {data.meta.length > 0 && <MetaGrid items={data.meta} />}
+
+    <article class="body">
+      <Content />
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: var(--measure-content);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-8) var(--space-24);
+  }
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-12);
+  }
+  .crumbs a {
+    color: var(--acc);
+    text-decoration: none;
+  }
+  .crumbs a:hover { text-decoration: underline; }
+  .sep { opacity: 0.55; }
+  .current { color: var(--text-strong); }
+
+  .hero {
+    margin-bottom: var(--space-12);
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-4);
+  }
+  .company {
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .metric {
+    font-family: var(--font-mono);
+    font-size: var(--type-sm);
+    font-weight: 600;
+    color: var(--acc);
+  }
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--type-h1);
+    font-weight: 700;
+    line-height: var(--line-tight);
+    letter-spacing: var(--track-display);
+    color: var(--text-strong);
+    margin: 0 0 var(--space-5);
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0 0 var(--space-6);
+    padding: 0;
+  }
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--acc);
+    border: 1px solid rgba(var(--acc-rgb), 0.32);
+    padding: var(--space-1) var(--space-3);
+    background: rgba(var(--acc-rgb), 0.05);
+  }
+  .desc {
+    font-size: var(--type-lg);
+    line-height: 1.55;
+    color: var(--text-base);
+    max-width: var(--measure-narrow);
+    margin: 0;
+  }
+
+  .body :global(h2) {
+    font-family: var(--font-body);
+    font-size: var(--type-h2);
+    font-weight: 700;
+    line-height: var(--line-snug);
+    letter-spacing: var(--track-h2);
+    color: var(--text-strong);
+    margin: var(--space-18) 0 var(--space-5);
+  }
+  .body :global(h3) {
+    font-family: var(--font-body);
+    font-size: var(--type-h3);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: var(--track-h3);
+    color: var(--text-strong);
+    margin: var(--space-14) 0 var(--space-3);
+  }
+  .body :global(p) {
+    margin: 0 0 var(--space-5);
+    max-width: var(--measure-body);
+  }
+  .body :global(ul),
+  .body :global(ol) {
+    margin: 0 0 var(--space-6);
+    padding-left: 0;
+  }
+  .body :global(li) {
+    list-style: none;
+    position: relative;
+    padding-left: var(--space-6);
+    margin-bottom: var(--space-3);
+  }
+  .body :global(li::before) {
+    content: '';
+    position: absolute;
+    left: var(--space-2);
+    top: 11px;
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--acc);
+  }
+  .body :global(strong) { color: var(--text-strong); font-weight: 600; }
+  .body :global(em) { color: var(--text-base); font-style: italic; }
+</style>
