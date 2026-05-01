@@ -17190,13 +17190,32 @@ See also: Health Samurai Lab: Game of Pools.`,
             );
         }
 
+        // Watch body class for overlay states. Used to pause the WebGL frame
+        // loop when something else covers the canvas, freeing up GPU.
+        function useOverlayState() {
+            const overlays = ['showcase-open', 'case-open', 'dw-open', 'reader-open',
+                              'left-pane-open', 'vibe-term-open', 'chat-fullscreen', 'ctl-open'];
+            const compute = () => overlays.some(c => document.body.classList.contains(c));
+            const [open, setOpen] = useState(compute);
+            useEffect(() => {
+                const update = () => setOpen(compute());
+                const obs = new MutationObserver(update);
+                obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+                update();
+                return () => obs.disconnect();
+            }, []);
+            return open;
+        }
+
         function App() {
+            const overlayOpen = useOverlayState();
             useEffect(() => {
                 document.body.classList.add('r3f-active');
                 return () => document.body.classList.remove('r3f-active');
             }, []);
             return (
                 <Canvas
+                    frameloop={overlayOpen ? 'never' : 'always'}
                     gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
                     dpr={[1, 1.5]}
                     camera={{ position: [0, 1.5, 7.6], fov: 62 }}
