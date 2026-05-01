@@ -1031,6 +1031,99 @@
             color: var(--acc);
         }
 
+        /* ============ SHOWCASE TABS — by company / by cases =================
+           Sits below .showcase-intro at the top of the basement panel. Two
+           tabs that switch the inner view (carousel vs cases-grid). Style
+           mirrors the .hud-tabs pattern: angled clip-path, mono caps,
+           accent for active, dim for idle. */
+        .sc-tabs {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: inline-flex;
+            gap: 2px;
+            z-index: 4;
+        }
+        .sc-tab {
+            appearance: none;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            color: rgba(255, 255, 255, 0.65);
+            padding: 8px 22px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+            transition: color 0.2s, background 0.2s, border-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 168px;
+            justify-content: center;
+        }
+        .sc-tab:hover {
+            color: rgba(255, 255, 255, 0.95);
+            background: rgba(var(--acc-rgb), 0.10);
+            border-color: rgba(var(--acc-rgb), 0.55);
+        }
+        .sc-tab.is-active {
+            color: #050708;
+            background: var(--acc);
+            border-color: var(--acc);
+            box-shadow: 0 0 18px rgba(var(--acc-rgb), 0.45);
+        }
+        .sc-tab-num {
+            font-size: 0.5625rem;
+            opacity: 0.7;
+            letter-spacing: 0.28em;
+        }
+        .sc-tab.is-active .sc-tab-num { opacity: 1; }
+        .sc-tab-label { font-size: 0.6875rem; }
+        @media (max-width: 760px) {
+            .sc-tabs { top: 60px; }
+            .sc-tab { min-width: auto; padding: 6px 14px; gap: 6px; }
+            .sc-tab-num { display: none; }
+        }
+
+        /* Cases-grid view — populated in Step 2. Hidden until tab clicked. */
+        .sc-view-cases {
+            position: absolute;
+            inset: 120px 32px 32px;
+            overflow-y: auto;
+            display: none;
+        }
+        body[data-sc-view="cases"] .sc-view-cases { display: block; }
+        body[data-sc-view="cases"] .cases { display: none; }
+        body[data-sc-view="cases"] .cases-nav { visibility: hidden; }
+        .sc-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            min-height: 200px;
+        }
+        @media (max-width: 880px) {
+            .sc-cases-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .sc-cases-grid { grid-template-columns: 1fr; }
+        }
+        .sc-cases-empty {
+            grid-column: 1 / -1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+            padding: 60px 0;
+        }
+
         /* ============ CARROUSEL: ONE CASE PER VIEWPORT ============ */
         .cases {
             position: absolute;
@@ -10372,6 +10465,17 @@
                 <p class="showcase-sub">scroll · drag · <span class="blink">← →</span></p>
             </div>
 
+            <nav class="sc-tabs" role="tablist" aria-label="Showcase view mode">
+                <button type="button" class="sc-tab is-active" data-sc-tab="company" role="tab" aria-selected="true" aria-controls="sc-view-company">
+                    <span class="sc-tab-num">01</span>
+                    <span class="sc-tab-label">By Company</span>
+                </button>
+                <button type="button" class="sc-tab" data-sc-tab="cases" role="tab" aria-selected="false" aria-controls="sc-view-cases">
+                    <span class="sc-tab-num">02</span>
+                    <span class="sc-tab-label">By Cases</span>
+                </button>
+            </nav>
+
             <div class="cases" id="cases">
                 <article class="case" data-case="cs01">
                     <div class="case-media is-openable" data-open-case="cs01" role="button" tabindex="0" aria-label="Open Americor case study">
@@ -10478,6 +10582,13 @@
                         <div class="case-meta">Databricks · Consulting · 2022</div>
                     </div>
                 </article>
+            </div>
+
+            <!-- By Cases view — populated by Step 2 from a DEEP_CASES data array -->
+            <div class="sc-view-cases" id="sc-view-cases" role="tabpanel" aria-labelledby="sc-tab-cases" aria-hidden="true">
+                <div class="sc-cases-grid" id="sc-cases-grid">
+                    <p class="sc-cases-empty">// loading deep cases…</p>
+                </div>
             </div>
 
             <nav class="cases-nav" aria-label="Carousel navigation">
@@ -13581,11 +13692,35 @@
                 window.__sfx?.disengage?.();
                 if (!opts?.silent) window.__router?.set({});
             }
+            // ---- View tabs: by company / by cases ----
+            const tabBtns = document.querySelectorAll('.sc-tab[data-sc-tab]');
+            const casesView = document.getElementById('sc-view-cases');
+            function setView(name, opts) {
+                const v = name === 'cases' ? 'cases' : 'company';
+                document.body.dataset.scView = v;
+                tabBtns.forEach(b => {
+                    const on = b.dataset.scTab === v;
+                    b.classList.toggle('is-active', on);
+                    b.setAttribute('aria-selected', String(on));
+                });
+                if (casesView) casesView.setAttribute('aria-hidden', v === 'cases' ? 'false' : 'true');
+                if (!opts?.silent) {
+                    const hash = v === 'cases' ? '#showcase/cases' : '#showcase';
+                    if (location.hash !== hash) history.replaceState(null, '', hash);
+                }
+                window.__sfx?.tick?.();
+            }
+            tabBtns.forEach(b => b.addEventListener('click', () => setView(b.dataset.scTab)));
+            // Read initial view from URL: #showcase/cases → cases; default company.
+            const initialView = /#showcase\/cases/.test(location.hash) ? 'cases' : 'company';
+            setView(initialView, { silent: true });
+
             // Expose for the URL router.
             window.__sc = {
                 open, close,
                 scrollTo: (i) => scrollTo(i),
                 indexForCase: (id) => items.findIndex(el => el.dataset.case === id),
+                setView,
             };
             cue.addEventListener('click', open);
             cue.addEventListener('keydown', (e) => {
