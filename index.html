@@ -3032,6 +3032,36 @@
         }
         .am-todo-label { color: rgba(255, 200, 0, 0.95); font-weight: 700; margin-right: 8px; }
 
+        /* ============ SIGNAL UI FILL — surfaces darken as signal drops ============
+           --ui-fill ramps 0 → 1 (linear with 1 - signal). Visible UI containers
+           pick up an opaque dark background as it grows, so the holographic
+           panels feel "stuck on a real surface" when reality breaks. */
+        .prompt {
+            background-color: rgba(2, 6, 10, calc(var(--ui-fill, 0) * 0.92));
+            transition: background-color 0.18s ease;
+        }
+        .hud-right-stack {
+            background-color: rgba(2, 6, 10, calc(var(--ui-fill, 0) * 0.85));
+            transition: background-color 0.18s ease;
+        }
+        .hud-left-articles .articles-feed {
+            background-color: rgba(2, 6, 10, calc(var(--ui-fill, 0) * 0.85));
+            transition: background-color 0.18s ease;
+        }
+        .agent-item, .release-item, .welcome-block, .experience-block,
+        .agents-head, .tasks-block, .projects-block, .releases-block,
+        .showcase-tip, .article-item {
+            background-color: rgba(0, 4, 8, calc(var(--ui-fill, 0) * 0.55));
+            transition: background-color 0.18s ease;
+        }
+        .ctl-fab {
+            background-color: rgba(0, 4, 8, calc(var(--ui-fill, 0) * 0.85));
+            transition: background-color 0.25s ease;
+        }
+        .sim-signal {
+            background-color: rgba(0, 4, 8, calc(0.45 + var(--ui-fill, 0) * 0.45));
+        }
+
         /* ============ AM TIMELINE — Gantt-style roadmap recap ============ */
         .am-tl-bleed { padding: 8px clamp(20px, 4vw, 56px) 32px; }
         .am-tl-frame {
@@ -15578,6 +15608,9 @@ See also: Health Samurai Lab: Game of Pools.`,
                 // mid-signal and only ramp up sharply near zero.
                 const inv = 1 - norm;
                 document.body.style.setProperty('--sim-fall', (inv * inv * inv).toFixed(4));
+                // Linear UI background fill — transparent at signal=1, fully
+                // filled at signal=0. Wired into prompt/HUD/agent surfaces.
+                document.body.style.setProperty('--ui-fill', inv.toFixed(3));
                 document.dispatchEvent(new CustomEvent('signal:change', { detail: norm }));
                 if (valueEl) valueEl.textContent = Math.round(pct) + '%';
                 document.body.dataset.simState =
