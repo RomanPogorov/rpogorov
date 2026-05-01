@@ -2267,12 +2267,15 @@
         /* Figures — bright theme strips the cyberpunk frame; media sits
            naked on the page background with a centered caption underneath
            and generous breathing room between rows. Phone-sized portrait
-           assets cap at ~700px tall so they don't dominate the column. */
+           assets cap at ~700px tall so they don't dominate the column.
+           Use margin-top/bottom only — leave horizontal auto so dc-figure-portrait
+           can centre the capped figure in the column. */
         .dc-page.dc-bright .dc-figure {
             background: transparent;
             border: 0;
             padding: 0;
-            margin: 32px 0 56px;
+            margin-top: 32px;
+            margin-bottom: 56px;
         }
         .dc-page.dc-bright .dc-figure img,
         .dc-page.dc-bright .dc-figure video {
@@ -2597,9 +2600,11 @@
             margin: 0 0 8px;
         }
         .dc-page[data-deep-id="engagement-bright"] .dc-iter .body p:last-child { margin-bottom: 0; }
-        /* Figures — generous breathing room, centered editorial captions */
+        /* Figures — generous breathing room, centered editorial captions.
+           Margin-top/bottom only so dc-figure-portrait can centre. */
         .dc-page[data-deep-id="engagement-bright"] .dc-figure {
-            margin: 32px 0 64px;
+            margin-top: 32px;
+            margin-bottom: 64px;
             background: transparent;
             border: 0;
             padding: 0;
