@@ -1,14 +1,15 @@
 ---
 /**
- * Article reader — /rpogorov-dev/article/{id}/
+ * /rpogorov-dev/app/article/{id}/ — article reader.
  *
- * One static page per live article in the content collection. Drafts and
- * "coming soon" entries are still listed on /articles/ but do not get a
- * dedicated reader page until they're flipped to status=live.
+ * Renders one MDX/MD article from the `articles` content collection inside
+ * ContentLayout (tokens + typography only — no legacy.css). The body markup
+ * is wrapped in `.cnt-body` so the content.css :where() rules style every
+ * element regardless of how the markdown nests.
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
-import Layout from '@layouts/Layout.astro';
+import ContentLayout from '@layouts/ContentLayout.astro';
 
 export const getStaticPaths = (async () => {
   const articles = await getCollection('articles');
@@ -29,7 +30,7 @@ const fmtDate = data.date.toLocaleDateString('en-US', {
 });
 ---
 
-<Layout title={`${data.title} — Roman Pogorov`} description={data.description} theme="dark">
+<ContentLayout title={`${data.title} — Roman Pogorov`} description={data.description} theme="dark">
   <main class="page">
     <nav class="crumbs" aria-label="Breadcrumb">
       <a href={`${baseUrl}/`}>Showcase</a>
@@ -52,11 +53,11 @@ const fmtDate = data.date.toLocaleDateString('en-US', {
       </ul>
     </header>
 
-    <article class="body">
+    <article class="cnt-body">
       <Content />
     </article>
   </main>
-</Layout>
+</ContentLayout>
 
 <style>
   .page {
@@ -73,43 +74,60 @@ const fmtDate = data.date.toLocaleDateString('en-US', {
     font-size: var(--type-xs);
     letter-spacing: var(--track-mono);
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--ink-muted);
     margin-bottom: var(--space-10);
   }
-  .crumbs a { color: var(--acc); text-decoration: none; }
+  .crumbs a {
+    color: var(--acc);
+    text-decoration: none;
+    border-bottom: none;
+  }
   .crumbs a:hover { text-decoration: underline; }
-  .sep { opacity: 0.55; }
-  .current { color: var(--text-strong); max-width: 60ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sep { opacity: 0.5; }
+  .current {
+    color: var(--ink-strong);
+    max-width: 60ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-  .hero { margin-bottom: var(--space-12); }
+  .hero {
+    margin-bottom: var(--space-12);
+  }
   .meta {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-4);
+    align-items: center;
     font-family: var(--font-mono);
     font-size: var(--type-2xs);
     font-weight: 600;
     letter-spacing: var(--track-mono);
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--ink-muted);
     margin-bottom: var(--space-5);
   }
   .meta time { color: var(--acc); }
-  .meta .author { margin-left: auto; }
-
+  .meta .author {
+    margin-left: auto;
+    color: var(--ink);
+  }
   .title {
     font-family: var(--font-display);
     font-size: var(--type-h1);
-    font-weight: 700;
+    font-weight: 800;
     line-height: var(--line-tight);
     letter-spacing: var(--track-display);
-    color: var(--text-strong);
+    color: var(--ink-strong);
+    text-transform: uppercase;
     margin: 0 0 var(--space-5);
   }
   .lead {
+    font-family: var(--font-body);
     font-size: var(--type-lg);
     line-height: 1.55;
-    color: var(--text-base);
+    color: var(--ink);
     max-width: var(--measure-narrow);
     margin: 0 0 var(--space-6);
   }
@@ -131,120 +149,6 @@ const fmtDate = data.date.toLocaleDateString('en-US', {
     border: 1px solid rgba(var(--acc-rgb), 0.32);
     padding: 3px var(--space-2);
     border-radius: var(--radius-sm);
-  }
-
-  .body :global(h2) {
-    font-family: var(--font-body);
-    font-size: var(--type-h2);
-    font-weight: 700;
-    line-height: var(--line-snug);
-    letter-spacing: var(--track-h2);
-    color: var(--text-strong);
-    margin: var(--space-16) 0 var(--space-5);
-  }
-  .body :global(h3) {
-    font-family: var(--font-body);
-    font-size: var(--type-h3);
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: var(--track-h3);
-    color: var(--text-strong);
-    margin: var(--space-12) 0 var(--space-3);
-  }
-  .body :global(p) {
-    margin: 0 0 var(--space-5);
-    max-width: var(--measure-body);
-    font-size: var(--type-base);
-    line-height: var(--line-body);
-    color: var(--text-base);
-  }
-  .body :global(ul),
-  .body :global(ol) {
-    margin: 0 0 var(--space-6);
-    padding-left: 0;
-    max-width: var(--measure-body);
-  }
-  .body :global(li) {
-    list-style: none;
-    position: relative;
-    padding-left: var(--space-6);
-    margin-bottom: var(--space-3);
-    line-height: var(--line-body);
-  }
-  .body :global(li::before) {
-    content: '';
-    position: absolute;
-    left: var(--space-2);
-    top: 11px;
-    width: 6px;
-    height: 6px;
-    border-radius: var(--radius-pill);
-    background: var(--acc);
-  }
-  .body :global(strong) { color: var(--text-strong); font-weight: 600; }
-  .body :global(em) { color: var(--text-base); font-style: italic; }
-  .body :global(blockquote) {
-    margin: var(--space-6) 0;
-    padding: var(--space-4) var(--space-6);
-    border-left: 3px solid var(--acc);
     background: rgba(var(--acc-rgb), 0.05);
-    color: var(--text-base);
-    font-style: italic;
-    max-width: var(--measure-body);
-  }
-  .body :global(blockquote p) { margin: 0; }
-  .body :global(code) {
-    font-family: var(--font-mono);
-    font-size: 0.875em;
-    color: var(--acc);
-    background: rgba(var(--acc-rgb), 0.08);
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-  .body :global(pre) {
-    background: var(--surface-frame);
-    border: 1px solid var(--border-soft);
-    border-radius: var(--radius-md);
-    padding: var(--space-5);
-    overflow-x: auto;
-    margin: 0 0 var(--space-6);
-    max-width: var(--measure-body);
-  }
-  .body :global(pre code) {
-    background: none;
-    padding: 0;
-    color: var(--text-base);
-  }
-  .body :global(table) {
-    width: 100%;
-    max-width: var(--measure-body);
-    border-collapse: collapse;
-    margin: var(--space-6) 0;
-    font-size: var(--type-sm);
-    font-family: var(--font-mono);
-  }
-  .body :global(th),
-  .body :global(td) {
-    padding: var(--space-3) var(--space-4);
-    border-bottom: 1px solid var(--border-soft);
-    text-align: left;
-  }
-  .body :global(th) {
-    color: var(--acc);
-    font-weight: 600;
-    letter-spacing: var(--track-mono);
-    text-transform: uppercase;
-    font-size: var(--type-2xs);
-  }
-  .body :global(td) {
-    color: var(--text-base);
-  }
-  .body :global(a) {
-    color: var(--acc);
-    text-decoration: none;
-    border-bottom: 1px solid rgba(var(--acc-rgb), 0.4);
-  }
-  .body :global(a:hover) {
-    border-bottom-color: var(--acc);
   }
 </style>

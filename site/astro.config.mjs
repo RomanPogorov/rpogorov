@@ -4,8 +4,8 @@ import mdx from '@astrojs/mdx';
 
 export default defineConfig({
   site: 'https://clauderunner.com',
-  base: '/rpogorov-dev/',
-  outDir: '../dist-astro',
+  base: '/rpogorov-dev/app/',
+  outDir: '../app',
   build: {
     assets: 'assets',
   },

@@ -1,0 +1,51 @@
+---
+/**
+ * ContentLayout — article reader and case-detail pages.
+ *
+ * Loads design tokens (the same vocabulary as legacy: --acc, --bg, --ink,
+ * theme overrides on body[data-theme]) and content typography (article
+ * heading scale, lists, blockquotes, tables, code). Does NOT load legacy.css
+ * because the heavy main-page styles fight content rhythm.
+ *
+ * Theme prop selects between bright (cases default — editorial white) and
+ * the cyber dark theme (articles default).
+ */
+interface Props {
+  title?: string;
+  description?: string;
+  theme?: 'dark' | 'bright';
+  bodyTheme?: 'green' | 'cyan' | 'mono' | 'ember';
+}
+
+const {
+  title = 'Roman Pogorov',
+  description,
+  theme = 'dark',
+  bodyTheme = 'green',
+} = Astro.props;
+const bodyClass = theme === 'bright' ? 'theme-bright' : '';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class={bodyClass} data-theme={bodyTheme}>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/tokens.css';
+  @import '../styles/content.css';
+</style>

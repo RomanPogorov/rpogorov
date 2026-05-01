@@ -1,39 +1,62 @@
 ---
 /**
- * Base HTML shell. Loads global styles, webfonts, sets <title>, and lets
- * the page choose dark or bright theme via the `theme` prop.
+ * Base layout. Loads the legacy CSS bundle (extracted 1:1 from the original
+ * index.html), fonts, marked.js, and the R3F importmap so any page in the
+ * /app/ Astro build inherits the same visual + JS environment as the legacy
+ * main page.
  */
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
-  theme?: 'dark' | 'bright';
+  bodyClass?: string;
+  bodyTheme?: 'green' | 'cyan' | 'mono' | 'ember';
 }
 
-const { title, description, theme = 'dark' } = Astro.props;
-const bodyClass = theme === 'bright' ? 'theme-bright' : '';
+const {
+  title = 'ROMAN POGOROV / GRID',
+  description,
+  bodyClass = '',
+  bodyTheme = 'green',
+} = Astro.props;
+
+const importMapJson = `{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "scheduler": "https://esm.sh/scheduler@0.23.2",
+    "three": "https://esm.sh/three@0.160.1",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.17.10?external=react,react-dom,three,scheduler",
+    "@react-three/drei": "https://esm.sh/@react-three/drei@9.117.0?external=react,react-dom,three,@react-three/fiber",
+    "postprocessing": "https://esm.sh/postprocessing@6.36.0?external=three",
+    "@react-three/postprocessing": "https://esm.sh/@react-three/postprocessing@2.16.3?external=react,react-dom,three,@react-three/fiber,postprocessing"
+  }
+}`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js" defer is:inline></script>
+    <script type="importmap" is:inline set:html={importMapJson}></script>
+    <script src="https://unpkg.com/@babel/standalone@7.25.7/babel.min.js" defer is:inline></script>
   </head>
-  <body class={bodyClass}>
+  <body class:list={['pre-gate', bodyClass]} data-theme={bodyTheme}>
     <slot />
   </body>
 </html>
 
 <style is:global>
-  @import '../styles/global.css';
+  @import '../styles/legacy.css';
 </style>

@@ -1,13 +1,13 @@
 ---
 /**
- * Articles index — /rpogorov-dev/articles/
+ * /rpogorov-dev/app/articles/ — articles index.
  *
- * Lists every article in the content collection, newest first. Status badges
- * differentiate live posts from drafts and "coming soon" placeholders so the
- * archive can grow incrementally without lying about what's actually there.
+ * Sorted newest first. Status badges differentiate live posts, drafts, and
+ * "coming soon" placeholders. All cards link to the reader so users can hit
+ * the placeholder pages directly via URL.
  */
 import { getCollection } from 'astro:content';
-import Layout from '@layouts/Layout.astro';
+import ContentLayout from '@layouts/ContentLayout.astro';
 
 const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
 const articles = (await getCollection('articles')).sort(
@@ -18,7 +18,7 @@ const fmtDate = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 ---
 
-<Layout title="Articles — Roman Pogorov" theme="dark">
+<ContentLayout title="Articles — Roman Pogorov" theme="dark">
   <main class="page">
     <nav class="crumbs" aria-label="Breadcrumb">
       <a href={`${baseUrl}/`}>Showcase</a>
@@ -31,42 +31,39 @@ const fmtDate = (d: Date) =>
       <h1 class="title">Articles</h1>
       <p class="lead">
         Devlogs, experiments, and notes on design + code workflows. Some are
-        full write-ups, some are still drafts. Click a card to read.
+        full write-ups, some are still drafts.
       </p>
     </header>
 
     <ul class="list">
       {
-        articles.map((a) => {
-          const href = `${baseUrl}/article/${a.id}/`;
-          return (
-            <li class:list={["row", `is-${a.data.status}`]}>
-              <a href={href} class="row-link">
-                <div class="row-meta">
-                  <time datetime={a.data.date.toISOString()}>{fmtDate(a.data.date)}</time>
-                  {a.data.readingTime && <span class="rt">{a.data.readingTime}</span>}
-                  {a.data.status !== 'live' && (
-                    <span class:list={["badge", `badge-${a.data.status}`]}>
-                      {a.data.status}
-                    </span>
-                  )}
-                </div>
-                <h2 class="row-title">{a.data.title}</h2>
-                <p class="row-desc">{a.data.description}</p>
-                <ul class="row-tags">
-                  {a.data.tags.map((t) => <li>{t}</li>)}
-                  {a.data.author !== 'Roman Pogorov' && (
-                    <li class="author">by {a.data.author}</li>
-                  )}
-                </ul>
-              </a>
-            </li>
-          );
-        })
+        articles.map((a) => (
+          <li class:list={["row", `is-${a.data.status}`]}>
+            <a href={`${baseUrl}/article/${a.id}/`} class="row-link">
+              <div class="row-meta">
+                <time datetime={a.data.date.toISOString()}>{fmtDate(a.data.date)}</time>
+                {a.data.readingTime && <span class="rt">{a.data.readingTime}</span>}
+                {a.data.status !== 'live' && (
+                  <span class:list={["badge", `badge-${a.data.status}`]}>
+                    {a.data.status}
+                  </span>
+                )}
+              </div>
+              <h2 class="row-title">{a.data.title}</h2>
+              <p class="row-desc">{a.data.description}</p>
+              <ul class="row-tags">
+                {a.data.tags.map((t) => <li>{t}</li>)}
+                {a.data.author !== 'Roman Pogorov' && (
+                  <li class="author">by {a.data.author}</li>
+                )}
+              </ul>
+            </a>
+          </li>
+        ))
       }
     </ul>
   </main>
-</Layout>
+</ContentLayout>
 
 <style>
   .page {
@@ -74,7 +71,6 @@ const fmtDate = (d: Date) =>
     margin: 0 auto;
     padding: var(--space-12) var(--space-8) var(--space-24);
   }
-
   .crumbs {
     display: flex;
     align-items: center;
@@ -83,18 +79,22 @@ const fmtDate = (d: Date) =>
     font-size: var(--type-xs);
     letter-spacing: var(--track-mono);
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--ink-muted);
     margin-bottom: var(--space-10);
   }
   .crumbs a {
     color: var(--acc);
     text-decoration: none;
+    border-bottom: none;
   }
   .crumbs a:hover { text-decoration: underline; }
-  .sep { opacity: 0.55; }
-  .current { color: var(--text-strong); }
+  .sep { opacity: 0.5; }
+  .current { color: var(--ink-strong); }
 
-  .hero { margin-bottom: var(--space-12); max-width: var(--measure-content); }
+  .hero {
+    margin-bottom: var(--space-12);
+    max-width: var(--measure-content);
+  }
   .eyebrow {
     display: inline-block;
     font-family: var(--font-mono);
@@ -111,14 +111,14 @@ const fmtDate = (d: Date) =>
     font-weight: 800;
     line-height: var(--line-tight);
     letter-spacing: var(--track-display);
-    color: var(--text-strong);
+    color: var(--ink-strong);
     text-transform: uppercase;
     margin: 0 0 var(--space-4);
   }
   .lead {
     font-size: var(--type-lg);
     line-height: 1.55;
-    color: var(--text-base);
+    color: var(--ink);
     max-width: var(--measure-narrow);
     margin: 0;
   }
@@ -134,17 +134,21 @@ const fmtDate = (d: Date) =>
     border: 1px solid var(--border-card);
     border-radius: var(--radius-md);
     background: var(--surface-card);
-    backdrop-filter: blur(8px);
-    transition: border-color 200ms, transform 200ms;
+    transition: border-color 200ms, transform 200ms, box-shadow 200ms;
   }
-  .row:hover { border-color: var(--acc); transform: translateY(-1px); }
-  .row.is-draft, .row.is-soon { opacity: 0.7; }
+  .row:hover {
+    border-color: var(--acc);
+    transform: translateY(-1px);
+    box-shadow: 0 18px 32px -22px rgba(var(--acc-rgb), 0.45);
+  }
+  .row.is-draft, .row.is-soon { opacity: 0.78; }
 
   .row-link {
     display: block;
     padding: var(--space-6) var(--space-7);
     color: inherit;
     text-decoration: none;
+    border-bottom: none;
   }
 
   .row-meta {
@@ -157,7 +161,7 @@ const fmtDate = (d: Date) =>
     font-weight: 600;
     letter-spacing: var(--track-mono);
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--ink-muted);
     margin-bottom: var(--space-3);
   }
   .row-meta time { color: var(--acc); }
@@ -177,13 +181,13 @@ const fmtDate = (d: Date) =>
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.012em;
-    color: var(--text-strong);
+    color: var(--ink-strong);
     margin: 0 0 var(--space-3);
   }
   .row-desc {
     font-size: var(--type-base);
     line-height: 1.55;
-    color: var(--text-base);
+    color: var(--ink);
     margin: 0 0 var(--space-4);
     max-width: 64ch;
   }
@@ -205,9 +209,11 @@ const fmtDate = (d: Date) =>
     border: 1px solid rgba(var(--acc-rgb), 0.32);
     padding: 3px var(--space-2);
     border-radius: var(--radius-sm);
+    background: rgba(var(--acc-rgb), 0.05);
   }
   .row-tags li.author {
-    color: var(--text-muted);
+    color: var(--ink-muted);
     border-color: var(--border-soft);
+    background: none;
   }
 </style>

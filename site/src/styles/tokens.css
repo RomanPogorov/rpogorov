@@ -1,27 +1,47 @@
-/* ===========================================================================
-   Design tokens — single source of truth for the Astro portfolio.
-   Two themes share the token names (--surface, --acc, etc.); CSS variables
-   on .theme-bright override the bright-only values. Components reference
-   tokens by name, never raw hex.
-   =========================================================================== */
+/* ============================================================================
+   Tokens — extracted 1:1 from legacy index.html :root block.
+   Theme overrides live on body[data-theme=*]. Non-main pages (articles,
+   cases) load these tokens but NOT the heavy legacy.css — they get clean
+   typography on top of the same colour vocabulary.
+   ============================================================================ */
 
 :root {
-  /* ---- Type families ---- */
+  /* User-controlled font scaling — A− / A+ buttons in the legacy main page. */
+  --text-scale: 1;
+
+  /* Cyber palette */
+  --bg: #02060a;
+  --ink: #eaf6ff;
+  --acc: #00e5ff;       /* tron cyan */
+  --acc-rgb: 0, 229, 255;
+  --acc2: #ff7a18;      /* warning orange (tron clu) */
+  --acc3: #6ee7ff;
+  --dim: #4a6478;
+  --panel: rgba(4, 12, 18, 0.55);
+  --grid: rgba(var(--acc-rgb), 0.09);
+  --glow: 0 0 12px rgba(var(--acc-rgb), 0.7), 0 0 32px rgba(var(--acc-rgb), 0.35);
+
+  /* Parallax (disabled — variables kept for future re-enable) */
+  --mx: 0;
+  --my: 0;
+  --tilt: 0;
+
+  /* Typography families */
   --font-display: 'Orbitron', 'Helvetica Neue', Arial, sans-serif;
   --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-  /* ---- Type scale (rem) ---- */
-  --type-2xs: 0.6875rem;   /* 11px — eyebrow */
-  --type-xs: 0.75rem;      /* 12px — small caps */
-  --type-sm: 0.8125rem;    /* 13px — caption */
-  --type-base: 1.0625rem;  /* 17px — body */
-  --type-lg: 1.1875rem;    /* 19px — lead */
-  --type-h3: 1.375rem;     /* 22px */
-  --type-h2: clamp(1.875rem, 3vw, 2.375rem);          /* 30–38px */
-  --type-h1: clamp(2.25rem, 4.4vw, 3.25rem);          /* 36–52px */
-  --type-h-major: clamp(2.5rem, 4vw, 3.25rem);        /* 40–52px chapter */
-  --type-impact: clamp(2rem, 3.4vw, 2.625rem);        /* impact metric */
+  /* Type scale */
+  --type-2xs: 0.6875rem;
+  --type-xs: 0.75rem;
+  --type-sm: 0.8125rem;
+  --type-base: 1.0625rem;
+  --type-lg: 1.1875rem;
+  --type-h3: 1.375rem;
+  --type-h2: clamp(1.875rem, 3vw, 2.375rem);
+  --type-h1: clamp(2.25rem, 4.4vw, 3.25rem);
+  --type-h-major: clamp(2.5rem, 4vw, 3.25rem);
+  --type-impact: clamp(2rem, 3.4vw, 2.625rem);
 
   --line-tight: 1.1;
   --line-snug: 1.2;
@@ -33,7 +53,7 @@
   --track-eyebrow: 0.08em;
   --track-mono: 0.22em;
 
-  /* ---- Spacing scale (px) ---- */
+  /* Spacing scale */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -51,41 +71,67 @@
   --space-24: 96px;
   --space-28: 112px;
 
-  /* ---- Radii ---- */
+  /* Radii */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 14px;
   --radius-pill: 999px;
 
-  /* ---- Layout widths ---- */
+  /* Layout widths */
   --measure-narrow: 720px;
   --measure-body: 760px;
   --measure-content: 920px;
   --measure-page: 1280px;
-
-  /* ---- Cyber dark theme (default) ---- */
-  --acc: #00ff88;
-  --acc-rgb: 0, 255, 136;
-  --surface-page: #0a0d10;
-  --surface-card: rgba(0, 0, 0, 0.4);
-  --surface-frame: #16191e;
-  --border-soft: rgba(0, 255, 136, 0.18);
-  --border-card: rgba(0, 255, 136, 0.22);
-  --text-base: #e6f0ec;
-  --text-strong: #ffffff;
-  --text-muted: rgba(230, 240, 236, 0.7);
 }
 
-/* ---- Bright editorial theme overlay ---- */
-.theme-bright {
-  --acc: #1d4ed8;
-  --acc-rgb: 29, 78, 216;
-  --surface-page: #fbfbfc;
-  --surface-card: #ffffff;
-  --surface-frame: #16191e;
-  --border-soft: #ebedf1;
-  --border-card: #e2e6ec;
-  --text-base: #2a313e;
-  --text-strong: #0b1018;
-  --text-muted: #6b7280;
+/* MONO — white/grayscale */
+body[data-theme='mono'] {
+  --ink: #ffffff;
+  --acc: #ffffff;
+  --acc-rgb: 255, 255, 255;
+  --acc2: #ff7a18;
+  --acc3: #d8e0e8;
+  --dim: #5a6470;
+  --grid: rgba(255, 255, 255, 0.07);
+  --glow: 0 0 12px rgba(255, 255, 255, 0.55), 0 0 32px rgba(255, 255, 255, 0.25);
+}
+
+/* CYAN — default tron */
+body[data-theme='cyan'] {
+  --ink: #eaf6ff;
+  --acc: #00e5ff;
+  --acc-rgb: 0, 229, 255;
+  --acc2: #ff7a18;
+  --acc3: #6ee7ff;
+  --dim: #4a6478;
+  --grid: rgba(var(--acc-rgb), 0.09);
+  --glow: 0 0 12px rgba(var(--acc-rgb), 0.7), 0 0 32px rgba(var(--acc-rgb), 0.35);
+}
+
+/* GREEN — matrix / signal (legacy default) */
+body[data-theme='green'] {
+  --ink: #e8fff0;
+  --acc: #00ff88;
+  --acc-rgb: 0, 255, 136;
+  --acc2: #ffcc00;
+  --acc3: #6effb0;
+  --dim: #2cd98b;
+  --grid: rgba(0, 255, 136, 0.08);
+  --glow: 0 0 12px rgba(0, 255, 136, 0.65), 0 0 32px rgba(0, 255, 136, 0.32);
+}
+
+/* EMBER — fire-warm red/orange */
+body[data-theme='ember'] {
+  --ink: #fff0e6;
+  --acc: #ff5722;
+  --acc-rgb: 255, 87, 34;
+  --acc2: #ffb547;
+  --acc3: #ff8a4a;
+  --dim: #785244;
+  --grid: rgba(255, 87, 34, 0.08);
+  --glow: 0 0 12px rgba(255, 87, 34, 0.7), 0 0 32px rgba(255, 87, 34, 0.4);
+}
+
+html {
+  font-size: calc(16px * var(--text-scale, 1));
 }
