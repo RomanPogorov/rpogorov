@@ -15613,9 +15613,13 @@ See also: Health Samurai Lab: Game of Pools.`,
                 // mid-signal and only ramp up sharply near zero.
                 const inv = 1 - norm;
                 document.body.style.setProperty('--sim-fall', (inv * inv * inv).toFixed(4));
-                // Linear UI background fill — transparent at signal=1, fully
-                // filled at signal=0. Wired into prompt/HUD/agent surfaces.
-                document.body.style.setProperty('--ui-fill', inv.toFixed(3));
+                // UI background fill — quartic curve so 50% is barely darker,
+                // 30% is moderate, then ramps fast toward 0.
+                //   signal=0.5 → ui-fill ≈ 0.06
+                //   signal=0.3 → ui-fill ≈ 0.24
+                //   signal=0.0 → ui-fill = 1.00
+                const ui = inv * inv * inv * inv;
+                document.body.style.setProperty('--ui-fill', ui.toFixed(4));
                 document.dispatchEvent(new CustomEvent('signal:change', { detail: norm }));
                 if (valueEl) valueEl.textContent = Math.round(pct) + '%';
                 document.body.dataset.simState =
