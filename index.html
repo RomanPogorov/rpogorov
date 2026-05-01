@@ -5833,9 +5833,13 @@
             transform: translateX(3px);
             box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.18);
         }
+        /* Strip the browser's blue focus ring on task-items — our .selected
+           class is the visual cue the dw-modal uses, no need for a second. */
+        .task-item:focus,
+        .task-item:focus-visible { outline: none; }
+
         /* Selected — this task-item is the one the dw-modal is showing.
-           Stronger left bar + brighter bg + pulsing dot, mirrors the
-           agent-item.selected pattern. */
+           Stronger left bar + brighter bg + dot, mirrors agent-item. */
         .task-item.selected {
             border-color: var(--acc);
             border-left-width: 3px;
@@ -9685,6 +9689,16 @@
             opacity: 0.3;
             cursor: default;
         }
+        .reader-nav.flash {
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.22);
+            box-shadow: 0 0 16px rgba(var(--acc-rgb), 0.6);
+        }
+        .panel-nav.flash {
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.22);
+            box-shadow: 0 0 16px rgba(var(--acc-rgb), 0.6);
+        }
         .reader-close {
             appearance: none;
             background: transparent;
@@ -12716,16 +12730,30 @@
             if (panelPrev) panelPrev.disabled = i <= 0;
             if (panelNext) panelNext.disabled = i >= tabs.length - 1;
         }
-        panelPrev?.addEventListener('click', () => {
+        function flashPanelBtn(btn) {
+            if (!btn) return;
+            btn.classList.add('flash');
+            setTimeout(() => btn.classList.remove('flash'), 220);
+        }
+        function panelGo(dir) {
             const i = activeTabIdx();
-            if (i > 0) { activateTab(tabs[i - 1]); syncNavDisabled(); window.__sfx?.tick?.(); }
-        });
-        panelNext?.addEventListener('click', () => {
-            const i = activeTabIdx();
-            if (i < tabs.length - 1) { activateTab(tabs[i + 1]); syncNavDisabled(); window.__sfx?.tick?.(); }
-        });
+            const next = i + dir;
+            if (next < 0 || next >= tabs.length) return;
+            activateTab(tabs[next]);
+            syncNavDisabled();
+            window.__sfx?.tick?.();
+            flashPanelBtn(dir > 0 ? panelNext : panelPrev);
+        }
+        panelPrev?.addEventListener('click', () => panelGo(-1));
+        panelNext?.addEventListener('click', () => panelGo(1));
         tabs.forEach(tab => tab.addEventListener('click', syncNavDisabled));
         syncNavDisabled();
+        // Keyboard arrows when the Claude Runner panel is open.
+        document.addEventListener('keydown', (e) => {
+            if (!body.classList.contains('engaged')) return;
+            if (e.key === 'ArrowLeft')  { e.preventDefault(); panelGo(-1); }
+            if (e.key === 'ArrowRight') { e.preventDefault(); panelGo(1); }
+        });
 
         // ===== draw bevelled border that matches the clip-path =====
         const borderPath = document.getElementById('border-path');
@@ -15491,6 +15519,12 @@ See also: Health Samurai Lab: Game of Pools.`,
                 if (next < 0 || next >= ARTICLES.length) return;
                 openReader(ARTICLES[next]);
                 window.__sfx?.tick?.();
+                // Flash the relevant arrow so keyboard nav has visual feedback
+                const btn = dir > 0 ? readerNext : readerPrev;
+                if (btn) {
+                    btn.classList.add('flash');
+                    setTimeout(() => btn.classList.remove('flash'), 220);
+                }
             }
             readerClose.addEventListener('click', closeReader);
             readerPrev?.addEventListener('click', (e) => { e.stopPropagation(); navigateReader(-1); });
