@@ -17003,10 +17003,38 @@ See also: Health Samurai Lab: Game of Pools.`,
                     matRef.current.opacity = op;
                 }
             });
-            // Plane: 40x22.5 at z=-10 with cam at z=5 fov=60 covers viewport.
+            // Plane sized + positioned to match the HTML <video>'s
+            // object-fit:cover + object-position:center top crop. Video
+            // aspect 1.94 (1280x660). Anchor top to camera view top so
+            // bottom is the region that gets cropped, like the HTML side.
+            const meshRef = useRef();
+            const { camera, size } = useThree();
+            useFrame(() => {
+                if (!meshRef.current) return;
+                const dist = Math.abs(camera.position.z - (-10));
+                const fovRad = (camera.fov * Math.PI) / 180;
+                const visibleH = 2 * Math.tan(fovRad / 2) * dist;
+                const visibleW = visibleH * (size.width / size.height);
+                // Cover: pick scale that lets video cover both axes.
+                const vidAspect = 1280 / 660;
+                let planeW, planeH;
+                if (visibleW / visibleH > vidAspect) {
+                    // Viewport wider than video — fit to width, video tall
+                    planeW = visibleW * 1.02;
+                    planeH = planeW / vidAspect;
+                } else {
+                    // Viewport taller — fit to height
+                    planeH = visibleH * 1.02;
+                    planeW = planeH * vidAspect;
+                }
+                meshRef.current.scale.set(planeW, planeH, 1);
+                // Top-anchor: align plane top with viewport top.
+                const topY = camera.position.y + visibleH / 2;
+                meshRef.current.position.y = topY - planeH / 2;
+            });
             return (
-                <mesh position={[0, 0, -10]} renderOrder={-1}>
-                    <planeGeometry args={[40, 22.5]} />
+                <mesh ref={meshRef} position={[0, 0, -10]} renderOrder={-1}>
+                    <planeGeometry args={[1, 1]} />
                     <meshBasicMaterial
                         ref={matRef}
                         map={texture}
