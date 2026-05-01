@@ -14972,6 +14972,12 @@
                     const AC = window.AudioContext || window.webkitAudioContext;
                     if (!AC) return;
                     ctx = new AC();
+                    // createMediaElementSource needs the element idle to
+                    // re-route reliably in Chrome — pause briefly, build the
+                    // graph, then resume. Saves the case where audio was
+                    // silent-autoplaying before any user gesture.
+                    const wasPlaying = !audio.paused;
+                    if (wasPlaying) audio.pause();
                     source = ctx.createMediaElementSource(audio);
                     shaper = ctx.createWaveShaper();
                     shaper.oversample = '2x';
@@ -14985,27 +14991,27 @@
                     lowpass.connect(ctx.destination);
                     ready = true;
                     applySignal();
+                    if (wasPlaying) audio.play().catch(() => {});
                 } catch (e) {
                     /* silent — fall back to plain HTMLMediaElement playback */
                 }
             }
-            function applySignal() {
+            function applySignal(signalIn) {
                 if (!ready) return;
-                const v = parseFloat(getComputedStyle(document.body).getPropertyValue('--sim-signal'));
-                const signal = Number.isFinite(v) ? v : 1;
+                let signal = signalIn;
+                if (!Number.isFinite(signal)) {
+                    const v = parseFloat(getComputedStyle(document.body).getPropertyValue('--sim-signal'));
+                    signal = Number.isFinite(v) ? v : 1;
+                }
                 const inv = 1 - signal;
-                // Lowpass cutoff: 22kHz at signal=1, drops fast below 0.4
-                // toward ~600Hz at signal=0. Cubic for sharper falloff.
                 const cutoff = 600 + signal * signal * signal * 21400;
-                lowpass.frequency.setTargetAtTime(cutoff, ctx.currentTime, 0.08);
-                // Distortion drive: 0 above signal=0.7, ramp up sharply.
+                lowpass.frequency.setTargetAtTime(cutoff, ctx.currentTime, 0.06);
                 const drive = inv > 0.3 ? Math.pow((inv - 0.3) / 0.7, 1.5) * 90 : 0;
                 shaper.curve = makeDistortionCurve(drive);
-                // Playback rate: 1.0 above signal=0.5, drop to 0.82 at signal=0.
                 const rate = signal > 0.5 ? 1.0 : 0.82 + (signal / 0.5) * 0.18;
                 try { audio.playbackRate = rate; } catch (e) {}
             }
-            document.addEventListener('signal:change', applySignal);
+            document.addEventListener('signal:change', (e) => applySignal(e.detail));
 
             // Try silent autoplay (most browsers allow it muted).
             audio.play().catch(() => { });
