@@ -3058,10 +3058,8 @@
             background-color: rgba(4, 30, 16, calc(var(--ui-fill, 0) * 0.92));
             transition: background-color 0.18s ease;
         }
-        .hud-left-articles .articles-feed {
-            background-color: rgba(4, 30, 16, calc(var(--ui-fill, 0) * 0.92));
-            transition: background-color 0.18s ease;
-        }
+        /* Left articles feed intentionally has no signal-fill — Roman wants
+           it to stay transparent even at signal=0. */
         .agent-item, .release-item, .welcome-block, .experience-block,
         .agents-head, .tasks-block, .projects-block, .releases-block,
         .showcase-tip, .article-item {
