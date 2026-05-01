@@ -1535,6 +1535,276 @@
             background: rgba(var(--acc-rgb), 0.08);
         }
 
+        /* ============ DEEP-CASE PAGE — generic overlay for nested cases ====
+           One overlay reused for any DEEP_CASES entry. Cyberpunk-dark theme
+           (matches the .case-page baseline). Opens on top of company-page if
+           the user came from there, on top of showcase otherwise. */
+        .dc-page {
+            position: fixed;
+            inset: 0;
+            z-index: 38;
+            background: #060708;
+            color: var(--ink);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            transform: translateY(100%);
+            transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow: hidden;
+            pointer-events: none;
+        }
+        body.dc-open .dc-page {
+            transform: translateY(0);
+            pointer-events: auto;
+            overflow-y: auto;
+        }
+        .dc-head {
+            position: sticky;
+            top: 0;
+            z-index: 4;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 36px;
+            background: linear-gradient(180deg, rgba(6, 7, 8, 0.95), rgba(6, 7, 8, 0.85));
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.18);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .dc-crumbs {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            flex: 1;
+            min-width: 0;
+            flex-wrap: wrap;
+        }
+        .dc-crumb {
+            background: transparent;
+            border: 0;
+            font: inherit;
+            color: var(--acc);
+            cursor: pointer;
+            padding: 2px 0;
+            text-decoration: none;
+            transition: color 0.15s, text-shadow 0.15s;
+        }
+        .dc-crumb:hover {
+            color: #fff;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.65);
+        }
+        .dc-crumb-current {
+            color: rgba(255, 255, 255, 0.95);
+            cursor: default;
+        }
+        .dc-crumb-sep { color: rgba(var(--acc-rgb), 0.5); }
+        .dc-close {
+            appearance: none;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            color: var(--dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .dc-close:hover {
+            color: var(--acc);
+            border-color: rgba(var(--acc-rgb), 0.6);
+            background: rgba(var(--acc-rgb), 0.06);
+        }
+        .dc-inner {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 40px 36px 120px;
+        }
+        .dc-hero {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background:
+                repeating-linear-gradient(45deg,
+                    rgba(var(--acc-rgb), 0.04) 0 6px,
+                    rgba(var(--acc-rgb), 0.10) 6px 12px),
+                linear-gradient(135deg, rgba(var(--acc-rgb), 0.10), rgba(var(--acc-rgb), 0.02));
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            margin: 0 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dc-hero-glyph {
+            font-size: 4rem;
+            color: rgba(var(--acc-rgb), 0.28);
+        }
+        .dc-hero-tag {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            padding: 4px 10px;
+        }
+        .dc-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 12px;
+        }
+        .dc-meta-company { color: rgba(255, 255, 255, 0.55); }
+        .dc-meta-metric {
+            color: var(--acc);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(var(--acc-rgb), 0.45);
+        }
+        .dc-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.625rem, 3vw, 2.25rem);
+            line-height: 1.18;
+            letter-spacing: 0.02em;
+            margin: 0 0 14px;
+            color: #fff;
+            text-shadow: 0 0 18px rgba(var(--acc-rgb), 0.35);
+        }
+        .dc-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            list-style: none;
+            margin: 0 0 22px;
+            padding: 0;
+        }
+        .dc-tags li {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--acc);
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            padding: 4px 9px;
+            background: rgba(var(--acc-rgb), 0.05);
+        }
+        .dc-desc {
+            font-size: 1.0625rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.78);
+            margin: 0 0 24px;
+        }
+        .dc-body {
+            font-size: 1rem;
+            line-height: 1.65;
+            color: rgba(255, 255, 255, 0.72);
+        }
+        .dc-body p { margin: 0 0 16px; }
+        .dc-body h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+            margin: 28px 0 12px;
+        }
+        .dc-body h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.0625rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 22px 0 10px;
+        }
+        .dc-body ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 18px;
+        }
+        .dc-body ul li {
+            position: relative;
+            padding-left: 22px;
+            margin: 8px 0;
+        }
+        .dc-body ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 12px;
+            height: 1px;
+            background: var(--acc);
+            box-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
+        }
+        .dc-body a {
+            color: var(--acc);
+            text-decoration: underline;
+            text-decoration-color: rgba(var(--acc-rgb), 0.4);
+        }
+        .dc-body a:hover {
+            text-decoration-color: var(--acc);
+        }
+        .dc-body code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875em;
+            background: rgba(var(--acc-rgb), 0.10);
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            padding: 1px 6px;
+            color: var(--acc);
+        }
+        .dc-empty {
+            padding: 48px 0;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px dashed rgba(var(--acc-rgb), 0.18);
+        }
+
+        /* Breadcrumbs on the existing case-page (cs01/cs02) header — sticky */
+        .cp-crumbs-bar {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 36px;
+            background: linear-gradient(180deg, rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.85));
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.18);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+        .cp-crumbs-bar .dc-crumbs { padding: 0; }
+        @media (max-width: 760px) {
+            .dc-head, .cp-crumbs-bar { padding: 14px 18px; }
+            .dc-inner { padding: 24px 18px 80px; }
+        }
+
         /* ============ CASE PAGE — full-page case detail (Inter, b/w/blue) ============ */
         .case-open-btn {
             margin-top: 22px;
@@ -12808,6 +13078,30 @@
         </svg>
     </aside>
 
+    <!-- Generic deep-case page — single overlay reused for any DEEP_CASES
+         entry. Content rendered from data: hero placeholder, breadcrumbs,
+         meta (company + metric + tags), title, body. -->
+    <section class="dc-page" id="dc-page" data-dc-page aria-hidden="true" aria-label="Deep case">
+        <header class="dc-head">
+            <nav class="dc-crumbs" id="dc-crumbs" aria-label="Breadcrumbs"></nav>
+            <button type="button" class="dc-close" id="dc-close" aria-label="Close case">ESC</button>
+        </header>
+        <div class="dc-inner">
+            <div class="dc-hero" id="dc-hero" aria-hidden="true">
+                <span class="dc-hero-tag" id="dc-hero-tag">CASE</span>
+                <span class="dc-hero-glyph">◆</span>
+            </div>
+            <div class="dc-meta-row">
+                <span class="dc-meta-company" id="dc-meta-company">—</span>
+                <span class="dc-meta-metric" id="dc-meta-metric"></span>
+            </div>
+            <h1 class="dc-title" id="dc-title">—</h1>
+            <ul class="dc-tags" id="dc-tags"></ul>
+            <p class="dc-desc" id="dc-desc">—</p>
+            <div class="dc-body" id="dc-body"></div>
+        </div>
+    </section>
+
     <!-- Reader modal — long-form article reading window, MD rendered via marked.js -->
     <aside class="reader" id="reader" aria-hidden="true" role="dialog">
         <div class="reader-frame">
@@ -13959,9 +14253,43 @@
             if (!openButtons.length || !pages.length) return;
             const initialized = new WeakSet();
 
+            // Inject a sticky breadcrumb bar at the top of each case-page on
+            // first open. Bar shows "Showcase ‹ <Company>", first crumb
+            // returns to showcase by-cases tab.
+            const COMPANY_LABELS = { cs01: 'Americor', cs02: 'Health Samurai' };
+            function ensureCrumbsBar(page) {
+                if (page.querySelector('.cp-crumbs-bar')) return;
+                const id = page.dataset.casePage;
+                const label = COMPANY_LABELS[id] || id;
+                const closeBtn = page.querySelector('[data-cp-close], .cp-close');
+                const bar = document.createElement('div');
+                bar.className = 'cp-crumbs-bar';
+                bar.innerHTML = `
+                    <nav class="dc-crumbs" aria-label="Breadcrumbs">
+                        <button type="button" class="dc-crumb" data-cp-crumb="showcase">Showcase</button>
+                        <span class="dc-crumb-sep">‹</span>
+                        <span class="dc-crumb-current">${label}</span>
+                    </nav>
+                `;
+                // Reuse the page's own close button by moving it into the bar.
+                if (closeBtn) bar.appendChild(closeBtn);
+                page.insertBefore(bar, page.firstChild);
+                bar.addEventListener('click', (e) => {
+                    const crumb = e.target.closest('button[data-cp-crumb="showcase"]');
+                    if (!crumb) return;
+                    closeCase();
+                    if (!body.classList.contains('showcase-open')) window.__sc?.open?.();
+                    window.__sc?.setView?.('cases');
+                    if (location.hash !== '#showcase/cases') {
+                        history.pushState(null, '', '#showcase/cases');
+                    }
+                });
+            }
+
             function openCase(id, opts) {
                 const page = document.querySelector(`.case-page[data-case-page="${id}"]`);
                 if (!page) return;
+                ensureCrumbsBar(page);
                 pages.forEach(p => p.classList.toggle('open', p === page));
                 page.scrollTop = 0;
                 body.classList.add('case-open');
@@ -15403,23 +15731,160 @@
                 </a>
             `).join('');
 
-            // Click → open the matching company case + (later) scroll to the deeplink section.
+            // Click → open the focused deep-case page (referrer = grid).
             grid.addEventListener('click', (e) => {
                 const card = e.target.closest('.sc-card');
                 if (!card) return;
                 e.preventDefault();
-                const company = card.dataset.deepCompany;
-                const deepLink = card.dataset.deepLink;
-                if (!company) return;
-                window.__cp?.open?.(company);
-                // Scroll to the matching am-deeplink / hs-subcase if present.
-                if (deepLink) setTimeout(() => {
-                    const target = document.querySelector(
-                        `[data-deeplink="${deepLink}"], #${CSS.escape(deepLink)}`
-                    );
-                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 400);
+                const id = card.dataset.deepId;
+                if (!id) return;
+                window.__dc?.open?.(id, { referrer: 'grid' });
             });
+        })();
+
+        // ===== Deep-case page (generic): __dc.open(id, opts) =====
+        (() => {
+            const COMPANY = {
+                cs01: { label: 'Americor', case: 'cs01' },
+                cs02: { label: 'Health Samurai', case: 'cs02' },
+            };
+            const page = document.getElementById('dc-page');
+            const closeBtn = document.getElementById('dc-close');
+            const crumbs = document.getElementById('dc-crumbs');
+            const elTag = document.getElementById('dc-hero-tag');
+            const elCo = document.getElementById('dc-meta-company');
+            const elMet = document.getElementById('dc-meta-metric');
+            const elTit = document.getElementById('dc-title');
+            const elDsc = document.getElementById('dc-desc');
+            const elTags = document.getElementById('dc-tags');
+            const elBody = document.getElementById('dc-body');
+            if (!page) return;
+
+            let currentId = null;
+            let referrer = null; // 'grid' | 'company:cs01' | 'company:cs02'
+
+            function findCase(id) {
+                return (typeof DEEP_CASES !== 'undefined')
+                    ? DEEP_CASES.find(c => c.id === id)
+                    : null;
+            }
+
+            function renderCrumbs(c) {
+                const company = COMPANY[c.company];
+                const fragments = [];
+                fragments.push(`<button type="button" class="dc-crumb" data-crumb="showcase">Showcase</button>`);
+                fragments.push(`<span class="dc-crumb-sep">‹</span>`);
+                if (company) {
+                    fragments.push(`<button type="button" class="dc-crumb" data-crumb="company" data-company="${company.case}">${company.label}</button>`);
+                    fragments.push(`<span class="dc-crumb-sep">‹</span>`);
+                }
+                fragments.push(`<span class="dc-crumb-current">${c.title}</span>`);
+                crumbs.innerHTML = fragments.join('');
+            }
+
+            function render(c) {
+                elTag.textContent = c.companyLabel.toUpperCase();
+                elCo.textContent = c.companyLabel;
+                elMet.textContent = c.metric || '';
+                elTit.textContent = c.title;
+                elDsc.textContent = c.desc;
+                elTags.innerHTML = c.tags.map(t => `<li>${t}</li>`).join('');
+                if (c.body) {
+                    // marked.js loaded for articles — reuse if available.
+                    elBody.innerHTML = (typeof marked !== 'undefined')
+                        ? marked.parse(c.body)
+                        : `<pre>${c.body.replace(/[<>&]/g, ch => ({ '<':'&lt;','>':'&gt;','&':'&amp;' }[ch]))}</pre>`;
+                } else {
+                    elBody.innerHTML = `<div class="dc-empty">// case story coming soon</div>`;
+                }
+                renderCrumbs(c);
+            }
+
+            function open(id, opts) {
+                const c = findCase(id);
+                if (!c) return;
+                currentId = id;
+                referrer = (opts && opts.referrer) || 'grid';
+                render(c);
+                document.body.classList.add('dc-open');
+                page.setAttribute('aria-hidden', 'false');
+                page.scrollTo?.(0, 0);
+                window.__sfx?.engage?.();
+                if (!(opts && opts.silent)) {
+                    const hash = `#case/${c.company}/${c.id}`;
+                    if (location.hash !== hash) history.pushState(null, '', hash);
+                }
+            }
+
+            function close(opts) {
+                document.body.classList.remove('dc-open');
+                page.setAttribute('aria-hidden', 'true');
+                window.__sfx?.disengage?.();
+                const ref = referrer;
+                currentId = null;
+                referrer = null;
+                if (opts && opts.silent) return;
+                // Pop one level: where to return based on referrer
+                if (ref && ref.startsWith('company:')) {
+                    // company-page is still open underneath (we opened on top)
+                    const co = ref.split(':')[1];
+                    if (location.hash !== `#case/${co}`) {
+                        history.pushState(null, '', `#case/${co}`);
+                    }
+                } else {
+                    // came from grid → showcase by-cases
+                    if (location.hash !== '#showcase/cases') {
+                        history.pushState(null, '', '#showcase/cases');
+                    }
+                }
+            }
+
+            // Crumb clicks
+            crumbs.addEventListener('click', (e) => {
+                const btn = e.target.closest('button.dc-crumb');
+                if (!btn) return;
+                const which = btn.dataset.crumb;
+                if (which === 'showcase') {
+                    close({ silent: true });
+                    // Make sure showcase is open and switch to By Cases tab.
+                    if (!document.body.classList.contains('case-open')) {
+                        if (!document.body.classList.contains('showcase-open')) window.__sc?.open?.();
+                    } else {
+                        window.__cp?.close?.();
+                    }
+                    window.__sc?.setView?.('cases');
+                    history.pushState(null, '', '#showcase/cases');
+                } else if (which === 'company') {
+                    close({ silent: true });
+                    const co = btn.dataset.company;
+                    window.__cp?.open?.(co);
+                    history.pushState(null, '', `#case/${co}`);
+                }
+            });
+
+            closeBtn.addEventListener('click', () => close());
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                if (!document.body.classList.contains('dc-open')) return;
+                e.stopPropagation();
+                close();
+            }, true);
+
+            // Public API
+            window.__dc = { open, close, current: () => currentId };
+
+            // URL routing on initial load + popstate.
+            function syncFromHash() {
+                const m = location.hash.match(/^#case\/(cs0[12])\/([\w-]+)/);
+                if (m) {
+                    open(m[2], { silent: true, referrer: 'grid' });
+                } else if (document.body.classList.contains('dc-open')) {
+                    close({ silent: true });
+                }
+            }
+            window.addEventListener('popstate', syncFromHash);
+            // Defer initial sync slightly so DEEP_CASES + __cp / __sc are ready.
+            setTimeout(syncFromHash, 80);
         })();
     </script>
 
