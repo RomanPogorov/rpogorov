@@ -44,6 +44,21 @@ const cases = defineCollection({
   }),
 });
 
+const companies = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/companies' }),
+  schema: z.object({
+    id: z.string(),
+    name: z.string(),
+    role: z.string(),
+    year: z.string(),
+    title: z.string(),
+    desc: z.string(),
+    tags: z.array(z.string()).default([]),
+    thumb: z.string().optional(),
+    order: z.number().default(0),
+  }),
+});
+
 const articles = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/articles' }),
   schema: z.object({
@@ -58,4 +73,4 @@ const articles = defineCollection({
   }),
 });
 
-export const collections = { cases, articles };
+export const collections = { cases, articles, companies };

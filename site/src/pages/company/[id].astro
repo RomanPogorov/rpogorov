@@ -1,0 +1,172 @@
+---
+/**
+ * /rpogorov-dev/app/company/{cs0X}/ — top-level company case page.
+ *
+ * Renders one entry from the `companies` collection (cs01-cs05). These are
+ * the "By Company" cards from the legacy showcase, lifted into MDX so the
+ * thumbnail, blurb, tags, and longer overview are all editable as content
+ * instead of inline JS data in index.html.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import ContentLayout from '@layouts/ContentLayout.astro';
+
+export const getStaticPaths = (async () => {
+  const companies = await getCollection('companies');
+  return companies.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const data = entry.data;
+const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
+---
+
+<ContentLayout title={`${data.name} — ${data.title}`} description={data.desc} theme="dark">
+  <main class="page">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={`${baseUrl}/`}>Showcase</a>
+      <span class="sep">/</span>
+      <span class="current">{data.name}</span>
+    </nav>
+
+    {data.thumb && (
+      <figure class="hero-shot">
+        <img src={data.thumb} alt={`${data.name} preview`} />
+      </figure>
+    )}
+
+    <header class="hero">
+      <div class="hero-meta">
+        <span class="no">{data.id.toUpperCase().replace('CS', 'CS/')}</span>
+        <span class="role">{data.role}</span>
+      </div>
+      <h1 class="title">{data.title}</h1>
+      <p class="lead">{data.desc}</p>
+      <ul class="tags">
+        {data.tags.map((t) => <li>{t}</li>)}
+      </ul>
+      <div class="meta-line">
+        <span>{data.name}</span>
+        <span class="dot">·</span>
+        <span>{data.role}</span>
+        <span class="dot">·</span>
+        <span>{data.year}</span>
+      </div>
+    </header>
+
+    <article class="cnt-body">
+      <Content />
+    </article>
+  </main>
+</ContentLayout>
+
+<style>
+  .page {
+    max-width: var(--measure-content);
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-8) var(--space-24);
+  }
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: var(--space-10);
+  }
+  .crumbs a { color: var(--acc); text-decoration: none; border-bottom: none; }
+  .crumbs a:hover { text-decoration: underline; }
+  .sep { opacity: 0.5; }
+  .current { color: var(--ink-strong); }
+
+  .hero-shot {
+    margin: 0 0 var(--space-10);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-card);
+    background: var(--surface-frame);
+  }
+  .hero-shot img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .hero { margin-bottom: var(--space-12); }
+  .hero-meta {
+    display: flex;
+    gap: var(--space-4);
+    align-items: baseline;
+    margin-bottom: var(--space-5);
+  }
+  .no, .role {
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+  }
+  .no { color: var(--acc); }
+  .role { color: var(--ink-muted); }
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--type-h1);
+    font-weight: 800;
+    line-height: var(--line-tight);
+    letter-spacing: var(--track-display);
+    color: var(--ink-strong);
+    margin: 0 0 var(--space-5);
+    text-transform: none;
+  }
+  .lead {
+    font-size: var(--type-lg);
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: var(--measure-narrow);
+    margin: 0 0 var(--space-6);
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0 0 var(--space-5);
+    padding: 0;
+  }
+  .tags li {
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--acc);
+    border: 1px solid rgba(var(--acc-rgb), 0.32);
+    padding: var(--space-1) var(--space-3);
+    background: rgba(var(--acc-rgb), 0.05);
+    border-radius: var(--radius-sm);
+  }
+  .meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    padding-top: var(--space-4);
+    border-top: 1px dashed var(--border-soft);
+  }
+  .meta-line .dot { opacity: 0.5; }
+</style>
