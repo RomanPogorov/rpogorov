@@ -16449,6 +16449,297 @@
     <span class="label">takeaway</span>
     <div class="body"><p>When testing isn't providing constructive results, it becomes apparent to <em>test out ideas</em> — throw things at the wall and see what sticks, as long as the things you throw are based in expertise or knowledge.</p></div>
 </div>` },
+            { id: 'engagement', company: 'cs01', companyLabel: 'Americor',
+              title: 'Engaging Early-Stage Users in Americor',
+              desc: 'Improving progress visibility, clarity, and predictability of the debt-settlement process to boost user confidence and engagement.',
+              metric: '+72% NPS', tags: ['UX Research', 'Retention', 'Multi-platform'], deeplink: 'engagement',
+              body: `<div class="dc-impact">
+    <div class="dc-impact-cell"><span class="num">+72%</span><span class="lbl">avg NPS lift across platforms</span></div>
+    <div class="dc-impact-cell"><span class="num">+15%</span><span class="lbl">early-user retention</span></div>
+    <div class="dc-impact-cell"><span class="num">4 mo</span><span class="lbl">end-to-end design</span></div>
+</div>
+
+<div class="dc-meta-grid">
+    <div><span class="lbl">Company</span><span class="val">Americor</span></div>
+    <div><span class="lbl">Timeline</span><span class="val">4 months</span></div>
+    <div><span class="lbl">Platform</span><span class="val">Web · iOS · Android (app showcased)</span></div>
+    <div><span class="lbl">Team</span><span class="val">Lead PD (me) · 4 dev · 1 PM · 1 UXR · 2 PD · 1 QA</span></div>
+</div>
+
+<h2>// my role</h2>
+<ul>
+    <li>Aligned product changes with stakeholders and execs across teams — decisions that rippled company-wide</li>
+    <li>Ran cross-team ideation to surface features and changes that drove the design</li>
+    <li>Shipped two new features and three redesigns under tight deadlines, hand-in-hand with engineering</li>
+    <li>Led legacy-UI refresh inside redesigns to bring a more premium feel</li>
+    <li>Worked with the UX researcher on usability and concept testing — insights drove every iteration</li>
+</ul>
+
+<h2>// background &amp; problem</h2>
+<p>Americor negotiates with creditors to settle users' debts for less than they owe. Negotiation takes time — settlements emerge unevenly, often months apart.</p>
+
+<div class="dc-pain">
+    <div class="dc-pain-card">
+        <span class="icon">// biz</span>
+        <h4>Business problem</h4>
+        <p>Engagement nosedives 2–3 months in. Onboarding cost is paid up front; revenue only lands after a settlement — early disengagement is expensive.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// user</span>
+        <h4>User pain</h4>
+        <p>Users start the program without clear expectations. Long quiet stretches breed confusion, frustration, and doubt — they stop believing deposits are doing anything.</p>
+    </div>
+</div>
+
+<h2 class="dc-h-major">// solution breakdown</h2>
+<p>Boost confidence and engagement by making the settlement process visible, predictable, and clear.</p>
+
+<figure class="dc-figure"><img src="cases/cs01/engagement/solution-overview.png" alt="Solution overview diagram"><figcaption>// solution map — clarity, progress, expectations</figcaption></figure>
+
+<div class="dc-pillars">
+    <div class="dc-pillar"><span class="dc-pillar-num">01 / clarity</span><p>Cut steps in the settlement process and rewrite how it's communicated.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">02 / movement</span><p>Replace static creditor status with a dynamic progress signal.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">03 / activity</span><p>Surface what changed since last login — no need to dig through every account.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">04 / expectations</span><p>Set realistic timelines so users know when to expect a settlement.</p></div>
+</div>
+
+<div class="dc-grid-3">
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/creditor-overview-redesign.png" alt="Creditor overview redesign"><figcaption>// creditor overview — dynamic progress</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/recent-activity-feed.png" alt="Recent activity feed"><figcaption>// recent activity — what changed since last login</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/settlement-timeline.png" alt="Settlement timeline"><figcaption>// expectations timeline</figcaption></figure>
+</div>
+
+<h2 class="dc-h-major">// design process</h2>
+
+<h2>// user research — interviews</h2>
+<p>Existing data showed early-program turnover; interviews aimed to dig into the <em>why</em>.</p>
+<ul>
+    <li>10 users between 30–90 days in the program</li>
+    <li>1:1 semi-structured video calls</li>
+    <li>Tracked emotional state from enrollment → early program → later program</li>
+    <li>Mapped pain points specific to the early window where users disengage</li>
+</ul>
+
+<div class="dc-pain">
+    <div class="dc-pain-card">
+        <span class="icon">// 01</span>
+        <h4>Lack of understanding</h4>
+        <p>Users couldn't connect individual statuses to the bigger settlement picture. <em>"How does my debt go from coming to Americor to being paid off?"</em></p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// 02</span>
+        <h4>Missing feeling of progress</h4>
+        <p>Months of deposits with no visible outcomes — <em>"I've been depositing for so long, but nothing has happened."</em></p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// 03</span>
+        <h4>Uncertainty</h4>
+        <p><em>"I don't know if I'm moving in the right direction."</em> First three months left users questioning whether the program was a scam.</p>
+    </div>
+</div>
+
+<h2 class="dc-h-major">// settlement-process clarity</h2>
+<p>The process was depicted exactly as it ran internally — overengineered for users.</p>
+
+<figure class="dc-figure"><img src="cases/cs01/engagement/legacy-process-map.png" alt="Legacy process map"><figcaption>// legacy — process drawn the way it runs internally</figcaption></figure>
+
+<div class="dc-iter">
+    <span class="label">decision</span>
+    <div class="body"><p>Condense and simplify the negotiation flow for users — the literal version creates more confusion than confidence.</p></div>
+</div>
+
+<figure class="dc-figure"><img src="cases/cs01/engagement/condensed-process.png" alt="Condensed process"><figcaption>// condensed — process the user actually needs</figcaption></figure>
+
+<h3>UI iteration</h3>
+<figure class="dc-figure"><img src="cases/cs01/engagement/ui-iteration-board.png" alt="UI iteration board"><figcaption>// iteration board — pulling pain points into UI</figcaption></figure>
+
+<div class="dc-iter">
+    <span class="label">iter 1 — feeling of progress</span>
+    <div class="body"><p>Reframed the UI as a timeline — moving through statuses instead of being parked in one.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">iter 2 — opaque statuses</span>
+    <div class="body"><p>Inlined descriptions — visibility without an extra interaction step.</p></div>
+</div>
+
+<h3>Moderated concept testing</h3>
+<p>Better understanding of each status. Better sense of moving step-to-step. UI was preferred. But — early users misread settlement as the <em>final</em> step, and the wholistic picture stayed fuzzy.</p>
+
+<div class="dc-grid-2">
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/iteration-pre-settlement.png" alt="Pre-settlement iteration"><figcaption>// iter — pre-settlement</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/iteration-post-settlement.png" alt="Post-settlement iteration"><figcaption>// iter — post-settlement</figcaption></figure>
+</div>
+
+<div class="dc-iter">
+    <span class="label">decision</span>
+    <div class="body"><p>Reframe "process" as a creditor lifecycle — enrollment → paid off. Combine pre and post settlement under one continuous journey, then keep the same UI in both phases for consistency.</p></div>
+</div>
+
+<h2 class="dc-h-major">// dynamic progress</h2>
+<p>Real progress was slow and uneven — and the UI wasn't helping users feel any of it.</p>
+
+<h3>The aging-vs-funds asymmetry</h3>
+<ul>
+    <li>Accounts age automatically as users intentionally miss creditor payments</li>
+    <li>Funds accrue from steady deposits — at the user's pace</li>
+    <li>Funds save against one or two creditors at a time, then reset after each settlement</li>
+    <li>Roughly half of users can't deposit fast enough to keep up with aging</li>
+    <li>Early progress concentrates on a couple of creditors while the rest sit still</li>
+</ul>
+
+<div class="dc-iter">
+    <span class="label">decision</span>
+    <div class="body"><p>Decouple early progress from deposit speed — let aging and saving move in parallel so all creditors show motion regardless of which finishes first.</p></div>
+</div>
+
+<div class="dc-grid-2">
+    <figure class="dc-figure"><img src="cases/cs01/engagement/aging-vs-funds-flow-1.png" alt="Aging vs funds flow 1"><figcaption>// flow 01 — sequence problem</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/aging-vs-funds-flow-2.png" alt="Aging vs funds flow 2"><figcaption>// flow 02 — concurrent progress</figcaption></figure>
+</div>
+
+<h3>Reframing the problem</h3>
+<p>Walkthroughs with stakeholders surfaced something deeper — progress was happening, just invisibly. The overview page lacked any signal that something had changed since last login. With no signal, users had to <em>remember</em> their previous status to perceive any progress at all.</p>
+
+<h3>How might we make progress visible</h3>
+<p>Four directions explored — each with different tradeoffs.</p>
+
+<div class="dc-grid-2">
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-progress-report.png" alt="Progress report"><figcaption>// progress report</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-progress-overview.png" alt="Progress overview"><figcaption>// progress overview</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-recent-activity.png" alt="Recent activity"><figcaption>// recent activity</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-update-notifications.png" alt="Update notifications"><figcaption>// update notifications</figcaption></figure>
+</div>
+
+<div class="dc-iter">
+    <span class="label">decision</span>
+    <div class="body"><p>Recent activity won — most honest, most immediate, doesn't depend on memory.</p></div>
+</div>
+
+<figure class="dc-figure"><img src="cases/cs01/engagement/recent-activity-iterations.png" alt="Recent activity iterations"><figcaption>// recent activity — iterations</figcaption></figure>
+
+<div class="dc-iter">
+    <span class="label">iter 1</span>
+    <div class="body"><p>"New" badge for everything that changed since last login — pulls attention without requiring users to recall their previous state.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">iter 2</span>
+    <div class="body"><p>Push notifications for activity events — immediate gratification for users with notifications enabled.</p></div>
+</div>
+
+<h3>Concept testing — recent activity</h3>
+<blockquote>"This makes it really clear that something is actually happening. Before, I wouldn't even notice."</blockquote>
+<blockquote>"This is exactly what I want. When will I be able to see this on my app?"</blockquote>
+<blockquote>"I'd check this all the time to see what's changing."</blockquote>
+
+<h2 class="dc-h-major">// creditor-overview redesign</h2>
+<p>The overview page focused on a static status — no signal of progress, no context for new settlement steps.</p>
+
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/creditor-overview-legacy.png" alt="Legacy creditor overview"><figcaption>// legacy — static status</figcaption></figure>
+
+<h3>UI iterations on the status row</h3>
+<div class="dc-grid-2">
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-1.png" alt="Status row iteration 1"><figcaption>// iter 1</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-2.png" alt="Status row iteration 2"><figcaption>// iter 2</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-3.png" alt="Status row iteration 3"><figcaption>// iter 3</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-4.png" alt="Status row iteration 4"><figcaption>// iter 4</figcaption></figure>
+</div>
+
+<div class="dc-iter">
+    <span class="label">decision 01</span>
+    <div class="body"><p>Show <em>progress</em>, not status — hint at forward motion instead of advertising stasis.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">decision 02</span>
+    <div class="body"><p>Tie the progress visual to current status — context for where the user is in the wider journey.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">decision 03</span>
+    <div class="body"><p>Refresh the legacy UI around what users care about — pre and post settlement amounts on top.</p></div>
+</div>
+
+<h3>Pre vs post settlement overview</h3>
+<p>Concept testing showed users with active settlements care about payment progress, not status progression — separate views for pre and post settlement, but only on the overview screen.</p>
+
+<div class="dc-grid-2">
+    <figure class="dc-figure"><img src="cases/cs01/engagement/post-settlement-overview.png" alt="Post-settlement overview"><figcaption>// post-settlement</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/pre-settlement-overview.png" alt="Pre-settlement overview"><figcaption>// pre-settlement</figcaption></figure>
+</div>
+
+<div class="dc-iter">
+    <span class="label">trade-off</span>
+    <div class="body"><p>Pre-settlement overview shows 4 steps, process detail shows 6 — accepted minor discrepancy, telegraphed via a checkpoint flag matching the icon. Most users either didn't notice or weren't confused.</p></div>
+</div>
+
+<h2 class="dc-h-major">// managing expectations</h2>
+<p>Initial interviews surfaced an even earlier problem — the debt overview was tuned for post-settlement progress. For early users, that meant a frozen progress bar and rising remaining-debt numbers. Users felt off-track before they had a chance to be on it.</p>
+
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/debt-overview-legacy.png" alt="Legacy debt overview"><figcaption>// legacy — debt overview</figcaption></figure>
+
+<ul>
+    <li>Progress bar didn't move until first settlement (3–6 months)</li>
+    <li>Each login highlighted a lack of motion</li>
+    <li>Remaining debt could grow before settlement due to interest — felt like negative progress</li>
+</ul>
+
+<div class="dc-iter">
+    <span class="label">decision</span>
+    <div class="body"><p>Split the progress overview by phase — distinct views before and after the user's first settlement.</p></div>
+</div>
+
+<figure class="dc-figure"><img src="cases/cs01/engagement/debt-overview-split-views.png" alt="Split debt-overview views"><figcaption>// split — pre and post first settlement</figcaption></figure>
+
+<div class="dc-iter">
+    <span class="label">decision 01</span>
+    <div class="body"><p>No progress bar in pre-settlement — kills the expectation of movement that won't happen yet.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">decision 02</span>
+    <div class="body"><p>Reframe "settlements" as "creditors" so users aren't reminded of what they don't have yet.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">decision 03</span>
+    <div class="body"><p>Drop "remaining debt", focus on enrolled debt — remove the interest-driven negative signal.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">trade-off</span>
+    <div class="body"><p>These calls strip progress signals — but the signals were static anyway. Compensated by the new recent-activity feature.</p></div>
+</div>
+
+<h3>New feature — settlement timeline</h3>
+<p>Users wrongly anchored to specific dates and got frustrated when reality didn't match. A projected timeline sets a realistic, flexible expectation.</p>
+
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/settlement-timeline-feature.png" alt="Settlement timeline feature"><figcaption>// feature — settlement timeline</figcaption></figure>
+
+<h3>Iterations</h3>
+<div class="dc-iter">
+    <span class="label">iter 1</span>
+    <div class="body"><p>Timeline + percentage format raised cognitive load — users misinterpreted the data. Stripped to require zero interpretation.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">iter 2</span>
+    <div class="body"><p>Users read early settlement projections as guarantees — added plain-text framing to position the data as a <em>projection</em>, not a promise.</p></div>
+</div>
+
+<figure class="dc-figure"><img src="cases/cs01/engagement/timeline-iterations.png" alt="Timeline iterations"><figcaption>// timeline — iterations</figcaption></figure>
+
+<h2 class="dc-h-major">// takeaways &amp; challenges</h2>
+
+<div class="dc-iter">
+    <span class="label">challenge</span>
+    <div class="body"><p>Showing detailed information without losing the user. Early-stage and late-stage users wanted different things at different fidelities — finding the balance was the bulk of the project.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">takeaway</span>
+    <div class="body"><p>"Tell users everything" sounds responsible until you ship it. Information overload causes the same — sometimes worse — confusion as too little. For consumer products, simplifying complex data, sometimes hiding it, is often the right call.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">challenge</span>
+    <div class="body"><p>Users' needs shift inside a single goal-oriented product. What works for a 30-day user actively misleads a 12-month user. Different mental models for the same screens.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">takeaway</span>
+    <div class="body"><p>Test with the target audience and with the users who'll be impacted as a side effect. Both groups change the answer.</p></div>
+</div>` },
             { id: 'creditor-card', company: 'cs01', companyLabel: 'Americor',
               title: 'Карточка кредитора', desc: 'Дизайн ключевого элемента интерфейса.',
               metric: '', tags: ['UI Design'], deeplink: 'creditor-card' },
@@ -16509,19 +16800,22 @@
               metric: '', tags: ['Vibe Code', 'Method'], deeplink: 'hs-12' },
         ];
 
-        // Inject a light-theme twin of offer-acceptance, right after the
-        // original — same content, theme="bright" toggles a CSS palette swap.
+        // Inject light-theme twins right after each original — same content,
+        // theme="bright" toggles a CSS palette swap.
         (() => {
-            const idx = DEEP_CASES.findIndex(c => c.id === 'offer-acceptance');
-            if (idx < 0) return;
-            const orig = DEEP_CASES[idx];
-            DEEP_CASES.splice(idx + 1, 0, {
-                ...orig,
-                id: 'offer-acceptance-bright',
-                title: orig.title + ' · bright',
-                deeplink: 'offer-acceptance-bright',
-                theme: 'bright',
-            });
+            const ids = ['offer-acceptance', 'engagement'];
+            for (const id of ids) {
+                const idx = DEEP_CASES.findIndex(c => c.id === id);
+                if (idx < 0) continue;
+                const orig = DEEP_CASES[idx];
+                DEEP_CASES.splice(idx + 1, 0, {
+                    ...orig,
+                    id: `${id}-bright`,
+                    title: orig.title + ' · bright',
+                    deeplink: `${id}-bright`,
+                    theme: 'bright',
+                });
+            }
         })();
 
         (() => {
