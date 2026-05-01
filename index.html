@@ -929,11 +929,11 @@
         body.showcase-open .scanlines,
         body.showcase-open .vignette,
         body.showcase-open .hud {
-            /* scale(0.96) used to shrink everything by 4% — that exposed
-               ~38px black stripes on each side as .stage pulled inwards.
-               Translate-only keeps full-bleed cover, no side gaps. */
-            transform: translateY(-12vh);
-            opacity: 0.3;
+            /* Small upward lift + fade. -12vh and scale(0.96) used to
+               cause a hard "punch up" + ~38px side gaps. Now ~3vh lift,
+               opacity 0.25 — soft and barely noticeable shift. */
+            transform: translateY(-3vh);
+            opacity: 0.25;
             pointer-events: none;
         }
         /* filter: blur kept ONLY on .stage so the video softens going away.
@@ -7744,7 +7744,10 @@
         .grid,
         .horizon,
         .hud {
-            transition: opacity 0.8s ease, filter 0.8s ease;
+            transition:
+                opacity 0.8s ease,
+                filter 0.8s ease,
+                transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
 
         /* ============ HOLOGRAPHIC PANEL — TRON ============ */
