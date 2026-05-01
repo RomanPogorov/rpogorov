@@ -1,0 +1,55 @@
+---
+/**
+ * Iteration / decision callout — used for things like "decision",
+ * "iter 1 — feeling of progress", "trade-off", "challenge", "takeaway".
+ * Renders as a soft callout card with an Inter eyebrow label and slotted
+ * body content.
+ */
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<div class="iter">
+  <div class="label">{label}</div>
+  <div class="body">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .iter {
+    background: rgba(var(--acc-rgb), 0.04);
+    border: 1px solid rgba(var(--acc-rgb), 0.16);
+    border-radius: var(--radius-md);
+    padding: var(--space-5) var(--space-6);
+    margin: var(--space-3) 0;
+  }
+  .label {
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--track-eyebrow);
+    text-transform: uppercase;
+    color: var(--acc);
+    margin: 0 0 var(--space-2);
+  }
+  .body :global(p) {
+    margin: 0 0 var(--space-2);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-base);
+  }
+  .body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .body :global(strong) {
+    color: var(--text-strong);
+    font-weight: 600;
+  }
+  .body :global(em) {
+    color: var(--text-base);
+    font-style: italic;
+  }
+</style>

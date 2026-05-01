@@ -1,0 +1,137 @@
+---
+/**
+ * Phase 0 sandbox — proves the Astro scaffold + CSS-token + component
+ * pipeline works end to end. Renders a bright editorial preview that uses
+ * every base component once. Cases will replace this in phase 1.
+ */
+import Layout from '../layouts/Layout.astro';
+import ImpactStrip from '../components/case/ImpactStrip.astro';
+import MetaGrid from '../components/case/MetaGrid.astro';
+import Pillar from '../components/case/Pillar.astro';
+import IterCard from '../components/case/IterCard.astro';
+import Figure from '../components/case/Figure.astro';
+import PainCard from '../components/case/PainCard.astro';
+---
+
+<Layout title="rpogorov.dev — Astro sandbox" theme="bright">
+  <main class="page">
+    <header class="header">
+      <span class="eyebrow">Astro phase 0</span>
+      <h1 class="title">Component sandbox</h1>
+      <p class="lead">
+        First Astro build — design tokens in <code>src/styles/tokens.css</code>,
+        component primitives in <code>src/components/case/</code>. Every block
+        below is a real reusable Astro component pulled from the same library
+        the migrated cases will use.
+      </p>
+    </header>
+
+    <ImpactStrip
+      cells={[
+        { num: '4', lbl: 'base components shipped' },
+        { num: '2', lbl: 'themes (dark / bright)' },
+        { num: '0', lbl: 'utility classes used' },
+      ]}
+    />
+
+    <MetaGrid
+      items={[
+        { label: 'Stack', value: 'Astro 6 · pure CSS · MDX content' },
+        { label: 'Branch', value: 'astro-migration' },
+        { label: 'Theme', value: 'bright (default)' },
+        { label: 'Status', value: 'Phase 0 — scaffold only' },
+      ]}
+    />
+
+    <h2 class="section">Pillars</h2>
+    <div class="row-3">
+      <Pillar num="01" label="tokens">Typed semantic colour layer in tokens.css. Components reference names, never raw hex.</Pillar>
+      <Pillar num="02" label="components">One Astro file per primitive, scoped CSS, zero utility classes.</Pillar>
+      <Pillar num="03" label="content">Cases and articles live in MDX content collections (added in phase 1).</Pillar>
+    </div>
+
+    <h2 class="section">Decisions &amp; iterations</h2>
+    <IterCard label="decision">
+      <p>Use Astro content collections for cases instead of a flat JS array — typed schema, zero rebuild noise when adding a new case.</p>
+    </IterCard>
+    <IterCard label="trade-off">
+      <p>Migration is a few days of focused work. The payoff is that adding case #5 is a single MDX file and an entry in the schema — no copy-paste of HTML.</p>
+    </IterCard>
+
+    <h2 class="section">Pain points</h2>
+    <div class="row-2">
+      <PainCard tag="before" title="Vanilla index.html">All 17K lines of styles, scripts, and content in one file. Adding a case meant copy-pasting.</PainCard>
+      <PainCard tag="after" title="Astro components">Tokens, layouts, primitives split. New case = one MDX + one schema row.</PainCard>
+    </div>
+
+    <h2 class="section">Figure (placeholder)</h2>
+    <Figure
+      src="https://placehold.co/1280x720/16191e/ffffff?text=Figure+placeholder"
+      alt="Phase 0 placeholder figure"
+      caption="Real case figures will land in phase 1 from cases/cs01/* assets"
+    />
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: var(--measure-content);
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-8);
+  }
+  .header {
+    margin-bottom: var(--space-12);
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .title {
+    font-family: var(--font-display);
+    font-size: var(--type-h1);
+    font-weight: 700;
+    line-height: var(--line-tight);
+    letter-spacing: var(--track-display);
+    color: var(--text-strong);
+    margin: var(--space-4) 0 var(--space-5);
+  }
+  .lead {
+    font-size: var(--type-lg);
+    line-height: 1.55;
+    color: var(--text-base);
+    max-width: var(--measure-narrow);
+    margin: 0 0 var(--space-8);
+  }
+  .lead code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--acc);
+    background: rgba(var(--acc-rgb), 0.06);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .section {
+    font-family: var(--font-body);
+    font-size: var(--type-h2);
+    font-weight: 700;
+    line-height: var(--line-snug);
+    letter-spacing: var(--track-h2);
+    color: var(--text-strong);
+    margin: var(--space-16) 0 var(--space-5);
+  }
+  .row-2,
+  .row-3 {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+  .row-2 { grid-template-columns: repeat(2, 1fr); }
+  .row-3 { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 720px) {
+    .row-2, .row-3 { grid-template-columns: 1fr; }
+  }
+</style>

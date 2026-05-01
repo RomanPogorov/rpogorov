@@ -1,0 +1,51 @@
+/* ===========================================================================
+   Global resets + base styles. Imports tokens, sets sensible defaults,
+   leaves component-level styling to .astro scoped styles.
+   =========================================================================== */
+
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--surface-page);
+  color: var(--text-base);
+  font-family: var(--font-body);
+  font-size: var(--type-base);
+  line-height: var(--line-body);
+  letter-spacing: -0.003em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--acc);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Webfonts — pulled from Google Fonts in Layout.astro <link>. Names listed
+   here match what tokens.css references. */

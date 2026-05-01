@@ -1,0 +1,52 @@
+---
+/**
+ * Figure — image or video asset with optional caption. Auto-detects
+ * portrait orientation server-side via the `aspect` prop ('portrait' caps
+ * width to phone-mockup size; default lets the image fill the column).
+ */
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  aspect?: 'portrait' | 'landscape';
+  kind?: 'img' | 'video';
+  poster?: string;
+}
+const { src, alt, caption, aspect = 'landscape', kind = 'img', poster } = Astro.props;
+const figureClass = ['figure', aspect === 'portrait' ? 'is-portrait' : ''].filter(Boolean).join(' ');
+---
+
+<figure class={figureClass}>
+  {kind === 'img' ? (
+    <img src={src} alt={alt} loading="lazy" />
+  ) : (
+    <video src={src} poster={poster} autoplay muted loop playsinline preload="metadata"></video>
+  )}
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .figure {
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-14);
+  }
+  .figure img,
+  .figure video {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+  }
+  .figure.is-portrait img,
+  .figure.is-portrait video {
+    max-width: 360px;
+  }
+  figcaption {
+    font-family: var(--font-body);
+    font-size: var(--type-sm);
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: var(--space-4) 0 0;
+    text-align: center;
+  }
+</style>

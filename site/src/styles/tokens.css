@@ -1,0 +1,91 @@
+/* ===========================================================================
+   Design tokens — single source of truth for the Astro portfolio.
+   Two themes share the token names (--surface, --acc, etc.); CSS variables
+   on .theme-bright override the bright-only values. Components reference
+   tokens by name, never raw hex.
+   =========================================================================== */
+
+:root {
+  /* ---- Type families ---- */
+  --font-display: 'Orbitron', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* ---- Type scale (rem) ---- */
+  --type-2xs: 0.6875rem;   /* 11px — eyebrow */
+  --type-xs: 0.75rem;      /* 12px — small caps */
+  --type-sm: 0.8125rem;    /* 13px — caption */
+  --type-base: 1.0625rem;  /* 17px — body */
+  --type-lg: 1.1875rem;    /* 19px — lead */
+  --type-h3: 1.375rem;     /* 22px */
+  --type-h2: clamp(1.875rem, 3vw, 2.375rem);          /* 30–38px */
+  --type-h1: clamp(2.25rem, 4.4vw, 3.25rem);          /* 36–52px */
+  --type-h-major: clamp(2.5rem, 4vw, 3.25rem);        /* 40–52px chapter */
+  --type-impact: clamp(2rem, 3.4vw, 2.625rem);        /* impact metric */
+
+  --line-tight: 1.1;
+  --line-snug: 1.2;
+  --line-body: 1.65;
+
+  --track-display: -0.022em;
+  --track-h2: -0.018em;
+  --track-h3: -0.011em;
+  --track-eyebrow: 0.08em;
+  --track-mono: 0.22em;
+
+  /* ---- Spacing scale (px) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-18: 72px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-28: 112px;
+
+  /* ---- Radii ---- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  /* ---- Layout widths ---- */
+  --measure-narrow: 720px;
+  --measure-body: 760px;
+  --measure-content: 920px;
+  --measure-page: 1280px;
+
+  /* ---- Cyber dark theme (default) ---- */
+  --acc: #00ff88;
+  --acc-rgb: 0, 255, 136;
+  --surface-page: #0a0d10;
+  --surface-card: rgba(0, 0, 0, 0.4);
+  --surface-frame: #16191e;
+  --border-soft: rgba(0, 255, 136, 0.18);
+  --border-card: rgba(0, 255, 136, 0.22);
+  --text-base: #e6f0ec;
+  --text-strong: #ffffff;
+  --text-muted: rgba(230, 240, 236, 0.7);
+}
+
+/* ---- Bright editorial theme overlay ---- */
+.theme-bright {
+  --acc: #1d4ed8;
+  --acc-rgb: 29, 78, 216;
+  --surface-page: #fbfbfc;
+  --surface-card: #ffffff;
+  --surface-frame: #16191e;
+  --border-soft: #ebedf1;
+  --border-card: #e2e6ec;
+  --text-base: #2a313e;
+  --text-strong: #0b1018;
+  --text-muted: #6b7280;
+}

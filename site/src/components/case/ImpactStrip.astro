@@ -1,0 +1,62 @@
+---
+/**
+ * Impact metrics strip — 3 cells side-by-side, big display number + small
+ * caption. Used at the top of every case body.
+ */
+interface ImpactCell {
+  num: string;
+  lbl: string;
+}
+interface Props {
+  cells: ImpactCell[];
+}
+const { cells } = Astro.props;
+---
+
+<div class="impact">
+  {cells.map((cell) => (
+    <div class="cell">
+      <span class="num">{cell.num}</span>
+      <span class="lbl">{cell.lbl}</span>
+    </div>
+  ))}
+</div>
+
+<style>
+  .impact {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin: 0 0 var(--space-8);
+  }
+  .cell {
+    background: var(--surface-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    padding: var(--space-6) var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .num {
+    font-family: var(--font-display);
+    font-size: var(--type-impact);
+    font-weight: 700;
+    line-height: var(--line-tight);
+    letter-spacing: -0.025em;
+    color: var(--text-strong);
+  }
+  .lbl {
+    font-family: var(--font-mono);
+    font-size: var(--type-xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  @media (max-width: 720px) {
+    .impact {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

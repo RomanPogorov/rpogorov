@@ -1,0 +1,39 @@
+---
+/**
+ * Base HTML shell. Loads global styles, webfonts, sets <title>, and lets
+ * the page choose dark or bright theme via the `theme` prop.
+ */
+interface Props {
+  title: string;
+  description?: string;
+  theme?: 'dark' | 'bright';
+}
+
+const { title, description, theme = 'dark' } = Astro.props;
+const bodyClass = theme === 'bright' ? 'theme-bright' : '';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class={bodyClass}>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>
