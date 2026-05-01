@@ -5833,6 +5833,29 @@
             transform: translateX(3px);
             box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.18);
         }
+        /* Selected — this task-item is the one the dw-modal is showing.
+           Stronger left bar + brighter bg + pulsing dot, mirrors the
+           agent-item.selected pattern. */
+        .task-item.selected {
+            border-color: var(--acc);
+            border-left-width: 3px;
+            border-left-color: var(--acc);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.28), rgba(var(--acc-rgb), 0.05) 70%);
+            box-shadow:
+                inset 4px 0 0 var(--acc),
+                inset 0 0 18px rgba(var(--acc-rgb), 0.16);
+        }
+        .task-item.selected::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            width: 6px; height: 6px;
+            background: var(--acc);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 8px var(--acc), 0 0 14px rgba(var(--acc-rgb), 0.5);
+        }
         .task-item .task-date { display: none; }      /* legacy markup: ignored */
         .task-text {
             color: var(--ink);
