@@ -17020,11 +17020,11 @@ See also: Health Samurai Lab: Game of Pools.`,
                 let planeW, planeH;
                 if (visibleW / visibleH > vidAspect) {
                     // Viewport wider than video — fit to width, video tall
-                    planeW = visibleW * 1.02;
+                    planeW = visibleW;
                     planeH = planeW / vidAspect;
                 } else {
                     // Viewport taller — fit to height
-                    planeH = visibleH * 1.02;
+                    planeH = visibleH;
                     planeW = planeH * vidAspect;
                 }
                 meshRef.current.scale.set(planeW, planeH, 1);
