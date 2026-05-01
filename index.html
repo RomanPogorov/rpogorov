@@ -927,8 +927,15 @@
         body.showcase-open .hud {
             transform: translateY(-12vh) scale(0.96);
             opacity: 0.3;
-            filter: blur(6px);
             pointer-events: none;
+        }
+        /* filter: blur kept ONLY on .stage so the video softens going away.
+           The other six layers used to also get blur(6px), which forced GPU
+           to allocate a separate offscreen buffer per element AND re-blur
+           every frame of the 0.85s transition. Drops opening / closing FPS
+           dramatically. Pure transform+opacity is compositor-handled. */
+        body.showcase-open .stage {
+            filter: blur(4px);
         }
         body.showcase-open .prompt {
             transform: translate(-50%, calc(-50% - 14vh)) perspective(1400px)
