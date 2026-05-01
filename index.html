@@ -6969,14 +6969,19 @@
             from { opacity: 0; }
             to   { opacity: 1; }
         }
+        /* Hide rules — !important + animation:none to beat the
+           ctl-fab-reveal animation's `forwards` opacity:1 in the cascade. */
         body.case-open .ctl-fab,
         body.showcase-open .ctl-fab,
         body.dw-open .ctl-fab,
         body.chat-fullscreen .ctl-fab,
         body.ctl-open .ctl-fab,
-        body.reader-open .ctl-fab {
-            opacity: 0;
-            pointer-events: none;
+        body.reader-open .ctl-fab,
+        body.left-pane-open .ctl-fab,
+        body.vibe-term-open .ctl-fab {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            animation: none !important;
         }
         .ctl-fab:hover {
             border-color: rgba(var(--acc-rgb), 0.7);
