@@ -1780,6 +1780,241 @@
             border: 1px dashed rgba(var(--acc-rgb), 0.18);
         }
 
+        /* === Rich deep-case body components (used inside .dc-body via raw HTML) === */
+        .dc-body blockquote { margin: 0; }
+        .dc-body figure { margin: 0; }
+        .dc-impact {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 0 0 28px;
+        }
+        .dc-impact-cell {
+            border: 1px solid rgba(var(--acc-rgb), 0.28);
+            background: rgba(var(--acc-rgb), 0.04);
+            padding: 18px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .dc-impact-cell .num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 14px rgba(var(--acc-rgb), 0.55);
+            line-height: 1;
+        }
+        .dc-impact-cell .lbl {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            line-height: 1.4;
+        }
+        .dc-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background: rgba(var(--acc-rgb), 0.16);
+            border: 1px solid rgba(var(--acc-rgb), 0.16);
+            margin: 0 0 28px;
+        }
+        .dc-meta-grid > div {
+            background: #060708;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .dc-meta-grid .lbl {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+        }
+        .dc-meta-grid .val {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.4;
+        }
+        .dc-pillars {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin: 0 0 22px;
+        }
+        .dc-pillar {
+            border: 1px solid rgba(var(--acc-rgb), 0.20);
+            background: rgba(var(--acc-rgb), 0.03);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .dc-pillar-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.22em;
+            color: var(--acc);
+        }
+        .dc-pillar p { margin: 0; font-size: 0.9375rem; line-height: 1.45; color: rgba(255, 255, 255, 0.82); }
+        .dc-pain {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin: 0 0 22px;
+        }
+        .dc-pain-card {
+            border-left: 2px solid var(--acc);
+            background: rgba(var(--acc-rgb), 0.04);
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .dc-pain-card .icon {
+            font-size: 1.25rem;
+            line-height: 1;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--acc);
+        }
+        .dc-pain-card h4 {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .dc-pain-card p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.5;
+        }
+        .dc-quote {
+            border-left: 1px solid rgba(var(--acc-rgb), 0.5);
+            padding: 8px 0 8px 16px;
+            margin: 8px 0;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 0.9375rem;
+        }
+        .dc-iter {
+            display: grid;
+            grid-template-columns: 110px 1fr;
+            gap: 16px;
+            align-items: start;
+            margin: 14px 0;
+            padding: 12px 0;
+            border-top: 1px dashed rgba(var(--acc-rgb), 0.18);
+        }
+        .dc-iter:first-of-type { border-top: 0; padding-top: 4px; }
+        .dc-iter .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+            padding-top: 4px;
+        }
+        .dc-iter .body { color: rgba(255, 255, 255, 0.78); }
+        .dc-iter .body p { margin: 0 0 8px; font-size: 0.9375rem; }
+        .dc-iter .body p:last-child { margin-bottom: 0; }
+        .dc-iter .body strong { color: #fff; font-weight: 600; }
+        .dc-tradeoff {
+            border: 1px solid rgba(var(--acc-rgb), 0.32);
+            background: rgba(var(--acc-rgb), 0.05);
+            padding: 14px 16px;
+            margin: 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .dc-tradeoff .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+        }
+        .dc-tradeoff p { margin: 0; font-size: 0.9375rem; color: rgba(255, 255, 255, 0.85); }
+        .dc-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 0 0 22px;
+        }
+        .dc-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin: 0 0 22px;
+        }
+        .dc-figure {
+            margin: 18px 0;
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            background: #0a0c0e;
+            padding: 6px;
+        }
+        .dc-figure img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .dc-figure figcaption {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 8px 6px 4px;
+        }
+        .dc-callout {
+            background: rgba(var(--acc-rgb), 0.06);
+            border-left: 2px solid var(--acc);
+            padding: 14px 16px;
+            margin: 16px 0;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .dc-callout p { margin: 0; }
+        .dc-stat-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 0 0 22px;
+        }
+        .dc-stat-row .cell {
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .dc-stat-row .cell .lbl {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+        }
+        .dc-stat-row .cell p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.78);
+            line-height: 1.45;
+        }
+        @media (max-width: 720px) {
+            .dc-impact, .dc-pillars, .dc-pain, .dc-grid-2, .dc-grid-3, .dc-stat-row { grid-template-columns: 1fr; }
+            .dc-iter { grid-template-columns: 1fr; gap: 6px; }
+            .dc-meta-grid { grid-template-columns: 1fr; }
+        }
+        /* Rich-body cases skip the generic placeholder hero (their body
+           starts with .dc-impact metrics + .dc-meta-grid project info). */
+        .dc-page.dc-rich .dc-hero { display: none; }
+
         /* Breadcrumbs on the existing case-page (cs01/cs02) header — sticky */
         .cp-crumbs-bar {
             position: sticky;
@@ -15644,8 +15879,349 @@
               title: 'Разделение опыта на фазы программы', desc: 'Главное продуктовое решение редизайна — отдельные UI для разных фаз клиента.',
               metric: '+18.2% conv', tags: ['UX', 'IA'], deeplink: 'program-phases' },
             { id: 'offer-acceptance', company: 'cs01', companyLabel: 'Americor',
-              title: 'Принятие офера', desc: 'Как пользователь принимает предложение по реструктуризации долга.',
-              metric: '', tags: ['UX', 'Flow'], deeplink: 'offer-acceptance' },
+              title: 'Increasing Settlement Offer Acceptance',
+              desc: 'Addressing concerns and boosting understanding of debt-settlement offers — empower informed decisions and increase online offer acceptance.',
+              metric: '+175%', tags: ['UX Research', 'Conversion', 'Multi-platform', 'Motion'], deeplink: 'offer-acceptance',
+              body: `<div class="dc-impact">
+    <div class="dc-impact-cell"><span class="num">+175%</span><span class="lbl">settlement offers accepted online</span></div>
+    <div class="dc-impact-cell"><span class="num">+44%</span><span class="lbl">offers accepted overall</span></div>
+    <div class="dc-impact-cell"><span class="num">300k</span><span class="lbl">users impacted by redesign</span></div>
+</div>
+
+<div class="dc-meta-grid">
+    <div><span class="lbl">Company</span><span class="val">Americor</span></div>
+    <div><span class="lbl">Timeline</span><span class="val">1 year (2024–2025), alongside other projects</span></div>
+    <div><span class="lbl">Platform</span><span class="val">Web · iOS · Android</span></div>
+    <div><span class="lbl">Team</span><span class="val">Lead PD (me) · 4 dev · 1 PM · 1 UXR · 2 PD · 1 QA</span></div>
+</div>
+
+<h2>// my role</h2>
+<ul>
+    <li>Led discussions with BI to understand and interpret existing settlement-acceptance statistics</li>
+    <li>Designed post-release testing to ascertain effectiveness of designs, derived insights for next iterations</li>
+    <li>Led ideation across teams to brainstorm ideas for users unaffected by initial product changes — full holistic approach</li>
+    <li>Led animation and motion design on the offer features</li>
+    <li>Worked with other designers to drive design decisions impacting design strategy</li>
+    <li>Researched theories, ideated and tested hypotheses that drove problem framing — significant impact on final designs</li>
+</ul>
+
+<h2>// background &amp; problem</h2>
+<p>Americor is a debt-settlement company that negotiates users' debts to lower them. After negotiating a settlement, it is presented to a user for acceptance.</p>
+<p><strong>Americor only collects its fees and gets revenue once an offer is accepted.</strong></p>
+
+<div class="dc-pain">
+    <div class="dc-pain-card">
+        <span class="icon">// biz</span>
+        <h4>Business problem</h4>
+        <p>The majority of settlements were accepted through phone calls — high-cost, resource-heavy, and a clear lack of self-service.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// user</span>
+        <h4>User pain</h4>
+        <p>Users were reluctant to accept settlements online — gaps in understanding, motivation, or communication across touchpoints, worsened by dreary, underwhelming patterns.</p>
+    </div>
+</div>
+
+<h2>// solution breakdown</h2>
+<p>Drive online acceptance through clarity, urgency and a more appealing experience across multiple touchpoints.</p>
+
+<div class="dc-pillars">
+    <div class="dc-pillar"><span class="dc-pillar-num">01 / appeal</span><p>A more appealing UI to excite and engage users — removing easily dismissed and disruptive patterns.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">02 / clarity</span><p>Ensuring clarity and minimizing misconceptions through rejection guidance — enabling informed decisions.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">03 / urgency</span><p>Creating urgency and reminders through fixed banners visible on every screen.</p></div>
+</div>
+
+<div class="dc-grid-3">
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-01-appealing-ui.png" alt="Appealing offer UI"><figcaption>// pillar 01 — appealing UI</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-02-clarity-rejection.png" alt="Rejection guidance"><figcaption>// pillar 02 — rejection guidance</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-03-banners-tokenized.png" alt="Banners and tokenized flow"><figcaption>// pillar 03 — touchpoints across the program</figcaption></figure>
+</div>
+
+<h2>// design process</h2>
+
+<h3>Analyzing issues with the original design</h3>
+<p>The original design was an MVP that failed to account for user pain points and used outdated UI/interaction patterns.</p>
+
+<div class="dc-grid-2">
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/original-desktop.png" alt="Original desktop offer"><figcaption>// original — desktop</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/original-mobile.png" alt="Original mobile offer"><figcaption>// original — mobile</figcaption></figure>
+</div>
+
+<div class="dc-pain">
+    <div class="dc-pain-card">
+        <span class="icon">// 01</span>
+        <h4>Low visibility</h4>
+        <p>Nothing significant in the UI indicated a pending offer besides the modal — users could close it and forget.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// 02</span>
+        <h4>Lack of access points</h4>
+        <p>Modal appeared every login and external notifications existed, but nothing significant let users re-open it once closed.</p>
+    </div>
+</div>
+
+<h3>Pain points from existing research</h3>
+<p>Ongoing surveys with 500+ users revealed common misconceptions — a clear lack of understanding only addressable via phone calls today:</p>
+
+<blockquote class="dc-quote">«Can I get a better settlement? I thought each one saved 50%.»</blockquote>
+<blockquote class="dc-quote">«Will I have to make more deposits to accept this settlement?»</blockquote>
+<blockquote class="dc-quote">«Will this increase how long I'm in the Americor program for?»</blockquote>
+<blockquote class="dc-quote">«Do I have enough funds to accept this offer?»</blockquote>
+
+<h2>// improving understanding &amp; access</h2>
+
+<h3>How might we make pending offers constantly visible and immediately accessible?</h3>
+<p>Use a fixed banner to allow visibility and access from all screens — ideating on different banner UIs.</p>
+
+<div class="dc-grid-3">
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-concept-top.png" alt="Top banner concept"><figcaption>// option A — top</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-concept-bottom.png" alt="Bottom banner concept"><figcaption>// option B — bottom + nav</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-option-c.png" alt="Option C banner"><figcaption>// option C — large CTA</figcaption></figure>
+</div>
+
+<div class="dc-grid-3">
+    <div class="dc-pain-card">
+        <span class="icon">// A</span>
+        <h4>Top banner</h4>
+        <p>First thing users notice. Natural sticky location without overcrowding UI. But hard to click on top.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// B</span>
+        <h4>Bottom banner</h4>
+        <p>Easier to click for hand placement. Combined with nav bar makes UI feel a bit heavy.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// C</span>
+        <h4>Large CTA</h4>
+        <p>Larger CTA and text — calls more attention. Trade-off: takes more screen real estate because it's fixed.</p>
+    </div>
+</div>
+
+<h3>Multi-variant testing</h3>
+<p>Each design had interchangeable pros and cons — implementing all three to test conversion and pick the winner.</p>
+
+<div class="dc-callout">
+    <p><strong>Option C had the highest conversion.</strong> All concepts saw an increase in settlement acceptance, but Option C converted <strong>15% better than A</strong> and <strong>3% better than B</strong>.</p>
+</div>
+
+<h3>Expanding on initial designs — adding urgency</h3>
+<p>Post-release research showed high but <em>delayed</em> conversion — creating urgency through banners for faster acceptance.</p>
+
+<div class="dc-iter">
+    <span class="label">pain point</span>
+    <div class="body"><p>Users did not accept offers immediately — some waited almost <strong>3 weeks</strong> before accepting.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">stats</span>
+    <div class="body"><p>Offers expire in 1 month. Americor policy: customer service calls them a week before expiry — leading to loss in online acceptance.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">iteration</span>
+    <div class="body"><p>Created urgency through banner UI and encouraged earlier acceptance by surfacing date of expiry at <strong>2 weeks</strong>.</p></div>
+</div>
+
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-urgency.png" alt="Urgency banner"><figcaption>// urgency banner with expiry counter</figcaption></figure>
+
+<h3>Next problem — addressing misconceptions with FAQ</h3>
+<p>Users still lacked understanding — calling in or simply not accepting offers. Addressed misconceptions in the form of an FAQ.</p>
+
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/faq-original.png" alt="FAQ original"><figcaption>// FAQ — first iteration</figcaption></figure>
+
+<h3>Experience walkthroughs</h3>
+<p>Internal experience walkthroughs allowed quick feedback and iteration — quick MVP release to assess impact on conversion.</p>
+
+<div class="dc-iter">
+    <span class="label">iteration</span>
+    <div class="body">
+        <p>Participants were inclined to close offers without looking at FAQ.</p>
+        <p><strong>Mandating FAQ</strong> by guiding users through it to close offers.</p>
+    </div>
+</div>
+
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/faq-mandatory.png" alt="Mandatory FAQ flow"><figcaption>// mandatory FAQ flow</figcaption></figure>
+
+<h3>Post-release analysis &amp; problem framing</h3>
+<p>Data showed FAQs had a positive impact, but were often unread. Less than <strong>35%</strong> of users that closed offers and got to the FAQ page actually opened and read them.</p>
+
+<div class="dc-pain">
+    <div class="dc-pain-card">
+        <span class="icon">// load</span>
+        <h4>High cognitive load &amp; effort</h4>
+        <p>Multiple FAQs rely on users self-diagnosing their own misconceptions — higher cognitive load and user effort.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// empathy</span>
+        <h4>Lack of empathy</h4>
+        <p>FAQs feel transactional — fail to show empathy, validate concerns, or guide users during an emotional, critical decision.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// skip</span>
+        <h4>Not actionable, skippable</h4>
+        <p>A static FAQ is not actionable — users skip it during decision-making, limiting effectiveness in guiding behavior.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// gap</span>
+        <h4>Missed opportunity</h4>
+        <p>FAQ limited to known hesitancies — no option for users to voice <em>their own</em> concerns directly.</p>
+    </div>
+</div>
+
+<h3>Design decision — reframing FAQ as rejection guidance</h3>
+<p>Reframing FAQ into a <strong>questionnaire</strong> that slows users down to reconsider the offer in a more direct way.</p>
+
+<div class="dc-iter">
+    <span class="label">iteration 1</span>
+    <div class="body">
+        <p>Users don't wait or take time to read FAQ.</p>
+        <p>→ Users are <strong>forced to select a reason</strong>, ensuring reconsideration.</p>
+    </div>
+</div>
+<div class="dc-iter">
+    <span class="label">iteration 2</span>
+    <div class="body">
+        <p>FAQs can feel avoidant of actual user issues — like they're trying to convince.</p>
+        <p>→ Asking users their thoughts directly makes them feel <strong>heard</strong>.</p>
+    </div>
+</div>
+<div class="dc-iter">
+    <span class="label">iteration 3</span>
+    <div class="body">
+        <p>Users have to self-diagnose concerns in FAQ — high effort.</p>
+        <p>→ Framing it as <em>why they're not accepting</em> aids their thought process and pinpoints the appropriate answer.</p>
+    </div>
+</div>
+
+<aside class="dc-tradeoff">
+    <span class="label">trade-off</span>
+    <p>This creates an extra step — friction in the rejection flow. What makes up for it: the extra step <strong>prioritizes user thoughts and shows empathy</strong>.</p>
+</aside>
+
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/rejection-guidance.png" alt="Rejection guidance UI"><figcaption>// rejection guidance — questionnaire flow</figcaption></figure>
+
+<div class="dc-stat-row">
+    <div class="cell"><span class="lbl">Result</span><p>"Other Reason" expands to a text field — constant data collection, ongoing research into settlement acceptance.</p></div>
+    <div class="cell"><span class="lbl">Result</span><p>Limited-group testing showed significant conversion going back to offers from rejection flow — <strong>+20% from static FAQ</strong>.</p></div>
+    <div class="cell"><span class="lbl">Overall</span><p>Led to <strong>+4% offer acceptance overall</strong>.</p></div>
+</div>
+
+<h2>// redesigning offer UI</h2>
+
+<h3>Concept testing &amp; interviews</h3>
+<p>Concept testing with users to identify pain points and understand decision drivers for accepting a settlement.</p>
+
+<div class="dc-stat-row">
+    <div class="cell"><span class="lbl">Method</span><p>1:1 semi-structured video calls — users walk through the prototype.</p></div>
+    <div class="cell"><span class="lbl">Sample</span><p>15 users who have accepted and rejected at least one settlement.</p></div>
+    <div class="cell"><span class="lbl">Goals</span><p>Decision factors · gaps in understanding · visual cues that drive acceptance.</p></div>
+</div>
+
+<h3>Problem framing — offer UI lacked scannability</h3>
+
+<div class="dc-pain">
+    <div class="dc-pain-card">
+        <span class="icon">// priority</span>
+        <h4>Wrong priority</h4>
+        <p>Offer didn't prioritize info that mattered most: <strong>settlement amount vs. original amount</strong>.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// labels</span>
+        <h4>Unclear labels</h4>
+        <p>"Settlement rate", "term", "start date" — confusing to users.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// scan</span>
+        <h4>Hard to scan</h4>
+        <p>Difficult to scan settlements quickly — had to look over the offer multiple times.</p>
+    </div>
+    <div class="dc-pain-card">
+        <span class="icon">// trust</span>
+        <h4>"Scammy" feel</h4>
+        <p>Felt overeager on the savings — failed to take fees into account, creating trust issues.</p>
+    </div>
+</div>
+
+<h3>Iterations — addressing user pain while redesigning legacy UI</h3>
+
+<div class="dc-iter">
+    <span class="label">iteration 1</span>
+    <div class="body"><p>Users care about original vs. settled amounts → reorganized information hierarchy to prioritize decision-driving data points.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">iteration 2</span>
+    <div class="body"><p>Users don't understand some information → improved copy and added tooltips for unclear info.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">iteration 3</span>
+    <div class="body"><p>Redesigned legacy UI → reorganized layout to feel more professional, added creditor logos for easier identification.</p></div>
+</div>
+
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/offer-redesign-1.png" alt="Offer redesign with savings block"><figcaption>// initial redesign — with savings block</figcaption></figure>
+
+<h3>Design decision — removing the misleading savings block</h3>
+<p>Avoided a misleading, overly promotional impression by <strong>removing the blue savings block</strong> — it excluded fees and felt salesy.</p>
+
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/offer-redesign-2.png" alt="Offer redesign without savings block"><figcaption>// final — comparison original vs. settlement amount</figcaption></figure>
+
+<div class="dc-iter">
+    <span class="label">iteration 1</span>
+    <div class="body">
+        <p>The savings block came off as "scam-like".</p>
+        <p>→ Removed it. Highlighted the comparison between original vs. settlement amount.</p>
+    </div>
+</div>
+<div class="dc-iter">
+    <span class="label">iteration 2</span>
+    <div class="body">
+        <p>FAQs and questions were limited to users <em>rejecting</em> offers.</p>
+        <p>→ Bringing FAQs to users who may not want to reject, but are reluctant.</p>
+    </div>
+</div>
+
+<aside class="dc-tradeoff">
+    <span class="label">trade-off</span>
+    <p>The savings block caught attention and could be attributed to some acceptance — but it was better to not mislead users and protect trust.</p>
+</aside>
+
+<h2>// the wow factor — beyond the popup</h2>
+<p>A generic popup assumes it'll successfully deliver the message. Statistical data shows it's considered intrusive and hastily dismissed.</p>
+
+<div class="dc-stat-row">
+    <div class="cell"><span class="lbl">Product</span><p><strong>24%</strong> of users close offer popups when they log in. Banners are effective in re-opening, but the initial popup is dismissed.</p></div>
+    <div class="cell"><span class="lbl">Behavior</span><p>Recordings and interviews show closing popups is <em>instinctive</em> — most sites have insignificant popups.</p></div>
+    <div class="cell"><span class="lbl">Industry</span><p>Desktop popups (newsletters, discount offers) — only <strong>5–10%</strong> conversion rate.</p></div>
+</div>
+
+<h3>How might we present offers differently to avoid instinctive closing?</h3>
+<p>An animated transition deviates from the norm — gives users a feeling of something different and more positive. Applied animation and motion design to the offer UI to make offers feel <strong>exciting and premium</strong>.</p>
+
+<h2>// covering the last 5%</h2>
+<p>Addressed the 5% of Americor users who never registered on the app/online portal. Unregistered users had to rely on phone calls — a workshop with internal teams unblocked them.</p>
+
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/workshop-unregistered.png" alt="Workshop session"><figcaption>// internal workshop — handling unregistered users</figcaption></figure>
+
+<div class="dc-callout">
+    <p><strong>Solution:</strong> a <strong>tokenized email flow</strong> allowed offer acceptance without needing to register online — covering every user, online or not.</p>
+</div>
+
+<h2>// takeaways &amp; challenges</h2>
+
+<div class="dc-iter">
+    <span class="label">challenge</span>
+    <div class="body"><p>Qualitative testing with users directly was particularly difficult here. Pain points were easy to identify and resolve early on, but didn't necessarily translate to equal conversion. Especially problematic when post-release testing presented gaps in results.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">takeaway</span>
+    <div class="body"><p>When user testing pre-release becomes ineffective, post-release testing is necessary — especially when the main outcome is conversion.</p></div>
+</div>
+
+<div class="dc-iter">
+    <span class="label">challenge</span>
+    <div class="body"><p>A significant number of identified problems and inherent solutions were based on hypothesis and design expertise — this study established a sense of design confidence in me.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">takeaway</span>
+    <div class="body"><p>When testing isn't providing constructive results, it becomes apparent to <em>test out ideas</em> — throw things at the wall and see what sticks, as long as the things you throw are based in expertise or knowledge.</p></div>
+</div>` },
             { id: 'creditor-card', company: 'cs01', companyLabel: 'Americor',
               title: 'Карточка кредитора', desc: 'Дизайн ключевого элемента интерфейса.',
               metric: '', tags: ['UI Design'], deeplink: 'creditor-card' },
@@ -15790,13 +16366,21 @@
                 elDsc.textContent = c.desc;
                 elTags.innerHTML = c.tags.map(t => `<li>${t}</li>`).join('');
                 if (c.body) {
-                    // marked.js loaded for articles — reuse if available.
-                    elBody.innerHTML = (typeof marked !== 'undefined')
-                        ? marked.parse(c.body)
-                        : `<pre>${c.body.replace(/[<>&]/g, ch => ({ '<':'&lt;','>':'&gt;','&':'&amp;' }[ch]))}</pre>`;
+                    // Heuristic: if body starts with `<`, treat as raw HTML (rich
+                    // case layouts use custom .dc-* classes that marked would mangle).
+                    // Otherwise render through marked.js (already loaded for articles).
+                    const isHtml = c.body.trimStart().startsWith('<');
+                    if (isHtml) {
+                        elBody.innerHTML = c.body;
+                    } else {
+                        elBody.innerHTML = (typeof marked !== 'undefined')
+                            ? marked.parse(c.body)
+                            : `<pre>${c.body.replace(/[<>&]/g, ch => ({ '<':'&lt;','>':'&gt;','&':'&amp;' }[ch]))}</pre>`;
+                    }
                 } else {
                     elBody.innerHTML = `<div class="dc-empty">// case story coming soon</div>`;
                 }
+                page.classList.toggle('dc-rich', !!(c.body && c.body.trimStart().startsWith('<')));
                 renderCrumbs(c);
             }
 
