@@ -13069,7 +13069,14 @@
                     setTimeout(() => tone({ freq: 1864, dur: 0.45, type: 'sine', gain: 0.016, attack: 0.018 }), 180);
                 }),
                 warn:     gate(() => { tone({ freq: 880, dur: 0.08, type: 'square', gain: 0.04 }); setTimeout(() => tone({ freq: 660, dur: 0.08, type: 'square', gain: 0.04 }), 90); }),
-                engage:   gate(() => { sweep({ f1: 240, f2: 1400, dur: 0.42, type: 'sawtooth', gain: 0.045 }); setTimeout(() => tone({ freq: 1800, dur: 0.05, type: 'square', gain: 0.04 }), 380); }),
+                // Layered "system engage" — short data hiss + clean sine
+                // ascend + bright digital confirm + chime tail.
+                engage: gate(() => {
+                    noiseBurst({ dur: 0.04, gain: 0.018, hp: 2400 });
+                    setTimeout(() => sweep({ f1: 380, f2: 1400, dur: 0.26, type: 'sine', gain: 0.038 }), 15);
+                    setTimeout(() => tone({ freq: 2400, dur: 0.018, type: 'square', gain: 0.022, attack: 0.001 }), 220);
+                    setTimeout(() => tone({ freq: 1864, dur: 0.06, type: 'sine', gain: 0.020, attack: 0.005 }), 260);
+                }),
                 // Layered "system disengage" — digital tick + filtered noise
                 // burst + clean sine descend + low confirm tail. No more
                 // sawtooth pew-pew.
