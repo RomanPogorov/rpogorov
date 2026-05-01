@@ -6803,21 +6803,21 @@
             text-shadow: 0 0 14px rgba(var(--acc-rgb), 0.35);
             opacity: 0;
             margin: 0;
-            /* rgba stops keyed off (1 - ui-fill) so the fill fades to
+            /* rgba stops keyed off (1 - ui-outline) so the fill fades to
                transparent as signal drops; --ink = #e8fff0. */
             background: linear-gradient(90deg,
-                    rgba(232, 255, 240, calc(1 - var(--ui-fill, 0))) 0%,
-                    rgba(232, 255, 240, calc(1 - var(--ui-fill, 0))) 42%,
-                    rgba(255, 255, 255, calc(1 - var(--ui-fill, 0))) 50%,
-                    rgba(232, 255, 240, calc(1 - var(--ui-fill, 0))) 58%,
-                    rgba(232, 255, 240, calc(1 - var(--ui-fill, 0))) 100%);
+                    rgba(232, 255, 240, calc(1 - var(--ui-outline, 0))) 0%,
+                    rgba(232, 255, 240, calc(1 - var(--ui-outline, 0))) 42%,
+                    rgba(255, 255, 255, calc(1 - var(--ui-outline, 0))) 50%,
+                    rgba(232, 255, 240, calc(1 - var(--ui-outline, 0))) 58%,
+                    rgba(232, 255, 240, calc(1 - var(--ui-outline, 0))) 100%);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             /* Stroke grows from 0 (no outline) at signal=1 to ~1.6px at
                signal=0, leaving the title as a wireframe glyph. */
-            -webkit-text-stroke: calc(var(--ui-fill, 0) * 1.6px) var(--acc);
+            -webkit-text-stroke: calc(var(--ui-outline, 0) * 1.6px) var(--acc);
             animation: fadeUp 1s 1.5s ease-out forwards, sweep 7s 2.5s ease-in-out infinite;
         }
 
@@ -15613,13 +15613,19 @@ See also: Health Samurai Lab: Game of Pools.`,
                 // mid-signal and only ramp up sharply near zero.
                 const inv = 1 - norm;
                 document.body.style.setProperty('--sim-fall', (inv * inv * inv).toFixed(4));
-                // UI background fill — quartic curve so 50% is barely darker,
-                // 30% is moderate, then ramps fast toward 0.
-                //   signal=0.5 → ui-fill ≈ 0.06
-                //   signal=0.3 → ui-fill ≈ 0.24
-                //   signal=0.0 → ui-fill = 1.00
-                const ui = inv * inv * inv * inv;
+                // UI background fill — cubic ramp capped at 0.40 so surfaces
+                // never go fully opaque; the world behind stays slightly
+                // visible even at signal=0.
+                //   signal=0.5 → ui-fill ≈ 0.05
+                //   signal=0.3 → ui-fill ≈ 0.14
+                //   signal=0.0 → ui-fill = 0.40 (cap)
+                const ui = inv * inv * inv * 0.4;
                 document.body.style.setProperty('--ui-fill', ui.toFixed(4));
+                // Outline ramp for the CLAUDE RUNNER title — separate var so
+                // the text can fully transition to wireframe (stroke only,
+                // no fill) at signal=0 while panel backgrounds stay at 40%.
+                const outline = inv * inv;
+                document.body.style.setProperty('--ui-outline', outline.toFixed(4));
                 document.dispatchEvent(new CustomEvent('signal:change', { detail: norm }));
                 if (valueEl) valueEl.textContent = Math.round(pct) + '%';
                 document.body.dataset.simState =
