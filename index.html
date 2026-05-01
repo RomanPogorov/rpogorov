@@ -7277,47 +7277,40 @@
             margin: 6px 0 14px;
         }
         .ctl-title em { color: #fff; font-style: normal; }
+        /* Match the panel/reader/dw-close look — plain "ESC" pill with
+           accent border, dim text → accent on hover. */
         .ctl-close {
             position: absolute;
             top: 16px;
             right: 18px;
             appearance: none;
-            background: rgba(0, 0, 0, 0.55);
-            border: 1px solid rgba(var(--acc-rgb), 0.4);
-            color: var(--acc);
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            color: var(--dim);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.625rem;
-            letter-spacing: 0.22em;
+            font-size: 0.5625rem;
+            letter-spacing: 0.35em;
             text-transform: uppercase;
-            padding: 6px 12px 6px 10px;
+            padding: 6px 10px 6px 14px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: border-color 0.2s, color 0.2s, background 0.2s, box-shadow 0.2s;
+            transition: all 0.2s ease;
             z-index: 5;
         }
+        .ctl-close::before {
+            content: '×';
+            font-size: 0.875rem;
+            line-height: 1;
+            color: var(--acc);
+            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
+        }
         .ctl-close:hover {
-            color: #050505;
-            background: var(--acc);
-            border-color: var(--acc);
-            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.7);
+            color: var(--acc);
+            border-color: rgba(var(--acc-rgb), 0.6);
+            background: rgba(var(--acc-rgb), 0.06);
         }
-        .ctl-close-x {
-            position: relative;
-            width: 10px;
-            height: 10px;
-        }
-        .ctl-close-x::before,
-        .ctl-close-x::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 0;
-            width: 100%; height: 1px;
-            background: currentColor;
-        }
-        .ctl-close-x::before { transform: translateY(-50%) rotate(45deg); }
-        .ctl-close-x::after  { transform: translateY(-50%) rotate(-45deg); }
 
         .ctl-legend {
             display: flex;
@@ -9946,10 +9939,7 @@
     <!-- Career timeline hologram modal -->
     <div class="ctl-modal" id="career-tl-modal" role="dialog" aria-modal="true" aria-labelledby="career-tl-title" hidden>
         <div class="ctl-pane" data-ctl-pane>
-            <button type="button" class="ctl-close" id="career-tl-close" aria-label="Close timeline">
-                <span class="ctl-close-x" aria-hidden="true"></span>
-                <span>close</span>
-            </button>
+            <button type="button" class="ctl-close" id="career-tl-close" aria-label="Close timeline">ESC</button>
 
             <div class="ctl-headstrip">
                 <span class="ctl-eyebrow">// career timeline · <b>2014 → 2026</b> · 5 roles · 3 side projects</span>
