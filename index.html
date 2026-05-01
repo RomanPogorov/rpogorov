@@ -1123,6 +1123,115 @@
             text-align: center;
             padding: 60px 0;
         }
+        .sc-card {
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(var(--acc-rgb), 0.18);
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s, background 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .sc-card:hover {
+            border-color: rgba(var(--acc-rgb), 0.55);
+            background: rgba(var(--acc-rgb), 0.04);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(var(--acc-rgb), 0.15);
+        }
+        .sc-card-thumb {
+            position: relative;
+            aspect-ratio: 16 / 9;
+            background:
+                repeating-linear-gradient(45deg,
+                    rgba(var(--acc-rgb), 0.05) 0 5px,
+                    rgba(var(--acc-rgb), 0.10) 5px 10px),
+                linear-gradient(135deg, rgba(var(--acc-rgb), 0.10), rgba(var(--acc-rgb), 0.02));
+            border-bottom: 1px solid rgba(var(--acc-rgb), 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sc-card-thumb-glyph {
+            font-size: 2rem;
+            color: rgba(var(--acc-rgb), 0.35);
+        }
+        .sc-card-thumb-tag {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--acc);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            padding: 3px 8px;
+        }
+        .sc-card-body {
+            padding: 12px 14px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+        .sc-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5625rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+        .sc-card-company { color: rgba(255, 255, 255, 0.45); }
+        .sc-card-metric {
+            color: var(--acc);
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.35);
+        }
+        .sc-card-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin: 4px 0 2px;
+            line-height: 1.25;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .sc-card-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8125rem;
+            line-height: 1.45;
+            color: rgba(255, 255, 255, 0.62);
+            margin: 0;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .sc-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin: 8px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+        .sc-card-tags li {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            color: rgba(var(--acc-rgb), 0.85);
+            border: 1px solid rgba(var(--acc-rgb), 0.28);
+            padding: 3px 7px;
+            text-transform: uppercase;
+            background: rgba(var(--acc-rgb), 0.04);
+        }
 
         /* ============ CARROUSEL: ONE CASE PER VIEWPORT ============ */
         .cases {
@@ -15181,6 +15290,132 @@
                 if (!audio.muted && audio.paused) {
                     audio.play().catch(() => { });
                 }
+            });
+        })();
+    </script>
+
+    <!-- Deep cases: data array + grid render for the showcase "By Cases" tab.
+         Source of truth for nested project cases inside each company. To be
+         migrated to MD files in a later step. -->
+    <script>
+        const DEEP_CASES = [
+            // ===== Americor (cs01) =====
+            { id: 'multi-platform-redesign', company: 'cs01', companyLabel: 'Americor',
+              title: 'Multi-platform Redesign', desc: 'Pre-IPO редизайн web + iOS + Android — единый язык на трёх платформах.',
+              metric: 'NPS 45 → 78', tags: ['UX Redesign', 'Multi-platform'], deeplink: '' },
+            { id: 'three-platform-ds', company: 'cs01', companyLabel: 'Americor',
+              title: '3-platform Design System', desc: '4-слойная архитектура: root → semantic → brand → platform. Multi-brand tokens.',
+              metric: 'T2M ~30%', tags: ['Design System', 'Tokens'], deeplink: '' },
+            { id: 'code-first-process', company: 'cs01', companyLabel: 'Americor',
+              title: 'Code-first Process', desc: 'Прототипы в React + Storybook становятся продакшеном. Zero handoff drift.',
+              metric: 'drift ≈ 0', tags: ['Process', 'React'], deeplink: '' },
+            { id: 'program-phases', company: 'cs01', companyLabel: 'Americor',
+              title: 'Разделение опыта на фазы программы', desc: 'Главное продуктовое решение редизайна — отдельные UI для разных фаз клиента.',
+              metric: '+18.2% conv', tags: ['UX', 'IA'], deeplink: 'program-phases' },
+            { id: 'offer-acceptance', company: 'cs01', companyLabel: 'Americor',
+              title: 'Принятие офера', desc: 'Как пользователь принимает предложение по реструктуризации долга.',
+              metric: '', tags: ['UX', 'Flow'], deeplink: 'offer-acceptance' },
+            { id: 'creditor-card', company: 'cs01', companyLabel: 'Americor',
+              title: 'Карточка кредитора', desc: 'Дизайн ключевого элемента интерфейса.',
+              metric: '', tags: ['UI Design'], deeplink: 'creditor-card' },
+            { id: 'creditor-lifecycle', company: 'cs01', companyLabel: 'Americor',
+              title: 'Жизненный цикл карточки кредитора', desc: 'Состояния и переходы карточки на разных этапах программы.',
+              metric: '', tags: ['UX', 'States'], deeplink: 'creditor-lifecycle' },
+            { id: 'waiting-frustration', company: 'cs01', companyLabel: 'Americor',
+              title: 'Снижение фрустрации на этапе ожидания', desc: 'Самый длительный и стрессовый этап клиента.',
+              metric: '', tags: ['UX', 'Research'], deeplink: 'waiting-frustration' },
+            { id: 'communication-section', company: 'cs01', companyLabel: 'Americor',
+              title: 'Communication', desc: 'Раздел коммуникаций в приложении: уведомления, чаты, статусы.',
+              metric: '', tags: ['UX', 'Notifications'], deeplink: 'communication' },
+            { id: 'community-codefirst', company: 'cs01', companyLabel: 'Americor',
+              title: 'Community section', desc: 'Reddit-style лента внутри приложения, целиком в коде, в продакшене.',
+              metric: '', tags: ['Vibe Code', 'React'], deeplink: 'community-codefirst' },
+            { id: 'fb-insights-parser', company: 'cs01', companyLabel: 'Americor',
+              title: 'FB Insights Parser', desc: 'AI-анализ 80k+ сообщений из FB-сообщества: topic + sentiment.',
+              metric: '80k msg', tags: ['Vibe Code', 'AI Research'], deeplink: '' },
+            { id: 'nsf-shortfall', company: 'cs01', companyLabel: 'Americor',
+              title: 'NSF Shortfall симулятор', desc: 'Внутренний инструмент для разбора платёжной логики.',
+              metric: '', tags: ['Vibe Code', 'Internal Tool'], deeplink: 'nsf-shortfall' },
+            // ===== Health Samurai (cs02) =====
+            { id: 'shadcn-ds', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Design system: Figma to Storybook', desc: 'Multi-layer DS на shadCN, semantic tokens, bidirectional sync.',
+              metric: '', tags: ['Design System', 'shadcn'], deeplink: 'hs-01' },
+            { id: 'figma-code-skill', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Figma ↔ Code mapping skill', desc: 'Custom Claude skill, 70–80% accuracy first run, iteratively improved.',
+              metric: '', tags: ['Automation', 'Claude Skill'], deeplink: 'hs-02' },
+            { id: 'landing-platform', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Landing platform & AI pipeline', desc: 'MD-in / brand-styled-out. Block library, "Fixik" DOM-aware Claude chat, blog and docs.',
+              metric: '3 mo → 2–3 d', tags: ['Automation', 'AI Pipeline'], deeplink: 'hs-03' },
+            { id: 'presentation-generator', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Presentation generator', desc: 'Same engine as landings, applied to decks. Three modes, ~1 hr cycle.',
+              metric: '~1 hr cycle', tags: ['Automation'], deeplink: 'hs-04' },
+            { id: 'embedded-analytics', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Embedded analytics on every page', desc: 'PostHog inside every page. Zero context switch.',
+              metric: '', tags: ['Tools'], deeplink: 'hs-05' },
+            { id: 'aidbox-redesign', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Aidbox redesign', desc: 'Joint redesign of the flagship FHIR platform UI.',
+              metric: '', tags: ['UX Redesign', 'Product'], deeplink: 'hs-06' },
+            { id: 'mpi-box', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'MPI Box redesign', desc: 'Master Patient Index — match, merge, audit.',
+              metric: '', tags: ['UX Redesign', 'Product'], deeplink: 'hs-07' },
+            { id: 'design-support-code', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Design support through code', desc: 'Designer in production repos, branch-and-merge model.',
+              metric: '', tags: ['Process'], deeplink: 'hs-08' },
+            { id: 'brand-illustrations', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Brand identity & illustrations', desc: 'Logos, illustrations, mascots, diagram style.',
+              metric: '', tags: ['Brand'], deeplink: 'hs-09' },
+            { id: 'kudos-generator', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'Kudos generator', desc: 'Mascot-trained image gen, ~200 generations, daily use.',
+              metric: '~200 gen', tags: ['Vibe Code', 'AI'], deeplink: 'hs-10' },
+            { id: 'firecamp-app', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'FireCamp app — vibe-coded production', desc: 'Healthcare-IT conference, responsive web app за неделю — voting, schedule, subscriptions.',
+              metric: '1 wk · ~100', tags: ['Vibe Code', 'Production'], deeplink: 'hs-11' },
+            { id: 'json-parser', company: 'cs02', companyLabel: 'Health Samurai',
+              title: 'JSON Parser & vibe-code as method', desc: 'Working prototypes instead of static mockups, from day one.',
+              metric: '', tags: ['Vibe Code', 'Method'], deeplink: 'hs-12' },
+        ];
+
+        (() => {
+            const grid = document.getElementById('sc-cases-grid');
+            if (!grid) return;
+            // Color/glyph chip per company
+            const COMPANY_TONE = { cs01: '#ff5722', cs02: '#eb5234' };
+            grid.innerHTML = DEEP_CASES.map(c => `
+                <a class="sc-card" data-deep-id="${c.id}" data-deep-company="${c.company}"${c.deeplink ? ` data-deep-link="${c.deeplink}"` : ''} href="#case/${c.company}/${c.id}">
+                    <div class="sc-card-thumb" aria-hidden="true">
+                        <span class="sc-card-thumb-tag">${c.companyLabel}</span>
+                        <span class="sc-card-thumb-glyph">◆</span>
+                    </div>
+                    <div class="sc-card-body">
+                        <div class="sc-card-meta">
+                            <span class="sc-card-company">${c.companyLabel}</span>
+                            ${c.metric ? `<span class="sc-card-metric">${c.metric}</span>` : ''}
+                        </div>
+                        <h3 class="sc-card-title">${c.title}</h3>
+                        <p class="sc-card-desc">${c.desc}</p>
+                        <ul class="sc-card-tags">
+                            ${c.tags.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                    </div>
+                </a>
+            `).join('');
+
+            // Click → open the matching company case + (later) scroll to the deeplink section.
+            grid.addEventListener('click', (e) => {
+                const card = e.target.closest('.sc-card');
+                if (!card) return;
+                e.preventDefault();
+                const company = card.dataset.deepCompany;
+                const deepLink = card.dataset.deepLink;
+                if (!company) return;
+                window.__cp?.open?.(company);
+                // Scroll to the matching am-deeplink / hs-subcase if present.
+                if (deepLink) setTimeout(() => {
+                    const target = document.querySelector(
+                        `[data-deeplink="${deepLink}"], #${CSS.escape(deepLink)}`
+                    );
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 400);
             });
         })();
     </script>
