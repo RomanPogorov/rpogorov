@@ -1,378 +1,317 @@
 ---
 /**
- * /rpogorov-dev/app/cases/ — flat index of every case in the collections.
+ * /rpogorov-dev/app/cases/ — full-screen showcase carousel.
  *
- * Two sections: top-level companies (cs01-cs05) as the primary "By Company"
- * archive, then deep Americor sub-cases (offer-acceptance, engagement, etc.)
- * as the "By Cases" group. Mirrors the showcase-tabs structure from the
- * legacy main page but as a static, deeplinkable list.
+ * Lifts the legacy `<section class="showcase">` markup 1:1 into Astro and
+ * sources the case data from the `companies` and `cases` content
+ * collections. Keeps the same class names so the legacy CSS (loaded via
+ * Layout.astro globally) styles every element identically: scroll-snap
+ * carousel, sc-tabs, ←/→ navigation, dots, deep-case grid for the second
+ * tab. Click an Open Case button → navigates to the deep MDX route.
  */
 import { getCollection } from 'astro:content';
-import ContentLayout from '@layouts/ContentLayout.astro';
+import Layout from '@layouts/Layout.astro';
 
 const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
-
 const companies = (await getCollection('companies')).sort(
   (a, b) => a.data.order - b.data.order
 );
 const subCases = (await getCollection('cases')).sort(
   (a, b) => a.data.order - b.data.order
 );
+
+const fallbackThumb = `${baseUrl}/showcase/cases/cs01-americor.png`;
 ---
 
-<ContentLayout title="Cases — Roman Pogorov" theme="dark">
-  <main class="page">
-    <nav class="crumbs" aria-label="Breadcrumb">
-      <a href={`${baseUrl}/`}>Showcase</a>
-      <span class="sep">/</span>
-      <span class="current">Cases</span>
-    </nav>
+<Layout title="Cases — Roman Pogorov" bodyTheme="green" bodyClass="showcase-open" description="Selected works archive — five top-level engagements and four Americor deep-dives.">
+  <section class="showcase" id="showcase" aria-label="Recent works">
+    <div class="showcase-inner">
+      <div class="showcase-intro">
+        <span class="showcase-tag">// archive · 2010 — 2026 · selected works</span>
+        <p class="showcase-sub">scroll · drag · <span class="blink">← →</span></p>
+      </div>
 
-    <header class="hero">
-      <span class="eyebrow">// archive · 2010 — 2026 · selected works</span>
-      <h1 class="title">Cases</h1>
-      <p class="lead">
-        Five top-level engagements and four Americor deep dives. Every entry
-        opens a full write-up — overview prose for company-level work, deep
-        process notes for the sub-case tabs.
-      </p>
-    </header>
+      <nav class="sc-tabs" role="tablist" aria-label="Showcase view mode">
+        <button type="button" class="sc-tab is-active" data-sc-tab="company" role="tab" aria-selected="true" aria-controls="sc-view-company">
+          <span class="sc-tab-num">01</span>
+          <span class="sc-tab-label">By Company</span>
+        </button>
+        <button type="button" class="sc-tab" data-sc-tab="cases" role="tab" aria-selected="false" aria-controls="sc-view-cases">
+          <span class="sc-tab-num">02</span>
+          <span class="sc-tab-label">By Cases</span>
+        </button>
+      </nav>
 
-    <section class="block">
-      <header class="block-head">
-        <span class="block-num">01</span>
-        <h2 class="block-title">By Company</h2>
-        <p class="block-sub">5 engagements, ordered by recency on the company timeline.</p>
-      </header>
-      <ul class="grid">
+      <div class="cases" id="cases">
         {
           companies.map((c) => (
-            <li class="card">
-              <a class="card-link" href={`${baseUrl}/company/${c.id}/`}>
-                <div class="card-thumb">
-                  {c.data.thumb ? (
-                    <img src={c.data.thumb} alt="" loading="lazy" />
-                  ) : (
-                    <div class="card-thumb-fallback">
-                      <span>{c.data.name}</span>
-                    </div>
-                  )}
+            <article class="case" data-case={c.id} data-company-href={`${baseUrl}/company/${c.id}/`}>
+              <div class="case-media is-openable" data-open-company={c.id} role="button" tabindex="0" aria-label={`Open ${c.data.name} case study`}>
+                <img src={c.data.thumb ?? fallbackThumb} alt={`${c.data.name} preview`} />
+                <div class="case-media-open-cue" aria-hidden="true">
+                  <span class="arrow">↓</span>
+                  <span>Open case</span>
                 </div>
-                <div class="card-body">
-                  <div class="card-head">
-                    <span class="no">{c.id.toUpperCase().replace('CS', 'CS/')}</span>
-                    <span class="role">{c.data.role}</span>
-                  </div>
-                  <h3 class="card-title">{c.data.title}</h3>
-                  <p class="card-desc">{c.data.desc}</p>
-                  <ul class="card-tags">
-                    {c.data.tags.slice(0, 4).map((t) => <li>{t}</li>)}
-                  </ul>
-                  <div class="card-meta">
-                    <span>{c.data.name}</span>
-                    <span class="dot">·</span>
-                    <span>{c.data.year}</span>
-                  </div>
+              </div>
+              <div class="case-body">
+                <div class="case-head">
+                  <span class="case-no">{c.id.toUpperCase().replace('CS', 'CS/')}</span>
+                  <span class="case-role">{c.data.role}</span>
                 </div>
-              </a>
-            </li>
+                <h3 class="case-title" set:html={c.data.title.replace(/\b(escape debt|five healthcare products|4 days|lifecycle|data-platform UX)\b/, '<em>$1</em>')} />
+                <p class="case-desc">{c.data.desc}</p>
+                <ul class="case-tags">
+                  {c.data.tags.map((t) => <li>{t}</li>)}
+                </ul>
+                <div class="case-meta">{c.data.name} · {c.data.role} · {c.data.year}</div>
+                <button class="case-open-btn" data-open-company={c.id} type="button" aria-label={`Open ${c.data.name} case`}>
+                  <span class="open-arrow" aria-hidden="true">↓</span>
+                  <span>Open case</span>
+                </button>
+              </div>
+            </article>
           ))
         }
-      </ul>
-    </section>
+      </div>
 
-    <section class="block">
-      <header class="block-head">
-        <span class="block-num">02</span>
-        <h2 class="block-title">By Cases</h2>
-        <p class="block-sub">Americor deep dives — process, decisions, iterations.</p>
-      </header>
-      <ul class="grid">
-        {
-          subCases.map((c) => (
-            <li class:list={["card", `is-${c.data.status}`]}>
+      <div class="sc-view-cases" id="sc-view-cases" role="tabpanel" aria-labelledby="sc-tab-cases" aria-hidden="true">
+        <div class="sc-cases-grid" id="sc-cases-grid">
+          {
+            subCases.map((c) => (
               <a
-                class="card-link"
+                class="sc-card"
                 href={`${baseUrl}/case/${c.data.company}/${c.data.deeplink}/`}
+                data-deep-id={c.id}
+                data-deep-company={c.data.company}
               >
-                <div class="card-thumb">
+                <div class="sc-card-thumb" aria-hidden="true">
                   {c.data.thumb ? (
                     <img src={c.data.thumb} alt="" loading="lazy" />
                   ) : (
-                    <div class="card-thumb-fallback">
-                      <span>{c.data.companyLabel}</span>
-                    </div>
+                    <span class="sc-card-thumb-glyph">◆</span>
                   )}
-                  {c.data.status === 'soon' && <span class="ribbon">soon</span>}
+                  <span class="sc-card-thumb-tag">{c.data.companyLabel}</span>
                 </div>
-                <div class="card-body">
-                  <div class="card-head">
-                    <span class="no">{c.data.no ?? c.data.companyLabel}</span>
-                    {c.data.metric && <span class="metric">{c.data.metric}</span>}
+                <div class="sc-card-body">
+                  <div class="sc-card-meta">
+                    <span class="sc-card-company">{c.data.companyLabel}</span>
+                    {c.data.metric && <span class="sc-card-metric">{c.data.metric}</span>}
                   </div>
-                  <h3 class="card-title">{c.data.title}</h3>
-                  <p class="card-desc">{c.data.desc}</p>
-                  <ul class="card-tags">
-                    {c.data.tags.slice(0, 4).map((t) => <li>{t}</li>)}
+                  <h3 class="sc-card-title">{c.data.title}</h3>
+                  <p class="sc-card-desc">{c.data.desc}</p>
+                  <ul class="sc-card-tags">
+                    {c.data.tags.map((t) => <li>{t}</li>)}
                   </ul>
-                  <div class="card-meta">
-                    <span>{c.data.companyLabel}</span>
-                    {c.data.year && (
-                      <>
-                        <span class="dot">·</span>
-                        <span>{c.data.year}</span>
-                      </>
-                    )}
-                  </div>
                 </div>
               </a>
-            </li>
-          ))
+            ))
+          }
+        </div>
+      </div>
+
+      <nav class="cases-nav" aria-label="Carousel navigation">
+        <button class="cases-arrow" id="cases-prev" type="button" aria-label="Previous case">←</button>
+        <ol class="cases-dots" id="cases-dots"></ol>
+        <button class="cases-arrow" id="cases-next" type="button" aria-label="Next case">→</button>
+      </nav>
+
+      <a class="showcase-back" href={`${baseUrl}/`} aria-label="Back to main">↑ back</a>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  // Carousel + tabs — lifted from legacy showcase JS, scoped to /cases/.
+  (() => {
+    const cases = document.getElementById('cases');
+    const prev = document.getElementById('cases-prev');
+    const next = document.getElementById('cases-next');
+    const dotsList = document.getElementById('cases-dots');
+    if (!cases || !prev || !next || !dotsList) return;
+
+    const items = Array.from(cases.querySelectorAll('.case'));
+    let activeIdx = 0;
+
+    items.forEach((_, i) => {
+      const li = document.createElement('li');
+      li.className = 'cases-dot';
+      if (i === 0) li.classList.add('active');
+      li.dataset.idx = String(i);
+      li.tabIndex = 0;
+      li.addEventListener('click', () => scrollTo(i));
+      li.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          scrollTo(i);
         }
-      </ul>
-    </section>
-  </main>
-</ContentLayout>
+      });
+      dotsList.appendChild(li);
+    });
 
-<style>
-  .page {
-    max-width: var(--measure-page);
+    function setActive(i) {
+      activeIdx = Math.max(0, Math.min(items.length - 1, i));
+      items.forEach((el, idx) => el.classList.toggle('active', idx === activeIdx));
+      Array.from(dotsList.children).forEach((el, idx) =>
+        el.classList.toggle('active', idx === activeIdx)
+      );
+    }
+
+    function scrollTo(i) {
+      const target = items[i];
+      if (!target) return;
+      cases.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });
+      setActive(i);
+    }
+
+    prev.addEventListener('click', () => scrollTo(activeIdx - 1));
+    next.addEventListener('click', () => scrollTo(activeIdx + 1));
+
+    // IntersectionObserver to auto-update activeIdx as user scrolls/swipes
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+            const idx = items.indexOf(entry.target);
+            if (idx >= 0) setActive(idx);
+          }
+        });
+      },
+      { root: cases, threshold: [0.6] }
+    );
+    items.forEach((el) => io.observe(el));
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') scrollTo(activeIdx - 1);
+      if (e.key === 'ArrowRight') scrollTo(activeIdx + 1);
+    });
+
+    // Initial active animation
+    setActive(0);
+  })();
+
+  // Tabs: by company / by cases
+  (() => {
+    const tabs = document.querySelectorAll('.sc-tab[data-sc-tab]');
+    const cases = document.getElementById('cases');
+    const grid = document.getElementById('sc-view-cases');
+    if (!cases || !grid) return;
+
+    function setView(name) {
+      const v = name === 'cases' ? 'cases' : 'company';
+      document.body.dataset.scView = v;
+      tabs.forEach((b) => {
+        const on = b.dataset.scTab === v;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', String(on));
+      });
+      cases.style.display = v === 'cases' ? 'none' : '';
+      grid.setAttribute('aria-hidden', v === 'cases' ? 'false' : 'true');
+      grid.style.display = v === 'cases' ? 'block' : 'none';
+      const hash = v === 'cases' ? '#by-cases' : '';
+      if (location.hash !== hash) {
+        history.replaceState(null, '', hash || location.pathname);
+      }
+    }
+
+    tabs.forEach((b) => b.addEventListener('click', () => setView(b.dataset.scTab)));
+    setView(/by-cases/.test(location.hash) ? 'cases' : 'company');
+  })();
+
+  // Open case clicks → navigate to the company / sub-case page
+  (() => {
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-open-company]');
+      if (trigger) {
+        const id = trigger.dataset.openCompany;
+        if (id) {
+          const base = document.querySelector('a.showcase-back')?.getAttribute('href') ?? '/';
+          const rootBase = base.replace(/\/$/, '');
+          window.location.href = `${rootBase}/company/${id}/`;
+        }
+      }
+    });
+
+    document.querySelectorAll('.case-media.is-openable').forEach((el) => {
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    });
+  })();
+</script>
+
+<style is:global>
+  /* Cases page lives outside the legacy audio-gate flow; pin showcase to
+     the viewport and force the inner carousel to fill it so the legacy
+     `.cases` (position: absolute; inset: 0) has actual height to fill.
+     Overrides go global so they win specificity vs legacy.css rules. */
+  html, body { height: 100%; }
+  body { background: var(--bg); margin: 0; }
+  body.showcase-open .showcase {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh !important;
+  }
+  body.showcase-open .showcase-inner { height: 100vh; }
+  /* Sub-cases grid view replaces the carousel when active — give it room
+     to scroll inside the showcase shell */
+  body[data-sc-view='cases'] .sc-view-cases {
+    display: block !important;
+    position: absolute;
+    top: 110px;
+    left: 0;
+    right: 0;
+    bottom: 80px;
+    overflow-y: auto;
+    padding: 0 6vw;
+    box-sizing: border-box;
+    z-index: 2;
+  }
+  body[data-sc-view='cases'] .sc-cases-grid {
+    max-width: 1280px;
     margin: 0 auto;
-    padding: var(--space-12) var(--space-8) var(--space-24);
+    align-content: start;
+    grid-auto-rows: min-content;
   }
-  .crumbs {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-family: var(--font-mono);
-    font-size: var(--type-xs);
-    letter-spacing: var(--track-mono);
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin-bottom: var(--space-10);
-  }
-  .crumbs a { color: var(--acc); text-decoration: none; border-bottom: none; }
-  .crumbs a:hover { text-decoration: underline; }
-  .sep { opacity: 0.5; }
-  .current { color: var(--ink-strong); }
-
-  .hero {
-    margin-bottom: var(--space-16);
-    max-width: var(--measure-content);
-  }
-  .eyebrow {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: var(--type-xs);
-    font-weight: 600;
-    letter-spacing: var(--track-mono);
-    text-transform: uppercase;
-    color: var(--acc);
-    margin-bottom: var(--space-4);
-  }
-  .title {
-    font-family: var(--font-display);
-    font-size: var(--type-h1);
-    font-weight: 800;
-    line-height: var(--line-tight);
-    letter-spacing: var(--track-display);
-    color: var(--ink-strong);
-    text-transform: uppercase;
-    margin: 0 0 var(--space-4);
-  }
-  .lead {
-    font-size: var(--type-lg);
-    line-height: 1.55;
-    color: var(--ink);
-    max-width: var(--measure-narrow);
-    margin: 0;
-  }
-
-  .block { margin-bottom: var(--space-20); }
-  .block-head {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
-    column-gap: var(--space-5);
-    align-items: baseline;
-    margin-bottom: var(--space-8);
-    border-bottom: 1px dashed var(--border-soft);
-    padding-bottom: var(--space-5);
-  }
-  .block-num {
-    grid-row: 1 / span 2;
-    align-self: center;
-    font-family: var(--font-mono);
-    font-size: var(--type-h2);
-    font-weight: 700;
-    color: var(--acc);
-    letter-spacing: var(--track-mono);
-  }
-  .block-title {
-    grid-column: 2;
-    grid-row: 1;
-    font-family: var(--font-display);
-    font-size: var(--type-h2);
-    font-weight: 800;
-    letter-spacing: var(--track-h2);
-    color: var(--ink-strong);
-    text-transform: uppercase;
-    margin: 0;
-  }
-  .block-sub {
-    grid-column: 2;
-    grid-row: 2;
-    font-family: var(--font-mono);
-    font-size: var(--type-2xs);
-    letter-spacing: var(--track-mono);
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    margin: var(--space-1) 0 0;
-  }
-
-  .grid {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-6);
-  }
-  @media (max-width: 880px) {
-    .grid { grid-template-columns: 1fr; }
-  }
-
-  .card {
-    background: var(--surface-card);
-    border: 1px solid var(--border-card);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    transition: border-color 200ms, transform 200ms, box-shadow 200ms;
-  }
-  .card:hover {
-    border-color: var(--acc);
-    transform: translateY(-2px);
-    box-shadow: 0 18px 40px -22px rgba(var(--acc-rgb), 0.45);
-  }
-  .card.is-soon { opacity: 0.78; }
-  .card-link {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    color: inherit;
-    text-decoration: none;
-    border-bottom: none;
-  }
-  .card-thumb {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    background: var(--surface-frame);
+  body[data-sc-view='cases'] .sc-card { align-self: start; }
+  /* Sub-case thumb image was unconstrained; cap it to thumb container */
+  .sc-card-thumb {
     overflow: hidden;
   }
-  .card-thumb img {
+  .sc-card-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    border-radius: 0;
-    border: none;
   }
-  .card-thumb-fallback {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: var(--type-xs);
-    letter-spacing: var(--track-mono);
-    text-transform: uppercase;
-    background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.14), transparent 60%) var(--surface-frame);
-  }
-  .ribbon {
+  /* Bottom-right back button — replaces the legacy ↑ back glyph in main */
+  .showcase-back {
     position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
+    bottom: 24px;
+    right: 32px;
+    z-index: 5;
+    color: var(--acc);
+    text-decoration: none;
     font-family: var(--font-mono);
-    font-size: var(--type-2xs);
-    font-weight: 600;
     letter-spacing: var(--track-mono);
     text-transform: uppercase;
-    background: rgba(var(--acc-rgb), 0.18);
-    color: var(--acc);
+    font-size: 0.7rem;
+    font-weight: 600;
     border: 1px solid rgba(var(--acc-rgb), 0.4);
-    padding: 4px var(--space-2);
-    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+    transition: background 200ms, border-color 200ms;
   }
-  .card-body {
-    padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    flex: 1;
+  .showcase-back:hover {
+    background: rgba(var(--acc-rgb), 0.12);
+    border-color: var(--acc);
   }
-  .card-head {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--font-mono);
-    font-size: var(--type-2xs);
-    font-weight: 600;
-    letter-spacing: var(--track-mono);
-    text-transform: uppercase;
-    color: var(--ink-muted);
-  }
-  .card-head .no { color: var(--acc); }
-  .card-head .metric { color: var(--acc); }
-  .card-head .role { color: var(--ink-muted); }
-  .card-title {
-    font-family: var(--font-body);
-    font-size: var(--type-h3);
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.012em;
-    color: var(--ink-strong);
-    margin: 0;
-  }
-  .card-desc {
-    font-size: var(--type-base);
-    line-height: 1.55;
-    color: var(--ink);
-    margin: 0;
-  }
-  .card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .card-tags li {
-    font-family: var(--font-mono);
-    font-size: var(--type-2xs);
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--acc);
-    border: 1px solid rgba(var(--acc-rgb), 0.32);
-    padding: 3px var(--space-2);
-    border-radius: var(--radius-sm);
-    background: rgba(var(--acc-rgb), 0.05);
-  }
-  .card-meta {
-    margin-top: auto;
-    padding-top: var(--space-3);
-    border-top: 1px dashed var(--border-soft);
-    font-family: var(--font-mono);
-    font-size: var(--type-2xs);
-    font-weight: 600;
-    letter-spacing: var(--track-mono);
-    text-transform: uppercase;
-    color: var(--ink-muted);
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-  .card-meta .dot { opacity: 0.5; }
 </style>
