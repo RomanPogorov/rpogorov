@@ -1726,6 +1726,20 @@
             color: var(--acc);
             margin: 28px 0 12px;
         }
+        /* Major chapter divider — used for the case's narrative "acts"
+           (solution breakdown, design process, takeaways). Bigger, in
+           Orbitron, with a thin accent rule above to break the page. */
+        .dc-body h2.dc-h-major {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.375rem, 2.4vw, 1.75rem);
+            line-height: 1.2;
+            letter-spacing: 0.04em;
+            color: #fff;
+            margin: 64px 0 24px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(var(--acc-rgb), 0.22);
+            text-shadow: 0 0 16px rgba(var(--acc-rgb), 0.28);
+        }
         .dc-body h3 {
             font-family: 'Inter', sans-serif;
             font-size: 1.0625rem;
@@ -2135,6 +2149,11 @@
         .dc-page.dc-bright .dc-desc { color: #2d3340; }
         .dc-page.dc-bright .dc-body { color: #2d3340; }
         .dc-page.dc-bright .dc-body h2 { color: var(--acc); }
+        .dc-page.dc-bright .dc-body h2.dc-h-major {
+            color: #0f1419;
+            text-shadow: none;
+            border-top-color: #e2e6ec;
+        }
         .dc-page.dc-bright .dc-body h3 { color: #0f1419; }
         .dc-page.dc-bright .dc-body strong { color: #0f1419; }
         .dc-page.dc-bright .dc-body code {
@@ -16143,7 +16162,7 @@
     </div>
 </div>
 
-<h2>// solution breakdown</h2>
+<h2 class="dc-h-major">// solution breakdown</h2>
 <p>Drive online acceptance through clarity, urgency and a more appealing experience across multiple touchpoints.</p>
 
 <div class="dc-pillars">
@@ -16158,7 +16177,7 @@
 </div>
 <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-03-banners-tokenized.png" alt="Banners and tokenized flow"><figcaption>// pillar 03 — touchpoints across the program (web)</figcaption></figure>
 
-<h2>// design process</h2>
+<h2 class="dc-h-major">// design process</h2>
 
 <h3>Analyzing issues with the original design</h3>
 <p>The original design was an MVP that failed to account for user pain points and used outdated UI/interaction patterns.</p>
@@ -16410,7 +16429,7 @@
     <p><strong>Solution:</strong> a <strong>tokenized email flow</strong> allowed offer acceptance without needing to register online — covering every user, online or not.</p>
 </div>
 
-<h2>// takeaways &amp; challenges</h2>
+<h2 class="dc-h-major">// takeaways &amp; challenges</h2>
 
 <div class="dc-iter">
     <span class="label">challenge</span>
