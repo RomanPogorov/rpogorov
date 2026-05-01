@@ -14950,9 +14950,62 @@
             setUI();
             audio.addEventListener('volumechange', setUI);
 
-            // No-op: visualizer was removed; left here so existing call sites
-            // (wake / click) keep their shape.
-            const setupGraph = () => {};
+            // ====== WebAudio chain — distort ambient with --sim-signal ======
+            // Built once on first user gesture. Source -> waveshaper (drive) ->
+            // lowpass (muffle) -> destination. Playback-rate doubles as tape
+            // pitch-down at low signal.
+            let ctx, source, shaper, lowpass, ready = false;
+            function makeDistortionCurve(amount) {
+                const k = Math.max(0, amount);
+                const n = 1024;
+                const curve = new Float32Array(n);
+                const deg = Math.PI / 180;
+                for (let i = 0; i < n; i++) {
+                    const x = (i * 2) / n - 1;
+                    curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+                }
+                return curve;
+            }
+            function setupGraph() {
+                if (ready) return;
+                try {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    if (!AC) return;
+                    ctx = new AC();
+                    source = ctx.createMediaElementSource(audio);
+                    shaper = ctx.createWaveShaper();
+                    shaper.oversample = '2x';
+                    shaper.curve = makeDistortionCurve(0);
+                    lowpass = ctx.createBiquadFilter();
+                    lowpass.type = 'lowpass';
+                    lowpass.frequency.value = 22000;
+                    lowpass.Q.value = 0.7;
+                    source.connect(shaper);
+                    shaper.connect(lowpass);
+                    lowpass.connect(ctx.destination);
+                    ready = true;
+                    applySignal();
+                } catch (e) {
+                    /* silent — fall back to plain HTMLMediaElement playback */
+                }
+            }
+            function applySignal() {
+                if (!ready) return;
+                const v = parseFloat(getComputedStyle(document.body).getPropertyValue('--sim-signal'));
+                const signal = Number.isFinite(v) ? v : 1;
+                const inv = 1 - signal;
+                // Lowpass cutoff: 22kHz at signal=1, drops fast below 0.4
+                // toward ~600Hz at signal=0. Cubic for sharper falloff.
+                const cutoff = 600 + signal * signal * signal * 21400;
+                lowpass.frequency.setTargetAtTime(cutoff, ctx.currentTime, 0.08);
+                // Distortion drive: 0 above signal=0.7, ramp up sharply.
+                const drive = inv > 0.3 ? Math.pow((inv - 0.3) / 0.7, 1.5) * 90 : 0;
+                shaper.curve = makeDistortionCurve(drive);
+                // Playback rate: 1.0 above signal=0.5, drop to 0.82 at signal=0.
+                const rate = signal > 0.5 ? 1.0 : 0.82 + (signal / 0.5) * 0.18;
+                try { audio.playbackRate = rate; } catch (e) {}
+            }
+            document.addEventListener('signal:change', applySignal);
 
             // Try silent autoplay (most browsers allow it muted).
             audio.play().catch(() => { });
@@ -14971,6 +15024,8 @@
                 if (document.body.classList.contains('pre-gate')) return;
                 if (document.body.classList.contains('audio-silent')) return;
                 if (!audio.muted) return;
+                setupGraph();
+                if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
                 audio.muted = false;
                 if (audio.paused) audio.play().catch(() => { });
             };
@@ -14980,6 +15035,8 @@
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 userTookControl = true;
+                setupGraph();
+                if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
                 audio.muted = !audio.muted;
                 if (!audio.muted && audio.paused) {
                     audio.play().catch(() => { });
