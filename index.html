@@ -7306,13 +7306,7 @@
             transition: all 0.2s ease;
             z-index: 5;
         }
-        .ctl-close::before {
-            content: '×';
-            font-size: 0.875rem;
-            line-height: 1;
-            color: var(--acc);
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
-        }
+        /* No × prefix — Roman wants the close pill to read just "ESC". */
         .ctl-close:hover {
             color: var(--acc);
             border-color: rgba(var(--acc-rgb), 0.6);
@@ -8096,13 +8090,7 @@
             transition: all 0.2s ease;
         }
 
-        .panel-header .close::before {
-            content: '×';
-            font-size: 0.875rem;
-            line-height: 1;
-            color: var(--acc);
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.6);
-        }
+        /* No × prefix — close pill stays as just "ESC". */
 
         .panel-header .close:hover {
             border-color: var(--acc);
@@ -9068,13 +9056,7 @@
             gap: 8px;
             transition: all 0.18s;
         }
-        .articles-close::before {
-            content: '×';
-            font-size: 0.875rem;
-            line-height: 1;
-            color: var(--acc);
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
-        }
+        /* No × prefix — close pill stays as just "ESC". */
         .articles-close:hover {
             border-color: var(--acc);
             color: var(--ink);
@@ -9584,13 +9566,7 @@
             gap: 8px;
             transition: all 0.2s;
         }
-        .reader-close::before {
-            content: '×';
-            font-size: 0.875rem;
-            line-height: 1;
-            color: var(--acc);
-            text-shadow: 0 0 6px rgba(var(--acc-rgb), 0.5);
-        }
+        /* No × prefix — close pill stays as just "ESC". */
         .reader-close:hover {
             border-color: var(--acc);
             color: var(--ink);
