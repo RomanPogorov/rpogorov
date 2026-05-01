@@ -7034,13 +7034,14 @@
         }
         /* Hide rules — !important + animation:none to beat the
            ctl-fab-reveal animation's `forwards` opacity:1 in the cascade. */
+        /* Articles / left pane stays NEXT to the FAB, not over it — so we
+           keep the FAB visible when left-pane-open is set. */
         body.case-open .ctl-fab,
         body.showcase-open .ctl-fab,
         body.dw-open .ctl-fab,
         body.chat-fullscreen .ctl-fab,
         body.ctl-open .ctl-fab,
         body.reader-open .ctl-fab,
-        body.left-pane-open .ctl-fab,
         body.vibe-term-open .ctl-fab {
             opacity: 0 !important;
             pointer-events: none !important;
