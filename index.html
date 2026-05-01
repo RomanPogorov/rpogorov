@@ -13070,7 +13070,15 @@
                 }),
                 warn:     gate(() => { tone({ freq: 880, dur: 0.08, type: 'square', gain: 0.04 }); setTimeout(() => tone({ freq: 660, dur: 0.08, type: 'square', gain: 0.04 }), 90); }),
                 engage:   gate(() => { sweep({ f1: 240, f2: 1400, dur: 0.42, type: 'sawtooth', gain: 0.045 }); setTimeout(() => tone({ freq: 1800, dur: 0.05, type: 'square', gain: 0.04 }), 380); }),
-                disengage:gate(() => sweep({ f1: 1400, f2: 240, dur: 0.32, type: 'sawtooth', gain: 0.04 })),
+                // Layered "system disengage" — digital tick + filtered noise
+                // burst + clean sine descend + low confirm tail. No more
+                // sawtooth pew-pew.
+                disengage: gate(() => {
+                    tone({ freq: 2200, dur: 0.018, type: 'square', gain: 0.022, attack: 0.001 });
+                    setTimeout(() => noiseBurst({ dur: 0.05, gain: 0.018, hp: 3200 }), 8);
+                    setTimeout(() => sweep({ f1: 1100, f2: 380, dur: 0.22, type: 'sine', gain: 0.038 }), 18);
+                    setTimeout(() => tone({ freq: 320, dur: 0.07, type: 'sine', gain: 0.022, attack: 0.006 }), 230);
+                }),
             };
             window.__sfx = SFX;
 
