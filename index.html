@@ -2089,6 +2089,141 @@
             border-color: var(--acc);
         }
 
+        /* ===== Bright theme — light-mode twin of the cyberpunk dark layout.
+                Activated by adding `theme: 'bright'` to a DEEP_CASES entry.
+                Swaps green accents for deep blue, dark surfaces for white,
+                and removes neon glow effects. ===== */
+        .dc-page.dc-bright {
+            --acc: #1d4ed8;
+            --acc-rgb: 29, 78, 216;
+            background: #f6f8fb;
+            color: #0f1419;
+        }
+        .dc-page.dc-bright .dc-head {
+            background: linear-gradient(180deg, rgba(246, 248, 251, 0.96), rgba(246, 248, 251, 0.84));
+            border-bottom-color: #e2e6ec;
+        }
+        .dc-page.dc-bright .dc-crumbs { color: #6b7280; }
+        .dc-page.dc-bright .dc-crumb { color: var(--acc); }
+        .dc-page.dc-bright .dc-crumb:hover { color: #0f1419; text-shadow: none; }
+        .dc-page.dc-bright .dc-crumb-current { color: #0f1419; }
+        .dc-page.dc-bright .dc-crumb-sep { color: #c7ccd4; }
+        .dc-page.dc-bright .dc-close {
+            color: #4a5160;
+            border-color: #d0d6df;
+            background: #fff;
+        }
+        .dc-page.dc-bright .dc-close:hover {
+            color: var(--acc);
+            border-color: var(--acc);
+            background: rgba(29, 78, 216, 0.06);
+        }
+        .dc-page.dc-bright .dc-meta-company { color: #6b7280; }
+        .dc-page.dc-bright .dc-meta-metric {
+            color: var(--acc);
+            text-shadow: none;
+        }
+        .dc-page.dc-bright .dc-title {
+            color: #0f1419;
+            text-shadow: none;
+        }
+        .dc-page.dc-bright .dc-tags li {
+            color: var(--acc);
+            background: #fff;
+            border-color: rgba(29, 78, 216, 0.32);
+        }
+        .dc-page.dc-bright .dc-desc { color: #2d3340; }
+        .dc-page.dc-bright .dc-body { color: #2d3340; }
+        .dc-page.dc-bright .dc-body h2 { color: var(--acc); }
+        .dc-page.dc-bright .dc-body h3 { color: #0f1419; }
+        .dc-page.dc-bright .dc-body strong { color: #0f1419; }
+        .dc-page.dc-bright .dc-body code {
+            color: var(--acc);
+            background: rgba(29, 78, 216, 0.08);
+            border-color: rgba(29, 78, 216, 0.22);
+        }
+        .dc-page.dc-bright .dc-body ul li::before {
+            background: var(--acc);
+            box-shadow: none;
+        }
+        /* Impact metrics */
+        .dc-page.dc-bright .dc-impact-cell {
+            background: #fff;
+            border-color: #e2e6ec;
+            box-shadow: 0 1px 2px rgba(15, 20, 25, 0.04);
+        }
+        .dc-page.dc-bright .dc-impact-cell .num {
+            color: #0f1419;
+            text-shadow: none;
+        }
+        .dc-page.dc-bright .dc-impact-cell .lbl { color: #6b7280; }
+        /* Project meta grid */
+        .dc-page.dc-bright .dc-meta-grid {
+            background: #e2e6ec;
+            border-color: #e2e6ec;
+        }
+        .dc-page.dc-bright .dc-meta-grid > div { background: #fff; }
+        .dc-page.dc-bright .dc-meta-grid .lbl { color: var(--acc); }
+        .dc-page.dc-bright .dc-meta-grid .val { color: #0f1419; }
+        /* Solution pillars */
+        .dc-page.dc-bright .dc-pillar {
+            background: #fff;
+            border-color: #e2e6ec;
+        }
+        .dc-page.dc-bright .dc-pillar-num { color: var(--acc); }
+        .dc-page.dc-bright .dc-pillar p { color: #2d3340; }
+        /* Pain cards */
+        .dc-page.dc-bright .dc-pain-card {
+            background: #fff;
+            border-left-color: var(--acc);
+            border: 1px solid #e2e6ec;
+            border-left: 2px solid var(--acc);
+        }
+        .dc-page.dc-bright .dc-pain-card .icon { color: var(--acc); }
+        .dc-page.dc-bright .dc-pain-card h4 { color: #0f1419; }
+        .dc-page.dc-bright .dc-pain-card p { color: #4a5160; }
+        /* Quotes */
+        .dc-page.dc-bright .dc-quote {
+            color: #2d3340;
+            border-left-color: rgba(29, 78, 216, 0.5);
+        }
+        /* Iterations */
+        .dc-page.dc-bright .dc-iter { border-top-color: #e2e6ec; }
+        .dc-page.dc-bright .dc-iter .label { color: var(--acc); }
+        .dc-page.dc-bright .dc-iter .body { color: #2d3340; }
+        .dc-page.dc-bright .dc-iter .body strong { color: #0f1419; }
+        /* Trade-off */
+        .dc-page.dc-bright .dc-tradeoff {
+            background: #fff;
+            border-color: #e2e6ec;
+        }
+        .dc-page.dc-bright .dc-tradeoff .label { color: var(--acc); }
+        .dc-page.dc-bright .dc-tradeoff p { color: #2d3340; }
+        /* Figures */
+        .dc-page.dc-bright .dc-figure {
+            background: #fff;
+            border-color: #e2e6ec;
+        }
+        .dc-page.dc-bright .dc-figure figcaption { color: #6b7280; }
+        /* Callout */
+        .dc-page.dc-bright .dc-callout {
+            background: rgba(29, 78, 216, 0.05);
+            border-left-color: var(--acc);
+            color: #2d3340;
+        }
+        /* Stat-row */
+        .dc-page.dc-bright .dc-stat-row .cell {
+            background: #fff;
+            border-color: #e2e6ec;
+        }
+        .dc-page.dc-bright .dc-stat-row .cell .lbl { color: var(--acc); }
+        .dc-page.dc-bright .dc-stat-row .cell p { color: #2d3340; }
+        /* Body anchor links */
+        .dc-page.dc-bright .dc-body a { color: var(--acc); }
+        .dc-page.dc-bright .dc-body a:hover { text-decoration-color: var(--acc); }
+        /* Section eyebrow */
+        .dc-page.dc-bright .dc-section-eyebrow { color: #6b7280; }
+
         /* Breadcrumbs on the existing case-page (cs01/cs02) header — sticky */
         .cp-crumbs-bar {
             position: sticky;
@@ -16403,6 +16538,21 @@
               metric: '', tags: ['Vibe Code', 'Method'], deeplink: 'hs-12' },
         ];
 
+        // Inject a light-theme twin of offer-acceptance, right after the
+        // original — same content, theme="bright" toggles a CSS palette swap.
+        (() => {
+            const idx = DEEP_CASES.findIndex(c => c.id === 'offer-acceptance');
+            if (idx < 0) return;
+            const orig = DEEP_CASES[idx];
+            DEEP_CASES.splice(idx + 1, 0, {
+                ...orig,
+                id: 'offer-acceptance-bright',
+                title: orig.title + ' · bright',
+                deeplink: 'offer-acceptance-bright',
+                theme: 'bright',
+            });
+        })();
+
         (() => {
             const grid = document.getElementById('sc-cases-grid');
             if (!grid) return;
@@ -16502,6 +16652,7 @@
                     elBody.innerHTML = `<div class="dc-empty">// case story coming soon</div>`;
                 }
                 page.classList.toggle('dc-rich', !!(c.body && c.body.trimStart().startsWith('<')));
+                page.classList.toggle('dc-bright', c.theme === 'bright');
                 renderCrumbs(c);
             }
 
