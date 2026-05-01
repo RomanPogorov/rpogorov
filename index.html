@@ -3032,34 +3032,34 @@
         }
         .am-todo-label { color: rgba(255, 200, 0, 0.95); font-weight: 700; margin-right: 8px; }
 
-        /* ============ SIGNAL UI FILL — surfaces darken as signal drops ============
-           --ui-fill ramps 0 → 1 (linear with 1 - signal). Visible UI containers
-           pick up an opaque dark background as it grows, so the holographic
-           panels feel "stuck on a real surface" when reality breaks. */
+        /* ============ SIGNAL UI FILL — surfaces darken to deep green ============
+           --ui-fill ramps 0 → 0.40 only below signal=0.15. Dark forest-green
+           tint instead of black so the fill ties to the accent palette.
+           Surfaces feel "stuck on a real surface" when reality breaks. */
         .prompt {
-            background-color: rgba(2, 6, 10, calc(var(--ui-fill, 0) * 0.92));
+            background-color: rgba(4, 30, 16, calc(var(--ui-fill, 0)));
             transition: background-color 0.18s ease;
         }
         .hud-right-stack {
-            background-color: rgba(2, 6, 10, calc(var(--ui-fill, 0) * 0.85));
+            background-color: rgba(4, 30, 16, calc(var(--ui-fill, 0) * 0.92));
             transition: background-color 0.18s ease;
         }
         .hud-left-articles .articles-feed {
-            background-color: rgba(2, 6, 10, calc(var(--ui-fill, 0) * 0.85));
+            background-color: rgba(4, 30, 16, calc(var(--ui-fill, 0) * 0.92));
             transition: background-color 0.18s ease;
         }
         .agent-item, .release-item, .welcome-block, .experience-block,
         .agents-head, .tasks-block, .projects-block, .releases-block,
         .showcase-tip, .article-item {
-            background-color: rgba(0, 4, 8, calc(var(--ui-fill, 0) * 0.55));
+            background-color: rgba(3, 22, 12, calc(var(--ui-fill, 0) * 0.85));
             transition: background-color 0.18s ease;
         }
         .ctl-fab {
-            background-color: rgba(0, 4, 8, calc(var(--ui-fill, 0) * 0.85));
+            background-color: rgba(4, 30, 16, calc(var(--ui-fill, 0) * 0.92));
             transition: background-color 0.25s ease;
         }
         .sim-signal {
-            background-color: rgba(0, 4, 8, calc(0.45 + var(--ui-fill, 0) * 0.45));
+            background-color: rgba(3, 22, 12, calc(0.45 + var(--ui-fill, 0) * 0.55));
         }
 
         /* ============ AM TIMELINE — Gantt-style roadmap recap ============ */
@@ -15613,13 +15613,15 @@ See also: Health Samurai Lab: Game of Pools.`,
                 // mid-signal and only ramp up sharply near zero.
                 const inv = 1 - norm;
                 document.body.style.setProperty('--sim-fall', (inv * inv * inv).toFixed(4));
-                // UI background fill — cubic ramp capped at 0.40 so surfaces
-                // never go fully opaque; the world behind stays slightly
-                // visible even at signal=0.
-                //   signal=0.5 → ui-fill ≈ 0.05
-                //   signal=0.3 → ui-fill ≈ 0.14
-                //   signal=0.0 → ui-fill = 0.40 (cap)
-                const ui = inv * inv * inv * 0.4;
+                // UI background fill — zero above signal=0.15, then linear
+                // up to 0.40 at signal=0. Surfaces stay completely clean
+                // through most of the slider; the dark fill only kicks in
+                // at the very bottom to mark "world breaks down".
+                //   signal>=0.15 → 0
+                //   signal=0.10 → 0.13
+                //   signal=0.05 → 0.27
+                //   signal=0.00 → 0.40
+                const ui = Math.max(0, (0.15 - norm) / 0.15) * 0.4;
                 document.body.style.setProperty('--ui-fill', ui.toFixed(4));
                 // Outline ramp for the CLAUDE RUNNER title — separate var so
                 // the text can fully transition to wireframe (stroke only,
