@@ -5489,6 +5489,7 @@
                 rgba(var(--acc-rgb), 0.0) 100%
             );
             transition: background 0.4s, border-color 0.4s;
+            position: relative;
         }
         .agent-item.flash {
             border-left-color: var(--acc);
@@ -5499,26 +5500,49 @@
             );
         }
 
-        /* Selected state — when this item's detail-window is open */
+        /* Selected state — this item's detail-window is the one currently
+           open in the modal. Stronger glow + marker dot so users can see
+           which entry the arrows are paging through, even when modal blurs
+           the HUD behind. */
         .agent-item.selected {
             border-left-color: var(--acc);
+            border-left-width: 3px;
             background: linear-gradient(
                 90deg,
-                rgba(var(--acc-rgb), 0.14) 0%,
-                rgba(var(--acc-rgb), 0.0) 100%
+                rgba(var(--acc-rgb), 0.28) 0%,
+                rgba(var(--acc-rgb), 0.04) 100%
             );
-            box-shadow: inset 0 0 12px rgba(var(--acc-rgb), 0.12);
+            box-shadow:
+                inset 4px 0 0 var(--acc),
+                inset 0 0 20px rgba(var(--acc-rgb), 0.18),
+                0 0 18px rgba(var(--acc-rgb), 0.30);
+        }
+        .agent-item.selected::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            width: 6px; height: 6px;
+            background: var(--acc);
+            border-radius: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 8px var(--acc), 0 0 16px rgba(var(--acc-rgb), 0.6);
+            animation: selected-pulse 1.2s ease-in-out infinite;
+        }
+        @keyframes selected-pulse {
+            0%, 100% { opacity: 1; }
+            50%      { opacity: 0.45; }
         }
         .release-item.selected {
             border-color: var(--acc);
             background: linear-gradient(
                 135deg,
-                rgba(var(--acc-rgb), 0.12) 0%,
-                rgba(var(--acc-rgb), 0.02) 100%
+                rgba(var(--acc-rgb), 0.26) 0%,
+                rgba(var(--acc-rgb), 0.06) 100%
             );
             box-shadow:
-                0 0 14px rgba(var(--acc-rgb), 0.25),
-                inset 0 0 10px rgba(var(--acc-rgb), 0.10);
+                0 0 24px rgba(var(--acc-rgb), 0.45),
+                inset 0 0 18px rgba(var(--acc-rgb), 0.22);
         }
 
         /* WARNING variant — yellow tone, soft alarm */
@@ -9165,6 +9189,28 @@
             border-color: var(--acc);
             box-shadow: inset 0 0 0 1px rgba(var(--acc-rgb), 0.6);
         }
+        /* Selected — currently shown in the reader modal. Loud focus marker
+           so the user can see which article the arrows are paging through
+           even when the reader covers the page. */
+        .article-item.selected, .case-item.selected {
+            border-color: var(--acc);
+            background: linear-gradient(135deg, rgba(var(--acc-rgb), 0.28) 0%, rgba(var(--acc-rgb), 0.05) 100%);
+            box-shadow:
+                0 0 22px rgba(var(--acc-rgb), 0.45),
+                inset 0 0 16px rgba(var(--acc-rgb), 0.18);
+            transform: translateX(2px);
+        }
+        .article-item.selected::after, .case-item.selected::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            width: 6px; height: 6px;
+            background: var(--acc);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--acc), 0 0 16px rgba(var(--acc-rgb), 0.6);
+            animation: selected-pulse 1.2s ease-in-out infinite;
+        }
         .article-meta-row, .case-meta-row {
             display: flex;
             justify-content: space-between;
@@ -9581,10 +9627,42 @@
             padding: 3px 8px;
             background: rgba(var(--acc-rgb), 0.05);
         }
-        .reader-close {
+        /* Wraps reader prev / next / close together at the top right. */
+        .reader-actions {
             position: absolute;
             top: 18px;
             right: 22px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .reader-nav {
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            color: var(--dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1;
+            padding: 4px 10px;
+            transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.12s, box-shadow 0.2s;
+        }
+        .reader-nav:hover:not(:disabled) {
+            color: var(--acc);
+            border-color: rgba(var(--acc-rgb), 0.65);
+            background: rgba(var(--acc-rgb), 0.06);
+        }
+        .reader-nav:active:not(:disabled) {
+            transform: scale(0.93);
+            background: rgba(var(--acc-rgb), 0.18);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.45);
+        }
+        .reader-nav:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+        .reader-close {
             appearance: none;
             background: transparent;
             border: 1px solid rgba(var(--acc-rgb), 0.3);
@@ -9595,7 +9673,6 @@
             text-transform: uppercase;
             padding: 6px 10px 6px 14px;
             cursor: pointer;
-            z-index: 2;
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -12475,7 +12552,11 @@
     <!-- Reader modal — long-form article reading window, MD rendered via marked.js -->
     <aside class="reader" id="reader" aria-hidden="true" role="dialog">
         <div class="reader-frame">
-            <button type="button" class="reader-close" id="reader-close" aria-label="Close article">ESC</button>
+            <div class="reader-actions">
+                <button type="button" class="reader-nav" id="reader-prev" aria-label="Previous article">←</button>
+                <button type="button" class="reader-nav" id="reader-next" aria-label="Next article">→</button>
+                <button type="button" class="reader-close" id="reader-close" aria-label="Close article">ESC</button>
+            </div>
             <header class="reader-header">
                 <div class="reader-meta-row">
                     <span class="reader-meta-tag">// article</span>
@@ -15351,27 +15432,61 @@ See also: Health Samurai Lab: Game of Pools.`,
                 readerContent.innerHTML = tmp.innerHTML;
                 readerContent.scrollTop = 0;
             }
+            // Track current article + sync prev/next disabled + .selected
+            // marker on the source article-item in the left HUD.
+            let currentArticleIdx = -1;
+            const readerPrev = document.getElementById('reader-prev');
+            const readerNext = document.getElementById('reader-next');
+            function syncReaderSelected(idx) {
+                document.querySelectorAll('.article-item.selected').forEach(el => el.classList.remove('selected'));
+                if (idx < 0 || idx >= ARTICLES.length) return;
+                const id = ARTICLES[idx].id;
+                const li = document.querySelector(`.article-item[data-id="${CSS.escape(id)}"]`);
+                if (li) li.classList.add('selected');
+                if (readerPrev) readerPrev.disabled = idx <= 0;
+                if (readerNext) readerNext.disabled = idx >= ARTICLES.length - 1;
+            }
+
             function openReader(a) {
                 renderArticle(a);
                 body.classList.add('reader-open');
                 reader.setAttribute('aria-hidden', 'false');
+                currentArticleIdx = ARTICLES.indexOf(a);
+                syncReaderSelected(currentArticleIdx);
                 window.__sfx?.engage?.();
             }
             function closeReader() {
                 body.classList.remove('reader-open');
                 reader.setAttribute('aria-hidden', 'true');
+                document.querySelectorAll('.article-item.selected').forEach(el => el.classList.remove('selected'));
+                currentArticleIdx = -1;
                 window.__sfx?.disengage?.();
             }
+            function navigateReader(dir) {
+                if (currentArticleIdx === -1) return;
+                const next = currentArticleIdx + dir;
+                if (next < 0 || next >= ARTICLES.length) return;
+                openReader(ARTICLES[next]);
+                window.__sfx?.tick?.();
+            }
             readerClose.addEventListener('click', closeReader);
+            readerPrev?.addEventListener('click', (e) => { e.stopPropagation(); navigateReader(-1); });
+            readerNext?.addEventListener('click', (e) => { e.stopPropagation(); navigateReader(1); });
             // Click on reader backdrop (outside the frame) closes it
             reader.addEventListener('click', (e) => { if (e.target === reader) closeReader(); });
 
-            // ESC closes the reader if open
+            // ESC closes the reader if open; ←/→ navigate
             document.addEventListener('keydown', (e) => {
-                if (e.key !== 'Escape') return;
-                if (body.classList.contains('reader-open')) {
+                if (!body.classList.contains('reader-open')) return;
+                if (e.key === 'Escape') {
                     e.stopPropagation();
                     closeReader();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    navigateReader(-1);
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    navigateReader(1);
                 }
             }, true);
         })();
