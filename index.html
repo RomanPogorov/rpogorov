@@ -1917,22 +1917,23 @@
             font-size: 0.9375rem;
         }
         .dc-iter {
-            display: grid;
-            grid-template-columns: 110px 1fr;
-            gap: 16px;
-            align-items: start;
-            margin: 14px 0;
-            padding: 12px 0;
+            margin: 18px 0;
+            padding: 14px 0 4px;
             border-top: 1px dashed rgba(var(--acc-rgb), 0.18);
         }
         .dc-iter:first-of-type { border-top: 0; padding-top: 4px; }
         .dc-iter .label {
+            display: block;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.5625rem;
+            font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--acc);
-            padding-top: 4px;
+            margin: 0 0 8px;
+        }
+        .dc-iter .label::before {
+            content: '// ';
+            opacity: 0.55;
         }
         .dc-iter .body { color: rgba(255, 255, 255, 0.78); }
         .dc-iter .body p { margin: 0 0 8px; font-size: 0.9375rem; }
@@ -2032,7 +2033,6 @@
         }
         @media (max-width: 720px) {
             .dc-impact, .dc-pillars, .dc-pain, .dc-grid-2, .dc-grid-3, .dc-stat-row { grid-template-columns: 1fr; }
-            .dc-iter { grid-template-columns: 1fr; gap: 6px; }
             .dc-meta-grid { grid-template-columns: 1fr; }
         }
         /* Rich-body cases skip the generic placeholder hero (their body
