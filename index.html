@@ -1974,8 +1974,10 @@
             padding: 8px 6px 4px;
         }
         /* Portrait/mobile single-shot: don't blow up to full container width
-           when shown alone — cap and center to keep readable proportions. */
-        .dc-figure-portrait {
+           when shown alone — cap and center to keep readable proportions.
+           Higher specificity than .dc-figure so the auto-margins win over
+           the shorthand `margin: 18px 0` on the base class. */
+        .dc-figure.dc-figure-portrait {
             max-width: 360px;
             margin-left: auto;
             margin-right: auto;
