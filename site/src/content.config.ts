@@ -18,6 +18,19 @@ const cases = defineCollection({
     metric: z.string().optional(),
     tags: z.array(z.string()),
     theme: z.enum(['dark', 'bright']).default('bright'),
+    /**
+     * Per-case accent — drives --acc / --acc-rgb on the .case-page wrapper.
+     * Components (PainCard, IterCard, dc-tags, dc-quote, etc.) read these
+     * vars, so flipping `accent` recolors every accented chrome in the case.
+     * Pass either a named preset ('green' / 'blue' / 'red') or a custom
+     * { hex, rgb } pair where rgb is "R, G, B" (no alpha).
+     */
+    accent: z
+      .union([
+        z.enum(['green', 'blue', 'red', 'cyan']),
+        z.object({ hex: z.string(), rgb: z.string() }),
+      ])
+      .default('green'),
     deeplink: z.string(),
     no: z.string().optional(),
     role: z.string().optional(),

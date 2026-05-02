@@ -280,12 +280,27 @@ const cs02Data = cs02?.data;
     subRendered.map(({ entry, Content }) => {
       const d = entry.data;
       const themeClass = d.theme === 'bright' ? 'cp-light' : '';
+      // Resolve per-case accent → inline CSS vars on .case-page so PainCard,
+      // IterCard, dc-tags, dc-callout, dc-quote, dc-tradeoff and every other
+      // var(--acc) consumer recolors automatically.
+      const ACCENT_PRESETS = {
+        green: { hex: '#059669', rgb: '5, 150, 105' },
+        blue:  { hex: '#1d4ed8', rgb: '29, 78, 216' },
+        red:   { hex: '#dc2626', rgb: '220, 38, 38' },
+        cyan:  { hex: '#00e5ff', rgb: '0, 229, 255' },
+      };
+      const accent = typeof d.accent === 'string'
+        ? ACCENT_PRESETS[d.accent] ?? ACCENT_PRESETS.green
+        : d.accent;
+      const accentStyle = `--acc: ${accent.hex}; --acc-rgb: ${accent.rgb};`;
       return (
         <section
           class:list={['case-page', themeClass]}
           id={`case-page-${d.deeplink}`}
           data-case-page={d.deeplink}
           data-theme={d.theme}
+          data-accent={typeof d.accent === 'string' ? d.accent : 'custom'}
+          style={accentStyle}
           aria-label={`${d.title} case study`}
         >
           <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">

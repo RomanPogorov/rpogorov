@@ -128,12 +128,12 @@ const importMapJson = `{
 
   /* Bright variant — flips every token a case-component reads, so PainCard,
      ImpactStrip, IterCard, Pillar, MetaGrid, Figure render on white with
-     dark text and visible card surfaces. Accent shifts to emerald-600 —
-     the cyber-cyan #00e5ff fails WCAG against white; emerald keeps the
-     "green portfolio" identity but with real contrast on light. */
+     dark text and visible card surfaces. The accent (--acc / --acc-rgb)
+     is set inline per-case via index.astro's accent resolver, so each
+     case can have its own brand color. We intentionally don't set --acc
+     here — the inline style wins by specificity, and falls through to
+     :root's cyber cyan if a case forgets to declare one. */
   .case-page.cp-light {
-    --acc: #059669;
-    --acc-rgb: 5, 150, 105;
     --text-strong: #0b1018;
     --text-base: #2a313e;
     --text-muted: #5b6372;

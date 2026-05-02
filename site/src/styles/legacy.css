@@ -2093,8 +2093,8 @@
                 Swaps green accents for deep blue, dark surfaces for white,
                 and removes neon glow effects. ===== */
         .dc-page.dc-bright {
-            --acc: #1d4ed8;
-            --acc-rgb: 29, 78, 216;
+            --acc: #059669;
+            --acc-rgb: 5, 150, 105;
             background: #f6f8fb;
             color: #0f1419;
         }
@@ -2115,7 +2115,7 @@
         .dc-page.dc-bright .dc-close:hover {
             color: var(--acc);
             border-color: var(--acc);
-            background: rgba(29, 78, 216, 0.06);
+            background: rgba(var(--acc-rgb), 0.06);
         }
         .dc-page.dc-bright .dc-meta-company { color: #6b7280; }
         .dc-page.dc-bright .dc-meta-metric {
@@ -2129,7 +2129,7 @@
         .dc-page.dc-bright .dc-tags li {
             color: var(--acc);
             background: #fff;
-            border-color: rgba(29, 78, 216, 0.32);
+            border-color: rgba(var(--acc-rgb), 0.32);
         }
         .dc-page.dc-bright .dc-desc { color: #2d3340; }
         .dc-page.dc-bright .dc-body { color: #2d3340; }
@@ -2160,8 +2160,8 @@
         .dc-page.dc-bright .dc-body strong { color: #0f1419; }
         .dc-page.dc-bright .dc-body code {
             color: var(--acc);
-            background: rgba(29, 78, 216, 0.08);
-            border-color: rgba(29, 78, 216, 0.22);
+            background: rgba(var(--acc-rgb), 0.08);
+            border-color: rgba(var(--acc-rgb), 0.22);
         }
         .dc-page.dc-bright .dc-body ul li::before {
             background: var(--acc);
@@ -2206,13 +2206,13 @@
         /* Quotes */
         .dc-page.dc-bright .dc-quote {
             color: #2d3340;
-            border-left-color: rgba(29, 78, 216, 0.5);
+            border-left-color: rgba(var(--acc-rgb), 0.5);
         }
         /* Iterations — bright theme renders them as stylish callout cards
            with a soft fill and subtle border instead of bare hairline rows. */
         .dc-page.dc-bright .dc-iter {
-            background: rgba(29, 78, 216, 0.04);
-            border: 1px solid rgba(29, 78, 216, 0.16);
+            background: rgba(var(--acc-rgb), 0.04);
+            border: 1px solid rgba(var(--acc-rgb), 0.16);
             border-radius: 12px;
             padding: 20px 24px;
             margin: 14px 0;
@@ -2290,7 +2290,7 @@
         }
         /* Callout */
         .dc-page.dc-bright .dc-callout {
-            background: rgba(29, 78, 216, 0.05);
+            background: rgba(var(--acc-rgb), 0.05);
             border-left-color: var(--acc);
             color: #2d3340;
         }
@@ -4687,22 +4687,22 @@
             color: #0a0a0a;
         }
         body.case-open .case-page.cp-light.open ::selection {
-            background: rgba(41,98,255,0.18);
+            background: rgba(var(--acc-rgb),0.18);
         }
         .cp-light .cp-meta { color: rgba(0,0,0,0.55); }
-        .cp-light .cp-meta-no { color: #2962ff; }
+        .cp-light .cp-meta-no { color: var(--acc); }
         .cp-light .cp-meta-divider { background: rgba(0,0,0,0.16); }
         .cp-light .cp-title { color: #0a0a0a; }
-        .cp-light .cp-title em { color: #2962ff; }
+        .cp-light .cp-title em { color: var(--acc); }
         .cp-light .cp-sub { color: rgba(0,0,0,0.62); }
         .cp-light .cp-tldr {
-            background: rgba(41,98,255,0.04);
-            border-left: 2px solid #2962ff;
+            background: rgba(var(--acc-rgb),0.04);
+            border-left: 2px solid var(--acc);
         }
-        .cp-light .cp-tldr-label { color: #2962ff; }
+        .cp-light .cp-tldr-label { color: var(--acc); }
         .cp-light .cp-tldr li { color: rgba(0,0,0,0.86); }
-        .cp-light .cp-tldr li::before { background: #2962ff; }
-        .cp-light .cp-tldr li em { color: #2962ff; font-style: normal; font-weight: 500; }
+        .cp-light .cp-tldr li::before { background: var(--acc); }
+        .cp-light .cp-tldr li em { color: var(--acc); font-style: normal; font-weight: 500; }
         .cp-light .cp-timeline {
             background: rgba(255,255,255,0.92);
             border-top: 1px solid rgba(0,0,0,0.06);
@@ -4717,39 +4717,39 @@
             border-color: rgba(0,0,0,0.32);
         }
         .cp-light .cp-tl-item.active {
-            color: #2962ff;
-            border-color: #2962ff;
-            background: rgba(41,98,255,0.06);
+            color: var(--acc);
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb),0.06);
         }
         .cp-light .cp-section { border-bottom: 1px solid rgba(0,0,0,0.06); }
-        .cp-light .cp-sec-num { color: #2962ff; }
+        .cp-light .cp-sec-num { color: var(--acc); }
         .cp-light .cp-sec-title { color: #0a0a0a; }
         .cp-light .cp-sec-body { color: rgba(0,0,0,0.74); }
         .cp-light .cp-sec-body strong { color: #0a0a0a; }
-        .cp-light .cp-sec-body em { color: #2962ff; font-style: normal; font-weight: 500; }
-        .cp-light .cp-sec-body li::before { background: #2962ff; }
-        .cp-light .cp-sec-body li strong { color: #2962ff; }
+        .cp-light .cp-sec-body em { color: var(--acc); font-style: normal; font-weight: 500; }
+        .cp-light .cp-sec-body li::before { background: var(--acc); }
+        .cp-light .cp-sec-body li strong { color: var(--acc); }
         .cp-light .cp-figure {
             background:
-                linear-gradient(135deg, rgba(41,98,255,0.05) 0%, rgba(41,98,255,0.01) 100%),
-                repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(41,98,255,0.04) 12px, rgba(41,98,255,0.04) 13px);
-            border: 1px dashed rgba(41,98,255,0.32);
-            color: rgba(41,98,255,0.7);
+                linear-gradient(135deg, rgba(var(--acc-rgb),0.05) 0%, rgba(var(--acc-rgb),0.01) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(var(--acc-rgb),0.04) 12px, rgba(var(--acc-rgb),0.04) 13px);
+            border: 1px dashed rgba(var(--acc-rgb),0.32);
+            color: rgba(var(--acc-rgb),0.7);
         }
         .cp-light .cp-figure-cap { color: rgba(0,0,0,0.45); }
         .cp-light .cp-gallery {
             background: #fbfbfc;
             border-top: 1px solid rgba(0,0,0,0.06);
         }
-        .cp-light .cp-gallery-label { color: #2962ff; }
+        .cp-light .cp-gallery-label { color: var(--acc); }
         .cp-light .cp-gallery-title { color: #0a0a0a; }
         .cp-light .cp-gallery-hint { color: rgba(0,0,0,0.5); }
         .cp-light .cp-gallery-tile {
             background:
-                linear-gradient(135deg, rgba(41,98,255,0.04) 0%, rgba(41,98,255,0.01) 100%),
-                repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(41,98,255,0.04) 12px, rgba(41,98,255,0.04) 13px);
-            border: 1px dashed rgba(41,98,255,0.22);
-            color: rgba(41,98,255,0.55);
+                linear-gradient(135deg, rgba(var(--acc-rgb),0.04) 0%, rgba(var(--acc-rgb),0.01) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 12px, rgba(var(--acc-rgb),0.04) 12px, rgba(var(--acc-rgb),0.04) 13px);
+            border: 1px dashed rgba(var(--acc-rgb),0.22);
+            color: rgba(var(--acc-rgb),0.55);
         }
         .cp-light .cp-close {
             background: rgba(255,255,255,0.78);
@@ -4757,9 +4757,9 @@
             color: #0a0a0a;
         }
         .cp-light .cp-close:hover {
-            border-color: #2962ff;
-            background: rgba(41,98,255,0.08);
-            color: #2962ff;
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb),0.08);
+            color: var(--acc);
         }
 
         /* Layout primitives for varied composition */
@@ -4768,11 +4768,11 @@
             font-size: 0.6875rem;
             letter-spacing: 0.28em;
             text-transform: uppercase;
-            color: #2962ff;
+            color: var(--acc);
             margin-bottom: 14px;
             font-weight: 500;
         }
-        .cp-light .cp-kicker { color: #2962ff; }
+        .cp-light .cp-kicker { color: var(--acc); }
 
         /* ============ CS02 — HEALTH SAMURAI THEME (dark slate + red) ============ */
         .cp-hs {
@@ -5462,7 +5462,7 @@
         }
         .cp-pullquote::before {
             content: '\201C';
-            color: #2962ff;
+            color: var(--acc);
             font-size: 1.1em;
             line-height: 1;
             margin-right: 8px;
@@ -5470,7 +5470,7 @@
         }
         .cp-pullquote::after {
             content: '\201D';
-            color: #2962ff;
+            color: var(--acc);
             line-height: 1;
             font-weight: 400;
         }
@@ -5483,13 +5483,13 @@
         }
         .cp-stat {
             padding: 26px 28px;
-            border: 1px solid rgba(41,98,255,0.22);
-            background: rgba(41,98,255,0.03);
+            border: 1px solid rgba(var(--acc-rgb),0.22);
+            background: rgba(var(--acc-rgb),0.03);
         }
         .cp-stat-num {
             font-size: clamp(2.125rem, 4vw, 3rem);
             font-weight: 600;
-            color: #2962ff;
+            color: var(--acc);
             letter-spacing: -0.025em;
             line-height: 1;
             margin-bottom: 10px;
@@ -5516,9 +5516,9 @@
             background: #fff;
         }
         .cp-product:hover {
-            border-color: #2962ff;
+            border-color: var(--acc);
             transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(41,98,255,0.06);
+            box-shadow: 0 8px 32px rgba(var(--acc-rgb),0.06);
         }
         .cp-product-name {
             font-family: 'Inter', sans-serif;
@@ -5528,7 +5528,7 @@
             color: #0a0a0a;
             letter-spacing: -0.005em;
         }
-        .cp-product-name::before { content: '◆'; color: #2962ff; margin-right: 8px; font-size: 0.5625rem; vertical-align: 2px; }
+        .cp-product-name::before { content: '◆'; color: var(--acc); margin-right: 8px; font-size: 0.5625rem; vertical-align: 2px; }
         .cp-product-blurb {
             font-size: 0.8125rem;
             color: rgba(0,0,0,0.6);
@@ -5556,7 +5556,7 @@
             font-size: 0.625rem;
             letter-spacing: 0.28em;
             text-transform: uppercase;
-            color: #2962ff;
+            color: var(--acc);
             font-weight: 500;
             margin-bottom: 10px;
         }
@@ -5586,7 +5586,7 @@
             font-size: 0.6875rem;
             letter-spacing: 0.28em;
             text-transform: uppercase;
-            color: #2962ff;
+            color: var(--acc);
             font-weight: 500;
         }
         .cp-slideshow-counter {
@@ -5599,8 +5599,8 @@
             position: relative;
             aspect-ratio: 16 / 9;
             background:
-                linear-gradient(135deg, rgba(41,98,255,0.06) 0%, rgba(41,98,255,0.01) 100%),
-                repeating-linear-gradient(45deg, transparent 0, transparent 14px, rgba(41,98,255,0.045) 14px, rgba(41,98,255,0.045) 15px);
+                linear-gradient(135deg, rgba(var(--acc-rgb),0.06) 0%, rgba(var(--acc-rgb),0.01) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 14px, rgba(var(--acc-rgb),0.045) 14px, rgba(var(--acc-rgb),0.045) 15px);
             border: 1px solid rgba(0,0,0,0.08);
             overflow: hidden;
             max-width: 1280px;
@@ -5619,7 +5619,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(41,98,255,0.55);
+            color: rgba(var(--acc-rgb),0.55);
             font-size: 0.75rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
@@ -5653,8 +5653,8 @@
             z-index: 2;
         }
         .cp-slide-arrow:hover {
-            border-color: #2962ff;
-            color: #2962ff;
+            border-color: var(--acc);
+            color: var(--acc);
         }
         .cp-slide-arrow:disabled { opacity: 0.32; cursor: default; }
         .cp-slide-prev { left: 16px; }
@@ -5688,8 +5688,8 @@
             transition: background 0.15s, border-color 0.15s;
         }
         .cp-slideshow-dots li.active {
-            background: #2962ff;
-            border-color: #2962ff;
+            background: var(--acc);
+            border-color: var(--acc);
         }
 
         @media (max-width: 700px) {
