@@ -279,7 +279,7 @@ const cs02Data = cs02?.data;
   {
     subRendered.map(({ entry, Content }) => {
       const d = entry.data;
-      const themeClass = d.theme === 'bright' ? 'cp-bright' : '';
+      const themeClass = d.theme === 'bright' ? 'cp-light' : '';
       return (
         <section
           class:list={['case-page', themeClass]}
@@ -328,13 +328,13 @@ const cs02Data = cs02?.data;
   <script is:inline>
     // Theme toggle inside sub-case overlays — bright (default for new sub-
     // cases) ↔ dark. cs01 (Americor) overlay doesn't render this button
-    // so it stays dark. Toggling adds/removes .cp-bright on the section.
+    // so it stays dark. Toggling adds/removes .cp-light on the section.
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-cp-theme-toggle]');
       if (!btn) return;
       const page = btn.closest('.case-page');
       if (!page) return;
-      page.classList.toggle('cp-bright');
+      page.classList.toggle('cp-light');
     });
   </script>
 
