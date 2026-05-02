@@ -365,30 +365,48 @@ const cs02Data = cs02?.data;
             return Math.random() < rate ? GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)] : ch;
           }).join('');
         }
+        // Walk slogan text nodes (not innerHTML) so we glitch letters
+        // without destroying <em>/<span> structure. Re-snapshotted whenever
+        // innerHTML changes (setNormal/setEgo) since refs would go stale.
+        let sloganNodes = [];
+        function snapshotSlogan() {
+          sloganNodes = [];
+          if (!$slogan) return;
+          const w = document.createTreeWalker($slogan, NodeFilter.SHOW_TEXT);
+          let n;
+          while ((n = w.nextNode())) sloganNodes.push({ node: n, original: n.nodeValue });
+        }
+        snapshotSlogan();
+        function mutateSlogan(rate) {
+          for (const { node, original } of sloganNodes) {
+            node.nodeValue = mutate(original, rate);
+          }
+        }
         let state = 'normal';
         let timer = null;
         function setNormal() {
           if ($meta) $meta.textContent = NORMAL.meta;
           if ($name) $name.textContent = NORMAL.name;
           if ($hero) $hero.textContent = NORMAL.hero;
-          if ($slogan) $slogan.innerHTML = NORMAL.slogan;
+          if ($slogan) { $slogan.innerHTML = NORMAL.slogan; snapshotSlogan(); }
           if ($cta) $cta.textContent = NORMAL.cta;
         }
         function setEgo() {
           if ($meta) $meta.textContent = EGO.meta;
           if ($name) $name.textContent = EGO.name;
           if ($hero) $hero.textContent = EGO.hero;
-          if ($slogan) $slogan.innerHTML = EGO.slogan;
+          if ($slogan) { $slogan.innerHTML = EGO.slogan; snapshotSlogan(); }
           if ($cta) $cta.textContent = EGO.cta;
         }
         function startGlitch() {
           stopGlitch();
           timer = setInterval(() => {
-            const rate = (state.rate ?? 0.12);
+            const rate = 0.12;
             if ($meta) $meta.textContent = mutate(NORMAL.meta, rate);
             if ($name) $name.textContent = mutate(NORMAL.name, rate);
             if ($hero) $hero.textContent = mutate(NORMAL.hero, rate);
             if ($cta) $cta.textContent = mutate(NORMAL.cta, rate);
+            mutateSlogan(rate);
           }, 90);
         }
         function stopGlitch() {
