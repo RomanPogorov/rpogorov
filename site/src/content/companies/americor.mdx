@@ -27,13 +27,12 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
   { kind: 'stub', text: 'soon · Figma ⇄ Code пайплайн', tabNum: '04', tabLabel: 'Figma ⇄ Code' },
 ]} />
 
-## TL;DR
-
-За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на **code-first** подход.
-
-Ключевая продуктовая находка — *разделение опыта на фазы программы*: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.
-
-Каждый год бизнес спускает на портал-команду план по NPS и CSAT. **Оба раза мы перекрыли его — и заметно.** По итогам редизайна команда получила премию.
+<div class="cp-tldr">
+  <div class="cp-tldr-label">// TL;DR</div>
+  <p class="cp-tldr-lead">За 2 года провёл редизайн веб- и мобильных приложений финтех-компании в сфере debt relief, построил с нуля многоуровневую дизайн-систему для трёх платформ (Web, iOS, Android) и нескольких брендов, выстроил систему сбора пользовательской обратной связи и перевёл дизайн-процесс на <em>code-first</em> подход.</p>
+  <p class="cp-tldr-note">Ключевая продуктовая находка — <em>разделение опыта на фазы программы</em>: раньше клиент в разных фазах видел один и тот же UI, я спроектировал отдельные интерфейсные состояния для каждой.</p>
+  <p class="cp-tldr-note">Каждый год бизнес спускает на портал-команду план по NPS и CSAT. <em>Оба раза мы перекрыли его — и заметно.</em> По итогам редизайна команда получила премию.</p>
+</div>
 
 <Metrics>
   <Metric label="NPS" was="45" now="78" description="Net Promoter Score. План бизнеса — <strong>70</strong>, сделали <strong>78</strong>. +33 пункта к стартовой точке после редизайна и системы фаз." points="0,22 30,18 60,15 90,9 120,4" />
@@ -54,31 +53,164 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
     { name: 'Дизайн-система', sub: '02', bars: [
       { kind: 'primary', s: 1, e: 2, label: '4 слоя · root → platform', title: '4-слойная архитектура: root → semantic → brand → platform' },
       { kind: 'product', s: 3, e: 6, label: 'Внедрение iOS / Android / Web', title: 'Внедрение DS: iOS / Android / Web, синхронизация Figma ↔ код' },
-      { kind: 'product', s: 7, e: 8, label: 'Покрытие → 100%', title: 'Покрытие 50–60% → 100% к концу года' }
+      { kind: 'product', s: 7, e: 8, label: 'Покрытие → 100%', title: 'Покрытие 50–60% → 100% к концу года' },
     ]},
     { name: 'Pre-IPO редизайн', sub: '03', bars: [
       { kind: 'primary', s: 2, e: 3, label: '4 варианта концепции', title: 'Четыре варианта концепции, тестирование на реальных пользователях' },
-      { kind: 'primary', s: 4, e: 5, label: 'v3 · shipped +18.2%', title: 'v3 (адаптивный флоу) — shipped at +18.2% conversion' }
+      { kind: 'primary', s: 4, e: 5, label: 'v3 · shipped +18.2%', title: 'v3 (адаптивный флоу) — shipped at +18.2% conversion' },
     ]},
     { name: 'Мультибренд', sub: '04', bars: [
-      { kind: 'product', s: 3, e: 7, label: 'Subsidiaries · цвета по штатам', title: 'Subsidiaries — отдельные визуальные идентификации по штатам' }
+      { kind: 'product', s: 3, e: 7, label: 'Subsidiaries · цвета по штатам', title: 'Subsidiaries — отдельные визуальные идентификации по штатам' },
     ]},
     { name: 'Code-first процесс', sub: '05', bars: [
-      { kind: 'bg', s: 4, e: 8, label: 'React + Storybook · prototype → handover', title: 'React + Storybook как source of truth' }
+      { kind: 'bg', s: 4, e: 8, label: 'React + Storybook · prototype → handover', title: 'React + Storybook как source of truth' },
     ]},
     { name: 'Vibe-code прототипы', sub: '06', bars: [
       { kind: 'short', s: 5, e: 5, label: 'FB Analyzer · 80k msg', title: 'Анализатор Facebook-сообщества: 80k+ сообщений → topic + sentiment' },
       { kind: 'short', s: 6, e: 6, label: 'NSF Simulator', title: 'NSF Shortfall simulator — для логики проблемных дат списания' },
-      { kind: 'short', s: 7, e: 7, label: 'Community demo', title: 'Code-first прототип Community-раздела для валидации' }
+      { kind: 'short', s: 7, e: 7, label: 'Community demo', title: 'Code-first прототип Community-раздела для валидации' },
     ]},
-    { name: 'UXR + Feedback loops', sub: '07', bars: [
-      { kind: 'bg', s: 2, e: 8, label: 'Опросы, интервью, логирование' }
+    { name: 'Раздел Community', sub: '07', bars: [
+      { kind: 'primary', s: 7, e: 8, label: 'Reddit-style → prod', title: 'Reddit-style лента внутри приложения, целиком собран в коде, в продакшене' },
     ]},
-    { name: 'Менторство дизайнеров', sub: '08', bars: [
-      { kind: 'bg', s: 3, e: 8, label: '2 PD · 1:1 ревью + DS контрибьюция' }
+    { name: 'Раздел Webinars', sub: '08', bars: [
+      { kind: 'short', s: 8, e: 8, label: 'В работе', title: 'Новый раздел для образовательного контента — в работе' },
     ]},
   ]}
 />
+
+## 01 — Контекст. Компания, роль, задача
+
+**Americor** — финтех в сфере debt relief. Помогает людям выходить из долгов через программы реструктуризации. Дочерние бренды в разных штатах со своей визуальной идентификацией — это связано с различиями в законодательстве. Продукт: веб-приложение (десктоп + адаптив) + мобильные приложения для iOS и Android.
+
+**Моя роль** — Lead Product Designer. Репортил продакт-менеджеру (→ CPO). В команде junior-дизайнер — менторил, постепенно вовлекал в задачи возрастающей сложности.
+
+**Задача** сразу была тройная: редизайн продуктовой линейки (компания готовилась к IPO); поднять **NPS и CSAT**; построить дизайн-систему с нуля и реально внедрить её в работу — не файл в Figma, а инструмент команды.
+
+## 02 — Старт. Что было на старте
+
+Единой дизайн-системы не существовало: переиспользуемые блоки лежали россыпью по файлам Figma, и при создании нового макета дизайнер собирал страницу из разрозненных кусков вручную. Поддерживать и масштабировать так — невозможно.
+
+Предыдущая попытка фриланс-дизайнера на фирменный стиль провалилась — 40–50% за полгода, человек ушёл. Разработчики тратили *недели* на поиск «источника правды» для компонентов.
+
+Главное: **никаких артефактов о том, как устроен продукт, не существовало** — ни user flow, ни process maps, ни документации. Понимание жило в головах отдельных людей.
+
+## 03 — Подход. Разобраться в продукте с нуля
+
+Поскольку документации не было, я начал с интервью — с аналитиками, бизнесом, разработчиками. Восстанавливал логику продукта по кускам.
+
+Чтобы валидировать понимание, собрал **Product Flow Diagram** — end-to-end карту со всеми флоу, ветвлениями по бизнес-правилам (Primary Flow для долгов > $7500, Secondary для меньших) и состояниями пользователя на каждом этапе. Это стало *первым в компании единым источником правды*.
+
+<figure class="cp-fullbleed">
+  <img src="/rpogorov-dev/app/showcase/cs01/high-level.png" alt="Product Flow Diagram — end-to-end карта продукта" />
+  <figcaption><b>↔</b> Product Flow Diagram — end-to-end карта продукта со всеми ветвлениями.</figcaption>
+</figure>
+
+Параллельно — аудит макетов и реальной сборки приложений (поставил тестовые билды, прошёл флоу сам). Опирался на здравый смысл, продуктовый опыт и UX best practices. Часть проблем была очевидной: где-то не хватало информации, где-то запутывали пользователя, где-то некорректно показывали данные, где-то не давали прозрачности по платежам. *Проблем накопилось много.*
+
+## 04 — Система. Дизайн-система для трёх платформ
+
+Многоуровневая структура:
+
+- **Root** — базовые значения: цвета, отступы, типографика.
+- **Semantic** — семантический слой с осмысленными названиями токенов.
+- **Brand** — уровень брендов (для дочерних компаний с разной идентификацией).
+- **Три режима**: Web, iOS, Android — управление из одного места.
+
+Параллельно реорганизовал структуру в Figma: итерации, ветки для разработки, понятная навигация. Покомпонентно раскатывали на текущие приложения вместе с командами разработки — покрыли **~50–60% интерфейсов**.
+
+<figure class="cp-fullbleed">
+  <img src="/rpogorov-dev/app/showcase/cs01/ds.png" alt="Структура дизайн-системы в Figma" />
+  <figcaption>Структура дизайн-системы в Figma — root → semantic → brand → platform.</figcaption>
+</figure>
+
+## 05 — Редизайн. IPO и адаптация дизайн-системы
+
+Через ~3 месяца работы пришёл бизнес: компания готовится к IPO, нужен полный редизайн. Ситуация нетривиальная — система, спроектированная под существующий дизайн, должна была начать поддерживать новый.
+
+Сначала это коснулось веб-приложения, потом — мобильных. Архитектура (root → semantic → brand с тремя режимами) была заложена достаточно гибко, чтобы обновлять её на лету, не ломая уже сделанного. *Это был один из моментов, где правильно выбранная изначальная архитектура окупилась многократно.*
+
+Главная продуктовая находка — *разделение опыта на фазы программы*. Раньше клиент в разных фазах видел один и тот же UI, хотя его контекст и потребности радикально менялись. Я спроектировал систему фаз и отдельные интерфейсные состояния для каждой.
+
+Middle-дизайнер к моменту начала редизайна ушла. Мы работали вдвоём с junior-дизайнером — я вёл редизайн, контролировал качество, менторил.
+
+### Иллюстрации и визуальный язык
+
+Параллельно с системной работой решал вопрос с графикой — иллюстрации для пустых состояний, онбординга, ключевых экранов; аватары для коммуникаций.
+
+Сначала генерировал десятки вариантов в разных стилях через нейросети — нужно было найти стиль, который ляжет на бренд. Со временем вырос пайплайн через нодовый редактор: **ComfyUI**, позже **Figma Weavy**. Это позволило стабильно генерировать иллюстрации в едином стиле — *не один раз случайно угадать, а превратить генерацию в управляемый процесс*.
+
+## 06 — Tools. Vibe-coded инструменты для решений на данных
+
+**Facebook Community Analyzer.** Кроме интервью, ценный источник данных — пользовательская активность в Facebook-группе компании. Я написал на vibe-code приложение, которое парсило все посты и комментарии (**~80 000 сообщений**), прогоняло каждое через нейросеть для определения темы (UX, поддержка, конкретная фича) и сентимента, и отдавало UI с фильтрацией.
+
+**NSF Shortfall Simulator.** При проектировании сложной фичи прогнозирования shortfall для платёжных дат столкнулся с запутанной бизнес-логикой. Самостоятельно собрал интерактивный симулятор, который помог разобраться в механике, верифицировать сценарии и ускорить проектирование.
+
+Оба инструмента стали постоянной частью рабочего процесса команды — не только для дизайна.
+
+## 07 — Shift. Code-first процесс и раздел Community
+
+На финальном этапе — последний крупный проект, раздел **Community**. Группу на Facebook заблокировали, и мы решили построить аналог Reddit/Facebook внутри приложения. Поскольку это была фича с нуля, я попробовал на ней новый подход.
+
+Базовый макет собрал в Figma, дальше попросил Claude собрать React-приложение с компонентами в Storybook во всех состояниях. Развитие продолжалось в коде: продуктовые гипотезы вшивались прямо в прототип — через иконку шестерёнки переключались варианты, сравнивались side-by-side.
+
+Когда решение было готово, я просил Claude сгенерировать Figma-компоненты для разработчиков и тестировщиков (они работали в своём стеке) — в наших токенах, шрифтах, дизайн-системе. *Передача проходила без расхождений.*
+
+Процесс перевернулся: вместо «дизайн → передача → разработка» стало **«прототип в коде → валидация на работающем продукте → передача готовых компонентов»**.
+
+## 08 — Итоги. Метрики и решения
+
+<div class="am-award">
+  <div class="am-award-badge" aria-hidden="true">★</div>
+  <div class="am-award-body">
+    <div class="am-award-label">// recognition</div>
+    <div class="am-award-text">Премия команде по итогам редизайна.</div>
+  </div>
+</div>
+
+<div class="am-metrics">
+  <div class="am-metric">
+    <div class="am-metric-label">NPS</div>
+    <div class="am-metric-vals"><span class="am-metric-was">45</span><span class="am-metric-arrow">→</span><span class="am-metric-now">78</span></div>
+  </div>
+  <div class="am-metric">
+    <div class="am-metric-label">CSAT (5)</div>
+    <div class="am-metric-vals"><span class="am-metric-was">3.6</span><span class="am-metric-arrow">→</span><span class="am-metric-now">4.5</span></div>
+  </div>
+  <div class="am-metric">
+    <div class="am-metric-label">DS coverage</div>
+    <div class="am-metric-vals"><span class="am-metric-was">0%</span><span class="am-metric-arrow">→</span><span class="am-metric-now">50–60%</span></div>
+  </div>
+</div>
+
+### Качественные результаты
+
+- Единый визуальный язык для нескольких брендов компании.
+- Команды веб- и мобильной разработки отметили, что пропали недельные поиски актуальных компонентов.
+- **80 000+** обработанных сообщений из Facebook-группы стали базой решений по редизайну.
+- Onboarding completion вырос (точная цифра — TBD).
+
+## 09 — Дальше. Планы на этот год
+
+Я ещё работаю в Americor, поэтому часть истории — про то, что в работе сейчас.
+
+<div class="am-plans">
+  <div class="am-plan">
+    <div class="am-plan-num">PLAN / 01</div>
+    <div class="am-plan-title">Покрытие ДС: <em>100%</em></div>
+    <p class="am-plan-desc">До конца года — все макеты, мобильные и десктопные, переезжают на единую дизайн-систему. Останется поддерживать, а не догонять.</p>
+  </div>
+  <div class="am-plan">
+    <div class="am-plan-num">PLAN / 02</div>
+    <div class="am-plan-title">Раздел Community</div>
+    <p class="am-plan-desc">Запуск аналога сообщества внутри приложения вместо заблокированной FB-группы. Подробности — в углублённом кейсе ниже.</p>
+  </div>
+  <div class="am-plan">
+    <div class="am-plan-num">PLAN / 03</div>
+    <div class="am-plan-title">Раздел Webinars</div>
+    <p class="am-plan-desc">Новый раздел для образовательного контента. Расскажу отдельным кейсом, когда выкатим.</p>
+  </div>
+</div>
 
 ## Сравнение редизайна
 
@@ -91,11 +223,29 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
   afterAlt="Desktop после редизайна"
 />
 
-## Под-кейсы
+## Углублённые кейсы
 
-Глубокие материалы по конкретным продуктовым направлениям внутри Americor:
+Ниже — отдельные продуктовые истории, которые я раскрываю самостоятельными кейсами.
 
-- [Increasing Settlement Offer Acceptance](/rpogorov-dev/app/case/cs01/offer-acceptance/) — +175% online acceptance, +44% overall, 300k users impacted
-- [Engaging Early-Stage Users](/rpogorov-dev/app/case/cs01/engagement/) — +72% NPS, +15% early-user retention
-- [Americor Design System](/rpogorov-dev/app/case/cs01/design-system/) — 3 platforms, 2 brands, 3-tier tokens
-- [Figma ↔ Claude vibe-coding pipeline](/rpogorov-dev/app/case/cs01/figma-claude-vibe/) — designer-to-engineer roundtrip без handoff drift
+<div class="am-deeplinks">
+  <a class="am-deeplink" href="/rpogorov-dev/app/case/cs01/offer-acceptance/">
+    <div class="am-deeplink-num">DEEP / 01</div>
+    <h3 class="am-deeplink-title">Принятие офера</h3>
+    <p class="am-deeplink-desc">Как пользователь принимает предложение по реструктуризации долга. +175% online acceptance, 300k users.</p>
+  </a>
+  <a class="am-deeplink" href="/rpogorov-dev/app/case/cs01/engagement/">
+    <div class="am-deeplink-num">DEEP / 02</div>
+    <h3 class="am-deeplink-title">Engagement: ранняя стадия программы</h3>
+    <p class="am-deeplink-desc">Прозрачность процесса, динамика статусов, реалистичные ожидания. +72% NPS, +15% retention.</p>
+  </a>
+  <a class="am-deeplink" href="/rpogorov-dev/app/case/cs01/design-system/">
+    <div class="am-deeplink-num">DEEP / 03</div>
+    <h3 class="am-deeplink-title">Дизайн-система</h3>
+    <p class="am-deeplink-desc">Three-tier токены, общий компонент-spec для web / iOS / Android, Code Connect → React.</p>
+  </a>
+  <a class="am-deeplink" href="/rpogorov-dev/app/case/cs01/figma-claude-vibe/">
+    <div class="am-deeplink-num">DEEP / 04</div>
+    <h3 class="am-deeplink-title">Figma ↔ Claude vibe-coding</h3>
+    <p class="am-deeplink-desc">Round-trip между Figma и кодом через Claude — config и спец перемещаются без drift.</p>
+  </a>
+</div>
