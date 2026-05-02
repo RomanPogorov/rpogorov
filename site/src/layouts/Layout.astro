@@ -107,4 +107,16 @@ const importMapJson = `{
     width: 100vw;
     max-width: 100vw;
   }
+
+  /* signal=0 — оставляем wireframe-картинку и сетку с глитч-ячейками,
+     убираем все линейные/мерцающие наложения сверху (interlace
+     пульс, scanlines, голограмм-флик, рваные полосы, фильм-зерно). */
+  body[data-sim-state="zero"] .layer-interlace,
+  body[data-sim-state="zero"] .layer-holo-flicker,
+  body[data-sim-state="zero"] .layer-tear,
+  body[data-sim-state="zero"] .scanlines,
+  body[data-sim-state="zero"] .noise {
+    animation: none !important;
+    opacity: 0 !important;
+  }
 </style>
