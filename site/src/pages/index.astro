@@ -326,6 +326,91 @@ const cs02Data = cs02?.data;
   <Fragment set:html={legacyAfter} />
 
   <script is:inline>
+    // Hero text mode tracker — three states based on signal slider:
+    //   norm > 0.15        → normal (Claude Runner + portfolio slogan)
+    //   0.02 < norm ≤ 0.15 → letter-glitch loop on every hero element
+    //   norm ≤ 0.02        → final swap to "Man with no ego" copy
+    (() => {
+      function init() {
+        const $meta = document.querySelector('.meta-top span:not(.dot)');
+        const $name = document.getElementById('prompt-roles');
+        const $hero = document.querySelector('.role-hero');
+        const $slogan = document.querySelector('.slogan');
+        const $cta = document.querySelector('.cta-text');
+        if (!$hero) { setTimeout(init, 200); return; }
+        const NORMAL = {
+          meta: $meta?.textContent ?? 'Roman Pogorov Portfolio 2026',
+          name: $name?.textContent ?? 'Designer',
+          hero: $hero?.textContent ?? 'Claude Runner',
+          slogan: $slogan?.innerHTML ?? '',
+          cta: $cta?.textContent ?? 'more information',
+        };
+        const EGO = {
+          meta: 'silent mode · no ego · 2026',
+          name: 'Stranger',
+          hero: 'Man with no ego',
+          slogan: 'no titles. no claims. <em>just presence.</em> <span class="slogan-end">listening over speaking. less is enough.</span>',
+          cta: 'sit with it',
+        };
+        const GLITCH_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*+=<>/\\';
+        function mutate(text, rate) {
+          return text.split('').map((ch) => {
+            if (ch === ' ' || ch === '·') return ch;
+            return Math.random() < rate ? GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)] : ch;
+          }).join('');
+        }
+        let state = 'normal';
+        let timer = null;
+        function setNormal() {
+          if ($meta) $meta.textContent = NORMAL.meta;
+          if ($name) $name.textContent = NORMAL.name;
+          if ($hero) $hero.textContent = NORMAL.hero;
+          if ($slogan) $slogan.innerHTML = NORMAL.slogan;
+          if ($cta) $cta.textContent = NORMAL.cta;
+        }
+        function setEgo() {
+          if ($meta) $meta.textContent = EGO.meta;
+          if ($name) $name.textContent = EGO.name;
+          if ($hero) $hero.textContent = EGO.hero;
+          if ($slogan) $slogan.innerHTML = EGO.slogan;
+          if ($cta) $cta.textContent = EGO.cta;
+        }
+        function startGlitch() {
+          stopGlitch();
+          timer = setInterval(() => {
+            const rate = (state.rate ?? 0.12);
+            if ($meta) $meta.textContent = mutate(NORMAL.meta, rate);
+            if ($name) $name.textContent = mutate(NORMAL.name, rate);
+            if ($hero) $hero.textContent = mutate(NORMAL.hero, rate);
+            if ($cta) $cta.textContent = mutate(NORMAL.cta, rate);
+          }, 90);
+        }
+        function stopGlitch() {
+          if (timer) { clearInterval(timer); timer = null; }
+        }
+        document.addEventListener('signal:change', (e) => {
+          const norm = e.detail;
+          let next;
+          if (norm > 0.15) next = 'normal';
+          else if (norm > 0.02) next = 'glitching';
+          else next = 'ego';
+          if (next === state) return;
+          state = next;
+          stopGlitch();
+          if (next === 'normal') setNormal();
+          else if (next === 'ego') setEgo();
+          else if (next === 'glitching') startGlitch();
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init, { once: true });
+      } else {
+        init();
+      }
+    })();
+  </script>
+
+  <script is:inline>
     // Theme toggle inside sub-case overlays — bright (default for new sub-
     // cases) ↔ dark. cs01 (Americor) overlay doesn't render this button
     // so it stays dark. Toggling adds/removes .cp-light on the section.
