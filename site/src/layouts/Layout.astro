@@ -108,13 +108,73 @@ const importMapJson = `{
     max-width: 100vw;
   }
 
-  /* Theme toggle button on sub-case overlays — bottom-right so it
-     doesn't fight the cp-close (top-right back-to-showcase button). */
-  .cp-theme-toggle {
+  /* Default content tokens (dark theme) — case components reference these
+     vars; without defaults they fall through to initial / white-on-white in
+     cp-light. Mirrors content.css's body:not(.theme-bright) block but lives
+     at :root scope so it applies on /app/ where body has data-theme=green. */
+  :root {
+    --text-strong: #ffffff;
+    --text-base: rgba(255, 255, 255, 0.86);
+    --text-muted: rgba(232, 255, 240, 0.62);
+    --ink-strong: #ffffff;
+    --ink-muted: rgba(232, 255, 240, 0.62);
+    --surface-card: rgba(255, 255, 255, 0.03);
+    --surface-frame: #16191e;
+    --border-soft: rgba(var(--acc-rgb), 0.18);
+    --border-card: rgba(var(--acc-rgb), 0.22);
+    --measure-content: 720px;
+    --measure-body: 720px;
+  }
+
+  /* Bright variant — flips every token a case-component reads, so PainCard,
+     ImpactStrip, IterCard, Pillar, MetaGrid, Figure render on white with
+     dark text and visible card surfaces. Accent stays the brand green. */
+  .case-page.cp-light {
+    --text-strong: #0b1018;
+    --text-base: #2a313e;
+    --text-muted: #5b6372;
+    --ink-strong: #0b1018;
+    --ink-muted: #5b6372;
+    --surface-card: #ffffff;
+    --surface-frame: #f4f6fa;
+    --border-soft: #e2e6ec;
+    --border-card: #d8dde5;
+  }
+  /* Visible card surfaces on white — without these the var(--surface-card)
+     #ffffff blends into the page bg and the card vanishes. */
+  .case-page.cp-light .pain-card,
+  .case-page.cp-light .impact-strip > article,
+  .case-page.cp-light .iter-card,
+  .case-page.cp-light .pillar,
+  .case-page.cp-light .meta-grid > article {
+    box-shadow: 0 1px 2px rgba(11, 16, 24, 0.04);
+  }
+  .case-page.cp-light .iter-card {
+    background: rgba(var(--acc-rgb), 0.04);
+    border-color: rgba(var(--acc-rgb), 0.20);
+  }
+  /* Prose typography in MDX body — mirror content.css bright values. */
+  .case-page.cp-light .cnt-body :where(p, li) { color: var(--text-base); }
+  .case-page.cp-light .cnt-body :where(h1, h2, h3, h4) { color: var(--text-strong); }
+  .case-page.cp-light .cnt-body strong { color: var(--text-strong); }
+  .case-page.cp-light .cnt-body em { color: var(--acc); font-style: normal; font-weight: 500; }
+  .case-page.cp-light .cnt-body :where(blockquote) {
+    color: var(--text-base);
+    border-left-color: var(--acc);
+    background: rgba(var(--acc-rgb), 0.05);
+  }
+  .case-page.cp-light .cnt-body :where(hr) {
+    border-color: var(--border-soft);
+  }
+
+  /* Global theme toggle — rendered at body level (sibling of .case-page,
+     not child) so position:fixed escapes the .case-page's translateY()
+     containing block. JS finds the open .case-page on click. */
+  .cp-theme-toggle-global {
     position: fixed;
     bottom: 22px;
     right: 24px;
-    z-index: 55;
+    z-index: 60;
     width: 40px;
     height: 40px;
     display: none;
@@ -129,15 +189,13 @@ const importMapJson = `{
     -webkit-backdrop-filter: blur(10px);
     transition: border-color 0.18s, background 0.18s, color 0.18s;
   }
-  body.case-open .case-page.open .cp-theme-toggle { display: inline-flex; }
-  .cp-theme-toggle:hover { border-color: rgba(var(--acc-rgb), 0.7); }
-  .case-page.cp-light .cp-theme-toggle {
-    border-color: rgba(0, 0, 0, 0.18);
-    background: rgba(255, 255, 255, 0.85);
+  body.case-open .cp-theme-toggle-global[data-theme-target] { display: inline-flex; }
+  .cp-theme-toggle-global:hover { border-color: rgba(var(--acc-rgb), 0.7); }
+  .cp-theme-toggle-global.is-light {
+    border-color: rgba(11, 16, 24, 0.16);
+    background: rgba(255, 255, 255, 0.92);
     color: #0b1018;
   }
-  .case-page.cp-light .cp-theme-toggle:hover {
-    border-color: var(--acc);
-  }
+  .cp-theme-toggle-global.is-light:hover { border-color: var(--acc); }
 
 </style>

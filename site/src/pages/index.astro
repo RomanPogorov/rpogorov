@@ -288,7 +288,6 @@ const cs02Data = cs02?.data;
           data-theme={d.theme}
           aria-label={`${d.title} case study`}
         >
-          <button class="cp-theme-toggle" data-cp-theme-toggle type="button" aria-label="Toggle theme">◐</button>
           <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
             <span class="cp-close-arrow" aria-hidden="true">↑</span>
             <span>back to {d.companyLabel}</span>
@@ -324,6 +323,13 @@ const cs02Data = cs02?.data;
   }
 
   <Fragment set:html={legacyAfter} />
+
+  <button
+    class="cp-theme-toggle-global"
+    data-cp-theme-toggle-global
+    type="button"
+    aria-label="Toggle case theme"
+  >◐</button>
 
   <script is:inline>
     // Hero text mode tracker — three states based on signal slider:
@@ -411,16 +417,48 @@ const cs02Data = cs02?.data;
   </script>
 
   <script is:inline>
-    // Theme toggle inside sub-case overlays — bright (default for new sub-
-    // cases) ↔ dark. cs01 (Americor) overlay doesn't render this button
-    // so it stays dark. Toggling adds/removes .cp-light on the section.
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-cp-theme-toggle]');
+    // Global theme toggle — single button at body level (so position:fixed
+     // escapes the .case-page transform containing block). Tracks which
+     // .case-page is currently open and toggles its .cp-light class. Hides
+     // when no theme-capable case is active (e.g., cs01 Americor stays dark).
+    (() => {
+      const btn = document.querySelector('[data-cp-theme-toggle-global]');
       if (!btn) return;
-      const page = btn.closest('.case-page');
-      if (!page) return;
-      page.classList.toggle('cp-light');
-    });
+
+      function activeCase() {
+        return document.querySelector('.case-page.open');
+      }
+      function syncBtn() {
+        const cp = activeCase();
+        const supports = !!(cp && cp.dataset.theme); // sub-cases set data-theme; cs01 overlay doesn't
+        if (supports) {
+          btn.setAttribute('data-theme-target', cp.dataset.casePage || cp.id || '1');
+          btn.classList.toggle('is-light', cp.classList.contains('cp-light'));
+        } else {
+          btn.removeAttribute('data-theme-target');
+          btn.classList.remove('is-light');
+        }
+      }
+
+      btn.addEventListener('click', () => {
+        const cp = activeCase();
+        if (!cp || !cp.dataset.theme) return;
+        cp.classList.toggle('cp-light');
+        btn.classList.toggle('is-light', cp.classList.contains('cp-light'));
+      });
+
+      // Re-evaluate whenever a case opens/closes. Body's .case-open class +
+      // each .case-page's .open class change via legacy __cp.open/close, so
+      // a MutationObserver on body covers both.
+      const obs = new MutationObserver(syncBtn);
+      obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+      document.querySelectorAll('.case-page').forEach((cp) => {
+        obs.observe(cp, { attributes: true, attributeFilter: ['class'] });
+      });
+      // Initial sync after legacy JS finishes hash routing.
+      setTimeout(syncBtn, 100);
+      setTimeout(syncBtn, 800);
+    })();
   </script>
 
   <script is:inline>
