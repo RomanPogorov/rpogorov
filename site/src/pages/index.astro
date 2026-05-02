@@ -1,28 +1,31 @@
 ---
 /**
- * /rpogorov-dev/app/ — main entry. The legacy main page rebuilt in Astro,
- * with two MDX-driven pieces:
+ * /rpogorov-dev/app/ — main entry. Legacy main page rebuilt in Astro.
+ * MDX-driven pieces:
  *
  * 1. Showcase carousel cards (5 cs0X entries) — server-rendered from
  *    src/content/companies/*.mdx at build time, replacing the hardcoded
- *    cards block in legacy-body.html. Open Case buttons go through the
- *    legacy __cp.open() overlay flow (data-open-case="<id>").
+ *    cards block in legacy-body.html.
  *
- * 2. Americor deep overlay — `<section class="case-page" data-case-page=
- *    "americor">` is rendered server-side here as Astro JSX (NOT set:html),
- *    with the MDX `<Content />` mounted inside. Clicking Open Case on cs01
- *    in the carousel triggers the legacy slide-up animation; the overlay
- *    is filled with rendered MDX (HeroShot, Timeline, Metrics, BeforeAfter
- *    + clean markdown). Single source of truth: edit americor.mdx → it
- *    updates both the carousel card AND the overlay content.
+ * 2. cs01 (Americor) deep overlay — `<section class="case-page" data-
+ *    case-page="cs01">` rendered here in JSX from src/content/companies/
+ *    cs01.mdx. Triggered by `data-open-case="cs01"` on the carousel card
+ *    via legacy __cp.open().
  *
- * The deep cs02 overlay still lives inline in legacy-body.html for now;
- * cs02 will get the same MDX treatment next.
+ * 3. Four Americor sub-case overlays — `<section class="case-page" data-
+ *    case-page="{deeplink}">` per entry in src/content/cases/. Triggered
+ *    by hash `#case/cs01/{deeplink}` (legacy router) → __dc.open() which
+ *    we override below to proxy to __cp.open() so the section-based
+ *    overlay shows.
+ *
+ * Body content for cs01 + 4 sub-cases lives only in MDX. legacy-body.html
+ * still ships its DEEP_CASES bodies, but they're not rendered anywhere
+ * because our __dc proxy targets the Astro-rendered overlays.
  */
 import Layout from '@layouts/Layout.astro';
 import Lightbox from '@components/case-rich/Lightbox.astro';
 import legacyBodyRaw from '../legacy-body.html?raw';
-import { getCollection, getEntry, render } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 const companies = (await getCollection('companies')).sort(
   (a, b) => a.data.order - b.data.order
@@ -31,9 +34,16 @@ const subCases = (await getCollection('cases')).sort(
   (a, b) => a.data.order - b.data.order
 );
 
-// Americor overlay MDX content
-const americor = await getEntry('companies', 'americor');
-const { Content: AmericorContent } = americor ? await render(americor) : { Content: null };
+const cs01 = companies.find((c) => c.id === 'cs01');
+const cs01Render = cs01 ? await render(cs01) : null;
+const Cs01Content = cs01Render?.Content ?? null;
+
+const subRendered = await Promise.all(
+  subCases.map(async (entry) => {
+    const r = await render(entry);
+    return { entry, Content: r.Content };
+  })
+);
 
 const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
 
@@ -45,7 +55,6 @@ function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
-// Restore <em> after escaping — showcase fields use it for accent words.
 function withEm(s: string): string {
   return escapeHtml(s)
     .replace(/&lt;em&gt;/g, '<em>')
@@ -56,11 +65,10 @@ function caseLabel(_id: string, idx: number): string {
   return `CS/${String(idx + 1).padStart(2, '0')}`;
 }
 
-// Which cs0X cards have a deep overlay wired up. cs01 → americor overlay
-// (rendered below from MDX). cs02 → legacy inline overlay still in
-// legacy-body.html. cs03/04/05 — no overlay yet, hide the open button.
+// cs0X cards with a deep overlay wired up. cs01 → MDX overlay below;
+// cs02 → legacy inline overlay still in legacy-body.html.
 const OVERLAY_ID: Record<string, string> = {
-  americor: 'americor',
+  cs01: 'cs01',
   cs02: 'cs02',
 };
 
@@ -114,27 +122,14 @@ const legacyBody = legacyBodyRaw.replace(
 
 const [legacyBefore, legacyAfter] = legacyBody.split('<!-- AMERICOR_OVERLAY_MARKER -->');
 
-const subCasesData = subCases.map((s) => ({
-  id: s.id,
-  company: s.data.company,
-  companyLabel: s.data.companyLabel,
-  title: s.data.title,
-  desc: s.data.desc,
-  metric: s.data.metric ?? '',
-  tags: s.data.tags,
-  thumb: s.data.thumb ?? '',
-  deeplink: s.data.deeplink,
-}));
-
-const americorData = americor?.data;
+const cs01Data = cs01?.data;
 ---
 
 <Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate">
-  <script is:inline set:html={`window.__SUBCASES_FROM_MDX = ${JSON.stringify(subCasesData)};`}></script>
   <Fragment set:html={legacyBefore} />
 
-  {AmericorContent && americorData && (
-    <section class="case-page" id="case-page-americor" data-case-page="americor" aria-label={`${americorData.name} case study`}>
+  {Cs01Content && cs01Data && (
+    <section class="case-page" id="case-page-cs01" data-case-page="cs01" aria-label={`${cs01Data.name} case study`}>
       <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
         <span class="cp-close-arrow" aria-hidden="true">↑</span>
         <span>back to showcase</span>
@@ -144,23 +139,94 @@ const americorData = americor?.data;
           <div class="cp-meta">
             <span class="cp-meta-no">CS/01</span>
             <span class="cp-meta-divider"></span>
-            <span>{americorData.name}</span>
+            <span>{cs01Data.name}</span>
             <span class="cp-meta-divider"></span>
-            <span>{americorData.role}</span>
+            <span>{cs01Data.role}</span>
             <span class="cp-meta-divider"></span>
-            <span>{americorData.year}</span>
+            <span>{cs01Data.year}</span>
           </div>
-          <h1 class="cp-title" set:html={americorData.title} />
-          <p class="cp-sub">{americorData.desc}</p>
+          <h1 class="cp-title" set:html={cs01Data.title} />
+          <p class="cp-sub">{cs01Data.desc}</p>
         </header>
         <article class="cnt-body">
-          <AmericorContent />
+          <Cs01Content />
         </article>
       </div>
     </section>
   )}
 
+  {
+    subRendered.map(({ entry, Content }) => {
+      const d = entry.data;
+      return (
+        <section
+          class="case-page"
+          id={`case-page-${d.deeplink}`}
+          data-case-page={d.deeplink}
+          aria-label={`${d.title} case study`}
+        >
+          <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
+            <span class="cp-close-arrow" aria-hidden="true">↑</span>
+            <span>back to {d.companyLabel}</span>
+          </button>
+          <div class="cp-inner">
+            <header class="cp-hero">
+              <div class="cp-meta">
+                <span class="cp-meta-no">{(d.no ?? 'DEEP').toUpperCase()}</span>
+                <span class="cp-meta-divider"></span>
+                <span>{d.companyLabel}</span>
+                {d.metric && (
+                  <>
+                    <span class="cp-meta-divider"></span>
+                    <span>{d.metric}</span>
+                  </>
+                )}
+              </div>
+              <h1 class="cp-title">{d.title}</h1>
+              {d.desc && <p class="cp-sub">{d.desc}</p>}
+              {d.tags && (
+                <ul class="dc-tags">
+                  {d.tags.map((t) => <li>{t}</li>)}
+                </ul>
+              )}
+            </header>
+            <article class="cnt-body">
+              <Content />
+            </article>
+          </div>
+        </section>
+      );
+    })
+  }
+
   <Fragment set:html={legacyAfter} />
+
+  <script is:inline>
+    // Override legacy __dc.open / __dc.close to proxy to __cp so the
+    // section-based MDX overlays we render above receive the open/close
+    // calls instead of the legacy DEEP_CASES dc-page mechanism. Runs on
+    // load so __cp / __dc are both defined by the time we redefine.
+    window.addEventListener('load', () => {
+      if (!window.__cp) return;
+      const dcOpen = (id, opts) => window.__cp.open(id, opts);
+      const dcClose = (opts) => window.__cp.close(opts);
+      window.__dc = { open: dcOpen, close: dcClose, current: () => null };
+      // Wire am-deeplinks (in cs01 MDX) — anchor href="#case/cs01/{slug}"
+      // doesn't trigger __dc.open by itself; the legacy hash router
+      // listens to popstate and on load. Pushing the hash on click
+      // triggers it.
+      document.querySelectorAll('a.am-deeplink[href^="#case/"]').forEach((a) => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const m = a.getAttribute('href').match(/^#case\/cs0\d+\/(.+)$/);
+          if (m && window.__cp) {
+            history.pushState(null, '', a.getAttribute('href'));
+            window.__cp.open(m[1]);
+          }
+        });
+      });
+    });
+  </script>
 
   <Lightbox />
 </Layout>
