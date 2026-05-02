@@ -521,5 +521,45 @@ const cs02Data = cs02?.data;
     });
   </script>
 
+  <script is:inline>
+    // Sub-case hash router — takes precedence over the legacy DEEP_CASES
+    // syncFromHash (which fires on a 80ms timeout after page load and
+    // opens the legacy .dc-page bright overlay) and the legacy router
+    // (which calls __cp.open on the COMPANY id, scrolling to a sub
+    // anchor that doesn't exist in our Astro layout).
+    //
+    // For URLs like #case/cs01/offer-acceptance we now (1) force-close
+    // the legacy dc-page if it opened, (2) close any wrong case-page,
+    // (3) open the .case-page[data-case-page=offer-acceptance] sub
+    // overlay. Runs after both legacy routers settle.
+    (() => {
+      function syncSub() {
+        const m = location.hash.match(/^#case\/cs0\d+\/([\w-]+)/);
+        if (!m) return;
+        const sub = m[1];
+        // Only intercept if a sub-case overlay actually exists for this id.
+        const subPage = document.querySelector(`.case-page[data-case-page="${sub}"]`);
+        if (!subPage) return;
+        // Force-close the legacy dc-page (may have opened via syncFromHash).
+        document.body.classList.remove('dc-open');
+        const dc = document.getElementById('dc-page');
+        if (dc) dc.classList.remove('dc-open');
+        // Close any other case-page that legacy router 2 opened (cs01 etc.).
+        document.querySelectorAll('.case-page.open').forEach((cp) => {
+          if (cp.dataset.casePage !== sub) cp.classList.remove('open');
+        });
+        // Open the right sub-case if not already open.
+        if (!subPage.classList.contains('open') && window.__cp?.open) {
+          window.__cp.open(sub, { silent: true });
+        }
+        document.body.classList.add('case-open');
+      }
+      // Run AFTER both legacy routers (~80ms each) have fired.
+      window.addEventListener('load', () => setTimeout(syncSub, 200));
+      window.addEventListener('hashchange', syncSub);
+      window.addEventListener('popstate', syncSub);
+    })();
+  </script>
+
   <Lightbox />
 </Layout>
