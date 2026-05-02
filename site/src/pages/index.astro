@@ -37,34 +37,33 @@ function withEm(s: string): string {
     .replace(/&lt;\/em&gt;/g, '</em>');
 }
 
-// Build the carousel cards block from companies collection
+const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
+
+// Map known company slug → display CS/0X label for the eyebrow
+function caseLabel(id: string, idx: number): string {
+  return `CS/${String(idx + 1).padStart(2, '0')}`;
+}
+
+// Build the carousel cards block from companies collection. Open Case
+// is a plain anchor to the deep MDX page (/company/{id}/) — no more
+// overlay JS for company cards. Single source of truth.
 const cardsHtml = companies
-  .map((c) => {
+  .map((c, i) => {
     const d = c.data;
     const title = d.showcaseTitle ?? d.title;
     const desc = d.showcaseDesc ?? d.desc;
     const tags = d.showcaseTags ?? d.tags;
     const meta = d.showcaseMeta ?? `${d.name} · ${d.role} · ${d.year}`;
     const thumb = d.thumb ?? '';
-    const isOpenable = ['cs01', 'cs02'].includes(c.id);
-    const mediaCls = isOpenable ? 'case-media is-openable' : 'case-media';
-    const openAttr = isOpenable
-      ? ` data-open-case="${c.id}" role="button" tabindex="0" aria-label="Open ${escapeHtml(d.name)} case study"`
-      : '';
-    const openCue = isOpenable
-      ? `<div class="case-media-open-cue" aria-hidden="true"><span class="arrow">↓</span><span>Open case</span></div>`
-      : '';
-    const openBtn = isOpenable
-      ? `<button class="case-open-btn" data-open-case="${c.id}" type="button" aria-label="Open full case"><span class="open-arrow" aria-hidden="true">↓</span><span>Open case</span></button>`
-      : '';
+    const href = `${baseUrl}/company/${c.id}/`;
     return `<article class="case" data-case="${c.id}">
-      <div class="${mediaCls}"${openAttr}>
+      <a class="case-media is-openable" href="${href}" aria-label="Open ${escapeHtml(d.name)} case study">
         <img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">
-        ${openCue}
-      </div>
+        <div class="case-media-open-cue" aria-hidden="true"><span class="arrow">↓</span><span>Open case</span></div>
+      </a>
       <div class="case-body">
         <div class="case-head">
-          <span class="case-no">${c.id.toUpperCase().replace('CS', 'CS/')}</span>
+          <span class="case-no">${caseLabel(c.id, i)}</span>
           <span class="case-role">${escapeHtml(d.role)}</span>
         </div>
         <h3 class="case-title">${withEm(title)}</h3>
@@ -73,7 +72,9 @@ const cardsHtml = companies
           ${tags.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}
         </ul>
         <div class="case-meta">${escapeHtml(meta)}</div>
-        ${openBtn}
+        <a class="case-open-btn" href="${href}" aria-label="Open full case">
+          <span class="open-arrow" aria-hidden="true">↓</span><span>Open case</span>
+        </a>
       </div>
     </article>`;
   })
