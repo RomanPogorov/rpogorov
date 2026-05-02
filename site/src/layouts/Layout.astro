@@ -128,8 +128,12 @@ const importMapJson = `{
 
   /* Bright variant — flips every token a case-component reads, so PainCard,
      ImpactStrip, IterCard, Pillar, MetaGrid, Figure render on white with
-     dark text and visible card surfaces. Accent stays the brand green. */
+     dark text and visible card surfaces. Accent shifts to emerald-600 —
+     the cyber-cyan #00e5ff fails WCAG against white; emerald keeps the
+     "green portfolio" identity but with real contrast on light. */
   .case-page.cp-light {
+    --acc: #059669;
+    --acc-rgb: 5, 150, 105;
     --text-strong: #0b1018;
     --text-base: #2a313e;
     --text-muted: #5b6372;
@@ -152,6 +156,84 @@ const importMapJson = `{
   .case-page.cp-light .iter-card {
     background: rgba(var(--acc-rgb), 0.04);
     border-color: rgba(var(--acc-rgb), 0.20);
+  }
+
+  /* Legacy .dc-* islands (Mobile / Wide / Row2 / Row3 / Callout / Quote /
+     Tradeoff / etc.) are styled by legacy.css with dark frames. The
+     legacy bright variant lives at .dc-page.dc-bright .dc-*, which never
+     matches our .case-page.cp-light wrapper. Mirror just the rules that
+     touch user-visible chrome — strip dark frames around media, rebase
+     callouts/quotes/tradeoffs to white surfaces, recolor captions. */
+  .case-page.cp-light .dc-figure {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin-top: 32px;
+    margin-bottom: 56px;
+  }
+  .case-page.cp-light .dc-figure img,
+  .case-page.cp-light .dc-figure video {
+    max-height: 700px;
+    max-width: 100%;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+  }
+  .case-page.cp-light .dc-figure figcaption {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #6b7280;
+    padding: 16px 0 0;
+    text-align: center;
+  }
+  .case-page.cp-light .dc-grid-2,
+  .case-page.cp-light .dc-grid-3 {
+    margin: 32px 0 56px;
+  }
+  .case-page.cp-light .dc-grid-2 .dc-figure,
+  .case-page.cp-light .dc-grid-3 .dc-figure {
+    margin: 0;
+  }
+  .case-page.cp-light .dc-callout {
+    background: rgba(var(--acc-rgb), 0.05);
+    border-left-color: var(--acc);
+    color: var(--text-base);
+  }
+  .case-page.cp-light .dc-callout strong { color: var(--text-strong); }
+  .case-page.cp-light .dc-quote {
+    color: var(--text-base);
+    border-left-color: rgba(var(--acc-rgb), 0.5);
+  }
+  .case-page.cp-light .dc-tradeoff {
+    background: #ffffff;
+    border-color: var(--border-card);
+    color: var(--text-base);
+    box-shadow: 0 1px 2px rgba(11, 16, 24, 0.04);
+  }
+  .case-page.cp-light .dc-tradeoff .label { color: var(--acc); }
+  .case-page.cp-light .dc-tradeoff p { color: var(--text-base); }
+  .case-page.cp-light .dc-iter {
+    background: rgba(var(--acc-rgb), 0.04);
+    border: 1px solid rgba(var(--acc-rgb), 0.16);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 14px 0;
+    color: var(--text-base);
+  }
+  .case-page.cp-light .dc-iter .label { color: var(--acc); }
+  .case-page.cp-light .dc-iter .body { color: var(--text-base); }
+  .case-page.cp-light .dc-iter .body strong { color: var(--text-strong); }
+  .case-page.cp-light .dc-stat-row { background: transparent; border-color: var(--border-card); }
+  .case-page.cp-light .dc-stat-row .cell { color: var(--text-base); border-color: var(--border-soft); }
+  .case-page.cp-light .dc-stat-row .lbl { color: var(--text-muted); }
+  .case-page.cp-light .dc-stat-row .val { color: var(--text-strong); }
+  .case-page.cp-light .am-media-frame,
+  .case-page.cp-light .am-media-stub {
+    background: transparent;
+    border: 0;
   }
   /* Prose typography in MDX body — mirror content.css bright values. */
   .case-page.cp-light .cnt-body :where(p, li) { color: var(--text-base); }
