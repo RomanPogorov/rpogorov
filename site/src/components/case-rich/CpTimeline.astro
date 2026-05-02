@@ -43,6 +43,11 @@ const { items } = Astro.props;
 </nav>
 
 <script is:inline>
+  // Defer to DOMContentLoaded so anchors `<a id="sec-NN">` rendered later
+  // in the MDX body are present before we look them up. Without this the
+  // script runs immediately after the <nav> tag and getElementById returns
+  // null for every section, so click handlers never bind.
+  function initCpTimeline() {
   document.querySelectorAll('.cp-timeline:not([data-cp-tl-init])').forEach((nav) => {
     nav.setAttribute('data-cp-tl-init', '1');
     const items = Array.from(nav.querySelectorAll('.cp-tl-item'));
@@ -110,4 +115,10 @@ const { items } = Astro.props;
       });
     });
   });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCpTimeline, { once: true });
+  } else {
+    initCpTimeline();
+  }
 </script>

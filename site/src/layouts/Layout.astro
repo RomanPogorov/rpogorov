@@ -70,4 +70,41 @@ const importMapJson = `{
     max-width: var(--measure-content);
     margin: 0 auto;
   }
+
+  /* Reset content.css ol-counter / list-bullet treatment for legacy
+     navigation lists — they're flex-row interactive components, not
+     prose lists. Without this, .cp-timeline gets a stray "01 / 02 …"
+     left-padded counter that pushes each tab right and overlaps the
+     real button content. */
+  .cnt-body .cp-timeline-list {
+    max-width: none;
+  }
+  .cnt-body .cp-timeline-list,
+  .cnt-body .cp-timeline-list li,
+  .cnt-body .am-deeplinks,
+  .cnt-body .am-deeplinks > a,
+  .cnt-body .am-plans,
+  .cnt-body .am-plans > div,
+  .cnt-body .am-gallery,
+  .cnt-body .am-gallery > figure {
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+  .cnt-body .cp-timeline-list li::before,
+  .cnt-body .cp-timeline-list::before,
+  .cnt-body .am-deeplinks > a::before,
+  .cnt-body .am-plans > div::before,
+  .cnt-body .am-gallery > figure::before {
+    content: none;
+  }
+  /* The cp-timeline sticky breakout escapes the .cnt-body column to span
+     full case-page width, which is the legacy intent. Make sure it can
+     reach the scrollable .case-page top edge without the cnt-body's
+     own max-width clamping its negative margins. */
+  .case-page .cnt-body > .cp-timeline {
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+    max-width: 100vw;
+  }
 </style>
