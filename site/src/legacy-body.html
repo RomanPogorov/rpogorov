@@ -6544,8 +6544,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 if (valueEl) valueEl.textContent = Math.round(pct) + '%';
                 document.body.dataset.simState =
                     norm > 0.7 ? 'high' :
-                    norm > 0.35 ? 'mid' :
-                    norm > 0.02 ? 'low' : 'zero';
+                    norm > 0.35 ? 'mid' : 'low';
             }
             input.addEventListener('input', (e) => apply(parseFloat(e.target.value)));
             apply(parseFloat(input.value));
