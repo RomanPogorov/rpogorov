@@ -1,0 +1,12 @@
+---
+/**
+ * Tradeoff — `.dc-tradeoff` aside used after a design decision to
+ * acknowledge what's lost. Typed label on the left, body on the right.
+ */
+interface Props { label?: string; }
+const { label = 'trade-off' } = Astro.props;
+---
+<aside class="dc-tradeoff">
+  <span class="label">{label}</span>
+  <div class="body"><slot /></div>
+</aside>

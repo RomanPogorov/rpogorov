@@ -1,0 +1,33 @@
+---
+/**
+ * Video — single video block with optional poster + caption.
+ * Autoplay-muted-loop by default (case-page videos are silent ambient
+ * loops). Set `controls` for explicit playback control.
+ *
+ * Usage in MDX:
+ *   <Video src="/.../clip.mp4" poster="/.../still.png"
+ *          caption="// clarity — rejection guidance" portrait />
+ */
+interface Props {
+  src: string;
+  poster?: string;
+  caption?: string;
+  portrait?: boolean;
+  controls?: boolean;
+}
+const { src, poster, caption, portrait = false, controls = false } = Astro.props;
+const figClass = portrait ? 'dc-figure dc-figure-portrait' : 'dc-figure';
+---
+<figure class={figClass} data-media data-kind="video" data-src={src} data-caption={caption ?? ''}>
+  <video
+    src={src}
+    poster={poster}
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    controls={controls}
+  ></video>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

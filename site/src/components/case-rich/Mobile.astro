@@ -1,0 +1,22 @@
+---
+/**
+ * Mobile — portrait-orientation image with caption underneath.
+ * Caps width to phone column (~360px) so vertical screenshots don't
+ * stretch full-width. Wraps in legacy `.dc-figure.dc-figure-portrait`
+ * so it picks up the same framing as other case figures and clicks
+ * open in the lightbox.
+ *
+ * Usage in MDX:
+ *   <Mobile src="/.../mobile.png" alt="..." caption="// urgency banner" />
+ */
+interface Props {
+  src: string;
+  alt?: string;
+  caption?: string;
+}
+const { src, alt = '', caption } = Astro.props;
+---
+<figure class="dc-figure dc-figure-portrait" data-media data-kind="image" data-src={src} data-caption={caption ?? ''}>
+  <img src={src} alt={alt} />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

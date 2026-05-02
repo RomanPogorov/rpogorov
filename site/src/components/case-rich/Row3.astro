@@ -1,0 +1,34 @@
+---
+/**
+ * Row3 — three images side-by-side, each with its own caption. Mobile
+ * collapses to single column. Renders inside `.dc-grid-3`. Each image
+ * is a `.dc-figure` so the lightbox handler picks it up. Portrait flag
+ * caps each tile to phone width (`.dc-figure-portrait`).
+ *
+ * Usage in MDX:
+ *   <Row3 items={[
+ *     { src: '/.../a.png', caption: '// 01' },
+ *     { src: '/.../b.png', caption: '// 02' },
+ *     { src: '/.../c.png', caption: '// 03' },
+ *   ]} portrait />
+ */
+type Item = { src: string; alt?: string; caption?: string; kind?: 'image' | 'video'; poster?: string };
+interface Props {
+  items: Item[];
+  portrait?: boolean;
+}
+const { items, portrait = false } = Astro.props;
+const figClass = portrait ? 'dc-figure dc-figure-portrait' : 'dc-figure';
+---
+<div class="dc-grid-3">
+  {items.map((it) => (
+    <figure class={figClass} data-media data-kind={it.kind ?? 'image'} data-src={it.src} data-caption={it.caption ?? ''}>
+      {it.kind === 'video' ? (
+        <video src={it.src} poster={it.poster} autoplay muted loop playsinline preload="metadata"></video>
+      ) : (
+        <img src={it.src} alt={it.alt ?? ''} />
+      )}
+      {it.caption && <figcaption>{it.caption}</figcaption>}
+    </figure>
+  ))}
+</div>

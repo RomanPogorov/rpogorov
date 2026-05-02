@@ -1,0 +1,25 @@
+---
+/**
+ * StatRow — `.dc-stat-row` 3-column row of small label+text cells.
+ * Used for "Method · Sample · Goals" or "Result · Result · Overall"
+ * blocks where the cells are short, equally weighted summaries.
+ *
+ * Usage in MDX:
+ *   <StatRow items={[
+ *     { label: 'Method', text: '1:1 video calls — users walk through the prototype.' },
+ *     { label: 'Sample', text: '15 users who have accepted and rejected at least one settlement.' },
+ *     { label: 'Goals',  text: 'Decision factors · gaps in understanding · visual cues.' },
+ *   ]} />
+ */
+interface Cell { label: string; text: string; html?: string }
+interface Props { items: Cell[]; }
+const { items } = Astro.props;
+---
+<div class="dc-stat-row">
+  {items.map((it) => (
+    <div class="cell">
+      <span class="lbl">{it.label}</span>
+      {it.html ? <p set:html={it.html} /> : <p>{it.text}</p>}
+    </div>
+  ))}
+</div>

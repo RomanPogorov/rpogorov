@@ -1,0 +1,16 @@
+---
+/**
+ * Wide — full-width landscape image with caption. Wraps in
+ * legacy `.dc-figure` so it sits inside the case body column.
+ */
+interface Props {
+  src: string;
+  alt?: string;
+  caption?: string;
+}
+const { src, alt = '', caption } = Astro.props;
+---
+<figure class="dc-figure" data-media data-kind="image" data-src={src} data-caption={caption ?? ''}>
+  <img src={src} alt={alt} />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
