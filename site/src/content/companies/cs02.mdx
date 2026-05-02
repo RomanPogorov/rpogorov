@@ -4,7 +4,7 @@ name: Health Samurai
 role: Senior Product Designer
 year: 2024 — present
 title: Built the system. <em>Now look inside.</em>
-desc: Дизайн-система, AI-pipeline, контент-экосистема, продуктовые редизайны и инфраструктура — разбито на 12 deep dives. Каждый sub-case описывает что построил, как это работает и что изменилось.
+desc: Design system, AI-pipeline content ecosystem, product redesigns and infrastructure work — broken into twelve deep dives. Each subcase covers what was built, how, and what changed.
 tags: [Design System, Figma ↔ Code, AI Pipeline, FHIR]
 thumb: /rpogorov-dev/app/showcase/cases/cs02-aidbox.png
 order: 2
@@ -14,32 +14,675 @@ showcaseTags: [shadcn, fhir-ready, ai-assisted, bi-directional sync]
 showcaseMeta: Health Samurai · Senior PD · 2023
 ---
 
-import Metric from '@components/case-rich/Metric.astro';
-import Metrics from '@components/case-rich/Metrics.astro';
+import MediaStub from '@components/case-rich/MediaStub.astro';
+import Row2 from '@components/case-rich/Row2.astro';
+import Row3 from '@components/case-rich/Row3.astro';
+import Wide from '@components/case-rich/Wide.astro';
+import Quote from '@components/case-rich/Quote.astro';
 
-## TL;DR
+<a class="hs-cta" href="#hs-01">
+  <span>Start with the system</span>
+  <span class="hs-cta-arrow">→</span>
+</a>
 
-- Stood up a **shadCN-based design system** end-to-end — Figma + code + Storybook in lockstep, plus a Claude skill that pulled components straight out of Figma before that tooling existed elsewhere.
-- Built a markdown-first **landing platform** with an in-browser DOM-aware Claude chat — time-to-landing dropped from 1.5 months to 2–3 days. The whole company website now runs on it.
-- Generators on top of the same primitives — **presentation generator** for any teammate, **kudos image generator** trained on the brand mascot, embedded analytics on every page.
-- Vibe-coded the **FireCamp conference app** in a week — voting, schedule, subscriptions. Became the proof point that convinced C-level the code-first approach was net positive, not a side experiment.
+<div class="hs-meta-row">
+  <span class="hs-meta-item">Role · <strong>Senior Product Designer</strong></span>
+  <span class="hs-meta-dot" aria-hidden="true"></span>
+  <span class="hs-meta-item">2024 — present</span>
+  <span class="hs-meta-dot" aria-hidden="true"></span>
+  <span class="hs-meta-item">FHIR-native infrastructure</span>
+  <span class="hs-meta-dot" aria-hidden="true"></span>
+  <span class="hs-meta-item">Flat org · No QAs · No PMs</span>
+</div>
 
-<Metrics>
-  <Metric label="LANDING CYCLE" was="1.5 mo" now="3 d" description="Median time from MD draft → live landing. <strong>30×</strong> faster turnaround for marketing." points="0,24 30,16 60,9 90,5 120,3" />
-  <Metric label="DS COVERAGE" was="0" now="5 products" description="One component library, five healthcare products: admin console, dev portal, FireCamp app, internal tooling, marketing." points="0,25 30,21 60,14 90,9 120,5" />
-  <Metric label="AI-ASSISTED" was="manual" now="round-trip" description="Claude skill handles Figma → code component scaffolds, devs review, ship through Storybook. <strong>No</strong> raw handoff." points="0,22 30,18 60,12 90,7 120,4" />
-</Metrics>
+<div class="hs-tldr-wrap">
+  <div class="hs-tldr">
+    <div class="hs-tldr-label">// TL;DR</div>
+    <ul class="hs-tldr-list">
+      <li>Stood up a <strong>shadCN-based design system</strong> end-to-end — Figma + code + Storybook in lockstep, plus a Claude skill that pulled components straight out of Figma <em>before that tooling existed elsewhere.</em></li>
+      <li>Built a markdown-first <strong>landing platform</strong> with an in-browser DOM-aware Claude chat — time-to-landing dropped from <em>3 months to 2–3 days</em>. The whole company website now runs on it.</li>
+      <li>Generators on top of the same primitives — <strong>presentation generator</strong> for any teammate, <strong>kudos image generator</strong> trained on the brand mascot, embedded analytics on every page.</li>
+      <li>Vibe-coded the <strong>FireCamp conference app</strong> in a week — voting, schedule, subscriptions. Became the proof point that convinced C-level the code-first approach was real, not a side project.</li>
+    </ul>
+  </div>
+</div>
 
-## Each track, opened up
+<section class="hs-grid-overview" aria-label="Subcases overview">
+  <div class="hs-grid-head">
+    <div class="hs-eyebrow">12 subcases · grouped</div>
+    <h2 class="hs-grid-h2">Each track, opened up. <em>Skim the grid or dive in.</em></h2>
+    <p class="hs-grid-sub">Click any card to jump to the full subcase below — design system, content infrastructure, product redesigns, brand work, and proof artifacts.</p>
+  </div>
+  <div class="hs-grid-cards">
+    <a class="hs-grid-card" href="#hs-01">
+      <div class="hs-grid-card-meta">01 · <strong>System</strong></div>
+      <h3 class="hs-grid-card-title">Design system: Figma to Storybook</h3>
+      <p class="hs-grid-card-desc">Multi-layer DS on shadCN, semantic tokens, bidirectional sync.</p>
+    </a>
+    <a class="hs-grid-card" href="#hs-02">
+      <div class="hs-grid-card-meta">02 · <strong>Tools</strong></div>
+      <h3 class="hs-grid-card-title">Figma ↔ Code mapping skill</h3>
+      <p class="hs-grid-card-desc">Custom Claude skill, 70–80% accuracy first run, iteratively improved.</p>
+    </a>
+    <a class="hs-grid-card is-feature" href="#hs-03">
+      <div class="hs-grid-card-meta">03 · <strong>Process</strong></div>
+      <h3 class="hs-grid-card-title">Landing platform & AI pipeline</h3>
+      <p class="hs-grid-card-desc">From a 3-month chain to MD-in / brand-styled-out in 2–3 days. Block library, "Fixik" DOM-aware Claude chat, blog and docs all run on the same engine.</p>
+      <div class="hs-grid-card-stat">
+        <span class="hs-grid-card-stat-value">3 mo → 2–3 d</span>
+        <span class="hs-grid-card-stat-label">cycle time per landing</span>
+      </div>
+    </a>
+    <a class="hs-grid-card" href="#hs-04">
+      <div class="hs-grid-card-meta">04 · <strong>Process</strong></div>
+      <h3 class="hs-grid-card-title">Presentation generator</h3>
+      <p class="hs-grid-card-desc">Same engine as landings, applied to decks. Three modes, ~1 hr cycle time.</p>
+    </a>
+    <a class="hs-grid-card" href="#hs-05">
+      <div class="hs-grid-card-meta">05 · <strong>Tools</strong></div>
+      <h3 class="hs-grid-card-title">Embedded analytics on every page</h3>
+      <p class="hs-grid-card-desc">PostHog inside every page. Zero context switch.</p>
+    </a>
+    <a class="hs-grid-card" href="#hs-06">
+      <div class="hs-grid-card-meta">06 · <strong>Product</strong></div>
+      <h3 class="hs-grid-card-title">Aidbox redesign</h3>
+      <p class="hs-grid-card-desc">Joint redesign of the flagship FHIR platform UI.</p>
+    </a>
+    <a class="hs-grid-card" href="#hs-07">
+      <div class="hs-grid-card-meta">07 · <strong>Product</strong></div>
+      <h3 class="hs-grid-card-title">MPI Box redesign</h3>
+      <p class="hs-grid-card-desc">Master Patient Index — match, merge, audit.</p>
+    </a>
+    <a class="hs-grid-card" href="#hs-08">
+      <div class="hs-grid-card-meta">08 · <strong>Process</strong></div>
+      <h3 class="hs-grid-card-title">Design support through code</h3>
+      <p class="hs-grid-card-desc">Designer in production repos, branch-and-merge model.</p>
+    </a>
+    <a class="hs-grid-card" href="#hs-09">
+      <div class="hs-grid-card-meta">09 · <strong>Brand</strong></div>
+      <h3 class="hs-grid-card-title">Brand identity & illustrations</h3>
+      <p class="hs-grid-card-desc">Logos, illustrations, mascots, diagram style.</p>
+    </a>
+    <a class="hs-grid-card" href="#hs-10">
+      <div class="hs-grid-card-meta">10 · <strong>Tools</strong></div>
+      <h3 class="hs-grid-card-title">Kudos generator</h3>
+      <p class="hs-grid-card-desc">Mascot-trained image gen, ~200 generations, daily use.</p>
+    </a>
+    <a class="hs-grid-card is-wide" href="#hs-11">
+      <div class="is-wide-body">
+        <div class="hs-grid-card-meta">11 · <strong>Proof</strong></div>
+        <h3 class="hs-grid-card-title">FireCamp app — vibe-coded production</h3>
+        <p class="hs-grid-card-desc">Healthcare-IT conference in Portugal. Shipped a responsive web app in a week — voting, schedule, subscriptions. The proof point that convinced C-level.</p>
+        <div class="hs-grid-card-stat">
+          <span class="hs-grid-card-stat-value">1 wk · ~100</span>
+          <span class="hs-grid-card-stat-label">build · attendees</span>
+        </div>
+      </div>
+    </a>
+    <a class="hs-grid-card" href="#hs-12">
+      <div class="hs-grid-card-meta">12 · <strong>Proof</strong></div>
+      <h3 class="hs-grid-card-title">JSON Parser & vibe-code as method</h3>
+      <p class="hs-grid-card-desc">Working prototypes instead of static mockups, from day one.</p>
+    </a>
+  </div>
+</section>
 
-Click any sub-case below to jump into the full write-up — design system, content infrastructure, product redesigns, brand work, and proof artifacts. Every track is self-contained: what was built, how, and what changed.
+## Timeline · Q1 2024 → Q4 2025
 
-- **Landing platform & AI pipeline** — MD + block library → live page with embedded MCP chat, 3-day cycle replacing month-long figma → review → ship loops.
-- **Design system: Figma to Storybook** — shadCN-based, FHIR-aware variants (resource pickers, value-set autocompletes), bidirectional sync via Code Connect.
-- **Figma — Code mapping skill** — a Claude skill that pulls component specs from Figma before official Code Connect was viable.
-- **Presentation generator** — internal tool: any teammate types markdown, gets a brand-consistent deck.
-- **Embedded analytics on every page** — engagement signals captured in-flow without retro instrumentation.
+Восемь параллельных линий работы. Цвет полоски — про интенсивность: основное направление, продуктовая работа, фоновая активность или короткий заход.
 
-## Под-кейсы (in progress)
+<div class="hs-tl-card">
+  <div class="hs-tl-headstrip">
+    <div class="hs-tl-stamp">// timeline · <b>Q1 2024 → Q4 2025</b> · 8 streams</div>
+    <div class="hs-tl-legend">
+      <span class="hs-tl-legend-item"><i class="hs-tl-sw hs-tl-sw--primary"></i> Основное направление</span>
+      <span class="hs-tl-legend-item"><i class="hs-tl-sw hs-tl-sw--product"></i> Работа над продуктом</span>
+      <span class="hs-tl-legend-item"><i class="hs-tl-sw hs-tl-sw--bg"></i> Идёт фоном</span>
+      <span class="hs-tl-legend-item"><i class="hs-tl-sw hs-tl-sw--short"></i> Короткий проект</span>
+    </div>
+  </div>
 
-Detailed write-ups for FireCamp PWA, the landing-pipeline migration, and the FB community analyzer (which drove the Americor pre-IPO redesign) live in the [articles archive](/rpogorov-dev/app/articles/).
+  <div class="hs-tl-grid" style="--hs-tl-cols: 8;" data-hs-tl>
+    <div class="hs-tl-row hs-tl-row--head">
+      <div class="hs-tl-label" aria-hidden="true"></div>
+      <div class="hs-tl-track">
+        <div class="hs-tl-quarter" style="--c: 1">Q1 24</div>
+        <div class="hs-tl-quarter" style="--c: 2">Q2 24</div>
+        <div class="hs-tl-quarter" style="--c: 3">Q3 24</div>
+        <div class="hs-tl-quarter" style="--c: 4">Q4 24</div>
+        <div class="hs-tl-quarter" style="--c: 5">Q1 25</div>
+        <div class="hs-tl-quarter" style="--c: 6">Q2 25</div>
+        <div class="hs-tl-quarter" style="--c: 7">Q3 25</div>
+        <div class="hs-tl-quarter is-now" style="--c: 8">Q4 25 <span class="hs-tl-now">NOW</span></div>
+      </div>
+    </div>
+    <div class="hs-tl-row">
+      <div class="hs-tl-label"><span class="hs-tl-dash"></span><span class="hs-tl-name">Онбординг и аудит</span><span class="hs-tl-sub">01</span></div>
+      <div class="hs-tl-track"><div class="hs-tl-bar hs-tl-bar--product" style="--s: 1; --e: 1;">Аудит</div></div>
+    </div>
+    <div class="hs-tl-row">
+      <div class="hs-tl-label"><span class="hs-tl-dash"></span><span class="hs-tl-name">Дизайн-система</span><span class="hs-tl-sub">02</span></div>
+      <div class="hs-tl-track">
+        <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 1; --e: 1;">shadCN + semantic слой</div>
+        <div class="hs-tl-bar hs-tl-bar--product" style="--s: 2; --e: 3;">Внедрение, Figma ↔ код</div>
+      </div>
+    </div>
+    <div class="hs-tl-row">
+      <div class="hs-tl-label"><span class="hs-tl-dash"></span><span class="hs-tl-name">Редизайн продуктов</span><span class="hs-tl-sub">03</span></div>
+      <div class="hs-tl-track">
+        <div class="hs-tl-bar hs-tl-bar--product" style="--s: 3; --e: 3;">Aidbox · первая фаза</div>
+        <div class="hs-tl-bar hs-tl-bar--product" style="--s: 5; --e: 6;">MPI Box, Aidbox v2 · DS-миграция</div>
+      </div>
+    </div>
+    <div class="hs-tl-row">
+      <div class="hs-tl-label"><span class="hs-tl-dash"></span><span class="hs-tl-name">Платформа лендингов</span><span class="hs-tl-sub">04</span></div>
+      <div class="hs-tl-track">
+        <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 3; --e: 4;">v1 · MD → Claude → лендинг</div>
+        <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 5; --e: 6;">v2 · визуальный редактор</div>
+        <div class="hs-tl-bar hs-tl-bar--primary" style="--s: 7; --e: 8;">Блог, докс, схемы</div>
+      </div>
+    </div>
+    <div class="hs-tl-row">
+      <div class="hs-tl-label"><span class="hs-tl-dash"></span><span class="hs-tl-name">Генератор презентаций</span><span class="hs-tl-sub">05</span></div>
+      <div class="hs-tl-track"><div class="hs-tl-bar hs-tl-bar--primary" style="--s: 8; --e: 8;">Скилл + редактор</div></div>
+    </div>
+    <div class="hs-tl-row">
+      <div class="hs-tl-label"><span class="hs-tl-dash"></span><span class="hs-tl-name">Бренд и иллюстрации</span><span class="hs-tl-sub">06</span></div>
+      <div class="hs-tl-track">
+        <div class="hs-tl-bar hs-tl-bar--product" style="--s: 1; --e: 2;">Логотипы, маски</div>
+        <div class="hs-tl-bar hs-tl-bar--product" style="--s: 7; --e: 8;">Стиль диаграмм, Mermaid</div>
+      </div>
+    </div>
+    <div class="hs-tl-row">
+      <div class="hs-tl-label"><span class="hs-tl-dash"></span><span class="hs-tl-name">Vibe-code прототипы</span><span class="hs-tl-sub">07</span></div>
+      <div class="hs-tl-track">
+        <div class="hs-tl-bar hs-tl-bar--short" style="--s: 5; --e: 5;">BOF App</div>
+        <div class="hs-tl-bar hs-tl-bar--short" style="--s: 6; --e: 6;">JSON Parser</div>
+        <div class="hs-tl-bar hs-tl-bar--short" style="--s: 7; --e: 7;">FireCamp · 1 нед</div>
+        <div class="hs-tl-bar hs-tl-bar--short" style="--s: 8; --e: 8;">Кудосы</div>
+      </div>
+    </div>
+    <div class="hs-tl-row">
+      <div class="hs-tl-label"><span class="hs-tl-dash"></span><span class="hs-tl-name">Сессии с коллегой</span><span class="hs-tl-sub">08</span></div>
+      <div class="hs-tl-track"><div class="hs-tl-bar hs-tl-bar--bg" style="--s: 3; --e: 8;">Сессии с коллегой-дизайнером, ежедневно</div></div>
+    </div>
+  </div>
+</div>
+
+<a id="hs-01"></a>
+
+## 01 — Design system: Figma to Storybook
+
+`System · 2024 Q3 — ongoing · 4 layers, multi-product`
+
+Multi-layer design system on top of shadCN with semantic tokens, custom states and bidirectional Figma ↔ code synchronization. Used in production by all product teams.
+
+<MediaStub kind="image" name="storybook-overview.png" caption="Storybook overview — components, tokens, documentation" aspect="16-9" />
+
+shadCN was chosen as the base — it provides components and freedom without imposing a visual language. But shadCN is "free": one team takes a button and adds Tailwind utilities to make their version, another team makes their own. With multiple products and teams, this freedom needed limits.
+
+The solution — **a semantic layer underneath shadCN**:
+
+- Unified typography styles
+- Semantic color layer
+- Rewritten components (with Claude) — our state set, additional states not present in shadCN out of the box, enriched inputs and selects
+- Storybook — also serves as documentation
+
+Architecturally: teams use only our components with our tokens. shadCN remains the foundation, but not the extension point — extension happens only through the semantic layer.
+
+### Bidirectional Figma ↔ Code pipeline
+
+Components were built in code first, then returned to Figma. Opposite of the usual order, and intentional: *code is the source of truth, Figma is the representation.*
+
+<Row2
+  items={[
+    { src: '', kind: 'image', caption: 'Token architecture — Root → Semantic → Brand → Platform' },
+    { src: '', kind: 'image', caption: 'Public Figma library' },
+  ]}
+/>
+
+<MediaStub kind="video" name="storybook-walkthrough.mp4" caption="Storybook walkthrough" aspect="16-9" />
+
+<div class="hs-metrics">
+  <div class="hs-metric">
+    <div class="hs-metric-value">All<em>.</em></div>
+    <div class="hs-metric-label">Product teams use it in production</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">Public</div>
+    <div class="hs-metric-label">Figma library (link TBD)</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">shadCN</div>
+    <div class="hs-metric-label">Compatible ecosystem</div>
+  </div>
+</div>
+
+<a id="hs-02"></a>
+
+## 02 — Figma ↔ Code mapping skill
+
+`Tools · custom Claude skill · 70–80% accuracy on first run`
+
+Custom Claude skill that takes a Figma interface as input, maps it to design-system components, identifies states, builds a correspondence table, and asks clarifying questions when uncertain. Used by developers in production.
+
+<MediaStub kind="video" name="skill-in-action.mp4" caption="Skill in action — input Figma frame, output mapping table + component list" aspect="16-9" />
+
+Built when no similar tools existed. The pipeline:
+
+- Designer hands the assembled Figma interface to Claude.
+- Claude scans the registry, sees what components are available, what maps to what it sees, what states each component should use.
+- Builds a correspondence table: what was found, what was mapped, which state where.
+- If anything is unclear — asks a question.
+
+First-run accuracy was **70–80%**. Sometimes wrong on state, padding, or layout. Iteratively improved instructions — quality grew. Now developers use the skill in their work.
+
+<Row2
+  items={[
+    { src: '', caption: 'Example input: Figma frame' },
+    { src: '', caption: 'Example output: mapping table generated by Claude' },
+  ]}
+/>
+
+<div class="hs-metrics">
+  <div class="hs-metric">
+    <div class="hs-metric-value"><em>70–80%</em></div>
+    <div class="hs-metric-label">First-run accuracy, growing through iteration</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">Used</div>
+    <div class="hs-metric-label">By developers in production</div>
+  </div>
+</div>
+
+<a id="hs-03"></a>
+
+## 03 — Landing platform & AI pipeline
+
+`Process shift · 3 months → 2–3 days · 15+ live landings`
+
+Turned landing-page production from manual and chaotic (3 months per landing through C-level alignment) into infrastructure: any non-tech employee drops Claude any text format and gets a brand-styled landing in 2–3 days.
+
+<MediaStub kind="video" name="full-cycle.mp4" caption="Full cycle: MD → Claude → landing → Fixik adjustment → deploy" aspect="16-9" />
+
+The CTO said: *"Guys, this is bullshit. Let's automate this."* So I started building the system step by step.
+
+### v1 — generator on a block library
+
+- Block library in code, designed and assembled by me
+- Claude skill trained on the library
+- Accepts MD / Word / HTML / PDF / archives — any input
+- Locally generates a landing in 10–20 minutes
+- ACP feature "Fixik" — DOM inspector + Claude chat panel through Chrome CLI for live tweaks
+- PR → my design review → release engineer → deploy. Eventually linters and code review tightened — release engineer left the chain.
+
+### v2 — visual block library
+
+After v1, people complained: "We don't have enough visual feedback, we don't understand which blocks exist, we don't see how content lays out."
+
+So I added a separate page with all blocks visible, an edit mode, a "cart" for blocks, JSON/MD export → import to Claude. For people who want visual control instead of "drop MD and get something."
+
+### Then the pipeline absorbed more
+
+- Company blog (MD render with brand typography)
+- Documentation — separate repos, developers commit MD → distilled → production
+- Schemas and diagrams — branded style described in a skill
+- Mermaid diagrams — stylization and systematization
+
+**The whole company website now runs on this system.** Presented at conferences.
+
+<Row2
+  items={[
+    { src: '', kind: 'video', caption: 'Fixik in action — DOM inspect + Claude chat live edit' },
+    { src: '', caption: 'Block library UI with edit mode' },
+  ]}
+/>
+<Row2
+  items={[
+    { src: '', caption: 'Cart drawer with assembled landing structure' },
+    { src: '', caption: 'Before / after — old landing vs new' },
+  ]}
+/>
+
+<div class="hs-metrics">
+  <div class="hs-metric">
+    <div class="hs-metric-value"><em>3 mo</em> → 2–3 d</div>
+    <div class="hs-metric-label">Cycle time per landing</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">15+</div>
+    <div class="hs-metric-label">Live landings on the platform</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">All</div>
+    <div class="hs-metric-label">Of the company website runs on this</div>
+  </div>
+</div>
+
+<a id="hs-04"></a>
+
+## 04 — Presentation generator
+
+`Process shift · ~1 week → ~1 hour · 30+ presentations generated`
+
+Same approach as the landing platform, applied to presentations. Two entry points (drop-and-get + visual editor), three generation modes (Normal / Variety / Madness). About 30 presentations generated, team in love.
+
+<MediaStub kind="video" name="generation-walkthrough.mp4" caption="Generation walkthrough across all three modes" aspect="16-9" />
+
+The problem: lots of sales pitches, lots of presentations. Everyone made them in different tools (Google Slides, Figma, PowerPoint, online services), with different styles. No system, no shared style constants, no reuse.
+
+Took about a month to build.
+
+### Entry point 1 — drop-and-get
+
+Drop MD / text / HTML / PDF into Claude → "make a presentation using Presentation Builder Skill". Three modes:
+
+- **Normal** — built on the block registry. The skill looks at registered blocks and tries to use them. Everything anchored to design tokens, design system, single style.
+- **Variety** — for non-standard input. Generates from content, not from blocks. Still in our style, but inventive — leverages base constants without imitating predefined blocks.
+- **Madness** — total goof-around. Whatever it wants. Mostly for fun, but it's there.
+
+### Entry point 2 — visual editor
+
+Slides + modules + JSON structure → Claude renders a controlled solution. For people who like control: ready page patterns, different elements (text, icons, text-with-icon, cards, dividers), per-slide data import.
+
+The structure is flexible: each module is a JSON node with fields, the visual representation lets you edit content right there or download generated JSON, edit it in your own editor, and feed it back to Claude.
+
+<Row2
+  items={[
+    { src: '', caption: 'Visual editor — slide canvas with module library' },
+    { src: '', caption: 'Generated presentation examples grid' },
+  ]}
+/>
+
+<MediaStub kind="video" name="madness-mode.mp4" caption="Madness mode demo (for fun)" aspect="16-9" />
+
+<div class="hs-metrics">
+  <div class="hs-metric">
+    <div class="hs-metric-value"><em>1 wk</em> → 1 h</div>
+    <div class="hs-metric-label">Cycle time per presentation</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">30+</div>
+    <div class="hs-metric-label">Presentations generated</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">3 / 2</div>
+    <div class="hs-metric-label">Modes / entry points</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">~1 mo</div>
+    <div class="hs-metric-label">To build</div>
+  </div>
+</div>
+
+<a id="hs-05"></a>
+
+## 05 — Embedded analytics on every page
+
+`Tools · PostHog inside every page · zero context switch`
+
+A "Stats" button visible only to logged-in employees on every page of the ecosystem — landing, article, case study, documentation. Click opens a drawer with PostHog data sliced for that specific page. No tool switching, no searching for the page in a global list.
+
+<MediaStub kind="image" name="stats-drawer-landing.png" caption="Stats drawer open on a landing page" aspect="16-9" />
+
+Standard analytics workflow: open separate tool → find the page in a list of all pages → load the dashboard for it. For a company with hundreds of articles, landings, case studies, and docs — that's friction.
+
+The fix: every page knows its own analytics scope. Logged-in employees see a small "Stats" button. Click — drawer slides in with PostHog data filtered to that page: traffic, sources, behavior, conversions, multiple slices.
+
+**The cultural impact** — analytics became part of daily browsing. People look at performance data while reading their own articles or landings. *Authors see their readership without effort.*
+
+<Row3
+  items={[
+    { src: '', caption: 'Stats button placement (zoom on UI)' },
+    { src: '', caption: 'Drawer with sliced metrics — traffic, sources, behavior' },
+    { src: '', caption: 'Different slice — page conversions' },
+  ]}
+/>
+
+<a id="hs-06"></a>
+
+## 06 — Aidbox redesign
+
+`Product · joint with co-designer · ongoing migration to DS`
+
+Improving the UX and UI of Aidbox — the company's flagship FHIR platform — built originally by engineers without a designer. Working in a pair with the co-designer; gradual migration to the new design system continues.
+
+<MediaStub kind="image" name="aidbox-before-after.png" caption="Aidbox interface — before / after comparison" aspect="16-9" />
+
+Pair work model: my co-designer leads the wireframes and primary UX exploration; I join for sessions, design-system migration, and specific flows. Several hours of focused pair work daily.
+
+### Approach
+
+- Reassemble screens in Figma using the new DS components
+- Prototype critical flows
+- Review with developers and clients — dogfooding helps, internal users are real users
+- Iterate, ship, migrate next module
+
+Concrete improvements — TBD per subcase, but key directions: *information architecture cleanup, primary navigation patterns, data-dense view UX, form UX.*
+
+<Row3
+  items={[
+    { src: '', caption: 'Information architecture before / after' },
+    { src: '', caption: 'Key flows redesigned' },
+    { src: '', caption: 'DS migration progress' },
+  ]}
+/>
+
+<a id="hs-07"></a>
+
+## 07 — MPI Box redesign
+
+`Product · MDM Box / Master Patient Index`
+
+Redesign of the Master Patient Index product — handling probabilistic patient matching, merge / unmerge workflows, and audit trails. Complex domain, dense data, real workflow constraints.
+
+<MediaStub kind="image" name="mpi-before-after.png" caption="MPI Box main interface — before / after" aspect="16-9" />
+
+MPI Box manages patient identity reconciliation across systems. Core workflows:
+
+- Probabilistic matching review (typo handling, incomplete data)
+- Merge / unmerge operations with full audit history
+- Custom scoring algorithms configuration
+- Scaling to millions of records — UI has to stay performant and clear
+
+Approach: *redesign existing flows, prototype new ones, validate with engineering team and customers, migrate to new DS.*
+
+<Row3
+  items={[
+    { src: '', caption: 'Match review flow — before / after' },
+    { src: '', caption: 'Merge workflow with audit trail' },
+    { src: '', caption: 'Configuration UI' },
+  ]}
+/>
+
+<a id="hs-08"></a>
+
+## 08 — Design support through code
+
+`Process shift · designer in production repos · review-and-merge`
+
+Started with traditional design sessions — "team implements after." Evolved into a model where I clone the team's repository, branch, refactor and fix UI directly in code. Team reviews and merges. Made possible by the AI-first culture of the company.
+
+<MediaStub kind="image" name="pr-review.png" caption="PR review — design changes in product repo" aspect="16-9" />
+
+### Initial model
+
+- Design session with the team.
+- We discuss what to fix.
+- They go implement.
+- Maybe it ships. Maybe drift.
+
+### Newer model
+
+- Pull the team's repo.
+- Branch.
+- Refactor — port components to the new DS, fix UI bugs, polish.
+- Open PR. Team reviews and merges.
+
+This works because:
+
+- Company is AI-first → designer with code skills isn't an anomaly
+- DS in code → my changes use the same source of truth as their code
+- Pair-work culture → review is fast and trust is built
+
+<a id="hs-09"></a>
+
+## 09 — Brand identity & illustrations
+
+`Brand · joint with co-designer · logos, illustrations, mascots, diagrams`
+
+Full brand redesign in pair with the co-designer — logos for all products, illustration system, mascots, diagram style, marketing templates. The visual language now used across the entire ecosystem.
+
+<MediaStub kind="image" name="brand-system-overview.png" caption="Brand system overview — logos, palette, illustrations" aspect="16-9" />
+
+Built together with the co-designer. Outputs:
+
+- New corporate visual identity
+- Logos for all products in the lineup (Aidbox, Formbox, Termbox, MDMbox, Payerbox, eRxbox, Smartbox, RCMbox)
+- Illustration system — for landings, articles, empty states
+- Mascots
+- Diagram style — translated into a Claude skill for automatic generation
+- Mermaid diagram stylization
+- Marketing templates — LinkedIn, downloads, events
+
+<Row2
+  items={[
+    { src: '', caption: 'Product logos lineup' },
+    { src: '', caption: 'Illustrations grid' },
+  ]}
+/>
+<Row2
+  items={[
+    { src: '', caption: 'Mascots collection' },
+    { src: '', caption: 'Diagram style — before / after' },
+  ]}
+/>
+
+<MediaStub kind="image" name="mermaid-before-after.png" caption="Mermaid diagrams — before / after stylization" aspect="16-9" />
+
+<a id="hs-10"></a>
+
+## 10 — Kudos generator
+
+`Tools · trained on brand mascot · ~200 generations · daily use`
+
+Internal "kudos" currency for thanks between employees runs through a Telegram bot. Built an image generator on a neural network trained on the company's brand mascot — employees write the gist of their thanks, the network generates a picture of the mascot in that scenario. Used daily.
+
+<MediaStub kind="image" name="kudos-grid.png" caption="Kudos generations grid — variety of scenarios with brand mascot" aspect="16-9" />
+
+The kudos system was already running through Telegram, but the messages were text-only. Adding an image per kudos made the gesture more memorable and personal.
+
+The generator:
+
+- Neural network fine-tuned on the brand mascot character
+- Employee writes the kudos message — what they're thanking for, context
+- Generator produces an image of the mascot acting out the scenario
+- Image goes into the Telegram bot's response
+
+<div class="hs-gallery cols-4">
+  <MediaStub kind="image" name="kudos-1.png" aspect="1-1" />
+  <MediaStub kind="image" name="kudos-2.png" aspect="1-1" />
+  <MediaStub kind="image" name="kudos-3.png" aspect="1-1" />
+  <MediaStub kind="image" name="kudos-4.png" aspect="1-1" />
+</div>
+
+<div class="hs-metrics">
+  <div class="hs-metric">
+    <div class="hs-metric-value"><em>~200</em></div>
+    <div class="hs-metric-label">Generations to date</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">Daily</div>
+    <div class="hs-metric-label">Use across the company</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">Mascot</div>
+    <div class="hs-metric-label">Trained on brand character</div>
+  </div>
+</div>
+
+<a id="hs-11"></a>
+
+## 11 — FireCamp app — vibe-coded production
+
+`Proof · 1-week build · ~100 attendees · FireCamp 2025, October`
+
+FireCamp is a major gathering of healthcare-IT leaders organized by Health Samurai in Portugal — Microsoft and other industry leaders attend. In previous years, the entire organization (round tables, discussion topics, navigation) ran on paper. Built a responsive web app in a week. ~100 people used it. The first major vibe-code production story for the company.
+
+<MediaStub kind="image" name="firecamp-schedule.png" caption="FireCamp app — main schedule view" aspect="16-9" />
+
+Features shipped in a week:
+
+- Talk voting
+- Section subscriptions
+- Schedule view
+- Navigation across rooms and topics
+- Responsive — worked on every attendee's phone
+
+### Why it mattered beyond the conference
+
+This was the first big proof for C-level that vibe-code can ship production work. *After FireCamp, support for scaling AI-pipeline work expanded.*
+
+<Row3
+  items={[
+    { src: '', caption: 'Voting screen' },
+    { src: '', caption: 'Schedule' },
+    { src: '', caption: 'Section subscriptions' },
+  ]}
+/>
+
+<MediaStub kind="image" name="firecamp-attendees.png" caption="Attendees using the app at the venue (if available)" aspect="16-9" />
+
+<div class="hs-metrics">
+  <div class="hs-metric">
+    <div class="hs-metric-value"><em>1 wk</em></div>
+    <div class="hs-metric-label">From zero to production</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">~100</div>
+    <div class="hs-metric-label">Attendees used the app</div>
+  </div>
+  <div class="hs-metric">
+    <div class="hs-metric-value">First</div>
+    <div class="hs-metric-label">Major vibe-code production proof</div>
+  </div>
+</div>
+
+<a id="hs-12"></a>
+
+## 12 — JSON Parser & vibe-code as method
+
+`Proof · vibe-code as a default tool · multiple prototypes`
+
+From day one, complex tasks (more than a single screen or simple flow) were assembled in code on React. Working demos instead of static mockups. JSON Parser was one of the visible artifacts — a UI hypothesis prototype for Aidbox, used to validate direction and present to the team.
+
+<MediaStub kind="video" name="json-parser-walkthrough.mp4" caption="JSON Parser — interactive prototype walkthrough" aspect="16-9" />
+
+Vibe-code became the default way to validate hypotheses. Static mockups skip questions that show up only in interaction — performance, edge cases, real keyboard input, scroll behavior. Working prototypes catch them.
+
+### Examples
+
+- **Global menu prototypes** — testing the observability hypothesis for the main product pattern. Multiple variants in code.
+- **BOF Application** — UI for one of the products.
+- **JSON Parser** — concept presentation and UI hypothesis validation for Aidbox.
+
+### Why this matters culturally
+
+In a company without designers in the room every day, working code prototypes gave product conversations real artifacts to react to. *"Look at this" beats "imagine this."*
+
+<Row3
+  items={[
+    { src: '', caption: 'JSON Parser interface' },
+    { src: '', caption: 'Global menu variants' },
+    { src: '', caption: 'BOF Application' },
+  ]}
+/>
+
+## Let's discuss the work
+
+Each subcase has more depth than fits on a page. Happy to walk through any of them — process, decisions, what worked, what didn't, what I'd do differently.
+
+<a class="hs-cta">
+  <span>Get in touch</span>
+  <span class="hs-cta-arrow">→</span>
+</a>

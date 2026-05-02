@@ -38,6 +38,10 @@ const cs01 = companies.find((c) => c.id === 'cs01');
 const cs01Render = cs01 ? await render(cs01) : null;
 const Cs01Content = cs01Render?.Content ?? null;
 
+const cs02 = companies.find((c) => c.id === 'cs02');
+const cs02Render = cs02 ? await render(cs02) : null;
+const Cs02Content = cs02Render?.Content ?? null;
+
 const subRendered = await Promise.all(
   subCases.map(async (entry) => {
     const r = await render(entry);
@@ -120,9 +124,11 @@ const legacyBody = legacyBodyRaw.replace(
   `<div class="cases" id="cases">\n${cardsHtml}\n            </div>`
 );
 
-const [legacyBefore, legacyAfter] = legacyBody.split('<!-- AMERICOR_OVERLAY_MARKER -->');
+const [legacyBefore, afterAmericor] = legacyBody.split('<!-- AMERICOR_OVERLAY_MARKER -->');
+const [legacyMid, legacyAfter] = afterAmericor.split('<!-- HS_OVERLAY_MARKER -->');
 
 const cs01Data = cs01?.data;
+const cs02Data = cs02?.data;
 ---
 
 <Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate">
@@ -151,6 +157,25 @@ const cs01Data = cs01?.data;
         <article class="cnt-body">
           <Cs01Content />
         </article>
+      </div>
+    </section>
+  )}
+
+  <Fragment set:html={legacyMid} />
+
+  {Cs02Content && cs02Data && (
+    <section class="case-page cp-hs" id="case-page-cs02" data-case-page="cs02" aria-label={`${cs02Data.name} case study`}>
+      <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
+        <span class="cp-close-arrow" aria-hidden="true">↑</span>
+        <span>back to showcase</span>
+      </button>
+      <header class="hs-hero">
+        <div class="hs-eyebrow">{cs02Data.name} · {cs02Data.year} · 12 deep dives</div>
+        <h1 class="hs-h1" set:html={cs02Data.title} />
+        <p class="hs-lead">{cs02Data.desc}</p>
+      </header>
+      <div class="cnt-body">
+        <Cs02Content />
       </div>
     </section>
   )}
