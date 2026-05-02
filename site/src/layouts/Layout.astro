@@ -126,6 +126,25 @@ const importMapJson = `{
     --measure-body: 720px;
   }
 
+  /* Accent scale — derived from the case's --acc so a block can paint with
+     5+ distinct shades and still flex with one accent change. The scale is
+     declared on .case-page so each case's inline `--acc` recomputes it.
+     - tint-* mix accent into transparent (work on any bg, dark or light)
+     - mix-* mix accent into white (solid pastels for bright theme)
+     - shade-* mix accent into black (darker variants for hover / borders)
+     Components reading --acc-tint-soft, --acc-shade-strong, etc. recolor
+     end-to-end when accent flips. */
+  .case-page {
+    --acc-tint-soft:   color-mix(in srgb, var(--acc) 5%,  transparent);
+    --acc-tint-medium: color-mix(in srgb, var(--acc) 12%, transparent);
+    --acc-tint-strong: color-mix(in srgb, var(--acc) 22%, transparent);
+    --acc-line:        color-mix(in srgb, var(--acc) 32%, transparent);
+    --acc-mix-soft:    color-mix(in srgb, var(--acc) 8%,  white);
+    --acc-mix-medium:  color-mix(in srgb, var(--acc) 18%, white);
+    --acc-shade-soft:  color-mix(in srgb, var(--acc), black 12%);
+    --acc-shade-strong:color-mix(in srgb, var(--acc), black 22%);
+  }
+
   /* Bright variant — flips every token a case-component reads, so PainCard,
      ImpactStrip, IterCard, Pillar, MetaGrid, Figure render on white with
      dark text and visible card surfaces. The accent (--acc / --acc-rgb)
