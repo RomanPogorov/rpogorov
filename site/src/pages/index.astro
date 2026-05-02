@@ -1,20 +1,108 @@
 ---
 /**
- * /rpogorov-dev/app/ — main entry. Rebuilds the legacy index.html body 1:1
- * inside the Astro layout: same markup, same CSS (loaded globally from
- * legacy.css), same inline scripts. The page is meant to be embedded in the
- * outer legacy index.html via iframe in the slide-in showcase area, but it
- * also stands on its own under /app/.
+ * /rpogorov-dev/app/ — main entry. Builds the legacy main page in Astro,
+ * but the showcase carousel cards (5 company cs0X cards in the "By Company"
+ * tab + 4 sub-case cards in the "By Cases" tab) are server-rendered from
+ * MDX content collections at build time, replacing the hardcoded blocks
+ * in legacy-body.html. Single source of truth: edit the .mdx, the cards
+ * regenerate on next build.
  *
- * Body markup lives at src/legacy-body.html and is injected as raw HTML so
- * Astro's parser doesn't have to interpret 8.8k lines of legacy markup +
- * inline scripts. Inline scripts execute as normal in the browser because
- * set:html lands literally in the served HTML.
+ * The deep overlay content (case-page-cs01/cs02 sections + DEEP_CASES JS
+ * bodies) is still inline in legacy-body.html for now — full MDX→HTML
+ * string render at build time is a follow-up.
  */
 import Layout from '@layouts/Layout.astro';
-import legacyBody from '../legacy-body.html?raw';
+import legacyBodyRaw from '../legacy-body.html?raw';
+import { getCollection } from 'astro:content';
+
+const companies = (await getCollection('companies')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const subCases = (await getCollection('cases')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// Restore <em> after escaping — showcaseTitle uses it for accent words.
+function withEm(s: string): string {
+  return escapeHtml(s)
+    .replace(/&lt;em&gt;/g, '<em>')
+    .replace(/&lt;\/em&gt;/g, '</em>');
+}
+
+// Build the carousel cards block from companies collection
+const cardsHtml = companies
+  .map((c) => {
+    const d = c.data;
+    const title = d.showcaseTitle ?? d.title;
+    const desc = d.showcaseDesc ?? d.desc;
+    const tags = d.showcaseTags ?? d.tags;
+    const meta = d.showcaseMeta ?? `${d.name} · ${d.role} · ${d.year}`;
+    const thumb = d.thumb ?? '';
+    const isOpenable = ['cs01', 'cs02'].includes(c.id);
+    const mediaCls = isOpenable ? 'case-media is-openable' : 'case-media';
+    const openAttr = isOpenable
+      ? ` data-open-case="${c.id}" role="button" tabindex="0" aria-label="Open ${escapeHtml(d.name)} case study"`
+      : '';
+    const openCue = isOpenable
+      ? `<div class="case-media-open-cue" aria-hidden="true"><span class="arrow">↓</span><span>Open case</span></div>`
+      : '';
+    const openBtn = isOpenable
+      ? `<button class="case-open-btn" data-open-case="${c.id}" type="button" aria-label="Open full case"><span class="open-arrow" aria-hidden="true">↓</span><span>Open case</span></button>`
+      : '';
+    return `<article class="case" data-case="${c.id}">
+      <div class="${mediaCls}"${openAttr}>
+        <img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">
+        ${openCue}
+      </div>
+      <div class="case-body">
+        <div class="case-head">
+          <span class="case-no">${c.id.toUpperCase().replace('CS', 'CS/')}</span>
+          <span class="case-role">${escapeHtml(d.role)}</span>
+        </div>
+        <h3 class="case-title">${withEm(title)}</h3>
+        <p class="case-desc">${withEm(desc)}</p>
+        <ul class="case-tags">
+          ${tags.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}
+        </ul>
+        <div class="case-meta">${escapeHtml(meta)}</div>
+        ${openBtn}
+      </div>
+    </article>`;
+  })
+  .join('\n');
+
+// Patch legacy body: replace the hardcoded <div class="cases" id="cases">
+// block with our generated cards.
+const legacyBody = legacyBodyRaw.replace(
+  /<div class="cases" id="cases">[\s\S]*?<\/div>(?=\s*\n\s*<!--\s*By Cases view)/,
+  `<div class="cases" id="cases">\n${cardsHtml}\n            </div>`
+);
+
+// Sub-cases also re-rendered inline as a JSON-friendly array — used by the
+// legacy By Cases tab grid. Body content remains in legacy DEEP_CASES for
+// now (deep overlay rendering); we only override metadata for the tile list.
+const subCasesData = subCases.map((s) => ({
+  id: s.id,
+  company: s.data.company,
+  companyLabel: s.data.companyLabel,
+  title: s.data.title,
+  desc: s.data.desc,
+  metric: s.data.metric ?? '',
+  tags: s.data.tags,
+  thumb: s.data.thumb ?? '',
+  deeplink: s.data.deeplink,
+}));
 ---
 
 <Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate">
+  <script is:inline set:html={`window.__SUBCASES_FROM_MDX = ${JSON.stringify(subCasesData)};`}></script>
   <Fragment set:html={legacyBody} />
 </Layout>
