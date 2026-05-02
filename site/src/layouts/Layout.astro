@@ -107,4 +107,19 @@ const importMapJson = `{
     width: 100vw;
     max-width: 100vw;
   }
+
+  /* signal=0 → полное спокойствие: убираем все мерцающие/глитчевые
+     слои, чтобы wireframe сцена осталась чистой. Layers ниже —
+     все CSS-only overlays из legacy hero. R3F канвас отдельно
+     управляется через body.sim-engaged. */
+  body[data-sim-state="zero"] .layer-interlace,
+  body[data-sim-state="zero"] .layer-holo-flicker,
+  body[data-sim-state="zero"] .layer-grid-burn,
+  body[data-sim-state="zero"] .layer-tear,
+  body[data-sim-state="zero"] .grid-glitch-cell,
+  body[data-sim-state="zero"] .scanlines,
+  body[data-sim-state="zero"] .noise {
+    animation: none !important;
+    opacity: 0 !important;
+  }
 </style>
