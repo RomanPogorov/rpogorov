@@ -20,6 +20,7 @@
  * cs02 will get the same MDX treatment next.
  */
 import Layout from '@layouts/Layout.astro';
+import Lightbox from '@components/case-rich/Lightbox.astro';
 import legacyBodyRaw from '../legacy-body.html?raw';
 import { getCollection, getEntry, render } from 'astro:content';
 
@@ -160,4 +161,6 @@ const americorData = americor?.data;
   )}
 
   <Fragment set:html={legacyAfter} />
+
+  <Lightbox />
 </Layout>

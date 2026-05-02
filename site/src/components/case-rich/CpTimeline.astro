@@ -51,24 +51,63 @@ const { items } = Astro.props;
       const id = btn.dataset.target;
       const el = id ? document.getElementById(id) : null;
       if (el) targetMap.set(el, btn);
-      btn.addEventListener('click', () => {
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
     });
     if ('IntersectionObserver' in window && targetMap.size) {
+      // Find nearest scrolling ancestor — inside the case-page overlay,
+      // it's the .case-page itself (scrolls), not the viewport.
+      function findScrollRoot(el) {
+        let p = el?.parentElement;
+        while (p && p !== document.body) {
+          const cs = getComputedStyle(p);
+          if (
+            (cs.overflowY === 'auto' || cs.overflowY === 'scroll') &&
+            p.scrollHeight > p.clientHeight
+          ) {
+            return p;
+          }
+          p = p.parentElement;
+        }
+        return null;
+      }
+      const root = findScrollRoot(items[0]);
       const io = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             const btn = targetMap.get(entry.target);
             if (!btn) return;
-            if (entry.isIntersecting && entry.intersectionRatio > 0.4) {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
               items.forEach((b) => b.classList.toggle('active', b === btn));
             }
           });
         },
-        { threshold: [0.4, 0.6] }
+        { threshold: [0.3, 0.6], root }
       );
       targetMap.forEach((_, el) => io.observe(el));
     }
+    // Click handler must scroll inside the same scroll root so the IO sees it
+    items.forEach((btn) => {
+      const id = btn.dataset.target;
+      const el = id ? document.getElementById(id) : null;
+      if (!el) return;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // override default smooth scroll if scroll root is non-window
+        const root = (function findRoot(node) {
+          let p = node?.parentElement;
+          while (p && p !== document.body) {
+            const cs = getComputedStyle(p);
+            if ((cs.overflowY === 'auto' || cs.overflowY === 'scroll') && p.scrollHeight > p.clientHeight) return p;
+            p = p.parentElement;
+          }
+          return null;
+        })(el);
+        if (root) {
+          const target = el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop - 24;
+          root.scrollTo({ top: target, behavior: 'smooth' });
+        } else {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
   });
 </script>

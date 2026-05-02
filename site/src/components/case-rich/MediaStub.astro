@@ -18,7 +18,14 @@ interface Props {
 const { kind = 'image', name, caption, aspect = '16-9' } = Astro.props;
 ---
 
-<figure class="am-media" data-kind={kind}>
+<figure
+  class="am-media"
+  data-media
+  data-kind={kind}
+  data-src=""
+  data-stub={name}
+  data-caption={caption ?? ''}
+>
   <div class="am-media-frame" data-aspect={aspect}>
     <div class="am-media-stub">{kind} · {name}</div>
     {kind === 'video' && <div class="am-media-play"></div>}

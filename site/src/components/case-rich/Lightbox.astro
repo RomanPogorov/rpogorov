@@ -1,0 +1,153 @@
+---
+/**
+ * Lightbox — full-screen image / video viewer. 1:1 port of the legacy
+ * `<div class="am-lightbox">` modal. Mounts once at the bottom of the
+ * page; collects every `[data-media]` tile in DOM order and wires click
+ * → open at that index. Stubs (no data-src) render a dashed-box placeholder
+ * with the asset filename so designers can see what's missing.
+ *
+ * Keyboard: ←/→ cycles, Esc closes (capture-phase so it owns the input
+ * while open and doesn't leak to the showcase / case-page handlers).
+ *
+ * Used in /app/index.astro — a single Lightbox per page is enough for
+ * every MediaStub or .cp-fullbleed image inside the case overlay.
+ */
+---
+
+<div class="am-lightbox" id="am-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+  <button class="am-lb-close" id="am-lb-close" type="button">close · esc</button>
+  <button class="am-lb-nav am-lb-prev" id="am-lb-prev" type="button" aria-label="Previous">←</button>
+  <button class="am-lb-nav am-lb-next" id="am-lb-next" type="button" aria-label="Next">→</button>
+  <div class="am-lightbox-stage" id="am-lb-stage" aria-live="polite"></div>
+  <div class="am-lb-caption" id="am-lb-caption"></div>
+  <div class="am-lb-counter" id="am-lb-counter"></div>
+</div>
+
+<script is:inline>
+  (() => {
+    const lb = document.getElementById('am-lightbox');
+    if (!lb) return;
+    const stage = document.getElementById('am-lb-stage');
+    const closeBtn = document.getElementById('am-lb-close');
+    const prevBtn = document.getElementById('am-lb-prev');
+    const nextBtn = document.getElementById('am-lb-next');
+    const captionEl = document.getElementById('am-lb-caption');
+    const counterEl = document.getElementById('am-lb-counter');
+
+    let tiles = Array.from(document.querySelectorAll('[data-media]'));
+    let idx = 0;
+
+    function buildItem(tile) {
+      return {
+        kind: tile.dataset.kind || 'image',
+        src: tile.dataset.src || '',
+        stub: tile.dataset.stub || '',
+        caption: tile.dataset.caption || '',
+      };
+    }
+
+    function render(i) {
+      idx = (i + tiles.length) % tiles.length;
+      const item = buildItem(tiles[idx]);
+      stage.innerHTML = '';
+      if (item.src) {
+        if (item.kind === 'video') {
+          const v = document.createElement('video');
+          v.src = item.src;
+          v.controls = true;
+          v.autoplay = true;
+          v.playsInline = true;
+          stage.appendChild(v);
+        } else {
+          const img = document.createElement('img');
+          img.src = item.src;
+          img.alt = item.caption;
+          stage.appendChild(img);
+        }
+      } else {
+        const placeholder = document.createElement('div');
+        placeholder.style.cssText =
+          'width:min(80vw,1200px);height:min(70vh,720px);display:flex;align-items:center;justify-content:center;border:1px dashed rgba(var(--acc-rgb),0.5);background:repeating-linear-gradient(45deg,transparent 0,transparent 22px,rgba(var(--acc-rgb),0.04) 22px,rgba(var(--acc-rgb),0.04) 23px),rgba(0,0,0,0.4);color:var(--acc);font-family:JetBrains Mono,monospace;letter-spacing:0.28em;text-transform:uppercase;font-size:0.875rem;text-align:center;padding:24px;';
+        placeholder.textContent =
+          (item.kind === 'video' ? '▸ video · ' : 'image · ') + (item.stub || 'placeholder');
+        stage.appendChild(placeholder);
+      }
+      captionEl.textContent = item.caption || '';
+      counterEl.textContent = `${idx + 1} of ${tiles.length}`;
+    }
+
+    function open(i) {
+      // refresh tiles each time — MDX inside the case overlay can be
+      // hidden until __cp.open mounts it; new tiles may appear later
+      tiles = Array.from(document.querySelectorAll('[data-media]'));
+      render(i);
+      lb.classList.add('open');
+      lb.setAttribute('aria-hidden', 'false');
+    }
+    function close() {
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+      stage.innerHTML = '';
+    }
+
+    function bindTile(tile, i) {
+      if (tile.__lbBound) return;
+      tile.__lbBound = true;
+      const trigger = tile.querySelector('.am-media-frame') || tile;
+      trigger.style.cursor = 'zoom-in';
+      trigger.addEventListener('click', () => {
+        tiles = Array.from(document.querySelectorAll('[data-media]'));
+        const newIdx = tiles.indexOf(tile);
+        open(newIdx >= 0 ? newIdx : i);
+      });
+    }
+    tiles.forEach((tile, i) => bindTile(tile, i));
+
+    // Also wire .cp-fullbleed images (legacy hero shots embedded in case
+    // body) — they are big media, deserve lightbox too.
+    document.querySelectorAll('.cp-fullbleed img, figure.am-media img').forEach((img) => {
+      if (img.__lbBound) return;
+      const figure = img.closest('figure, .cp-fullbleed');
+      if (!figure || figure.dataset.media !== undefined) return; // handled above
+      img.__lbBound = true;
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', () => {
+        const tmp = document.createElement('figure');
+        tmp.dataset.media = '';
+        tmp.dataset.kind = 'image';
+        tmp.dataset.src = img.src;
+        tmp.dataset.caption = img.alt || '';
+        document.body.appendChild(tmp);
+        tiles = Array.from(document.querySelectorAll('[data-media]'));
+        const i = tiles.indexOf(tmp);
+        open(i);
+        // cleanup after close
+        setTimeout(() => tmp.remove(), 0);
+      });
+    });
+
+    closeBtn.addEventListener('click', close);
+    prevBtn.addEventListener('click', () => render(idx - 1));
+    nextBtn.addEventListener('click', () => render(idx + 1));
+    lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        render(idx - 1);
+      }
+      if (e.key === 'ArrowRight') {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        render(idx + 1);
+      }
+    }, true);
+  })();
+</script>
