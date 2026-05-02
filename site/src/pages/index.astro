@@ -1,19 +1,27 @@
 ---
 /**
- * /rpogorov-dev/app/ — main entry. Builds the legacy main page in Astro,
- * but the showcase carousel cards (5 company cs0X cards in the "By Company"
- * tab + 4 sub-case cards in the "By Cases" tab) are server-rendered from
- * MDX content collections at build time, replacing the hardcoded blocks
- * in legacy-body.html. Single source of truth: edit the .mdx, the cards
- * regenerate on next build.
+ * /rpogorov-dev/app/ — main entry. The legacy main page rebuilt in Astro,
+ * with two MDX-driven pieces:
  *
- * The deep overlay content (case-page-cs01/cs02 sections + DEEP_CASES JS
- * bodies) is still inline in legacy-body.html for now — full MDX→HTML
- * string render at build time is a follow-up.
+ * 1. Showcase carousel cards (5 cs0X entries) — server-rendered from
+ *    src/content/companies/*.mdx at build time, replacing the hardcoded
+ *    cards block in legacy-body.html. Open Case buttons go through the
+ *    legacy __cp.open() overlay flow (data-open-case="<id>").
+ *
+ * 2. Americor deep overlay — `<section class="case-page" data-case-page=
+ *    "americor">` is rendered server-side here as Astro JSX (NOT set:html),
+ *    with the MDX `<Content />` mounted inside. Clicking Open Case on cs01
+ *    in the carousel triggers the legacy slide-up animation; the overlay
+ *    is filled with rendered MDX (HeroShot, Timeline, Metrics, BeforeAfter
+ *    + clean markdown). Single source of truth: edit americor.mdx → it
+ *    updates both the carousel card AND the overlay content.
+ *
+ * The deep cs02 overlay still lives inline in legacy-body.html for now;
+ * cs02 will get the same MDX treatment next.
  */
 import Layout from '@layouts/Layout.astro';
 import legacyBodyRaw from '../legacy-body.html?raw';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 
 const companies = (await getCollection('companies')).sort(
   (a, b) => a.data.order - b.data.order
@@ -21,6 +29,12 @@ const companies = (await getCollection('companies')).sort(
 const subCases = (await getCollection('cases')).sort(
   (a, b) => a.data.order - b.data.order
 );
+
+// Americor overlay MDX content
+const americor = await getEntry('companies', 'americor');
+const { Content: AmericorContent } = americor ? await render(americor) : { Content: null };
+
+const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
 
 function escapeHtml(s: string): string {
   return s
@@ -30,23 +44,25 @@ function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
-// Restore <em> after escaping — showcaseTitle uses it for accent words.
+// Restore <em> after escaping — showcase fields use it for accent words.
 function withEm(s: string): string {
   return escapeHtml(s)
     .replace(/&lt;em&gt;/g, '<em>')
     .replace(/&lt;\/em&gt;/g, '</em>');
 }
 
-const baseUrl = `${import.meta.env.BASE_URL}`.replace(/\/$/, '');
-
-// Map known company slug → display CS/0X label for the eyebrow
-function caseLabel(id: string, idx: number): string {
+function caseLabel(_id: string, idx: number): string {
   return `CS/${String(idx + 1).padStart(2, '0')}`;
 }
 
-// Build the carousel cards block from companies collection. Open Case
-// is a plain anchor to the deep MDX page (/company/{id}/) — no more
-// overlay JS for company cards. Single source of truth.
+// Which cs0X cards have a deep overlay wired up. cs01 → americor overlay
+// (rendered below from MDX). cs02 → legacy inline overlay still in
+// legacy-body.html. cs03/04/05 — no overlay yet, hide the open button.
+const OVERLAY_ID: Record<string, string> = {
+  americor: 'americor',
+  cs02: 'cs02',
+};
+
 const cardsHtml = companies
   .map((c, i) => {
     const d = c.data;
@@ -55,12 +71,24 @@ const cardsHtml = companies
     const tags = d.showcaseTags ?? d.tags;
     const meta = d.showcaseMeta ?? `${d.name} · ${d.role} · ${d.year}`;
     const thumb = d.thumb ?? '';
-    const href = `${baseUrl}/company/${c.id}/`;
+    const overlayId = OVERLAY_ID[c.id];
+
+    const mediaCls = overlayId ? 'case-media is-openable' : 'case-media';
+    const mediaTrigger = overlayId
+      ? ` data-open-case="${overlayId}" role="button" tabindex="0" aria-label="Open ${escapeHtml(d.name)} case study"`
+      : '';
+    const openCue = overlayId
+      ? `<div class="case-media-open-cue" aria-hidden="true"><span class="arrow">↓</span><span>Open case</span></div>`
+      : '';
+    const openBtn = overlayId
+      ? `<button class="case-open-btn" data-open-case="${overlayId}" type="button" aria-label="Open full case"><span class="open-arrow" aria-hidden="true">↓</span><span>Open case</span></button>`
+      : '';
+
     return `<article class="case" data-case="${c.id}">
-      <a class="case-media is-openable" href="${href}" aria-label="Open ${escapeHtml(d.name)} case study">
+      <div class="${mediaCls}"${mediaTrigger}>
         <img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">
-        <div class="case-media-open-cue" aria-hidden="true"><span class="arrow">↓</span><span>Open case</span></div>
-      </a>
+        ${openCue}
+      </div>
       <div class="case-body">
         <div class="case-head">
           <span class="case-no">${caseLabel(c.id, i)}</span>
@@ -72,24 +100,19 @@ const cardsHtml = companies
           ${tags.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}
         </ul>
         <div class="case-meta">${escapeHtml(meta)}</div>
-        <a class="case-open-btn" href="${href}" aria-label="Open full case">
-          <span class="open-arrow" aria-hidden="true">↓</span><span>Open case</span>
-        </a>
+        ${openBtn}
       </div>
     </article>`;
   })
   .join('\n');
 
-// Patch legacy body: replace the hardcoded <div class="cases" id="cases">
-// block with our generated cards.
 const legacyBody = legacyBodyRaw.replace(
   /<div class="cases" id="cases">[\s\S]*?<\/div>(?=\s*\n\s*<!--\s*By Cases view)/,
   `<div class="cases" id="cases">\n${cardsHtml}\n            </div>`
 );
 
-// Sub-cases also re-rendered inline as a JSON-friendly array — used by the
-// legacy By Cases tab grid. Body content remains in legacy DEEP_CASES for
-// now (deep overlay rendering); we only override metadata for the tile list.
+const [legacyBefore, legacyAfter] = legacyBody.split('<!-- AMERICOR_OVERLAY_MARKER -->');
+
 const subCasesData = subCases.map((s) => ({
   id: s.id,
   company: s.data.company,
@@ -101,9 +124,40 @@ const subCasesData = subCases.map((s) => ({
   thumb: s.data.thumb ?? '',
   deeplink: s.data.deeplink,
 }));
+
+const americorData = americor?.data;
 ---
 
 <Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate">
   <script is:inline set:html={`window.__SUBCASES_FROM_MDX = ${JSON.stringify(subCasesData)};`}></script>
-  <Fragment set:html={legacyBody} />
+  <Fragment set:html={legacyBefore} />
+
+  {AmericorContent && americorData && (
+    <section class="case-page" id="case-page-americor" data-case-page="americor" aria-label={`${americorData.name} case study`}>
+      <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
+        <span class="cp-close-arrow" aria-hidden="true">↑</span>
+        <span>back to showcase</span>
+      </button>
+      <div class="cp-inner">
+        <header class="cp-hero">
+          <div class="cp-meta">
+            <span class="cp-meta-no">CS/01</span>
+            <span class="cp-meta-divider"></span>
+            <span>{americorData.name}</span>
+            <span class="cp-meta-divider"></span>
+            <span>{americorData.role}</span>
+            <span class="cp-meta-divider"></span>
+            <span>{americorData.year}</span>
+          </div>
+          <h1 class="cp-title" set:html={americorData.title} />
+          <p class="cp-sub">{americorData.desc}</p>
+        </header>
+        <article class="cnt-body">
+          <AmericorContent />
+        </article>
+      </div>
+    </section>
+  )}
+
+  <Fragment set:html={legacyAfter} />
 </Layout>

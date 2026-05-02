@@ -59,4 +59,15 @@ const importMapJson = `{
 
 <style is:global>
   @import '../styles/legacy.css';
+  @import '../styles/tokens.css';
+  @import '../styles/content.css';
+
+  /* Inside the cs0X overlay we mount the MDX body in a `.cnt-body` wrapper
+     so content.css typography (h2/h3/p/ul/blockquote/code/pre/table)
+     applies to the markdown prose. Legacy .am-* / .cp-* / .case-page
+     classes still style the rich-component islands. */
+  .case-page .cnt-body {
+    max-width: var(--measure-content);
+    margin: 0 auto;
+  }
 </style>
