@@ -279,13 +279,16 @@ const cs02Data = cs02?.data;
   {
     subRendered.map(({ entry, Content }) => {
       const d = entry.data;
+      const themeClass = d.theme === 'bright' ? 'cp-bright' : '';
       return (
         <section
-          class="case-page"
+          class:list={['case-page', themeClass]}
           id={`case-page-${d.deeplink}`}
           data-case-page={d.deeplink}
+          data-theme={d.theme}
           aria-label={`${d.title} case study`}
         >
+          <button class="cp-theme-toggle" data-cp-theme-toggle type="button" aria-label="Toggle theme">◐</button>
           <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
             <span class="cp-close-arrow" aria-hidden="true">↑</span>
             <span>back to {d.companyLabel}</span>
@@ -321,6 +324,19 @@ const cs02Data = cs02?.data;
   }
 
   <Fragment set:html={legacyAfter} />
+
+  <script is:inline>
+    // Theme toggle inside sub-case overlays — bright (default for new sub-
+    // cases) ↔ dark. cs01 (Americor) overlay doesn't render this button
+    // so it stays dark. Toggling adds/removes .cp-bright on the section.
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-cp-theme-toggle]');
+      if (!btn) return;
+      const page = btn.closest('.case-page');
+      if (!page) return;
+      page.classList.toggle('cp-bright');
+    });
+  </script>
 
   <script is:inline>
     // Override legacy __dc.open / __dc.close to proxy to __cp so the

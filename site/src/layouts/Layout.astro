@@ -108,4 +108,29 @@ const importMapJson = `{
     max-width: 100vw;
   }
 
+  /* Theme toggle button on sub-case overlays */
+  .cp-theme-toggle {
+    position: absolute;
+    top: 24px;
+    right: 96px;
+    z-index: 40;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+  }
+  .cp-theme-toggle:hover { border-color: rgba(var(--acc-rgb), 0.7); }
+  .case-page.cp-bright .cp-theme-toggle {
+    border-color: rgba(0, 0, 0, 0.18);
+    background: rgba(255, 255, 255, 0.85);
+    color: #0b1018;
+  }
+
 </style>
