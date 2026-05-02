@@ -33,6 +33,12 @@ const companies = (await getCollection('companies')).sort(
 const subCases = (await getCollection('cases')).sort(
   (a, b) => a.data.order - b.data.order
 );
+const rightPanel = (await getCollection('rightPanel')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const tasks = rightPanel.filter((e) => e.data.kind === 'pain');
+const strengths = rightPanel.filter((e) => e.data.kind === 'strength');
+const releases = rightPanel.filter((e) => e.data.kind === 'release');
 
 const cs01 = companies.find((c) => c.id === 'cs01');
 const cs01Render = cs01 ? await render(cs01) : null;
@@ -119,9 +125,98 @@ const cardsHtml = companies
   })
   .join('\n');
 
-const legacyBody = legacyBodyRaw.replace(
+const tasksHtml = tasks
+  .map(
+    (t) =>
+      `<li class="task-item" data-id="${escapeHtml(t.data.id)}" tabindex="0"><span class="task-text">${escapeHtml(t.data.lead ?? '')}</span></li>`
+  )
+  .join('');
+
+const agentsHtml = strengths
+  .map((s) => {
+    const d = s.data;
+    const name = d.short?.name ?? d.title.split(' ')[0];
+    const tagShort = d.short?.summary ?? '';
+    const meta = d.short?.date ?? '';
+    return `<li class="agent-item" data-id="${escapeHtml(d.id)}">
+        <span class="agent-dot"></span>
+        <div class="agent-body">
+          <div class="agent-name">${escapeHtml(name)} <span class="agent-tag">${escapeHtml(tagShort)}</span></div>
+          <div class="agent-task" data-task>${escapeHtml(d.lead ?? '')}</div>
+          <div class="agent-meta" data-meta>${escapeHtml(meta)}</div>
+        </div>
+      </li>`;
+  })
+  .join('');
+
+const releasesHtml = releases
+  .map((r) => {
+    const d = r.data;
+    const sh = d.short ?? {};
+    return `<li class="release-item" data-id="${escapeHtml(d.id)}" tabindex="0">
+        <div class="release-meta-row">
+          <span class="release-version">${escapeHtml(sh.role ?? '')}</span>
+          <span class="release-date">${escapeHtml(sh.date ?? '')}</span>
+        </div>
+        <div class="release-name">${escapeHtml(sh.name ?? d.title)}</div>
+        <div class="release-summary">${escapeHtml(sh.summary ?? '')}</div>
+      </li>`;
+  })
+  .join('');
+
+// Build DETAIL dictionary keyed by id — same shape legacy JS expects.
+function renderDetailHtml(d: any): string {
+  const stats = (d.stats ?? [])
+    .map((s: any) => `<div class="dw-stat"><div class="dw-stat-k">${s.k}</div><div class="dw-stat-v">${s.v}</div></div>`)
+    .join('');
+  const sections = (d.sections ?? [])
+    .map((s: any) => {
+      const items = s.items.map((it: string) => `<li>${it}</li>`).join('');
+      return `<div class="dw-section"><h3>${s.h}</h3><ul class="dw-list">${items}</ul></div>`;
+    })
+    .join('');
+  const cta = d.cta
+    ? `<div class="dw-cta"><a class="dw-cta-link" data-open-showcase="${d.cta.openShowcase}">${d.cta.label}</a></div>`
+    : '';
+  return `<div class="dw-stats">${stats}</div>${sections}${cta}`;
+}
+
+const detailDict = Object.fromEntries(
+  rightPanel.map((entry) => [
+    entry.data.id,
+    {
+      tag: entry.data.tag,
+      title: entry.data.title,
+      html: renderDetailHtml(entry.data),
+    },
+  ])
+);
+
+let legacyBody = legacyBodyRaw.replace(
   /<div class="cases" id="cases">[\s\S]*?<\/div>(?=\s*\n\s*<!--\s*By Cases view)/,
   `<div class="cases" id="cases">\n${cardsHtml}\n            </div>`
+);
+
+// Replace right-panel lists with content-collection-rendered versions.
+legacyBody = legacyBody
+  .replace(
+    /<ul class="tasks-list" id="tasks-list">[\s\S]*?<\/ul>/,
+    `<ul class="tasks-list" id="tasks-list">${tasksHtml}</ul>`
+  )
+  .replace(
+    /<ul class="agents-list" id="agents-list">[\s\S]*?<\/ul>/,
+    `<ul class="agents-list" id="agents-list">${agentsHtml}</ul>`
+  )
+  .replace(
+    /<ul class="releases-list" id="releases-list">[\s\S]*?<\/ul>/,
+    `<ul class="releases-list" id="releases-list">${releasesHtml}</ul>`
+  );
+
+// Replace inline DETAIL = {...} dictionary with a window-injected lookup
+// so legacy detail-window JS reads our content-collection data instead.
+legacyBody = legacyBody.replace(
+  /const DETAIL = \{[\s\S]*?\n\s+\};/,
+  'const DETAIL = window.__RIGHT_PANEL_DETAIL || {};'
 );
 
 const [legacyBefore, afterAmericor] = legacyBody.split('<!-- AMERICOR_OVERLAY_MARKER -->');
@@ -132,6 +227,7 @@ const cs02Data = cs02?.data;
 ---
 
 <Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate">
+  <script is:inline set:html={`window.__RIGHT_PANEL_DETAIL = ${JSON.stringify(detailDict)};`}></script>
   <Fragment set:html={legacyBefore} />
 
   {Cs01Content && cs01Data && (

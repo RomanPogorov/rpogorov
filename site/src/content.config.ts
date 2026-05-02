@@ -77,4 +77,46 @@ const articles = defineCollection({
   }),
 });
 
-export const collections = { cases, articles, companies };
+const rightPanel = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/right-panel' }),
+  schema: z.object({
+    id: z.string(),
+    kind: z.enum(['pain', 'strength', 'agent', 'release']),
+    tag: z.string(),
+    title: z.string(),
+    lead: z.string().optional(),
+    short: z
+      .object({
+        role: z.string().optional(),
+        date: z.string().optional(),
+        name: z.string().optional(),
+        summary: z.string().optional(),
+      })
+      .optional(),
+    stats: z
+      .array(
+        z.object({
+          k: z.string(),
+          v: z.string(),
+        })
+      )
+      .default([]),
+    sections: z
+      .array(
+        z.object({
+          h: z.string(),
+          items: z.array(z.string()),
+        })
+      )
+      .default([]),
+    cta: z
+      .object({
+        label: z.string(),
+        openShowcase: z.string(),
+      })
+      .optional(),
+    order: z.number().default(0),
+  }),
+});
+
+export const collections = { cases, articles, companies, rightPanel };
