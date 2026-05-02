@@ -1,0 +1,27 @@
+---
+/**
+ * MediaStub — placeholder figure for assets that aren't shipped yet.
+ * 1:1 with the legacy `<div class="am-media-stub">` blocks: shows a
+ * centered "image · filename.png" or "video · filename.mp4" tag inside
+ * the framed box, optional caption beneath.
+ *
+ * Usage in MDX:
+ *   <MediaStub kind="image" name="design-system-overview.png"
+ *              caption="Структура дизайн-системы" aspect="16-9" />
+ */
+interface Props {
+  kind?: 'image' | 'video';
+  name: string;
+  caption?: string;
+  aspect?: '16-9' | '16-10' | '4-3' | '9-16' | '1-1';
+}
+const { kind = 'image', name, caption, aspect = '16-9' } = Astro.props;
+---
+
+<figure class="am-media" data-kind={kind}>
+  <div class="am-media-frame" data-aspect={aspect}>
+    <div class="am-media-stub">{kind} · {name}</div>
+    {kind === 'video' && <div class="am-media-play"></div>}
+  </div>
+  {caption && <div class="am-media-caption">{caption}</div>}
+</figure>

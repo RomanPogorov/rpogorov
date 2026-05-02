@@ -19,6 +19,8 @@ import Metric from '@components/case-rich/Metric.astro';
 import Metrics from '@components/case-rich/Metrics.astro';
 import Timeline from '@components/case-rich/Timeline.astro';
 import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
+import CpTimeline from '@components/case-rich/CpTimeline.astro';
+import MediaStub from '@components/case-rich/MediaStub.astro';
 
 <HeroShot slides={[
   { kind: 'img', src: '/rpogorov-dev/app/showcase/cs01/main.png', alt: 'Americor — редизайнённый dashboard', tabNum: '01', tabLabel: 'Редизайн' },
@@ -79,6 +81,20 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
   ]}
 />
 
+<CpTimeline items={[
+  { target: 'sec-01', num: '01', name: 'Контекст' },
+  { target: 'sec-02', num: '02', name: 'Старт' },
+  { target: 'sec-03', num: '03', name: 'Подход' },
+  { target: 'sec-04', num: '04', name: 'Система' },
+  { target: 'sec-05', num: '05', name: 'Редизайн' },
+  { target: 'sec-06', num: '06', name: 'Tools' },
+  { target: 'sec-07', num: '07', name: 'Shift' },
+  { target: 'sec-08', num: '08', name: 'Итоги' },
+  { target: 'sec-09', num: '09', name: 'Дальше' },
+]} />
+
+<a id="sec-01"></a>
+
 ## 01 — Контекст. Компания, роль, задача
 
 **Americor** — финтех в сфере debt relief. Помогает людям выходить из долгов через программы реструктуризации. Дочерние бренды в разных штатах со своей визуальной идентификацией — это связано с различиями в законодательстве. Продукт: веб-приложение (десктоп + адаптив) + мобильные приложения для iOS и Android.
@@ -87,6 +103,8 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
 
 **Задача** сразу была тройная: редизайн продуктовой линейки (компания готовилась к IPO); поднять **NPS и CSAT**; построить дизайн-систему с нуля и реально внедрить её в работу — не файл в Figma, а инструмент команды.
 
+<a id="sec-02"></a>
+
 ## 02 — Старт. Что было на старте
 
 Единой дизайн-системы не существовало: переиспользуемые блоки лежали россыпью по файлам Figma, и при создании нового макета дизайнер собирал страницу из разрозненных кусков вручную. Поддерживать и масштабировать так — невозможно.
@@ -94,6 +112,8 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
 Предыдущая попытка фриланс-дизайнера на фирменный стиль провалилась — 40–50% за полгода, человек ушёл. Разработчики тратили *недели* на поиск «источника правды» для компонентов.
 
 Главное: **никаких артефактов о том, как устроен продукт, не существовало** — ни user flow, ни process maps, ни документации. Понимание жило в головах отдельных людей.
+
+<a id="sec-03"></a>
 
 ## 03 — Подход. Разобраться в продукте с нуля
 
@@ -107,6 +127,8 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
 </figure>
 
 Параллельно — аудит макетов и реальной сборки приложений (поставил тестовые билды, прошёл флоу сам). Опирался на здравый смысл, продуктовый опыт и UX best practices. Часть проблем была очевидной: где-то не хватало информации, где-то запутывали пользователя, где-то некорректно показывали данные, где-то не давали прозрачности по платежам. *Проблем накопилось много.*
+
+<a id="sec-04"></a>
 
 ## 04 — Система. Дизайн-система для трёх платформ
 
@@ -124,6 +146,10 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
   <figcaption>Структура дизайн-системы в Figma — root → semantic → brand → platform.</figcaption>
 </figure>
 
+<MediaStub kind="image" name="design-system-overview.png" caption="Дополнительный обзор: токены, компоненты, governance" aspect="16-9" />
+
+<a id="sec-05"></a>
+
 ## 05 — Редизайн. IPO и адаптация дизайн-системы
 
 Через ~3 месяца работы пришёл бизнес: компания готовится к IPO, нужен полный редизайн. Ситуация нетривиальная — система, спроектированная под существующий дизайн, должна была начать поддерживать новый.
@@ -134,11 +160,45 @@ import BeforeAfter from '@components/case-rich/BeforeAfter.astro';
 
 Middle-дизайнер к моменту начала редизайна ушла. Мы работали вдвоём с junior-дизайнером — я вёл редизайн, контролировал качество, менторил.
 
+### Ключевые флоу — скринкасты
+
+<div class="am-gallery cols-2">
+  <MediaStub kind="video" name="screencast-offer-acceptance.mp4" caption="Принятие offer — пользовательский флоу" aspect="16-10" />
+  <MediaStub kind="video" name="screencast-community.mp4" caption="Community section в работе" aspect="16-10" />
+</div>
+
 ### Иллюстрации и визуальный язык
 
 Параллельно с системной работой решал вопрос с графикой — иллюстрации для пустых состояний, онбординга, ключевых экранов; аватары для коммуникаций.
 
 Сначала генерировал десятки вариантов в разных стилях через нейросети — нужно было найти стиль, который ляжет на бренд. Со временем вырос пайплайн через нодовый редактор: **ComfyUI**, позже **Figma Weavy**. Это позволило стабильно генерировать иллюстрации в едином стиле — *не один раз случайно угадать, а превратить генерацию в управляемый процесс*.
+
+#### Поиск стиля
+
+<div class="am-gallery cols-4">
+  <MediaStub kind="image" name="illustration-style-1.png" aspect="4-3" />
+  <MediaStub kind="image" name="illustration-style-2.png" aspect="4-3" />
+  <MediaStub kind="image" name="illustration-style-3.png" aspect="4-3" />
+  <MediaStub kind="image" name="illustration-style-4.png" aspect="4-3" />
+</div>
+
+#### Финальный набор
+
+<div class="am-gallery cols-3">
+  <MediaStub kind="image" name="final-illustration-1.png" aspect="4-3" />
+  <MediaStub kind="image" name="final-illustration-2.png" aspect="4-3" />
+  <MediaStub kind="image" name="final-illustration-3.png" aspect="4-3" />
+</div>
+
+#### Аватары
+
+<MediaStub kind="image" name="avatars.png" caption="Сетка аватаров для коммуникаций" aspect="16-9" />
+
+#### Пайплайн генерации
+
+<MediaStub kind="video" name="video-generation-pipeline.mp4" caption="ComfyUI → Figma Weavy: управляемая генерация в едином стиле" aspect="16-9" />
+
+<a id="sec-06"></a>
 
 ## 06 — Tools. Vibe-coded инструменты для решений на данных
 
@@ -147,6 +207,14 @@ Middle-дизайнер к моменту начала редизайна ушл
 **NSF Shortfall Simulator.** При проектировании сложной фичи прогнозирования shortfall для платёжных дат столкнулся с запутанной бизнес-логикой. Самостоятельно собрал интерактивный симулятор, который помог разобраться в механике, верифицировать сценарии и ускорить проектирование.
 
 Оба инструмента стали постоянной частью рабочего процесса команды — не только для дизайна.
+
+<div class="am-gallery cols-3">
+  <MediaStub kind="image" name="facebook-parser-ui.png" caption="FB Community Analyzer — UI" aspect="16-10" />
+  <MediaStub kind="image" name="feedback-summary-ui.png" caption="Сводный UI обратной связи" aspect="16-10" />
+  <MediaStub kind="image" name="nsf-shortfall-simulator.png" caption="NSF Shortfall Simulator" aspect="16-10" />
+</div>
+
+<a id="sec-07"></a>
 
 ## 07 — Shift. Code-first процесс и раздел Community
 
@@ -157,6 +225,12 @@ Middle-дизайнер к моменту начала редизайна ушл
 Когда решение было готово, я просил Claude сгенерировать Figma-компоненты для разработчиков и тестировщиков (они работали в своём стеке) — в наших токенах, шрифтах, дизайн-системе. *Передача проходила без расхождений.*
 
 Процесс перевернулся: вместо «дизайн → передача → разработка» стало **«прототип в коде → валидация на работающем продукте → передача готовых компонентов»**.
+
+<MediaStub kind="video" name="screencast-figma-claude-pipeline.mp4" caption="★ Двусторонний пайплайн: Figma → Claude → Figma" aspect="16-9" />
+
+<MediaStub kind="video" name="screencast-community-section.mp4" caption="Community section с переключателями гипотез" aspect="16-9" />
+
+<a id="sec-08"></a>
 
 ## 08 — Итоги. Метрики и решения
 
@@ -190,6 +264,8 @@ Middle-дизайнер к моменту начала редизайна ушл
 - **80 000+** обработанных сообщений из Facebook-группы стали базой решений по редизайну.
 - Onboarding completion вырос (точная цифра — TBD).
 
+<a id="sec-09"></a>
+
 ## 09 — Дальше. Планы на этот год
 
 Я ещё работаю в Americor, поэтому часть истории — про то, что в работе сейчас.
@@ -217,10 +293,30 @@ Middle-дизайнер к моменту начала редизайна ушл
 Перетащи разделитель — слева как было, справа как стало.
 
 <BeforeAfter
-  before="/rpogorov-dev/app/showcase/cs01/desktop-before.jpg"
-  after="/rpogorov-dev/app/showcase/cs01/desktop-after.png"
-  beforeAlt="Desktop до редизайна"
-  afterAlt="Desktop после редизайна"
+  platforms={['desktop', 'mobile']}
+  scenes={[
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      thumb: '/rpogorov-dev/app/showcase/cs01/desktop-after.png',
+      desktop: { before: '/rpogorov-dev/app/showcase/cs01/desktop-before.jpg', after: '/rpogorov-dev/app/showcase/cs01/desktop-after.png' },
+      mobile: { before: '', after: '' },
+    },
+    {
+      id: 'creditor',
+      label: 'Creditors',
+      thumb: '/rpogorov-dev/app/showcase/cs01/creditor-after.png',
+      desktop: { before: '/rpogorov-dev/app/showcase/cs01/creditor-before.png', after: '/rpogorov-dev/app/showcase/cs01/creditor-after.png' },
+      mobile: { before: '', after: '' },
+    },
+    {
+      id: 'offer',
+      label: 'Offer Flow',
+      thumb: '/rpogorov-dev/app/showcase/cs01/offer-after.png',
+      desktop: { before: '/rpogorov-dev/app/showcase/cs01/offer-before.png', after: '/rpogorov-dev/app/showcase/cs01/offer-after.png' },
+      mobile: { before: '', after: '' },
+    },
+  ]}
 />
 
 ## Углублённые кейсы

@@ -1,67 +1,214 @@
 ---
 /**
- * BeforeAfter — drag-the-divider comparison slider. Markup is a single
- * scene per component instance (multi-scene multi-platform with scene
- * picker is heavier — kept simple for the rebuild). CSS in legacy.css
- * (.am-ba-*).
+ * BeforeAfter — drag-the-divider redesign comparator. 1:1 port of the
+ * legacy `<div class="am-ba">` block from index.html: platform tabs
+ * (Desktop / Mobile), per-platform stage with range slider + divider +
+ * handle, scene picker (Dashboard / Creditors / Offer Flow), fullscreen
+ * toggle that moves the block into <body> to escape parent z-index.
  *
  * Usage in MDX:
  *   <BeforeAfter
- *     before="/path/before.jpg"
- *     after="/path/after.png"
- *     beforeAlt="..."
- *     afterAlt="..."
+ *     platforms={['desktop', 'mobile']}
+ *     scenes={[
+ *       { id: 'dashboard', label: 'Dashboard', thumb: '/.../desktop-after.png',
+ *         desktop: { before: '/.../desktop-before.jpg', after: '/.../desktop-after.png' },
+ *         mobile:  { before: '', after: '' } },
+ *       …
+ *     ]}
  *   />
  */
-interface Props {
+interface ImagePair {
   before: string;
   after: string;
-  beforeAlt?: string;
-  afterAlt?: string;
 }
-const { before, after, beforeAlt = '', afterAlt = '' } = Astro.props;
-const id = `ba-${Math.random().toString(36).slice(2, 8)}`;
+interface Scene {
+  id: string;
+  label: string;
+  thumb: string;
+  desktop?: ImagePair;
+  mobile?: ImagePair;
+}
+interface Props {
+  platforms?: Array<'desktop' | 'mobile'>;
+  scenes: Scene[];
+}
+const { platforms = ['desktop'], scenes } = Astro.props;
+const initialScene = scenes[0];
+
+const platformLabel = { desktop: 'Desktop', mobile: 'Mobile' } as const;
+
+const sceneMap = JSON.stringify(
+  Object.fromEntries(
+    scenes.map((s) => [s.id, { desktop: s.desktop ?? { before: '', after: '' }, mobile: s.mobile ?? { before: '', after: '' } }])
+  )
+);
 ---
 
-<div class="am-ba" data-ba data-ba-id={id}>
-  <div class="am-ba-stage" data-platform="default">
-    <img class="am-ba-img am-ba-before-img" src={before} alt={beforeAlt} />
-    <div class="am-ba-after-wrap">
-      <img class="am-ba-img" src={after} alt={afterAlt} />
+<div class="am-ba" data-ba data-ba-scenes-data={sceneMap}>
+  <button type="button" class="am-ba-fullscreen" data-ba-fullscreen aria-label="Toggle fullscreen">Expand</button>
+
+  {platforms.length > 1 && (
+    <div class="am-ba-tabs" role="tablist">
+      {platforms.map((p, i) => (
+        <button
+          class:list={['am-ba-tab', i === 0 ? 'active' : '']}
+          type="button"
+          data-platform={p}
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+        >
+          {platformLabel[p]}
+        </button>
+      ))}
     </div>
-    <span class="am-ba-label before">Before</span>
-    <span class="am-ba-label after">After</span>
-    <div class="am-ba-divider" aria-hidden="true"></div>
-    <div class="am-ba-handle" aria-hidden="true"></div>
-    <input
-      type="range"
-      class="am-ba-range"
-      min="0"
-      max="100"
-      step="0.1"
-      value="50"
-      aria-label="Compare before and after"
-    />
-  </div>
+  )}
+
+  {platforms.map((p, i) => {
+    const pair = (initialScene as any)[p] ?? { before: '', after: '' };
+    return (
+      <div
+        class="am-ba-stage"
+        data-platform={p}
+        {...(i === 0 ? {} : { hidden: true })}
+      >
+        <img class="am-ba-img am-ba-before-img" src={pair.before} alt={`${platformLabel[p]} до редизайна`} />
+        <div class="am-ba-after-wrap">
+          <img class="am-ba-img" src={pair.after} alt={`${platformLabel[p]} после редизайна`} />
+        </div>
+        <span class="am-ba-label before">Before</span>
+        <span class="am-ba-label after">After</span>
+        <div class="am-ba-divider" aria-hidden="true"></div>
+        <div class="am-ba-handle" aria-hidden="true"></div>
+        <input type="range" class="am-ba-range" min="0" max="100" step="0.1" value="50" aria-label="Compare before and after" />
+      </div>
+    );
+  })}
+
+  {scenes.length > 1 && (
+    <div class="am-ba-scenes" data-ba-scenes>
+      {scenes.map((s, i) => (
+        <button
+          type="button"
+          class:list={['am-ba-scene', i === 0 ? 'active' : '']}
+          data-scene={s.id}
+        >
+          <img src={s.thumb} alt="" />
+          <span class="am-ba-scene-label">{s.label}</span>
+        </button>
+      ))}
+    </div>
+  )}
 </div>
 
 <script is:inline>
-  // Wire each before/after on the page once.
-  document.querySelectorAll('[data-ba]').forEach((ba) => {
-    const stage = ba.querySelector('.am-ba-stage');
-    if (!stage) return;
-    const range = stage.querySelector('.am-ba-range');
-    const after = stage.querySelector('.am-ba-after-wrap');
-    const divider = stage.querySelector('.am-ba-divider');
-    const handle = stage.querySelector('.am-ba-handle');
-    if (!range || !after || !divider || !handle) return;
-    function set(v) {
-      const pct = Math.max(0, Math.min(100, Number(v)));
-      after.style.clipPath = `inset(0 0 0 ${pct}%)`;
-      divider.style.left = `${pct}%`;
-      handle.style.left = `${pct}%`;
+  // 1:1 port of legacy am-ba JS — platform tabs, range → --ba-pos CSS var,
+  // scene picker swap, fullscreen toggle that escapes parent stacking
+  // contexts by moving the block into <body>.
+  document.querySelectorAll('[data-ba]:not([data-ba-init])').forEach((block) => {
+    block.setAttribute('data-ba-init', '1');
+    const tabs = block.querySelectorAll('.am-ba-tab');
+    const stages = block.querySelectorAll('.am-ba-stage');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const platform = tab.dataset.platform;
+        tabs.forEach((t) => {
+          const on = t === tab;
+          t.classList.toggle('active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        stages.forEach((s) => {
+          if (s.dataset.platform === platform) s.removeAttribute('hidden');
+          else s.setAttribute('hidden', '');
+        });
+      });
+    });
+
+    stages.forEach((stage) => {
+      stage.style.setProperty('--ba-pos', '50%');
+      const range = stage.querySelector('.am-ba-range');
+      if (!range) return;
+      const apply = () => stage.style.setProperty('--ba-pos', range.value + '%');
+      range.addEventListener('input', apply);
+      range.addEventListener('change', apply);
+      apply();
+    });
+
+    let SCENES = {};
+    try {
+      SCENES = JSON.parse(block.getAttribute('data-ba-scenes-data') || '{}');
+    } catch (e) {}
+    const sceneBtns = Array.from(block.querySelectorAll('.am-ba-scene'));
+    function activateScene(btn) {
+      if (!btn) return;
+      const id = btn.dataset.scene;
+      const data = SCENES[id];
+      if (!data) return;
+      sceneBtns.forEach((b) => b.classList.toggle('active', b === btn));
+      block.querySelectorAll('.am-ba-stage').forEach((stage) => {
+        const platform = stage.dataset.platform;
+        const pair = data[platform];
+        const beforeImg = stage.querySelector('.am-ba-before-img');
+        const afterImg = stage.querySelector('.am-ba-after-wrap img');
+        if (beforeImg) beforeImg.src = pair?.before || '';
+        if (afterImg) afterImg.src = pair?.after || '';
+        stage.classList.toggle('is-scene-empty', !pair?.before && !pair?.after);
+      });
     }
-    set(range.value);
-    range.addEventListener('input', (e) => set(e.target.value));
+    sceneBtns.forEach((btn) => btn.addEventListener('click', () => activateScene(btn)));
+
+    let baHovered = false;
+    block.addEventListener('mouseenter', () => { baHovered = true; });
+    block.addEventListener('mouseleave', () => { baHovered = false; });
+    document.addEventListener('keydown', (e) => {
+      if (e.target?.tagName === 'INPUT' || e.target?.tagName === 'TEXTAREA') return;
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      if (!baHovered && !block.classList.contains('is-fs')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const activeIdx = sceneBtns.findIndex((s) => s.classList.contains('active'));
+      const next = e.key === 'ArrowRight'
+        ? (activeIdx + 1) % sceneBtns.length
+        : (activeIdx - 1 + sceneBtns.length) % sceneBtns.length;
+      activateScene(sceneBtns[next]);
+    }, true);
+
+    const fsBtn = block.querySelector('[data-ba-fullscreen]');
+    let placeholder = null;
+    const enterFs = () => {
+      placeholder = document.createComment('am-ba-placeholder');
+      block.parentNode.insertBefore(placeholder, block);
+      document.body.appendChild(block);
+      block.classList.add('is-fs');
+      document.body.classList.add('am-ba-fs');
+      if (fsBtn) fsBtn.textContent = 'Collapse';
+    };
+    const exitFs = () => {
+      block.classList.remove('is-fs');
+      document.body.classList.remove('am-ba-fs');
+      if (placeholder && placeholder.parentNode) {
+        placeholder.parentNode.replaceChild(block, placeholder);
+        placeholder = null;
+      }
+      if (fsBtn) fsBtn.textContent = 'Expand';
+    };
+    if (fsBtn) {
+      fsBtn.addEventListener('click', () => {
+        if (block.classList.contains('is-fs')) exitFs();
+        else enterFs();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && block.classList.contains('is-fs')) {
+          e.stopImmediatePropagation();
+          exitFs();
+        }
+      }, true);
+    }
+    ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach((ev) => {
+      block.addEventListener(ev, (e) => {
+        if (!block.classList.contains('is-fs')) return;
+        e.stopPropagation();
+      });
+    });
   });
 </script>

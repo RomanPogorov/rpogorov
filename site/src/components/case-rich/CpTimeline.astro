@@ -1,0 +1,74 @@
+---
+/**
+ * CpTimeline — sticky case-page section nav (legacy `<nav class="cp-timeline">`).
+ *
+ * Renders a vertical numbered list of section anchors. Inline JS hooks:
+ * click → smooth scroll to `#${target}`; IntersectionObserver flips the
+ * active class as the user scrolls through the case sections.
+ *
+ * Usage in MDX:
+ *   <CpTimeline items={[
+ *     { target: 'sec-01', num: '01', name: 'Контекст' },
+ *     …
+ *   ]} />
+ */
+interface Item {
+  target: string;
+  num: string;
+  name: string;
+}
+interface Props {
+  items: Item[];
+}
+const { items } = Astro.props;
+---
+
+<nav class="cp-timeline" aria-label="Case timeline">
+  <ol class="cp-timeline-list">
+    {
+      items.map((it, i) => (
+        <li>
+          <button
+            class:list={['cp-tl-item', i === 0 ? 'active' : '']}
+            data-target={it.target}
+            type="button"
+          >
+            <span class="cp-tl-num">{it.num}</span>
+            <span class="cp-tl-name">{it.name}</span>
+          </button>
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<script is:inline>
+  document.querySelectorAll('.cp-timeline:not([data-cp-tl-init])').forEach((nav) => {
+    nav.setAttribute('data-cp-tl-init', '1');
+    const items = Array.from(nav.querySelectorAll('.cp-tl-item'));
+    const targetMap = new Map();
+    items.forEach((btn) => {
+      const id = btn.dataset.target;
+      const el = id ? document.getElementById(id) : null;
+      if (el) targetMap.set(el, btn);
+      btn.addEventListener('click', () => {
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    if ('IntersectionObserver' in window && targetMap.size) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const btn = targetMap.get(entry.target);
+            if (!btn) return;
+            if (entry.isIntersecting && entry.intersectionRatio > 0.4) {
+              items.forEach((b) => b.classList.toggle('active', b === btn));
+            }
+          });
+        },
+        { threshold: [0.4, 0.6] }
+      );
+      targetMap.forEach((_, el) => io.observe(el));
+    }
+  });
+</script>
