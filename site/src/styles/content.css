@@ -287,7 +287,6 @@ video {
 }
 .cnt-body :where(figure img) {
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-soft);
 }
 .cnt-body :where(figcaption) {
   margin-top: var(--space-3);

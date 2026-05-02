@@ -14,6 +14,7 @@ interface Props {
 }
 const { src, alt, caption, aspect = 'landscape', kind = 'img', poster } = Astro.props;
 const figureClass = ['figure', aspect === 'portrait' ? 'is-portrait' : ''].filter(Boolean).join(' ');
+const cleanCaption = caption?.replace(/^\s*\/\/\s*/, '');
 ---
 
 <figure class={figureClass}>
@@ -22,7 +23,7 @@ const figureClass = ['figure', aspect === 'portrait' ? 'is-portrait' : ''].filte
   ) : (
     <video src={src} poster={poster} autoplay muted loop playsinline preload="metadata"></video>
   )}
-  {caption && <figcaption>{caption}</figcaption>}
+  {cleanCaption && <figcaption>{cleanCaption}</figcaption>}
 </figure>
 
 <style>

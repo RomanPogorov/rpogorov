@@ -15,8 +15,9 @@ interface Props {
   caption?: string;
 }
 const { src, alt = '', caption } = Astro.props;
+const cleanCaption = caption?.replace(/^\s*\/\/\s*/, '');
 ---
-<figure class="dc-figure dc-figure-portrait" data-media data-kind="image" data-src={src} data-caption={caption ?? ''}>
+<figure class="dc-figure dc-figure-portrait" data-media data-kind="image" data-src={src} data-caption={cleanCaption ?? ''}>
   <img src={src} alt={alt} />
-  {caption && <figcaption>{caption}</figcaption>}
+  {cleanCaption && <figcaption>{cleanCaption}</figcaption>}
 </figure>
