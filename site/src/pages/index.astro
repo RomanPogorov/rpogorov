@@ -303,31 +303,38 @@ const cs02Data = cs02?.data;
           style={accentStyle}
           aria-label={`${d.title} case study`}
         >
-          <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
-            <span class="cp-close-arrow" aria-hidden="true">↑</span>
-            <span>back to {d.companyLabel}</span>
-          </button>
-          <div class="cp-inner">
-            <header class="cp-hero">
-              <div class="cp-meta">
-                <span class="cp-meta-no">{(d.no ?? 'DEEP').toUpperCase()}</span>
-                <span class="cp-meta-divider"></span>
-                <span>{d.companyLabel}</span>
-                {d.metric && (
-                  <>
-                    <span class="cp-meta-divider"></span>
-                    <span>{d.metric}</span>
-                  </>
-                )}
+          <div class="cp-crumbs-bar">
+            <nav class="dc-crumbs" aria-label="Breadcrumbs">
+              <button type="button" class="dc-crumb" data-cp-crumb="showcase">Showcase</button>
+              <span class="dc-crumb-sep">‹</span>
+              <button type="button" class="dc-crumb" data-cp-crumb-company={d.company}>{d.companyLabel}</button>
+              <span class="dc-crumb-sep">‹</span>
+              <span class="dc-crumb-current">{d.deeplink.toUpperCase()}</span>
+            </nav>
+            <button type="button" class="dc-close" data-cp-close aria-label="Close case">ESC</button>
+          </div>
+          <div class="cp-inner dc-inner">
+            <div class="dc-meta-row">
+              <span class="dc-meta-company">{d.companyLabel}</span>
+              {d.metric && <span class="dc-meta-metric">{d.metric}</span>}
+            </div>
+            <h1 class="dc-title">{d.title}</h1>
+            {d.tags && (
+              <ul class="dc-tags">
+                {d.tags.map((t) => <li>{t}</li>)}
+              </ul>
+            )}
+            {d.desc && <p class="dc-desc">{d.desc}</p>}
+            {d.impact && d.impact.length > 0 && (
+              <div class="dc-impact">
+                {d.impact.map((it) => (
+                  <div class="dc-impact-cell">
+                    <div class="num">{it.num}</div>
+                    <div class="lbl">{it.lbl}</div>
+                  </div>
+                ))}
               </div>
-              <h1 class="cp-title">{d.title}</h1>
-              {d.desc && <p class="cp-sub">{d.desc}</p>}
-              {d.tags && (
-                <ul class="dc-tags">
-                  {d.tags.map((t) => <li>{t}</li>)}
-                </ul>
-              )}
-            </header>
+            )}
             <article class="cnt-body">
               <Content />
             </article>
@@ -517,6 +524,15 @@ const cs02Data = cs02?.data;
             window.__cp.open(m[1]);
           }
         });
+      });
+      // Wire crumb-company button — closes sub-case and opens parent company case.
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-cp-crumb-company]');
+        if (!btn) return;
+        const company = btn.dataset.cpCrumbCompany;
+        if (!company || !window.__cp) return;
+        history.pushState(null, '', `#case/${company}`);
+        window.__cp.open(company);
       });
     });
   </script>

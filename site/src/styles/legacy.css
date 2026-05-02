@@ -2092,48 +2092,58 @@
                 Activated by adding `theme: 'bright'` to a DEEP_CASES entry.
                 Swaps green accents for deep blue, dark surfaces for white,
                 and removes neon glow effects. ===== */
-        .dc-page.dc-bright {
+        :is(.dc-page.dc-bright, .case-page.cp-light) {
             --acc: #059669;
             --acc-rgb: 5, 150, 105;
             background: #f6f8fb;
             color: #0f1419;
         }
-        .dc-page.dc-bright .dc-head {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-head {
             background: linear-gradient(180deg, rgba(246, 248, 251, 0.96), rgba(246, 248, 251, 0.84));
             border-bottom-color: #e2e6ec;
         }
-        .dc-page.dc-bright .dc-crumbs { color: #6b7280; }
-        .dc-page.dc-bright .dc-crumb { color: var(--acc); }
-        .dc-page.dc-bright .dc-crumb:hover { color: #0f1419; text-shadow: none; }
-        .dc-page.dc-bright .dc-crumb-current { color: #0f1419; }
-        .dc-page.dc-bright .dc-crumb-sep { color: #c7ccd4; }
-        .dc-page.dc-bright .dc-close {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumbs { color: #6b7280; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb { color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb:hover { color: #0f1419; text-shadow: none; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb-current { color: #0f1419; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb-sep { color: #c7ccd4; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-close {
             color: #4a5160;
             border-color: #d0d6df;
             background: #fff;
         }
-        .dc-page.dc-bright .dc-close:hover {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-close:hover {
             color: var(--acc);
             border-color: var(--acc);
             background: rgba(var(--acc-rgb), 0.06);
         }
-        .dc-page.dc-bright .dc-meta-company { color: #6b7280; }
-        .dc-page.dc-bright .dc-meta-metric {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-meta-company { color: #6b7280; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-meta-metric {
             color: var(--acc);
             text-shadow: none;
         }
-        .dc-page.dc-bright .dc-title {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-title {
             color: #0f1419;
             text-shadow: none;
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2.25rem, 4.4vw, 3.25rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.022em;
         }
-        .dc-page.dc-bright .dc-tags li {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-impact-cell .num {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.018em;
+        }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-tags li {
             color: var(--acc);
             background: #fff;
             border-color: rgba(var(--acc-rgb), 0.32);
         }
-        .dc-page.dc-bright .dc-desc { color: #2d3340; }
-        .dc-page.dc-bright .dc-body { color: #2d3340; }
-        .dc-page.dc-bright .dc-body h2 {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-desc { color: #2d3340; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body { color: #2d3340; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body h2 {
             font-family: 'Inter', sans-serif;
             font-size: clamp(1.875rem, 3vw, 2.375rem);
             font-weight: 700;
@@ -2144,7 +2154,7 @@
             margin: 72px 0 20px;
             text-shadow: none;
         }
-        .dc-page.dc-bright .dc-body h2.dc-h-major {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body h2.dc-h-major {
             font-family: 'Inter', sans-serif;
             font-size: clamp(2.5rem, 4vw, 3.25rem);
             font-weight: 800;
@@ -2156,69 +2166,69 @@
             margin: 112px 0 28px;
             padding-top: 56px;
         }
-        .dc-page.dc-bright .dc-body h3 { color: #0f1419; }
-        .dc-page.dc-bright .dc-body strong { color: #0f1419; }
-        .dc-page.dc-bright .dc-body code {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body h3 { color: #0f1419; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body strong { color: #0f1419; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body code {
             color: var(--acc);
             background: rgba(var(--acc-rgb), 0.08);
             border-color: rgba(var(--acc-rgb), 0.22);
         }
-        .dc-page.dc-bright .dc-body ul li::before {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body ul li::before {
             background: var(--acc);
             box-shadow: none;
         }
         /* Impact metrics */
-        .dc-page.dc-bright .dc-impact-cell {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-impact-cell {
             background: #fff;
             border-color: #e2e6ec;
             box-shadow: 0 1px 2px rgba(15, 20, 25, 0.04);
         }
-        .dc-page.dc-bright .dc-impact-cell .num {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-impact-cell .num {
             color: #0f1419;
             text-shadow: none;
         }
-        .dc-page.dc-bright .dc-impact-cell .lbl { color: #6b7280; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-impact-cell .lbl { color: #6b7280; }
         /* Project meta grid */
-        .dc-page.dc-bright .dc-meta-grid {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-meta-grid {
             background: #e2e6ec;
             border-color: #e2e6ec;
         }
-        .dc-page.dc-bright .dc-meta-grid > div { background: #fff; }
-        .dc-page.dc-bright .dc-meta-grid .lbl { color: var(--acc); }
-        .dc-page.dc-bright .dc-meta-grid .val { color: #0f1419; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-meta-grid > div { background: #fff; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-meta-grid .lbl { color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-meta-grid .val { color: #0f1419; }
         /* Solution pillars */
-        .dc-page.dc-bright .dc-pillar {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-pillar {
             background: #fff;
             border-color: #e2e6ec;
         }
-        .dc-page.dc-bright .dc-pillar-num { color: var(--acc); }
-        .dc-page.dc-bright .dc-pillar p { color: #2d3340; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-pillar-num { color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-pillar p { color: #2d3340; }
         /* Pain cards */
-        .dc-page.dc-bright .dc-pain-card {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-pain-card {
             background: #fff;
             border-left-color: var(--acc);
             border: 1px solid #e2e6ec;
             border-left: 2px solid var(--acc);
         }
-        .dc-page.dc-bright .dc-pain-card .icon { color: var(--acc); }
-        .dc-page.dc-bright .dc-pain-card h4 { color: #0f1419; }
-        .dc-page.dc-bright .dc-pain-card p { color: #4a5160; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-pain-card .icon { color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-pain-card h4 { color: #0f1419; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-pain-card p { color: #4a5160; }
         /* Quotes */
-        .dc-page.dc-bright .dc-quote {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-quote {
             color: #2d3340;
             border-left-color: rgba(var(--acc-rgb), 0.5);
         }
         /* Iterations — bright theme renders them as stylish callout cards
            with a soft fill and subtle border instead of bare hairline rows. */
-        .dc-page.dc-bright .dc-iter {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-iter {
             background: rgba(var(--acc-rgb), 0.04);
             border: 1px solid rgba(var(--acc-rgb), 0.16);
             border-radius: 12px;
             padding: 20px 24px;
             margin: 14px 0;
         }
-        .dc-page.dc-bright .dc-iter:first-of-type { padding-top: 20px; }
-        .dc-page.dc-bright .dc-iter .label {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-iter:first-of-type { padding-top: 20px; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-iter .label {
             font-family: 'Inter', sans-serif;
             font-size: 12px;
             font-weight: 600;
@@ -2227,13 +2237,13 @@
             color: var(--acc);
             margin: 0 0 8px;
         }
-        .dc-page.dc-bright .dc-iter .label::before { content: ''; }
-        .dc-page.dc-bright .dc-iter .body { color: #2d3340; }
-        .dc-page.dc-bright .dc-iter .body p { font-size: 16px; line-height: 1.6; margin: 0 0 8px; }
-        .dc-page.dc-bright .dc-iter .body p:last-child { margin-bottom: 0; }
-        .dc-page.dc-bright .dc-iter .body strong { color: #0f1419; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-iter .label::before { content: ''; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-iter .body { color: #2d3340; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-iter .body p { font-size: 16px; line-height: 1.6; margin: 0 0 8px; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-iter .body p:last-child { margin-bottom: 0; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-iter .body strong { color: #0f1419; }
         /* H3 — bigger and more top air than the cyberpunk dark scale */
-        .dc-page.dc-bright .dc-body h3 {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body h3 {
             font-family: 'Inter', sans-serif;
             font-size: 1.375rem;
             font-weight: 600;
@@ -2243,34 +2253,34 @@
             margin: 56px 0 14px;
         }
         /* Trade-off */
-        .dc-page.dc-bright .dc-tradeoff {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-tradeoff {
             background: #fff;
             border-color: #e2e6ec;
         }
-        .dc-page.dc-bright .dc-tradeoff .label { color: var(--acc); }
-        .dc-page.dc-bright .dc-tradeoff p { color: #2d3340; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-tradeoff .label { color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-tradeoff p { color: #2d3340; }
         /* Figures — bright theme strips the cyberpunk frame; media sits
            naked on the page background with a centered caption underneath
            and generous breathing room between rows. Phone-sized portrait
            assets cap at ~700px tall so they don't dominate the column.
            Use margin-top/bottom only — leave horizontal auto so dc-figure-portrait
            can centre the capped figure in the column. */
-        .dc-page.dc-bright .dc-figure {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-figure {
             background: transparent;
             border: 0;
             padding: 0;
             margin-top: 32px;
             margin-bottom: 56px;
         }
-        .dc-page.dc-bright .dc-figure img,
-        .dc-page.dc-bright .dc-figure video {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-figure img,
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-figure video {
             max-height: 700px;
             max-width: 100%;
             width: auto;
             margin: 0 auto;
             display: block;
         }
-        .dc-page.dc-bright .dc-figure figcaption {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-figure figcaption {
             font-family: 'Inter', sans-serif;
             font-size: 13px;
             font-weight: 500;
@@ -2280,32 +2290,32 @@
             padding: 16px 0 0;
             text-align: center;
         }
-        .dc-page.dc-bright .dc-grid-2,
-        .dc-page.dc-bright .dc-grid-3 {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-grid-2,
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-grid-3 {
             margin: 32px 0 56px;
         }
-        .dc-page.dc-bright .dc-grid-2 .dc-figure,
-        .dc-page.dc-bright .dc-grid-3 .dc-figure {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-grid-2 .dc-figure,
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-grid-3 .dc-figure {
             margin: 0;
         }
         /* Callout */
-        .dc-page.dc-bright .dc-callout {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-callout {
             background: rgba(var(--acc-rgb), 0.05);
             border-left-color: var(--acc);
             color: #2d3340;
         }
         /* Stat-row */
-        .dc-page.dc-bright .dc-stat-row .cell {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-stat-row .cell {
             background: #fff;
             border-color: #e2e6ec;
         }
-        .dc-page.dc-bright .dc-stat-row .cell .lbl { color: var(--acc); }
-        .dc-page.dc-bright .dc-stat-row .cell p { color: #2d3340; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-stat-row .cell .lbl { color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-stat-row .cell p { color: #2d3340; }
         /* Body anchor links */
-        .dc-page.dc-bright .dc-body a { color: var(--acc); }
-        .dc-page.dc-bright .dc-body a:hover { text-decoration-color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body a { color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-body a:hover { text-decoration-color: var(--acc); }
         /* Section eyebrow */
-        .dc-page.dc-bright .dc-section-eyebrow { color: #6b7280; }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-section-eyebrow { color: #6b7280; }
 
         /* ===== Engagement bright — editorial Inter typography overhaul.
                 Scoped to [data-deep-id="engagement"] so the dark twin and
