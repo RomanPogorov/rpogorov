@@ -485,27 +485,6 @@
             body[data-sim-state="low"] .stage video { animation: none; }
         }
 
-        /* Calm-zero: at signal≈0 we want only the wireframe 3D scene visible.
-           Everything else — grid, scanlines, noise, vignette, interference,
-           tear-bars, interlace, holo-flicker — gets force-hidden. The R3F
-           canvas (#r3f-bg) is left untouched so it keeps rendering normally. */
-        body.sim-quiet .grid,
-        body.sim-quiet .layer-grid-burn,
-        body.sim-quiet .layer-grid-interference,
-        body.sim-quiet .layer-tear,
-        body.sim-quiet .layer-scanlines-amp,
-        body.sim-quiet .layer-interlace,
-        body.sim-quiet .layer-holo-flicker,
-        body.sim-quiet .scanlines,
-        body.sim-quiet .noise,
-        body.sim-quiet .vignette,
-        body.sim-quiet .tear-bar,
-        body.sim-quiet .grid-glitch-cell {
-            opacity: 0 !important;
-            animation: none !important;
-            visibility: hidden !important;
-        }
-
         /* Interlace — every-other-line dim overlay that pulses on/off in
            rapid steps. Only fires at low signal. Replaces the cheesy walking
            gradient with something that reads as a TV losing sync. */
