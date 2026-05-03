@@ -20299,6 +20299,8 @@ See also: Health Samurai Lab: Game of Pools.`,
             draft: '',
             caretAt: 0,
             caretBlink: true,
+            scrollY: 0,        // pixels scrolled UP from the bottom anchor
+            userScrolled: false,  // true once user wheels — suppresses auto-snap
         };
 
         // ---------- Career timeline data (mirrors legacy ROLES) ----------
@@ -20358,13 +20360,14 @@ See also: Health Samurai Lab: Game of Pools.`,
             if (!m || typeof m.id !== 'number') return;
             if (m.id <= lastSeenMsgId) return;
             lastSeenMsgId = m.id;
-            // If we already have a "user" message with the same content as
-            // the latest local entry, don't double-append our own echo.
             const role = mapServerRole(m.role);
             const last = chatState.messages[chatState.messages.length - 1];
             if (role === 'user' && last && last.role === 'user' && last.content === m.text) return;
             chatState.messages.push({ role, content: m.text });
-            chatState.pending = (role === 'user');  // expecting reply
+            chatState.pending = (role === 'user');
+            // Auto-snap to bottom when a new message arrives, unless the
+            // user has explicitly scrolled up to read history.
+            if (!chatState.userScrolled) chatState.scrollY = 0;
             redrawHolo();
         }
 
@@ -20409,6 +20412,10 @@ See also: Health Samurai Lab: Game of Pools.`,
             chatState.messages.push({ role: 'user', content: trimmed });
             chatState.pending = true;
             chatState.error = null;
+            // Sending = explicit jump to bottom; clear userScrolled so the
+            // upcoming reply also auto-snaps.
+            chatState.scrollY = 0;
+            chatState.userScrolled = false;
             redrawHolo();
             try {
                 const r = await fetch('/rpogorov-dev/api/chat/send', {
@@ -20779,12 +20786,9 @@ See also: Health Samurai Lab: Game of Pools.`,
             texCtx.fillText('// CHAT WITH ROMAN\'S CLAUDE', cx, yTop);
             texCtx.font = `${labelSize - 1}px JetBrains Mono, monospace`;
             texCtx.fillStyle = accDim;
-            texCtx.fillText('▸ ask anything about his work, projects, or experience', cx, yTop + 18);
+            texCtx.fillText('▸ ask · scroll up to read history · roman may join the chat', cx, yTop + 18);
 
-            // Build flat render-list of {kind, role?, lines, links}.
-            // Set the body font BEFORE wrapping so measureText uses the right
-            // metrics — otherwise wrap target width mismatches render width
-            // and lines overflow the curve.
+            // Build all blocks — full history, no truncation.
             texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
             const blocks = [];
             for (const m of chatState.messages) {
@@ -20793,7 +20797,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 const lines = [];
                 for (const p of paragraphs) {
                     if (lines.length) lines.push('');
-                    const wrapped = wrapLines(p.replace(/\n/g, ' '), cw);
+                    const wrapped = wrapLines(p.replace(/\n/g, ' '), cw - (m.role === 'roman' ? 24 : 0));
                     for (const w of wrapped) lines.push(w);
                 }
                 const links = extractLinks(m.content);
@@ -20803,61 +20807,92 @@ See also: Health Samurai Lab: Game of Pools.`,
                 blocks.push({ role: 'assistant', lines: ['…thinking'], links: [] });
             }
 
-            // Total height needed: each block has 1 label line + lines + a gap.
-            const blockHeight = (b) => 18 /* label */ + (b.lines.length * lineH) + (b.links.length ? (lineH + 8) : 0) + 18 /* gap */;
+            // Each block: label (18) + body lines + optional link row + gap.
+            const blockHeight = (b) => 22 /* label */ + (b.lines.length * lineH) + (b.links.length ? (40 + 12) : 0) + 18 /* gap */;
 
-            // Pick last N blocks that fit in available area, top-down rendering.
+            // Layout pass — y positions in a "virtual" coordinate space.
+            const layout = blocks.map((b) => ({ block: b, h: blockHeight(b) }));
+            const totalH = layout.reduce((acc, r) => acc + r.h, 0);
+
+            // Visible chat region.
             const yStart = yTop + 48;
-            const avail = yBottom - yStart;
-            let keepFromIdx = 0;
-            let consumed = 0;
-            for (let i = blocks.length - 1; i >= 0; i--) {
-                const h = blockHeight(blocks[i]);
-                if (consumed + h > avail) { keepFromIdx = i + 1; break; }
-                consumed += h;
-            }
-            const visible = blocks.slice(keepFromIdx);
+            const viewportH = yBottom - yStart;
+            const scrollMax = Math.max(0, totalH - viewportH);
+            chatState.scrollY = Math.max(0, Math.min(chatState.scrollY, scrollMax));
 
-            // Render
-            let y = yStart;
-            texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
-            for (const b of visible) {
-                // Role label — 3 roles: user (visitor), claude, roman (owner)
+            // Convert virtual y → screen y. The latest message sits at the
+            // bottom of the viewport when scrollY = 0; positive scrollY
+            // scrolls UP into older history.
+            const yShift = yStart - Math.max(0, totalH - viewportH) + chatState.scrollY;
+
+            // Clip everything to the chat region so older blocks don't leak
+            // above the header / below the input row.
+            texCtx.save();
+            texCtx.beginPath();
+            texCtx.rect(cx - 16, yStart, cw + 32, viewportH);
+            texCtx.clip();
+
+            let virtualY = 0;
+            for (const r of layout) {
+                const blockTop = virtualY + yShift;
+                const blockBot = blockTop + r.h;
+                virtualY += r.h;
+                if (blockBot < yStart) continue;          // entirely above viewport
+                if (blockTop > yBottom) continue;          // entirely below viewport
+
+                const b = r.block;
+                let y = blockTop;
+                const isRoman = b.role === 'roman';
+
+                // Roman messages get a subtle bordered card with glow on the
+                // left edge — distinct from both visitor and Claude.
+                if (isRoman) {
+                    texCtx.save();
+                    texCtx.shadowColor = accSolid;
+                    texCtx.shadowBlur = 10;
+                    texCtx.strokeStyle = accSolid;
+                    texCtx.lineWidth = 1.5;
+                    const cardX = cx - 14;
+                    const cardW = cw + 28;
+                    const cardH = r.h - 16;
+                    texCtx.strokeRect(cardX + 0.5, y + 0.5, cardW, cardH);
+                    // Heavy left edge bar
+                    texCtx.fillStyle = accSolid;
+                    texCtx.fillRect(cardX, y, 4, cardH);
+                    texCtx.restore();
+                }
+
+                // Role label
                 texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
-                let roleLabel = '// CLAUDE';
-                if (b.role === 'user')  { roleLabel = '// YOU';   texCtx.fillStyle = accDim;   }
-                else if (b.role === 'roman') { roleLabel = '// ROMAN · OWNER'; texCtx.fillStyle = accSolid; }
-                else                    { roleLabel = '// CLAUDE'; texCtx.fillStyle = accSolid; }
-                texCtx.fillText(roleLabel, cx, y);
-                y += 18;
+                let roleLabel, labelColor;
+                if (b.role === 'user') { roleLabel = '// YOU'; labelColor = accDim; }
+                else if (isRoman)      { roleLabel = '// ROMAN · OWNER'; labelColor = accSolid; }
+                else                   { roleLabel = '// CLAUDE'; labelColor = accSoft; }
+                texCtx.fillStyle = labelColor;
+                texCtx.fillText(roleLabel, cx + (isRoman ? 8 : 0), y + 4);
+                y += 22;
 
                 // Body lines
                 texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
-                texCtx.fillStyle = accSoft;
+                texCtx.fillStyle = isRoman ? accSolid : accSoft;
                 for (const line of b.lines) {
-                    texCtx.fillText(line, cx, y);
+                    texCtx.fillText(line, cx + (isRoman ? 8 : 0), y);
                     y += lineH;
                 }
 
-                // Links — render as button-sized hit zones with the same
-                // type weight as the body so they read as primary calls.
+                // Links
                 if (b.links.length) {
                     const linkSize = bodySize;
                     const linkH = 36;
                     const linkPadX = 16;
                     const linkPadY = 7;
-                    let lx = cx;
+                    let lx = cx + (isRoman ? 8 : 0);
                     let linkY = y + 6;
                     texCtx.font = `bold ${linkSize}px JetBrains Mono, monospace`;
                     for (const link of b.links) {
                         const text = '▸ ' + link.label;
                         const w = texCtx.measureText(text).width + linkPadX * 2;
-                        // Wrap to a new row if it won't fit on the current one.
-                        if (lx + w > cx + cw) {
-                            lx = cx;
-                            linkY += linkH + 8;
-                        }
-                        // Box with glow
+                        if (lx + w > cx + cw) { lx = cx; linkY += linkH + 8; }
                         texCtx.save();
                         texCtx.shadowColor = accSolid;
                         texCtx.shadowBlur = 12;
@@ -20870,9 +20905,22 @@ See also: Health Samurai Lab: Game of Pools.`,
                         hitZones.push({ x: lx, y: linkY, w, h: linkH, action: 'link:' + link.href });
                         lx += w + 10;
                     }
-                    y = linkY + linkH + 12;
                 }
-                y += 18;
+            }
+            texCtx.restore();
+
+            // Scrollbar indicator on the right edge of the chat region —
+            // shows position when there's more than a viewport of history.
+            if (totalH > viewportH) {
+                const trackX = cx + cw + 8;
+                const trackY = yStart;
+                const trackH = viewportH;
+                texCtx.fillStyle = accFaint;
+                texCtx.fillRect(trackX, trackY, 2, trackH);
+                const thumbH = Math.max(20, trackH * (viewportH / totalH));
+                const thumbTop = trackY + (trackH - thumbH) * (1 - chatState.scrollY / scrollMax);
+                texCtx.fillStyle = accSolid;
+                texCtx.fillRect(trackX, thumbTop, 2, thumbH);
             }
 
             // ---- Bottom prompt input row (fake) ----
@@ -21557,8 +21605,16 @@ See also: Health Samurai Lab: Game of Pools.`,
         // Initial focus if we're already in screencast mode (e.g. hot reload).
         if (document.body.classList.contains('screencast-on')) chatInput.focus();
 
-        // Wheel: swallow so it doesn't scroll the page beneath.
-        mount.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+        // Wheel: in chat view scrolls history. Convention: wheel up
+        // (deltaY < 0) = read older → scrollY grows.
+        mount.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (holoState.view === 'chat') {
+                chatState.scrollY = Math.max(0, chatState.scrollY - e.deltaY);
+                chatState.userScrolled = chatState.scrollY > 0;
+                redrawHolo();
+            }
+        }, { passive: false });
 
         })(); }
     </script>
