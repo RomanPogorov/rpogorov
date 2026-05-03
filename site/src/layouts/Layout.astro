@@ -299,4 +299,227 @@ const importMapJson = `{
   }
   .cp-theme-toggle-global.is-light:hover { border-color: var(--acc); }
 
+  /* ============ SCREENCAST mode — curved holographic display ============ */
+  .ss-toggle {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 90;
+    appearance: none;
+    border: 1px solid rgba(var(--ui-acc-rgb), 0.45);
+    background: rgba(5, 8, 10, 0.6);
+    color: var(--ui-acc);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.625rem;
+    letter-spacing: 0.4em;
+    padding: 8px 18px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color 0.18s, color 0.18s, background 0.18s;
+  }
+  .ss-toggle:hover {
+    border-color: var(--ui-acc);
+    color: #fff;
+    background: rgba(var(--ui-acc-rgb), 0.1);
+  }
+  body.screencast-on .ss-toggle { display: none; }
+
+  /* Hide all green chrome when screencast is on */
+  body.screencast-on .hud,
+  body.screencast-on .hud-left-articles,
+  body.screencast-on .hud-right,
+  body.screencast-on .panel,
+  body.screencast-on .prompt,
+  body.screencast-on .ctl-fab,
+  body.screencast-on .perf-hud,
+  body.screencast-on .stage,
+  body.screencast-on .grid,
+  body.screencast-on .horizon,
+  body.screencast-on .scanlines,
+  body.screencast-on .noise,
+  body.screencast-on .vignette,
+  body.screencast-on [class*="layer-"],
+  body.screencast-on .r3f-bg,
+  body.screencast-on .showcase,
+  body.screencast-on .showcase-cue,
+  body.screencast-on .ctl-fab-eyebrow {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  /* The screencast stage — full-bleed dark scene */
+  .screencast-stage {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 60%, rgba(20, 30, 50, 0.6), transparent 70%),
+      linear-gradient(180deg, #02060c 0%, #050810 60%, #080c14 100%);
+    overflow: hidden;
+    color: #c9d8ec;
+    font-family: 'JetBrains Mono', monospace;
+    perspective: 2400px;
+    perspective-origin: 50% 55%;
+  }
+  .screencast-stage[hidden] { display: none; }
+
+  /* Corner HUD widgets — futuristic info plaques like the reference. */
+  .ss-corner {
+    position: absolute;
+    z-index: 5;
+    padding: 14px 18px;
+    border: 1px solid rgba(120, 180, 240, 0.28);
+    background: linear-gradient(180deg, rgba(8, 18, 32, 0.55), rgba(8, 18, 32, 0.25));
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #b8d4f0;
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    text-shadow: 0 0 6px rgba(120, 180, 240, 0.5);
+    pointer-events: none;
+  }
+  .ss-corner-tl { top: 24px; left: 24px; min-width: 180px; }
+  .ss-corner-tr { top: 24px; right: 24px; text-align: right; min-width: 140px; }
+  .ss-corner-eyebrow { color: #7fbbff; font-weight: 700; }
+  .ss-corner-temp {
+    font-size: 1.75rem;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: #d8eaff;
+    text-shadow: 0 0 12px rgba(120, 180, 240, 0.7);
+  }
+  .ss-corner-clock {
+    font-size: 1.625rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: #d8eaff;
+    text-shadow: 0 0 12px rgba(120, 180, 240, 0.7);
+  }
+  .ss-corner-meta { font-size: 0.625rem; opacity: 0.7; margin-top: 4px; }
+  .ss-corner-data { font-size: 0.625rem; opacity: 0.55; margin-top: 2px; }
+
+  /* The curved display itself.
+     Real curve: we wrap an iframe in a wide container, then use border-radius
+     with separate horizontal/vertical radii (50% / 6%) to clip into a wide
+     curved-edge shape, plus a CSS mask with a radial fade so the left/right
+     edges feather into darkness like a panoramic OLED. The whole assembly
+     sits inside a perspective container with a slight rotateX so it tilts
+     toward the viewer. The iframe inside is flat and fully interactive —
+     scroll, click, anchor links all work. */
+  .ss-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+    transform: translate(-50%, -50%) rotateX(-3deg);
+    width: min(86vw, 1500px);
+    aspect-ratio: 21 / 9;
+    max-height: 78vh;
+  }
+  .ss-display-glow {
+    position: absolute;
+    inset: -40px;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 48% at 50% 50%, rgba(120, 200, 255, 0.16), transparent 70%);
+    filter: blur(20px);
+    z-index: 0;
+  }
+  .ss-display-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50% / 7%;
+    overflow: hidden;
+    box-shadow:
+      inset 0 0 0 1px rgba(180, 220, 255, 0.35),
+      inset 0 0 80px rgba(80, 160, 240, 0.18),
+      0 0 60px rgba(80, 160, 240, 0.25),
+      0 0 120px rgba(40, 90, 180, 0.18);
+    background: #050810;
+    /* Side fade — the left/right edges fade into darkness, selling the curve.
+       The radial mask is wider than tall so the falloff is mostly horizontal. */
+    -webkit-mask-image: radial-gradient(ellipse 78% 100% at 50% 50%, #000 70%, transparent 100%);
+    mask-image: radial-gradient(ellipse 78% 100% at 50% 50%, #000 70%, transparent 100%);
+  }
+  .ss-display-inner {
+    width: 100%;
+    height: 100%;
+    /* Sub-tilt the inner content for a parallax sliver effect */
+    transform: translateZ(0);
+  }
+  .ss-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #0a0e16;
+    color-scheme: light;
+  }
+  /* Top + bottom glowing bezels — thin lines that follow the curve. */
+  .ss-display-bezel {
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(140, 200, 255, 0.0) 8%,
+      rgba(140, 200, 255, 0.85) 50%,
+      rgba(140, 200, 255, 0.0) 92%,
+      transparent 100%);
+    box-shadow: 0 0 12px rgba(140, 200, 255, 0.6);
+    pointer-events: none;
+    z-index: 3;
+    border-radius: 50% / 100%;
+  }
+  .ss-display-bezel-top { top: -1px; }
+  .ss-display-bezel-bottom { bottom: -1px; }
+
+  /* Exit button — sits in bottom-right of the stage. */
+  .ss-exit {
+    position: absolute;
+    bottom: 28px;
+    right: 28px;
+    z-index: 5;
+    appearance: none;
+    border: 1px solid rgba(140, 200, 255, 0.4);
+    background: rgba(5, 10, 18, 0.55);
+    color: #b8d4f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.625rem;
+    letter-spacing: 0.32em;
+    padding: 8px 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color 0.18s, color 0.18s, background 0.18s;
+  }
+  .ss-exit:hover {
+    border-color: #b8d4f0;
+    color: #fff;
+    background: rgba(140, 200, 255, 0.1);
+  }
+  .ss-exit-arrow {
+    display: inline-block;
+    transform: rotate(180deg);
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 760px) {
+    .ss-display { width: 96vw; aspect-ratio: 16 / 10; }
+    .ss-corner { font-size: 0.5625rem; padding: 10px 12px; }
+    .ss-corner-tl, .ss-corner-tr { top: 14px; min-width: 0; }
+    .ss-corner-tl { left: 14px; }
+    .ss-corner-tr { right: 14px; }
+    .ss-corner-temp, .ss-corner-clock { font-size: 1.125rem; }
+  }
+
 </style>
