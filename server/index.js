@@ -185,6 +185,28 @@ async function tgGetUpdates() {
       }
 
       // ---------- Roman side ----------
+      // Owner /build command — triggers an agentic Claude run that creates
+      // a new case file and ships it. Only Roman can do this.
+      const buildMatch = text.match(/^\/build\s+(.+)$/s);
+      if (buildMatch) {
+        const replyId2 = msg.reply_to_message?.message_id;
+        const threadIdB =
+          (replyId2 && state.sentMap[replyId2]) ||
+          state.lastActiveThread ||
+          mostRecentVisitorThread();
+        if (!threadIdB) {
+          sendTelegramMessage(ROMAN_CHAT_ID, '⚠️ /build needs a thread context — reply to a visitor message to scope it, or wait until someone is in the chat.').catch(() => {});
+          continue;
+        }
+        state.lastActiveThread = threadIdB;
+        appendMsg(threadIdB, 'roman', `/build ${buildMatch[1]}`);
+        runOwnerBuild(threadIdB, buildMatch[1]).catch((e) => {
+          console.error('build err:', e);
+          appendMsg(threadIdB, 'claude', `// build failed: ${String(e.message || e).slice(0, 200)}`);
+        });
+        continue;
+      }
+      // Other slash commands: ignore.
       if (text.startsWith('/')) continue;
       const replyId = msg.reply_to_message?.message_id;
       const threadId =
@@ -445,6 +467,72 @@ const claudeQueue = (() => {
     },
   };
 })();
+
+// ---------- Owner build mode ----------
+// Spawns Claude in agentic mode (full tool access, working dir at the
+// portfolio repo) to assemble a custom case MDX, build it, and post the
+// resulting URL into the chat thread. Only triggered by Roman's /build
+// command on Telegram.
+const BUILD_SYSTEM_PROMPT = `You are Claude operating in OWNER MODE on Roman Pogorov's portfolio site. Roman has just asked you (via a /build command from his Telegram bot) to assemble a custom case page LIVE for a visitor who is watching the chat unfold on the portfolio site.
+
+YOUR TASK
+1. Pick a short kebab-case slug for the case (e.g. "live-design-process", "fintech-onboarding-cs"). Avoid colliding with existing files in /root/vault/portfolio/cases/.
+2. Create /root/vault/portfolio/cases/<slug>.mdx with the same frontmatter shape as the existing cases there (look at engagement.mdx, offer-acceptance.mdx, design-system.mdx). Required fields: id, company (cs01 or cs02), companyLabel, title, desc, metric, tags, theme, accent, deeplink, no, role, year, thumb. Body should follow the same MDX style — markdown with optional Wide / Row2 / Row3 / Quote / IterCard imports if useful.
+3. Use the task description Roman gave to drive the content. Be concrete, sharp, and in Roman's tone — short paragraphs, "//" section headers, ▸ bullets, no fluff. Reference his real experience (Health Samurai, Americor, etc.) where appropriate.
+4. Run \`cd /root/rpogorov-dev/site && npx astro build\` to compile.
+5. Once the build succeeds, output ONE final line in this exact format (and nothing else after it):
+   BUILD_OK /case/cs01/<slug>
+   If build fails, output:
+   BUILD_FAIL <one-line error>
+
+Concise progress notes are welcome (one line per phase: "drafting", "writing mdx", "building"). Don't dump giant transcripts.
+
+Tools allowed: Bash, Edit, Write, Read, Glob, Grep. Use them as needed. The site repo is at /root/rpogorov-dev/site, the cases live at /root/vault/portfolio/cases (which is symlinked into src/content/cases).`;
+
+async function runOwnerBuild(threadId, taskText) {
+  appendMsg(threadId, 'claude', `// owner build started\n▸ task: ${taskText.slice(0, 200)}\n▸ status: spinning up agent…`);
+
+  return new Promise((resolve) => {
+    const child = spawn('/root/bin/claude-headless', [
+      '--print',
+      '--model', 'claude-sonnet-4-6',
+      '--allowedTools', 'Bash', 'Edit', 'Write', 'Read', 'Glob', 'Grep',
+      '--add-dir', '/root/vault/portfolio',
+      '--add-dir', '/root/rpogorov-dev/site',
+      '--append-system-prompt', BUILD_SYSTEM_PROMPT,
+      '--dangerously-skip-permissions',
+      taskText,
+    ], { cwd: '/root/rpogorov-dev/site', stdio: ['ignore', 'pipe', 'pipe'] });
+
+    let out = '', err = '';
+    const killer = setTimeout(() => {
+      try { child.kill('SIGTERM'); } catch (_) {}
+      appendMsg(threadId, 'claude', '// build timed out after 8 minutes — the agent will be killed.');
+    }, 8 * 60 * 1000);
+
+    child.stdout.on('data', (d) => out += d);
+    child.stderr.on('data', (d) => err += d);
+    child.on('close', (code) => {
+      clearTimeout(killer);
+      const trimmed = out.trim();
+      // Find the BUILD_OK / BUILD_FAIL marker.
+      const okMatch = trimmed.match(/BUILD_OK\s+(\S+)/);
+      const failMatch = trimmed.match(/BUILD_FAIL\s+(.+)/);
+      if (okMatch) {
+        const url = okMatch[1];
+        appendMsg(threadId, 'claude', `// build complete — your custom case is live\n[Open the case](${url})`);
+      } else if (failMatch) {
+        appendMsg(threadId, 'claude', `// build failed — ${failMatch[1].slice(0, 300)}`);
+      } else if (code !== 0) {
+        appendMsg(threadId, 'claude', `// build agent exited ${code}\n${(err || trimmed).slice(0, 400)}`);
+      } else {
+        // No marker — surface the agent's final words anyway.
+        appendMsg(threadId, 'claude', `// build agent done\n${trimmed.slice(-600)}`);
+      }
+      resolve();
+    });
+  });
+}
 
 function callClaude(messages) {
   return new Promise((resolve, reject) => {
