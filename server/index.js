@@ -233,13 +233,15 @@ const server = http.createServer(async (req, res) => {
     try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
     const thread = String(body.thread || '').slice(0, 64);
     const text = String(body.text || '').trim().slice(0, 2000);
+    // useClaude: when true (default), the server also kicks off Claude in
+    // the background so visitor and Roman see Claude's reply in the same
+    // thread alongside Roman's own TG replies.
+    const useClaude = body.useClaude !== false;
     if (!thread || !text) return send(res, 400, { error: 'thread and text required' });
 
-    // Save visitor message + mark this thread as the active one
     const visitorMsg = appendMsg(thread, 'visitor', text);
     state.lastActiveThread = thread;
 
-    // Send to Telegram, tagged with thread for human readability
     const tgText = `💬 [#${thread.slice(0, 8)}]\n${text}\n\n— reply to this message to respond`;
     let tgMsgId = null;
     try {
@@ -259,6 +261,38 @@ const server = http.createServer(async (req, res) => {
     } catch (e) {
       console.error('sendMessage error:', e.message);
     }
+
+    // Kick off Claude in the background so the HTTP response returns fast
+    // and the visitor sees Claude's reply via long-poll a few seconds later.
+    if (useClaude) {
+      claudeQueue.run(() => {
+        const history = (state.threads[thread]?.msgs || []).map((m) => ({
+          role: m.role === 'visitor' ? 'user' : (m.role === 'roman' ? 'user' : 'assistant'),
+          name: m.role,
+          content: m.text,
+        })).filter((m) => typeof m.content === 'string' && m.content.length > 0);
+        // Re-format for Claude with role hints — when a message came from
+        // Roman tag it explicitly so Claude knows the owner is in the room.
+        const messages = history.map((m) => {
+          if (m.name === 'roman') {
+            return { role: 'user', content: `[ROMAN — owner of this portfolio, talking to you in front of the visitor]: ${m.content}` };
+          }
+          if (m.name === 'visitor') {
+            return { role: 'user', content: m.content };
+          }
+          return { role: 'assistant', content: m.content };
+        });
+        return callClaude(messages.slice(-12));
+      }).then((reply) => {
+        appendMsg(thread, 'claude', reply);
+        // Forward Claude's reply to Roman's TG so he sees it
+        sendTelegramMessage(ROMAN_CHAT_ID, `🤖 [#${thread.slice(0, 8)}] claude:\n${reply}`).catch(() => {});
+      }).catch((err) => {
+        console.error('claude bg error:', err);
+        appendMsg(thread, 'claude', '// internal: claude error — try again in a moment');
+      });
+    }
+
     return send(res, 200, { ok: true, msg: visitorMsg, tg: tgMsgId });
   }
 
