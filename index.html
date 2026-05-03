@@ -20269,11 +20269,29 @@ See also: Health Samurai Lab: Game of Pools.`,
         }
 
         // ---------- Chat state ----------
+        // Stable thread id so the same browser/visitor stays on the same
+        // server-side conversation across reloads. Server gathers history
+        // by thread so Roman can join via Telegram and reply in-line.
+        function getThreadId() {
+            try {
+                let id = localStorage.getItem('ss-chat-thread');
+                if (!id) {
+                    id = 't_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+                    localStorage.setItem('ss-chat-thread', id);
+                }
+                return id;
+            } catch (_) {
+                return 't_' + Math.random().toString(36).slice(2);
+            }
+        }
+        const CHAT_THREAD = getThreadId();
+        let lastSeenMsgId = 0;
+
         const chatState = {
             messages: [
                 {
                     role: 'assistant',
-                    content: 'Hi! I\'m Claude — ask me anything about Roman\'s work, projects, or experience. Try:\n▸ what is the Americor engagement case?\n▸ что такое Fixik?\n▸ какие есть проекты в Health Samurai?',
+                    content: 'Hi! I\'m Claude, the agent for Roman\'s portfolio. Ask me anything about his work — cases, methodology, decisions. If Roman joins, his messages appear here as // ROMAN. Try:\n▸ what is the Americor engagement case?\n▸ что такое Fixik?\n▸ какие есть проекты в Health Samurai?',
                 },
             ],
             pending: false,
@@ -20327,6 +20345,63 @@ See also: Health Samurai Lab: Game of Pools.`,
             texture.needsUpdate = true;
         }
 
+        // Map server role → frontend role.
+        function mapServerRole(r) {
+            if (r === 'visitor') return 'user';
+            if (r === 'claude') return 'assistant';
+            if (r === 'roman') return 'roman';
+            return r;
+        }
+
+        // Append a server message into chatState if we haven't seen it.
+        function ingestServerMsg(m) {
+            if (!m || typeof m.id !== 'number') return;
+            if (m.id <= lastSeenMsgId) return;
+            lastSeenMsgId = m.id;
+            // If we already have a "user" message with the same content as
+            // the latest local entry, don't double-append our own echo.
+            const role = mapServerRole(m.role);
+            const last = chatState.messages[chatState.messages.length - 1];
+            if (role === 'user' && last && last.role === 'user' && last.content === m.text) return;
+            chatState.messages.push({ role, content: m.text });
+            chatState.pending = (role === 'user');  // expecting reply
+            redrawHolo();
+        }
+
+        // Long-poll the thread for new messages (visitor msgs from this
+        // browser, claude replies, and Roman's TG injections).
+        let polling = false;
+        async function pollLoop() {
+            if (polling) return;
+            polling = true;
+            while (document.body.classList.contains('screencast-on') || lastSeenMsgId === 0) {
+                try {
+                    const r = await fetch(
+                        '/rpogorov-dev/api/chat/poll?thread=' + encodeURIComponent(CHAT_THREAD)
+                            + '&after=' + lastSeenMsgId,
+                        { method: 'GET' }
+                    );
+                    const data = await r.json();
+                    if (Array.isArray(data.msgs)) {
+                        for (const m of data.msgs) ingestServerMsg(m);
+                        // If Claude replied (or Roman did), clear pending.
+                        const last = chatState.messages[chatState.messages.length - 1];
+                        if (last && last.role !== 'user') {
+                            chatState.pending = false;
+                            redrawHolo();
+                        }
+                    }
+                } catch (e) { /* swallow, retry */ }
+            }
+            polling = false;
+        }
+        // Kick polling once when the screencast first opens.
+        const pollingObs = new MutationObserver(() => {
+            if (document.body.classList.contains('screencast-on')) pollLoop();
+        });
+        pollingObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        if (document.body.classList.contains('screencast-on')) pollLoop();
+
         async function sendChatMessage(text) {
             if (chatState.pending) return;
             const trimmed = text.trim();
@@ -20336,22 +20411,27 @@ See also: Health Samurai Lab: Game of Pools.`,
             chatState.error = null;
             redrawHolo();
             try {
-                const r = await fetch('/rpogorov-dev/api/chat/claude', {
+                const r = await fetch('/rpogorov-dev/api/chat/send', {
                     method: 'POST',
                     headers: { 'content-type': 'application/json' },
                     body: JSON.stringify({
-                        messages: chatState.messages
-                            .filter((m) => m.role === 'user' || m.role === 'assistant')
-                            .map((m) => ({ role: m.role, content: m.content })),
+                        thread: CHAT_THREAD,
+                        text: trimmed,
+                        useClaude: true,
                     }),
                 });
+                if (!r.ok) {
+                    const data = await r.json().catch(() => ({}));
+                    throw new Error(data.error || 'send failed');
+                }
+                // Don't await Claude here — long-poll will deliver the reply.
+                // But mark the visitor msg id as seen so we don't duplicate
+                // when the server echoes it back.
                 const data = await r.json();
-                if (!r.ok || !data.reply) throw new Error(data.error || 'no reply');
-                chatState.messages.push({ role: 'assistant', content: data.reply });
+                if (data?.msg?.id) lastSeenMsgId = Math.max(lastSeenMsgId, data.msg.id);
             } catch (e) {
                 chatState.error = String(e.message || e);
                 chatState.messages.push({ role: 'assistant', content: '// error: ' + chatState.error });
-            } finally {
                 chatState.pending = false;
                 redrawHolo();
             }
@@ -20500,8 +20580,8 @@ See also: Health Samurai Lab: Game of Pools.`,
             texCtx.textBaseline = 'top';
 
             // ---- LEFT widget — mode description ----
-            const lx = 40;
-            const lw = SIDE_W - 72;
+            const lx = 60;
+            const lw = SIDE_W - 110;
             let ly = 50;
             // Title
             texCtx.font = 'bold 22px JetBrains Mono, monospace';
@@ -20560,7 +20640,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             }
 
             // ---- RIGHT widget ----
-            const rx = TEX_W - 56;
+            const rx = TEX_W - 76;
             texCtx.textAlign = 'right';
             texCtx.font = '300 60px JetBrains Mono, monospace';
             texCtx.fillStyle = accSolid;
@@ -20645,8 +20725,8 @@ See also: Health Samurai Lab: Game of Pools.`,
         function drawTabs(accSolid, accSoft, accDim) {
             // Header-style tab row: two big pills centred above the content,
             // big enough to read as a section header.
-            const cw = CENTER_W - 112;
-            const cx = CENTER_X + 56;
+            const cw = CENTER_W - 160;
+            const cx = CENTER_X + 80;
             const tabs = [
                 { label: '// CAREER TIMELINE',         id: 'career' },
                 { label: '// TALK TO PORTFOLIO AGENT', id: 'chat' },
@@ -20683,8 +20763,8 @@ See also: Health Samurai Lab: Game of Pools.`,
         }
 
         function drawChat(accSolid, accSoft, accDim, accFaint) {
-            const cx = CENTER_X + 56;
-            const cw = CENTER_W - 112;
+            const cx = CENTER_X + 80;
+            const cw = CENTER_W - 160;
             const labelSize = 14;
             const bodySize = 20;
             const lineH = 26;
@@ -20742,15 +20822,18 @@ See also: Health Samurai Lab: Game of Pools.`,
             let y = yStart;
             texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
             for (const b of visible) {
-                // Role label
+                // Role label — 3 roles: user (visitor), claude, roman (owner)
                 texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
-                texCtx.fillStyle = b.role === 'user' ? accDim : accSolid;
-                texCtx.fillText(b.role === 'user' ? '// YOU' : '// CLAUDE', cx, y);
+                let roleLabel = '// CLAUDE';
+                if (b.role === 'user')  { roleLabel = '// YOU';   texCtx.fillStyle = accDim;   }
+                else if (b.role === 'roman') { roleLabel = '// ROMAN · OWNER'; texCtx.fillStyle = accSolid; }
+                else                    { roleLabel = '// CLAUDE'; texCtx.fillStyle = accSolid; }
+                texCtx.fillText(roleLabel, cx, y);
                 y += 18;
 
                 // Body lines
                 texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
-                texCtx.fillStyle = b.role === 'user' ? accSoft : accSoft;
+                texCtx.fillStyle = accSoft;
                 for (const line of b.lines) {
                     texCtx.fillText(line, cx, y);
                     y += lineH;
@@ -20838,8 +20921,8 @@ See also: Health Samurai Lab: Game of Pools.`,
         }
 
         function drawCareer(accSolid, accSoft, accDim, accFaint) {
-            const cx = CENTER_X + 56;
-            const cw = CENTER_W - 112;
+            const cx = CENTER_X + 80;
+            const cw = CENTER_W - 160;
             const labelSize = 14;
             const bodySize = 19;
             const lineH = 26;
