@@ -94,12 +94,17 @@ const themeClass = data.theme === 'bright' ? 'cp-light' : '';
 </script>
 
 <style>
-  /* Standalone page wrapper — gives the shared CaseHeader's sticky bar
-     a real document to scroll inside, since outside the overlay there's
-     no fixed-position .case-page container. */
+  /* Standalone page wrapper — defeats the legacy .case-page overlay
+     styles (position:fixed, transform:translateY(100%), pointer-events:none,
+     overflow:hidden) so the case actually shows when there's no
+     body.case-open + .case-page.open dance to flip them. */
   .case-page.is-standalone {
-    position: relative;
-    inset: auto;
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    transition: none !important;
+    pointer-events: auto !important;
+    overflow: visible !important;
     background: #050505;
     color: #fff;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
