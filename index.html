@@ -20441,32 +20441,39 @@ See also: Health Samurai Lab: Game of Pools.`,
             texCtx.clearRect(0, 0, TEX_W, TEX_H);
             hitZones.length = 0;
 
-            // ---- imperfect border, with subtle glow halo ----
-            // Glow pass: same path, wider stroke, blurred via shadowBlur.
+            // ---- Continuous frame around the entire holo with strong glow ----
+            const fx = BORDER_INSET, fy = BORDER_INSET;
+            const fw = TEX_W - 2 * BORDER_INSET, fh = TEX_H - 2 * BORDER_INSET;
+            // Outer halo pass — wide blur, transparent stroke colour to keep
+            // it as a soft glow.
             texCtx.save();
             texCtx.shadowColor = accSolid;
-            texCtx.shadowBlur = 14;
+            texCtx.shadowBlur = 28;
             texCtx.strokeStyle = accSoft;
-            texCtx.lineWidth = 2;
+            texCtx.lineWidth = 3;
             texCtx.lineCap = 'round';
-            texCtx.beginPath();
-            for (const [x0, y0, x1, y1] of borderSegments) {
-                texCtx.moveTo(x0, y0);
-                texCtx.lineTo(x1, y1);
-            }
-            texCtx.stroke();
-            // Sharp pass on top so strokes stay crisp despite glow.
+            texCtx.lineJoin = 'round';
+            texCtx.strokeRect(fx + 0.5, fy + 0.5, fw, fh);
+            // Mid pass — narrower glow.
+            texCtx.shadowBlur = 14;
+            texCtx.strokeStyle = accSolid;
+            texCtx.lineWidth = 2;
+            texCtx.strokeRect(fx + 0.5, fy + 0.5, fw, fh);
+            // Sharp top pass — no shadow, thin crisp line.
             texCtx.shadowBlur = 0;
-            texCtx.stroke();
+            texCtx.strokeStyle = accSolid;
+            texCtx.lineWidth = 1.5;
+            texCtx.strokeRect(fx + 0.5, fy + 0.5, fw, fh);
             texCtx.restore();
 
-            // Corner brackets with stronger glow.
+            // Corner brackets — small accent ticks layered on top of the
+            // continuous frame for a sci-fi alignment-mark feel.
             texCtx.save();
             texCtx.shadowColor = accSolid;
-            texCtx.shadowBlur = 18;
+            texCtx.shadowBlur = 16;
             texCtx.strokeStyle = accSolid;
-            texCtx.lineWidth = 3;
-            const ci = BORDER_INSET, cl = 36;
+            texCtx.lineWidth = 4;
+            const ci = BORDER_INSET, cl = 30;
             const corners = [
                 [ci, ci, ci + cl, ci, ci, ci + cl],
                 [TEX_W - ci, ci, TEX_W - ci - cl, ci, TEX_W - ci, ci + cl],
@@ -21089,22 +21096,21 @@ See also: Health Samurai Lab: Game of Pools.`,
         window.__ssCyl = cylinder;
 
         // Darkening backplate — slightly behind the holo strokes, dims the
-        // bg scene only inside the screen footprint so text reads cleanly
-        // against a soft dark surface (rather than the colourful lounge).
-        // Same geometry, slightly inflated so it shows past the strokes by
-        // a few pixels at the edges.
+        // bg scene only inside the screen footprint. Color is a dark version
+        // of the current --acc, computed in syncAccent so theme switches
+        // recolour the backdrop too.
         const dimGeom = cylGeom.clone();
         const dimMat = new THREE.MeshBasicMaterial({
-            color: 0x050810,
+            color: 0x002614,    // dark green default (#002614 ≈ matrix green × 0.15)
             transparent: true,
-            opacity: 0.55,
+            opacity: 0.62,
             side: THREE.DoubleSide,
             depthWrite: false,
         });
         const dimPlate = new THREE.Mesh(dimGeom, dimMat);
         dimPlate.position.y = SEG_H * 0.30;
         dimPlate.scale.set(1.005, 1.04, 1.005);
-        dimPlate.renderOrder = -1;  // paint before the holo strokes
+        dimPlate.renderOrder = -1;
         scene.add(dimPlate);
 
         // No additive halo — the new transparent screen relies on the
@@ -21122,8 +21128,11 @@ See also: Health Samurai Lab: Game of Pools.`,
                 const c = new THREE.Color(accStr);
                 material.uniforms.uTint.value.copy(c);
                 glowMat.color.copy(c);
+                // Dim plate = accent darkened to ~15% so the bg behind the
+                // holo reads as a deep accent-tinted surface (dark green for
+                // matrix theme, dark cyan for tron, etc.).
+                dimMat.color.copy(c).multiplyScalar(0.15);
             } catch (e) { /* ignore parse errors */ }
-            // Repaint holo layer with the new accent.
             drawHolo();
             texture.needsUpdate = true;
         }
@@ -21227,10 +21236,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             drawHolo();
             texture.needsUpdate = true;
         }, 700);
-        // Border re-roll every few seconds for the "imperfect drift" feel.
-        setInterval(() => {
-            precomputeBorder();
-        }, 4500);
+        // (border drift removed — frame is now a continuous solid line)
 
         // ---------- Click → raycast → hit-zone → action ----------
         const raycaster = new THREE.Raycaster();
