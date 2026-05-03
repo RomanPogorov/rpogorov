@@ -20709,30 +20709,38 @@ See also: Health Samurai Lab: Game of Pools.`,
                     y += lineH;
                 }
 
-                // Links — render as small button labels with hit zones
+                // Links — render as button-sized hit zones with the same
+                // type weight as the body so they read as primary calls.
                 if (b.links.length) {
+                    const linkSize = bodySize;
+                    const linkH = 36;
+                    const linkPadX = 16;
+                    const linkPadY = 7;
                     let lx = cx;
-                    const linkY = y + 4;
-                    texCtx.font = `bold ${labelSize + 1}px JetBrains Mono, monospace`;
+                    let linkY = y + 6;
+                    texCtx.font = `bold ${linkSize}px JetBrains Mono, monospace`;
                     for (const link of b.links) {
                         const text = '▸ ' + link.label;
-                        const w = texCtx.measureText(text).width + 16;
-                        const h = 22;
-                        // Box
+                        const w = texCtx.measureText(text).width + linkPadX * 2;
+                        // Wrap to a new row if it won't fit on the current one.
+                        if (lx + w > cx + cw) {
+                            lx = cx;
+                            linkY += linkH + 8;
+                        }
+                        // Box with glow
                         texCtx.save();
                         texCtx.shadowColor = accSolid;
-                        texCtx.shadowBlur = 8;
+                        texCtx.shadowBlur = 12;
                         texCtx.strokeStyle = accSolid;
-                        texCtx.lineWidth = 1;
-                        texCtx.strokeRect(lx + 0.5, linkY + 0.5, w, h);
+                        texCtx.lineWidth = 1.5;
+                        texCtx.strokeRect(lx + 0.5, linkY + 0.5, w, linkH);
                         texCtx.restore();
                         texCtx.fillStyle = accSolid;
-                        texCtx.fillText(text, lx + 8, linkY + 4);
-                        hitZones.push({ x: lx, y: linkY, w, h, action: 'link:' + link.href });
-                        lx += w + 8;
-                        if (lx + 200 > cx + cw) { lx = cx; y += h + 6; } // wrap
+                        texCtx.fillText(text, lx + linkPadX, linkY + linkPadY);
+                        hitZones.push({ x: lx, y: linkY, w, h: linkH, action: 'link:' + link.href });
+                        lx += w + 10;
                     }
-                    y += lineH + 8;
+                    y = linkY + linkH + 12;
                 }
                 y += 18;
             }
@@ -20804,10 +20812,25 @@ See also: Health Samurai Lab: Game of Pools.`,
             const COLS = 13;
             const colW = cw / COLS;
             const axisH = 44;
-            // Side row sits a bit further below to leave room for its label.
             const sideLabelY = y + axisH + 22;
             const sideY = sideLabelY + 24;
             const yearsY = sideY + axisH + 14;
+
+            // ---- Year grid lines ----
+            // Faint vertical rules at each year column boundary, from just
+            // above the main row down through the year tick labels.
+            const accRgbStr = (getComputedStyle(document.body).getPropertyValue('--acc-rgb') || '0, 255, 136').trim();
+            const gridTop = y - 6;
+            const gridBottom = yearsY + 22;
+            for (let i = 0; i <= COLS; i++) {
+                const isMajor = (i === 0 || i === 3 || i === 6 || i === 9 || i === 12 || i === 13);
+                texCtx.strokeStyle = `rgba(${accRgbStr}, ${isMajor ? 0.30 : 0.14})`;
+                texCtx.lineWidth = 1;
+                texCtx.beginPath();
+                texCtx.moveTo(cx + i * colW + 0.5, gridTop);
+                texCtx.lineTo(cx + i * colW + 0.5, gridBottom);
+                texCtx.stroke();
+            }
 
             // Main row
             for (const [id, r] of Object.entries(ROLES)) {
@@ -21071,11 +21094,11 @@ See also: Health Samurai Lab: Game of Pools.`,
                     float lum = (col.r + col.g + col.b) / 3.0;
                     col += uTint * 0.10 * lum * texA;
 
-                    // Base scanline alpha — visible even where there's no ink,
-                    // so the entire screen area reads as a CRT/holographic
-                    // surface rather than just floating text.
-                    float baseScan = pow(1.0 - scan, 3.0);          // 0..1, peaks on dark rows
-                    float baseAlpha = baseScan * 0.22 + tearD * 0.35;
+                    // Base scanline alpha — thin visible stripes on the dim
+                    // plate. Higher exponent narrows the "dark" band so the
+                    // lines read as distinct hairlines instead of zebras.
+                    float baseScan = pow(1.0 - scan, 6.0);
+                    float baseAlpha = baseScan * 0.20 + tearD * 0.35;
                     vec3 baseCol = uTint;
 
                     // Composite ink + base scanline. Where ink present, ink
@@ -21095,15 +21118,83 @@ See also: Health Samurai Lab: Game of Pools.`,
         scene.add(cylinder);
         window.__ssCyl = cylinder;
 
-        // Darkening backplate — slightly behind the holo strokes, dims the
-        // bg scene only inside the screen footprint. Color is a dark version
-        // of the current --acc, computed in syncAccent so theme switches
-        // recolour the backdrop too.
+        // Darkening backplate — slightly behind the holo strokes. Custom
+        // shader with noise-based ragged edges + drifting grunge so the
+        // boundary doesn't read as a perfect rectangle.
         const dimGeom = cylGeom.clone();
-        const dimMat = new THREE.MeshBasicMaterial({
-            color: 0x002614,    // dark green default (#002614 ≈ matrix green × 0.15)
+        const dimMat = new THREE.ShaderMaterial({
+            uniforms: {
+                uColor:   { value: new THREE.Color(0x000201) },  // overwritten by syncAccent
+                uOpacity: { value: 0.97 },
+                uTime:    { value: 0 },
+                uEdge:    { value: 0.10 },   // size of the ragged falloff zone (0..1)
+                uNoise:   { value: 0.08 },   // amplitude of the edge displacement
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3  uColor;
+                uniform float uOpacity;
+                uniform float uTime;
+                uniform float uEdge;
+                uniform float uNoise;
+                varying vec2 vUv;
+
+                float hash(vec2 p) {
+                    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+                }
+                float vnoise(vec2 p) {
+                    vec2 i = floor(p);
+                    vec2 f = fract(p);
+                    float a = hash(i);
+                    float b = hash(i + vec2(1.0, 0.0));
+                    float c = hash(i + vec2(0.0, 1.0));
+                    float d = hash(i + vec2(1.0, 1.0));
+                    vec2 u = f * f * (3.0 - 2.0 * f);
+                    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+                }
+                float fbm(vec2 p) {
+                    float v = 0.0;
+                    float amp = 0.5;
+                    for (int i = 0; i < 4; i++) {
+                        v += amp * vnoise(p);
+                        p *= 2.07;
+                        amp *= 0.5;
+                    }
+                    return v;
+                }
+
+                void main() {
+                    // Distance from nearest edge, 0..0.5
+                    float dx = min(vUv.x, 1.0 - vUv.x);
+                    float dy = min(vUv.y, 1.0 - vUv.y);
+                    float edge = min(dx, dy);
+
+                    // Slow-drifting noise field for ragged edge displacement
+                    // and faint grunge spots in the body.
+                    vec2 np = vUv * vec2(28.0, 12.0) + vec2(uTime * 0.04, uTime * -0.03);
+                    float n = fbm(np);
+
+                    // Push the edge inward by noise so the boundary is torn,
+                    // not a clean rectangle. Smoothstep from 0..uEdge gives a
+                    // soft falloff inside that band.
+                    float raggedEdge = edge + (n - 0.5) * uNoise;
+                    float edgeAlpha = smoothstep(0.0, uEdge, raggedEdge);
+
+                    // Faint grunge variation across the body — keeps the
+                    // surface from reading as flat colour.
+                    float bodyGrunge = 0.85 + 0.15 * fbm(vUv * vec2(6.0, 4.0) + uTime * 0.06);
+
+                    float alpha = edgeAlpha * uOpacity * bodyGrunge;
+                    gl_FragColor = vec4(uColor, alpha);
+                }
+            `,
             transparent: true,
-            opacity: 0.62,
             side: THREE.DoubleSide,
             depthWrite: false,
         });
@@ -21128,10 +21219,14 @@ See also: Health Samurai Lab: Game of Pools.`,
                 const c = new THREE.Color(accStr);
                 material.uniforms.uTint.value.copy(c);
                 glowMat.color.copy(c);
-                // Dim plate = accent darkened to ~15% so the bg behind the
-                // holo reads as a deep accent-tinted surface (dark green for
-                // matrix theme, dark cyan for tron, etc.).
-                dimMat.color.copy(c).multiplyScalar(0.15);
+                // Dim plate = accent darkened to ~2.5% — basically black
+                // with the faintest theme tint. ShaderMaterial: write the
+                // colour into its uColor uniform.
+                if (dimMat.uniforms?.uColor) {
+                    dimMat.uniforms.uColor.value.copy(c).multiplyScalar(0.004);
+                } else if (dimMat.color) {
+                    dimMat.color.copy(c).multiplyScalar(0.004);
+                }
             } catch (e) { /* ignore parse errors */ }
             drawHolo();
             texture.needsUpdate = true;
@@ -21226,6 +21321,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             material.uniforms.uTime.value = t;
             material.uniforms.uGlitch.value = t < glitchState.until ? 1.0 : 0.0;
             material.uniforms.uGlitchSeed.value = glitchState.seed;
+            if (dimMat.uniforms?.uTime) dimMat.uniforms.uTime.value = t;
             renderer.render(scene, camera);
         }
         render();
