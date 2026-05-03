@@ -19966,6 +19966,986 @@ See also: Health Samurai Lab: Game of Pools.`,
         }
     </script>
 
+    <!-- ============ SCREENCAST mode — curved holographic display ============
+         Toggle: hides every green chrome layer and reveals a panoramic curved
+         display in the middle. The "curve" is a real SVG feDisplacementMap
+         filter applied to the iframe — content actually bends in 3D, not just
+         rounded edges. -->
+    <style>
+        .ss-toggle {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 90;
+            appearance: none;
+            border: 1px solid rgba(0, 255, 136, 0.45);
+            background: rgba(5, 8, 10, 0.6);
+            color: #00ff88;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.4em;
+            padding: 8px 18px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: border-color 0.18s, color 0.18s, background 0.18s;
+        }
+        .ss-toggle:hover {
+            border-color: #00ff88;
+            color: #fff;
+            background: rgba(0, 255, 136, 0.1);
+        }
+        body.screencast-on .ss-toggle { display: none; }
+
+        /* Holographic mode: the curved display floats over the live bg.mp4 +
+           R3F scene, so we keep the stage and 3D background visible. We hide
+           only the green UI chrome (HUD panels, prompt, ctl-fab) — the world
+           behind the screen stays alive. */
+        body.screencast-on .hud,
+        body.screencast-on .hud-left-articles,
+        body.screencast-on .hud-right,
+        body.screencast-on .panel,
+        body.screencast-on .prompt,
+        body.screencast-on .ctl-fab,
+        body.screencast-on .perf-hud,
+        body.screencast-on .scanlines,
+        body.screencast-on .noise,
+        body.screencast-on .vignette,
+        body.screencast-on [class*="layer-"],
+        body.screencast-on .showcase,
+        body.screencast-on .showcase-cue {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+
+        .screencast-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 80;
+            /* Transparent: the live bg video + R3F scene shows through. The
+               curved display sits on top as a holographic overlay. */
+            background: transparent;
+            overflow: hidden;
+            color: #c9d8ec;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .screencast-stage[hidden] { display: none; }
+
+        .ss-corner {
+            position: absolute;
+            z-index: 5;
+            padding: 14px 18px;
+            border: 1px solid rgba(120, 180, 240, 0.28);
+            background: linear-gradient(180deg, rgba(8, 18, 32, 0.55), rgba(8, 18, 32, 0.25));
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: #b8d4f0;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            line-height: 1.5;
+            text-shadow: 0 0 6px rgba(120, 180, 240, 0.5);
+            pointer-events: none;
+        }
+        .ss-corner-tl { top: 24px; left: 24px; min-width: 180px; }
+        .ss-corner-tr { top: 24px; right: 24px; text-align: right; min-width: 140px; }
+        .ss-corner-eyebrow { color: #7fbbff; font-weight: 700; }
+        .ss-corner-temp,
+        .ss-corner-clock {
+            font-size: 1.625rem;
+            font-weight: 300;
+            letter-spacing: 0.06em;
+            color: #d8eaff;
+            text-shadow: 0 0 12px rgba(120, 180, 240, 0.7);
+        }
+        .ss-corner-meta { font-size: 0.625rem; opacity: 0.7; margin-top: 4px; }
+        .ss-corner-data { font-size: 0.625rem; opacity: 0.55; margin-top: 2px; }
+
+        /* True 3D curved display — Three.js cylinder segment with the iframe
+           content rendered as a CanvasTexture (refreshed via html2canvas).
+           Hidden source iframe lives off-screen at a fixed virtual viewport
+           (1280x720), html2canvas snapshots its body into a 2D canvas, that
+           canvas becomes the texture for the cylinder. Wheel events on the
+           Three.js canvas forward to the iframe's scrollBy; clicks raycast
+           into the cylinder, the UV hit converts to iframe coords, and we
+           dispatch a synthetic click on whatever element sits there. */
+        .ss-canvas-mount {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            cursor: grab;
+        }
+        .ss-canvas-mount:active { cursor: grabbing; }
+        .ss-canvas-mount canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        /* Off-screen source iframe — laid out at 1280x720 so html2canvas
+           captures a sensible viewport, but pushed far off-screen so the
+           user doesn't see it. The iframe still renders normally + scripts
+           run + scroll works. */
+        .ss-source-iframe {
+            position: fixed;
+            left: -100000px;
+            top: 0;
+            width: 1280px;
+            height: 720px;
+            border: 0;
+            background: #fff;
+            z-index: -1;
+            opacity: 0.001;
+            pointer-events: none;
+        }
+
+        /* Chat input — native HTML overlay positioned at the bottom of the
+           stage (below the curved screen). Styled to match the holo accent. */
+        .ss-chat-form {
+            position: absolute;
+            left: 50%;
+            bottom: 28px;
+            transform: translateX(-50%);
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: min(72vw, 900px);
+            padding: 10px 16px;
+            background: rgba(2, 6, 12, 0.55);
+            border: 1px solid var(--ui-acc, #00ff88);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow:
+                0 0 14px rgba(var(--ui-acc-rgb, 0,255,136), 0.45),
+                0 0 36px rgba(var(--ui-acc-rgb, 0,255,136), 0.18);
+        }
+        .ss-chat-prompt {
+            color: var(--ui-acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+        .ss-chat-input {
+            flex: 1;
+            background: transparent;
+            border: 0;
+            outline: none;
+            color: rgba(234, 246, 255, 0.92);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+        }
+        .ss-chat-input::placeholder { color: rgba(var(--ui-acc-rgb), 0.45); }
+        .ss-chat-send {
+            appearance: none;
+            background: transparent;
+            border: 1px solid rgba(var(--ui-acc-rgb), 0.55);
+            color: var(--ui-acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: border-color 0.18s, background 0.18s, color 0.18s;
+        }
+        .ss-chat-send:hover {
+            border-color: var(--ui-acc);
+            background: rgba(var(--ui-acc-rgb), 0.1);
+            color: #fff;
+        }
+        .ss-chat-send:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        @media (max-width: 760px) {
+            .ss-chat-form { width: calc(100vw - 24px); padding: 8px 12px; gap: 8px; }
+            .ss-chat-input { font-size: 0.8125rem; }
+        }
+
+        .ss-exit {
+            position: absolute;
+            bottom: 28px;
+            right: 28px;
+            z-index: 5;
+            appearance: none;
+            border: 1px solid rgba(140, 200, 255, 0.4);
+            background: rgba(5, 10, 18, 0.55);
+            color: #b8d4f0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+            padding: 8px 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: border-color 0.18s, color 0.18s, background 0.18s;
+        }
+        .ss-exit:hover {
+            border-color: #b8d4f0;
+            color: #fff;
+            background: rgba(140, 200, 255, 0.1);
+        }
+
+        @media (max-width: 760px) {
+            .ss-display-wrap { width: 96vw; aspect-ratio: 16 / 10; }
+            .ss-corner { font-size: 0.5625rem; padding: 10px 12px; }
+            .ss-corner-tl, .ss-corner-tr { top: 14px; min-width: 0; }
+            .ss-corner-tl { left: 14px; }
+            .ss-corner-tr { right: 14px; }
+            .ss-corner-temp, .ss-corner-clock { font-size: 1.125rem; }
+        }
+    </style>
+
+    <button class="ss-toggle" data-screencast-toggle type="button" aria-label="Toggle screencast mode">SCREENCAST</button>
+
+    <section class="screencast-stage" data-screencast-stage hidden aria-hidden="true">
+        <div class="ss-canvas-mount" data-ss-canvas-mount></div>
+        <form class="ss-chat-form" data-ss-chat-form autocomplete="off">
+            <span class="ss-chat-prompt">▸</span>
+            <input
+                type="text"
+                class="ss-chat-input"
+                data-ss-chat-input
+                placeholder="ask claude about roman's work…"
+                maxlength="500"
+                autocomplete="off"
+                spellcheck="false"
+            />
+            <button type="submit" class="ss-chat-send" data-ss-chat-send>send →</button>
+        </form>
+        <button class="ss-exit" data-screencast-exit type="button" aria-label="Exit screencast mode">↑ EXIT SCREENCAST</button>
+    </section>
+
+    <script type="module">
+        // Three.js cylinder rendering a transparent holographic terminal.
+        // No iframe — the texture is a programmatic terminal animation drawn
+        // into the canvas (border + side widgets + scrolling log lines), with
+        // mostly-transparent pixels so the bg scene shows through everywhere
+        // except the strokes/text.
+        import * as THREE from 'https://esm.sh/three@0.160.0';
+
+        const mount = document.querySelector('[data-ss-canvas-mount]');
+        const stage = document.querySelector('[data-screencast-stage]');
+        if (!mount || !stage) {
+            console.warn('[screencast] mount missing, skipping 3D cylinder');
+        } else { (async () => {
+
+        // Wait until the stage is actually visible (toggle pressed) before
+        // initialising — otherwise mount dimensions are 0 (display:none).
+        async function waitForVisible() {
+            if (!stage.hidden && mount.clientWidth > 0) return;
+            return new Promise((resolve) => {
+                const obs = new MutationObserver(() => {
+                    if (!stage.hidden && mount.clientWidth > 0) {
+                        obs.disconnect();
+                        resolve();
+                    }
+                });
+                obs.observe(stage, { attributes: true, attributeFilter: ['hidden'] });
+            });
+        }
+        await waitForVisible();
+        // Tiny tick so layout settles after `hidden` is removed
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+        const TEX_W = 2200;
+        const TEX_H = 720;
+        const SIDE_W = 460;
+        const CENTER_X = SIDE_W;
+        const CENTER_W = TEX_W - SIDE_W * 2;
+
+        // Texture canvas — fully transparent except for: the imperfect outline,
+        // the side widget text, and the scrolling terminal log in the centre.
+        const texCanvas = document.createElement('canvas');
+        texCanvas.width = TEX_W;
+        texCanvas.height = TEX_H;
+        const texCtx = texCanvas.getContext('2d');
+
+        // ---------- Chat state ----------
+        const chatState = {
+            messages: [
+                {
+                    role: 'assistant',
+                    content: 'Hi! I\'m Claude — ask me anything about Roman\'s work, projects, or experience. Try:\n▸ what is the Americor engagement case?\n▸ что такое Fixik?\n▸ какие есть проекты в Health Samurai?',
+                },
+            ],
+            pending: false,
+            error: null,
+        };
+        // Hit zones in texture-canvas pixel coords: { x, y, w, h, action }
+        const hitZones = [];
+
+        function redrawHolo() {
+            drawHolo();
+            texture.needsUpdate = true;
+        }
+
+        async function sendChatMessage(text) {
+            if (chatState.pending) return;
+            const trimmed = text.trim();
+            if (!trimmed) return;
+            chatState.messages.push({ role: 'user', content: trimmed });
+            chatState.pending = true;
+            chatState.error = null;
+            redrawHolo();
+            try {
+                const r = await fetch('/rpogorov-dev/api/chat/claude', {
+                    method: 'POST',
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: chatState.messages
+                            .filter((m) => m.role === 'user' || m.role === 'assistant')
+                            .map((m) => ({ role: m.role, content: m.content })),
+                    }),
+                });
+                const data = await r.json();
+                if (!r.ok || !data.reply) throw new Error(data.error || 'no reply');
+                chatState.messages.push({ role: 'assistant', content: data.reply });
+            } catch (e) {
+                chatState.error = String(e.message || e);
+                chatState.messages.push({ role: 'assistant', content: '// error: ' + chatState.error });
+            } finally {
+                chatState.pending = false;
+                redrawHolo();
+            }
+        }
+
+        // Parse markdown links [label](/case/...) → { plain: "before ", link: { label, href }, after: "after" }
+        // For now we keep the text pass-through and harvest links separately.
+        function extractLinks(text) {
+            const re = /\[([^\]]+)\]\(([^)]+)\)/g;
+            const links = [];
+            let m;
+            while ((m = re.exec(text)) !== null) {
+                links.push({ label: m[1], href: m[2], start: m.index, end: re.lastIndex });
+            }
+            return links;
+        }
+        function stripMarkdownLinks(text) {
+            return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
+        }
+        function stripMarkdownBold(text) {
+            return text.replace(/\*\*([^*]+)\*\*/g, '$1');
+        }
+        function preprocessText(text) {
+            return stripMarkdownBold(stripMarkdownLinks(text));
+        }
+
+        // ---------- Imperfect border path ----------
+        // Pre-compute the segments once: an outer rounded rectangle made of
+        // little dashes, with random gaps that don't move (so the border has
+        // a stable hand-drawn / glitchy feel, not flickering randomness).
+        const BORDER_INSET = 24;
+        const BORDER_DASH = 28;
+        const BORDER_GAP_PROB = 0.10;
+        const borderSegments = [];
+        function precomputeBorder() {
+            borderSegments.length = 0;
+            const x0 = BORDER_INSET, y0 = BORDER_INSET;
+            const x1 = TEX_W - BORDER_INSET, y1 = TEX_H - BORDER_INSET;
+            // Top
+            for (let x = x0; x < x1; x += BORDER_DASH) {
+                if (Math.random() > BORDER_GAP_PROB)
+                    borderSegments.push([x, y0, Math.min(x + BORDER_DASH * 0.85, x1), y0]);
+            }
+            // Bottom
+            for (let x = x0; x < x1; x += BORDER_DASH) {
+                if (Math.random() > BORDER_GAP_PROB)
+                    borderSegments.push([x, y1, Math.min(x + BORDER_DASH * 0.85, x1), y1]);
+            }
+            // Left
+            for (let y = y0; y < y1; y += BORDER_DASH) {
+                if (Math.random() > BORDER_GAP_PROB)
+                    borderSegments.push([x0, y, x0, Math.min(y + BORDER_DASH * 0.85, y1)]);
+            }
+            // Right
+            for (let y = y0; y < y1; y += BORDER_DASH) {
+                if (Math.random() > BORDER_GAP_PROB)
+                    borderSegments.push([x1, y, x1, Math.min(y + BORDER_DASH * 0.85, y1)]);
+            }
+            // Inner column rules — separate the side widgets from the centre.
+            for (let y = y0 + 60; y < y1 - 60; y += BORDER_DASH) {
+                if (Math.random() > BORDER_GAP_PROB + 0.04)
+                    borderSegments.push([SIDE_W, y, SIDE_W, Math.min(y + BORDER_DASH * 0.7, y1 - 60)]);
+                if (Math.random() > BORDER_GAP_PROB + 0.04)
+                    borderSegments.push([SIDE_W + CENTER_W, y, SIDE_W + CENTER_W, Math.min(y + BORDER_DASH * 0.7, y1 - 60)]);
+            }
+        }
+        precomputeBorder();
+
+        // ---------- Word wrap helper for canvas text ----------
+        function wrapLines(text, maxWidth) {
+            const words = text.split(/\s+/);
+            const lines = [];
+            let line = '';
+            for (const w of words) {
+                const test = line ? line + ' ' + w : w;
+                if (texCtx.measureText(test).width <= maxWidth) {
+                    line = test;
+                } else {
+                    if (line) lines.push(line);
+                    line = w;
+                }
+            }
+            if (line) lines.push(line);
+            return lines;
+        }
+
+        function drawHolo() {
+            // Theme accent.
+            const cs = getComputedStyle(document.body);
+            const accRgb = (cs.getPropertyValue('--acc-rgb') || '0, 255, 136').trim();
+            const accSolid = `rgb(${accRgb})`;
+            const accSoft  = `rgba(${accRgb}, 0.85)`;
+            const accDim   = `rgba(${accRgb}, 0.55)`;
+            const accFaint = `rgba(${accRgb}, 0.30)`;
+
+            // Fully clear — texture starts transparent.
+            texCtx.clearRect(0, 0, TEX_W, TEX_H);
+            hitZones.length = 0;
+
+            // ---- imperfect border, with subtle glow halo ----
+            // Glow pass: same path, wider stroke, blurred via shadowBlur.
+            texCtx.save();
+            texCtx.shadowColor = accSolid;
+            texCtx.shadowBlur = 14;
+            texCtx.strokeStyle = accSoft;
+            texCtx.lineWidth = 2;
+            texCtx.lineCap = 'round';
+            texCtx.beginPath();
+            for (const [x0, y0, x1, y1] of borderSegments) {
+                texCtx.moveTo(x0, y0);
+                texCtx.lineTo(x1, y1);
+            }
+            texCtx.stroke();
+            // Sharp pass on top so strokes stay crisp despite glow.
+            texCtx.shadowBlur = 0;
+            texCtx.stroke();
+            texCtx.restore();
+
+            // Corner brackets with stronger glow.
+            texCtx.save();
+            texCtx.shadowColor = accSolid;
+            texCtx.shadowBlur = 18;
+            texCtx.strokeStyle = accSolid;
+            texCtx.lineWidth = 3;
+            const ci = BORDER_INSET, cl = 36;
+            const corners = [
+                [ci, ci, ci + cl, ci, ci, ci + cl],
+                [TEX_W - ci, ci, TEX_W - ci - cl, ci, TEX_W - ci, ci + cl],
+                [ci, TEX_H - ci, ci + cl, TEX_H - ci, ci, TEX_H - ci - cl],
+                [TEX_W - ci, TEX_H - ci, TEX_W - ci - cl, TEX_H - ci, TEX_W - ci, TEX_H - ci - cl],
+            ];
+            texCtx.beginPath();
+            for (const [a,b,c,d,e,f] of corners) {
+                texCtx.moveTo(c, d); texCtx.lineTo(a, b); texCtx.lineTo(e, f);
+            }
+            texCtx.stroke();
+            texCtx.restore();
+
+            texCtx.textBaseline = 'top';
+
+            // ---- LEFT widget ----
+            const lx = 56;
+            texCtx.font = 'bold 22px JetBrains Mono, monospace';
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText('// LIVE LINK 15.02.A', lx, 56);
+            texCtx.font = '16px JetBrains Mono, monospace';
+            texCtx.fillStyle = accSoft;
+            texCtx.fillText('RPOGOROV · CLAUDE BRIDGE', lx, 90);
+            texCtx.fillText(chatState.pending ? '▸ thinking…' : '▸ ready', lx, 116);
+            // Pulse bars
+            texCtx.font = '12px JetBrains Mono, monospace';
+            texCtx.fillStyle = accDim;
+            texCtx.fillText('STATUS', lx, TEX_H - 130);
+            texCtx.font = 'bold 18px JetBrains Mono, monospace';
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText('STABLE', lx, TEX_H - 110);
+            for (let i = 0; i < 10; i++) {
+                const bx = lx + i * 12;
+                const bh = 4 + ((i * 7 + Date.now() / 80) % 14);
+                texCtx.fillStyle = i % 3 === 0 ? accSolid : accFaint;
+                texCtx.fillRect(bx, TEX_H - 76 - bh, 5, bh);
+            }
+
+            // ---- RIGHT widget ----
+            const rx = TEX_W - 56;
+            texCtx.textAlign = 'right';
+            texCtx.font = '300 60px JetBrains Mono, monospace';
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText('15°C', rx, 56);
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            texCtx.font = '300 56px JetBrains Mono, monospace';
+            texCtx.fillText(`${hh}:${mm}`, rx, 124);
+            texCtx.font = '14px JetBrains Mono, monospace';
+            texCtx.fillStyle = accSoft;
+            texCtx.fillText('SIGNAL · STABLE', rx, 196);
+            texCtx.font = '12px JetBrains Mono, monospace';
+            texCtx.fillStyle = accSoft;
+            texCtx.fillText('FPS 60 · GPU 38°C', rx, TEX_H - 110);
+            texCtx.fillText('MEM 64% · DISK 22%', rx, TEX_H - 92);
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText('// holo-frame · live', rx, TEX_H - 56);
+            texCtx.textAlign = 'left';
+
+            // ---- CENTRE: chat ----
+            drawChat(accSolid, accSoft, accDim, accFaint);
+        }
+
+        function drawChat(accSolid, accSoft, accDim, accFaint) {
+            const cx = CENTER_X + 56;
+            const cw = CENTER_W - 112;
+            const labelSize = 12;
+            const bodySize = 17;
+            const lineH = 22;
+            const yTop = 56;
+            const yBottom = TEX_H - 60;
+
+            // Header
+            texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText('// CHAT WITH ROMAN\'S CLAUDE', cx, yTop);
+            texCtx.font = `${labelSize - 1}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accDim;
+            texCtx.fillText('▸ ask anything about his work, projects, or experience', cx, yTop + 18);
+
+            // Build flat render-list of {kind, role?, lines, links}.
+            // Set the body font BEFORE wrapping so measureText uses the right
+            // metrics — otherwise wrap target width mismatches render width
+            // and lines overflow the curve.
+            texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
+            const blocks = [];
+            for (const m of chatState.messages) {
+                const cleanText = preprocessText(m.content);
+                const paragraphs = cleanText.split(/\n\n+/);
+                const lines = [];
+                for (const p of paragraphs) {
+                    if (lines.length) lines.push('');
+                    const wrapped = wrapLines(p.replace(/\n/g, ' '), cw);
+                    for (const w of wrapped) lines.push(w);
+                }
+                const links = extractLinks(m.content);
+                blocks.push({ role: m.role, lines, links });
+            }
+            if (chatState.pending) {
+                blocks.push({ role: 'assistant', lines: ['…thinking'], links: [] });
+            }
+
+            // Total height needed: each block has 1 label line + lines + a gap.
+            const blockHeight = (b) => 18 /* label */ + (b.lines.length * lineH) + (b.links.length ? (lineH + 8) : 0) + 18 /* gap */;
+
+            // Pick last N blocks that fit in available area, top-down rendering.
+            const yStart = yTop + 48;
+            const avail = yBottom - yStart;
+            let keepFromIdx = 0;
+            let consumed = 0;
+            for (let i = blocks.length - 1; i >= 0; i--) {
+                const h = blockHeight(blocks[i]);
+                if (consumed + h > avail) { keepFromIdx = i + 1; break; }
+                consumed += h;
+            }
+            const visible = blocks.slice(keepFromIdx);
+
+            // Render
+            let y = yStart;
+            texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
+            for (const b of visible) {
+                // Role label
+                texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
+                texCtx.fillStyle = b.role === 'user' ? accDim : accSolid;
+                texCtx.fillText(b.role === 'user' ? '// YOU' : '// CLAUDE', cx, y);
+                y += 18;
+
+                // Body lines
+                texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
+                texCtx.fillStyle = b.role === 'user' ? accSoft : accSoft;
+                for (const line of b.lines) {
+                    texCtx.fillText(line, cx, y);
+                    y += lineH;
+                }
+
+                // Links — render as small button labels with hit zones
+                if (b.links.length) {
+                    let lx = cx;
+                    const linkY = y + 4;
+                    texCtx.font = `bold ${labelSize + 1}px JetBrains Mono, monospace`;
+                    for (const link of b.links) {
+                        const text = '▸ ' + link.label;
+                        const w = texCtx.measureText(text).width + 16;
+                        const h = 22;
+                        // Box
+                        texCtx.save();
+                        texCtx.shadowColor = accSolid;
+                        texCtx.shadowBlur = 8;
+                        texCtx.strokeStyle = accSolid;
+                        texCtx.lineWidth = 1;
+                        texCtx.strokeRect(lx + 0.5, linkY + 0.5, w, h);
+                        texCtx.restore();
+                        texCtx.fillStyle = accSolid;
+                        texCtx.fillText(text, lx + 8, linkY + 4);
+                        hitZones.push({ x: lx, y: linkY, w, h, action: 'link:' + link.href });
+                        lx += w + 8;
+                        if (lx + 200 > cx + cw) { lx = cx; y += h + 6; } // wrap
+                    }
+                    y += lineH + 8;
+                }
+                y += 18;
+            }
+        }
+
+        // (legacy review-list/detail renderers removed — chat replaces them)
+
+        drawHolo();
+        const texture = new THREE.CanvasTexture(texCanvas);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        // Debug: expose texCanvas globally so we can pixel-peek from devtools
+        window.__ssTexCanvas = texCanvas;
+
+        // Three.js scene
+        const scene = new THREE.Scene();
+        scene.background = null;  // stage CSS handles backdrop
+
+        // Custom curved-plane geometry: a grid of vertices that follows a
+        // cylindrical arc on the X-Z plane. Avoids the BackSide/UV mirror
+        // confusion of CylinderGeometry — UVs are written explicitly so the
+        // texture maps left-to-right across the arc, viewer-facing.
+        const RADIUS = 5;
+        const ARC = Math.PI * 0.85;     // ~153° — deep wrap matching the reference image
+        const ARC_HALF = ARC / 2;
+        const ARC_LEN = RADIUS * ARC;
+        const SEG_H = ARC_LEN * (TEX_H / TEX_W);
+        const RADIAL_SEGS = 128;
+        const HEIGHT_SEGS = 1;
+        const positions = [];
+        const uvs = [];
+        const indices = [];
+        for (let j = 0; j <= HEIGHT_SEGS; j++) {
+            const v = j / HEIGHT_SEGS;
+            const y = (v - 0.5) * SEG_H;
+            for (let i = 0; i <= RADIAL_SEGS; i++) {
+                const u = i / RADIAL_SEGS;
+                // u=0 → viewer's LEFT (negative X, theta = -π/2 - ARC_HALF)
+                // u=1 → viewer's RIGHT (positive X, theta = -π/2 + ARC_HALF)
+                const theta = -Math.PI / 2 - ARC_HALF + u * ARC;
+                const x = Math.cos(theta) * RADIUS;
+                const z = Math.sin(theta) * RADIUS;
+                positions.push(x, y, z);
+                uvs.push(u, v);
+            }
+        }
+        for (let j = 0; j < HEIGHT_SEGS; j++) {
+            for (let i = 0; i < RADIAL_SEGS; i++) {
+                const a = j * (RADIAL_SEGS + 1) + i;
+                const b = a + 1;
+                const c = a + (RADIAL_SEGS + 1);
+                const d = c + 1;
+                // Wind so face normal points toward +Z (concave side faces camera)
+                indices.push(a, c, b);
+                indices.push(b, c, d);
+            }
+        }
+        const cylGeom = new THREE.BufferGeometry();
+        cylGeom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        cylGeom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+        cylGeom.setIndex(indices);
+        cylGeom.computeVertexNormals();
+        // Holographic shader: scanlines + chromatic aberration + cyan tint +
+        // edge fade + low-amplitude flicker. The iframe texture is sampled
+        // three times (R/G/B at slight horizontal offsets) for a CRT-like
+        // RGB split, then mixed with horizontal scanlines, tinted blue, and
+        // faded toward the arc edges so the screen visually melts into the
+        // bg scene at the sides.
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                uMap:        { value: texture },
+                uTime:       { value: 0 },
+                uScanCount:  { value: 720.0 },
+                uScanStrength: { value: 0.16 },
+                uChroma:     { value: 0.0024 },
+                uTint:       { value: new THREE.Color(0x00ff88) },  // overwritten from body --acc
+                uTintMix:    { value: 0.18 },
+                uOpacity:    { value: 0.86 },
+                uEdgeFade:   { value: 0.10 },
+                uFlicker:    { value: 1.0 },
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform sampler2D uMap;
+                uniform float uTime;
+                uniform float uScanCount;
+                uniform float uScanStrength;
+                uniform float uChroma;
+                uniform vec3  uTint;
+                uniform float uTintMix;
+                uniform float uOpacity;
+                uniform float uEdgeFade;
+                uniform float uFlicker;
+                varying vec2 vUv;
+
+                void main() {
+                    // Sample with chromatic split.
+                    vec4 cR = texture2D(uMap, vUv + vec2( uChroma, 0.0));
+                    vec4 cG = texture2D(uMap, vUv);
+                    vec4 cB = texture2D(uMap, vUv + vec2(-uChroma, 0.0));
+                    vec3 col = vec3(cR.r, cG.g, cB.b);
+                    // Texture alpha — transparent pixels of the texture stay
+                    // transparent (so the bg scene shows through everywhere
+                    // except actual strokes/text).
+                    float texA = max(max(cR.a, cG.a), cB.a);
+
+                    // Scanlines — only modulate where we actually have ink.
+                    float scan = 0.5 + 0.5 * sin(vUv.y * uScanCount + uTime * 6.0);
+                    scan = pow(scan, 2.0);
+                    col *= 1.0 - uScanStrength * (1.0 - scan);
+
+                    // Tint everything toward the accent.
+                    col = mix(col, col * uTint, uTintMix);
+                    // Push pixel toward the pure accent so terminal text reads as the theme color.
+                    col = mix(col, uTint, 0.45);
+
+                    // Flicker
+                    float fl = 0.94 + 0.06 * sin(uTime * 30.0 + vUv.y * 12.0);
+                    col *= mix(1.0, fl, uFlicker);
+
+                    // Edge fade — soft falloff at left/right.
+                    float dx = abs(vUv.x - 0.5) * 2.0;
+                    float edgeAlpha = 1.0 - smoothstep(1.0 - uEdgeFade, 1.0, dx);
+
+                    // Glow boost — proportional to ink luminance, leaks slightly past strokes
+                    float lum = (col.r + col.g + col.b) / 3.0;
+                    col += uTint * 0.25 * lum * texA;
+
+                    gl_FragColor = vec4(col, texA * uOpacity * edgeAlpha);
+                }
+            `,
+            transparent: true,
+            side: THREE.DoubleSide,
+            depthWrite: false,
+        });
+        const cylinder = new THREE.Mesh(cylGeom, material);
+        // Bias upward — reference image has the screen filling the upper ~60%
+        // of the viewport with the lounge interior visible below it.
+        cylinder.position.y = SEG_H * 0.30;
+        scene.add(cylinder);
+        window.__ssCyl = cylinder;
+
+        // No additive halo — the new transparent screen relies on the
+        // shader's per-pixel glow around strokes/text only, so the rest
+        // of the curve area stays see-through.
+        const glowMat = { color: new THREE.Color(0x00ff88) };  // shim — kept so syncAccent's glowMat.color.copy() still has a target
+
+        // Theme-driven tint: read --acc from body and feed it into both the
+        // shader and the additive glow. Re-read whenever data-theme flips so
+        // the gear-popover theme picker re-paints the holo screen live.
+        function syncAccent() {
+            const cs = getComputedStyle(document.body);
+            const accStr = (cs.getPropertyValue('--acc') || '#00ff88').trim();
+            try {
+                const c = new THREE.Color(accStr);
+                material.uniforms.uTint.value.copy(c);
+                glowMat.color.copy(c);
+            } catch (e) { /* ignore parse errors */ }
+            // Repaint holo layer with the new accent.
+            drawHolo();
+            texture.needsUpdate = true;
+        }
+        syncAccent();
+        const accObs = new MutationObserver(syncAccent);
+        accObs.observe(document.body, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+
+        // Subtle inner glow ring at top + bottom edges of the cylinder
+        function addRimRing(yOffset) {
+            const ringGeom = new THREE.TorusGeometry(RADIUS, 0.012, 8, 96, ARC);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: 0x8cc8ff,
+                transparent: true,
+                opacity: 0.85,
+                toneMapped: false,
+            });
+            const ring = new THREE.Mesh(ringGeom, ringMat);
+            ring.position.y = yOffset;
+            ring.rotation.x = Math.PI / 2;
+            ring.rotation.z = -Math.PI / 2 - ARC_HALF + ARC / 2 - Math.PI / 2;
+            // Wrap an inner partial torus only along the arc front
+            return ring;
+        }
+        // Easier approach: thin ring as a curve out of LineSegments
+        function arcLine(yOffset, color, opacity) {
+            const pts = [];
+            const N = 96;
+            for (let i = 0; i <= N; i++) {
+                const t = i / N;
+                const a = -Math.PI / 2 - ARC_HALF + ARC * t;
+                pts.push(new THREE.Vector3(Math.cos(a) * RADIUS, yOffset, Math.sin(a) * RADIUS));
+            }
+            const geom = new THREE.BufferGeometry().setFromPoints(pts);
+            const mat = new THREE.LineBasicMaterial({ color, transparent: true, opacity });
+            return new THREE.Line(geom, mat);
+        }
+        // Rim arc lines removed — the imperfect border is now drawn into the
+        // texture (see drawHolo's borderSegments stroke) so we don't need
+        // separate Three.js Line meshes anymore.
+
+        // Camera positioned at cylinder centre on the open side
+        const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 50);
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x000000, 0);
+        mount.appendChild(renderer.domElement);
+
+        function resize() {
+            const w = mount.clientWidth, h = mount.clientHeight;
+            renderer.setSize(w, h, false);
+            camera.aspect = w / h;
+            // Distance: place camera so the front of the arc fills the frame.
+            // The arc's front-most point is at z=-RADIUS (after rotation we set
+            // arc center toward -Z). Frame the arc width = 2*RADIUS*sin(ARC/2)
+            // at distance D, with vertical fov 40°.
+            const arcWidth = 2 * RADIUS * Math.sin(ARC / 2);
+            const arcHeightVis = SEG_H;
+            // Required distance for vertical fit:
+            const fovRad = (camera.fov * Math.PI) / 180;
+            const dV = (arcHeightVis / 2) / Math.tan(fovRad / 2);
+            // Required distance for horizontal fit:
+            const dH = (arcWidth / 2) / (Math.tan(fovRad / 2) * camera.aspect);
+            const dist = Math.max(dV, dH) * 1.05;
+            camera.position.set(0, 0, dist);
+            camera.lookAt(0, 0, -RADIUS);
+            camera.updateProjectionMatrix();
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Render loop — also drives the shader time uniform for flicker/scan animation.
+        const clock = new THREE.Clock();
+        function render() {
+            requestAnimationFrame(render);
+            material.uniforms.uTime.value = clock.getElapsedTime();
+            renderer.render(scene, camera);
+        }
+        render();
+
+        // ---------- Live tick: clock, pulse bars, border drift ----------
+        // Re-render every 700ms so left-bar pulses + clock stay alive.
+        setInterval(() => {
+            drawHolo();
+            texture.needsUpdate = true;
+        }, 700);
+        // Border re-roll every few seconds for the "imperfect drift" feel.
+        setInterval(() => {
+            precomputeBorder();
+        }, 4500);
+
+        // ---------- Click → raycast → hit-zone → action ----------
+        const raycaster = new THREE.Raycaster();
+        const ndc = new THREE.Vector2();
+        mount.style.cursor = 'pointer';
+        mount.addEventListener('click', (e) => {
+            const rect = mount.getBoundingClientRect();
+            ndc.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            ndc.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(ndc, camera);
+            const hits = raycaster.intersectObject(cylinder);
+            if (hits.length === 0) return;
+            const uv = hits[0].uv;
+            if (!uv) return;
+            const tx = uv.x * TEX_W;
+            const ty = (1 - uv.y) * TEX_H;
+            for (const z of hitZones) {
+                if (tx >= z.x && tx <= z.x + z.w && ty >= z.y && ty <= z.y + z.h) {
+                    if (z.action.startsWith('link:')) {
+                        const href = z.action.slice(5);
+                        // Close screencast and navigate.
+                        document.body.classList.remove('screencast-on');
+                        stage.hidden = true;
+                        stage.setAttribute('aria-hidden', 'true');
+                        if (href.startsWith('/case/')) {
+                            // Existing legacy hash router opens the case overlay.
+                            location.hash = '#case/' + href.slice('/case/'.length);
+                        } else if (href.startsWith('/')) {
+                            location.href = '/rpogorov-dev' + href;
+                        } else {
+                            window.open(href, '_blank', 'noopener');
+                        }
+                    }
+                    return;
+                }
+            }
+        });
+
+        // Hook the chat form
+        const chatForm = document.querySelector('[data-ss-chat-form]');
+        const chatInput = document.querySelector('[data-ss-chat-input]');
+        const chatSend = document.querySelector('[data-ss-chat-send]');
+        if (chatForm && chatInput) {
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const v = chatInput.value;
+                chatInput.value = '';
+                if (chatSend) chatSend.disabled = true;
+                sendChatMessage(v).finally(() => {
+                    if (chatSend) chatSend.disabled = false;
+                    chatInput.focus();
+                });
+            });
+        }
+
+        // Wheel: swallow so it doesn't scroll the page beneath.
+        mount.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+
+        })(); }
+    </script>
+
+    <script>
+        (() => {
+            const toggle = document.querySelector('[data-screencast-toggle]');
+            const exit = document.querySelector('[data-screencast-exit]');
+            const stage = document.querySelector('[data-screencast-stage]');
+            const clockEl = document.querySelector('[data-ss-clock]');
+            if (!toggle || !stage) return;
+            function setOn(on) {
+                document.body.classList.toggle('screencast-on', on);
+                stage.hidden = !on;
+                stage.setAttribute('aria-hidden', on ? 'false' : 'true');
+            }
+            toggle.addEventListener('click', () => setOn(!document.body.classList.contains('screencast-on')));
+            exit?.addEventListener('click', () => setOn(false));
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape') return;
+                if (!document.body.classList.contains('screencast-on')) return;
+                e.stopPropagation();
+                setOn(false);
+            }, true);
+            function tickClock() {
+                if (!clockEl) return;
+                const d = new Date();
+                clockEl.textContent = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            }
+            tickClock();
+            setInterval(tickClock, 60_000);
+        })();
+    </script>
+
 </body>
 
 </html>
