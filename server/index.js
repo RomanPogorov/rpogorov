@@ -336,8 +336,115 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, { ok: true, threads: Object.keys(state.threads).length });
   }
 
+  // ---------- /api/chat/claude — visitor talks to Roman's Claude ----------
+  // POST { messages: [{role: 'user'|'assistant', content: string}, ...] }
+  // Returns { reply: string }.
+  if (req.method === 'POST' && url.pathname === '/api/chat/claude') {
+    let body;
+    try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
+    const messages = Array.isArray(body.messages) ? body.messages : [];
+    const cleanMsgs = messages
+      .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+      .slice(-12)
+      .map((m) => ({ role: m.role, content: String(m.content).slice(0, 4000) }));
+    if (!cleanMsgs.length || cleanMsgs[cleanMsgs.length - 1].role !== 'user') {
+      return send(res, 400, { error: 'last message must be from user' });
+    }
+    return claudeQueue.run(() => callClaude(cleanMsgs)).then(
+      (reply) => send(res, 200, { reply }),
+      (err) => { console.error('claude error:', err); send(res, 500, { error: String(err.message || err) }); },
+    );
+  }
+
   send(res, 404, { error: 'not found' });
 });
+
+// ---------- Claude helpers ----------
+const CLAUDE_SYSTEM_PROMPT = `You are Claude, answering questions about ROMAN POGOROV on his portfolio site (clauderunner.com/rpogorov-dev/). You are NOT Roman — you speak ABOUT him.
+
+ROMAN POGOROV — Product Designer · 15 years in design.
+- Now: Senior Product Designer at Health Samurai (2024 → present)
+- Before: Lead Product Designer at Americor (2023 → 2025)
+- Edge: design ↔ code pipeline, AI tooling, design systems, vibe-coding production features.
+
+KEY WORK (link these when relevant):
+
+[1] Americor — fintech debt-relief, web + iOS + Android.
+- Engagement case: progress visibility redesign, +72% NPS lift across platforms. /case/cs01/engagement
+- Offer-acceptance: +175% offers accepted online, +44% overall. /case/cs01/offer-acceptance
+- Design system: 3-tier token architecture (primitive → semantic → component), Figma modes per brand, Code Connect to React. /case/cs01/design-system
+- Figma + Claude vibe pipeline. /case/cs01/figma-claude-vibe
+- Company overlay: /case/cs01
+
+[2] Health Samurai — healthcare infrastructure (Aidbox, FHIR-native).
+- Stood up a shadCN-based design system end-to-end: Figma + code + Storybook in lockstep.
+- Wrote a Claude skill that pulled components straight out of Figma before that tooling existed elsewhere.
+- Markdown-first landing platform with in-browser DOM-aware Claude chat ("Fixik"). Cycle time per landing dropped from 3 months to 2–3 days. Whole company website now runs on it.
+- Presentation generator + kudos image generator on the same engine.
+- Vibe-coded the FireCamp conference app in a week (voting, schedule, subscriptions). 600+ attendees used it.
+- Company overlay: /case/cs02
+
+STRENGTHS:
+- Code × Design: a lot of hypotheses → picking the perfect UX, fast iteration on real prototypes.
+- Proper prototypes: code-first prototypes that become production.
+- Figma + AI multi-tooling: token sync, Claude skills, automation.
+
+REPLY STYLE:
+- Concise. 1–4 short paragraphs. No filler.
+- Reply in the SAME LANGUAGE the user wrote in (Russian or English; pick automatically).
+- When pointing to a specific case, embed the URL as a markdown link [label](/case/cs0X[/...]). The frontend turns those into clickable buttons.
+- Never fabricate metrics, dates, projects, or quotes that aren't listed above. If a question is outside Roman's listed work, say so briefly and offer the closest relevant case.
+- Don't roleplay as Roman. You're Claude answering ABOUT him.
+
+If the user just says hi, greet briefly and suggest 2–3 directions you can dig into (e.g. "design system at Health Samurai", "Americor +72% NPS engagement case", "code-design pipeline").`;
+
+// Sequential queue — Roman's instruction: claude CLI calls strictly serial
+// (parallel only with explicit ask) so background invocations don't trample
+// each other.
+const claudeQueue = (() => {
+  let chain = Promise.resolve();
+  return {
+    run(fn) {
+      const p = chain.then(() => fn());
+      chain = p.catch(() => {});
+      return p;
+    },
+  };
+})();
+
+function callClaude(messages) {
+  return new Promise((resolve, reject) => {
+    const transcript = messages.map((m) => {
+      const tag = m.role === 'user' ? 'User' : 'Assistant';
+      return `${tag}: ${m.content}`;
+    }).join('\n\n');
+    const prompt = `${transcript}\n\nAssistant:`;
+
+    // No --bare: use Roman's Max-plan OAuth (claude-headless --bare requires
+    // an explicit ANTHROPIC_API_KEY which we don't have).
+    const child = spawn('/root/bin/claude-headless', [
+      '--print',
+      '--model', 'claude-sonnet-4-6',
+      '--append-system-prompt', CLAUDE_SYSTEM_PROMPT,
+      prompt,
+    ], { stdio: ['ignore', 'pipe', 'pipe'] });
+
+    let out = '', err = '';
+    const killer = setTimeout(() => {
+      try { child.kill('SIGTERM'); } catch (_) {}
+    }, 45_000);
+    child.stdout.on('data', (d) => out += d);
+    child.stderr.on('data', (d) => err += d);
+    child.on('close', (code) => {
+      clearTimeout(killer);
+      if (code !== 0) return reject(new Error(`claude exit ${code}: ${err.slice(0, 300)}`));
+      const reply = out.trim();
+      if (!reply) return reject(new Error('claude returned empty output'));
+      resolve(reply);
+    });
+    child.on('error', (e) => { clearTimeout(killer); reject(e); });
+  });
+}
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`portfolio-chat listening on http://127.0.0.1:${PORT}`);
