@@ -88,8 +88,11 @@
 
         html {
             /* Base for `rem` units. Multiplied by --text-scale so A− / A+ buttons resize
-               typography proportionally across the whole page. */
-            font-size: calc(16px * var(--text-scale, 1));
+               typography proportionally across the whole page. !important wins over
+               content.css's `html,body { font-size: var(--type-base) }` which Layout.astro
+               imports AFTER legacy.css and which would otherwise pin the root font to a
+               fixed 1.0625rem regardless of slider state. */
+            font-size: calc(16px * var(--text-scale, 1)) !important;
         }
         html,
         body {
