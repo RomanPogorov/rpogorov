@@ -20900,13 +20900,13 @@ See also: Health Samurai Lab: Game of Pools.`,
                 uMap:        { value: texture },
                 uTime:       { value: 0 },
                 uScanCount:  { value: 720.0 },
-                uScanStrength: { value: 0.16 },
-                uChroma:     { value: 0.0024 },
-                uTint:       { value: new THREE.Color(0x00ff88) },  // overwritten from body --acc
-                uTintMix:    { value: 0.18 },
-                uOpacity:    { value: 0.86 },
+                uScanStrength: { value: 0.07 },   // softer scanlines
+                uChroma:     { value: 0.0006 },   // tiny RGB split — keeps the holo feel without doubling text
+                uTint:       { value: new THREE.Color(0x00ff88) },
+                uTintMix:    { value: 0.10 },
+                uOpacity:    { value: 0.95 },
                 uEdgeFade:   { value: 0.10 },
-                uFlicker:    { value: 1.0 },
+                uFlicker:    { value: 0.45 },     // half the wobble
             },
             vertexShader: `
                 varying vec2 vUv;
@@ -20929,37 +20929,34 @@ See also: Health Samurai Lab: Game of Pools.`,
                 varying vec2 vUv;
 
                 void main() {
-                    // Sample with chromatic split.
+                    // Tiny chromatic split — just enough to read as holo.
                     vec4 cR = texture2D(uMap, vUv + vec2( uChroma, 0.0));
                     vec4 cG = texture2D(uMap, vUv);
                     vec4 cB = texture2D(uMap, vUv + vec2(-uChroma, 0.0));
                     vec3 col = vec3(cR.r, cG.g, cB.b);
-                    // Texture alpha — transparent pixels of the texture stay
-                    // transparent (so the bg scene shows through everywhere
-                    // except actual strokes/text).
                     float texA = max(max(cR.a, cG.a), cB.a);
 
-                    // Scanlines — only modulate where we actually have ink.
+                    // Push pixel toward the pure accent so canvas-drawn text
+                    // is exactly the theme colour (counters the per-channel
+                    // mix that the chromatic split introduces).
+                    col = mix(col, uTint, 0.6);
+
+                    // Subtle scanlines.
                     float scan = 0.5 + 0.5 * sin(vUv.y * uScanCount + uTime * 6.0);
                     scan = pow(scan, 2.0);
                     col *= 1.0 - uScanStrength * (1.0 - scan);
 
-                    // Tint everything toward the accent.
-                    col = mix(col, col * uTint, uTintMix);
-                    // Push pixel toward the pure accent so terminal text reads as the theme color.
-                    col = mix(col, uTint, 0.45);
-
-                    // Flicker
-                    float fl = 0.94 + 0.06 * sin(uTime * 30.0 + vUv.y * 12.0);
+                    // Mild flicker.
+                    float fl = 0.97 + 0.03 * sin(uTime * 30.0 + vUv.y * 12.0);
                     col *= mix(1.0, fl, uFlicker);
 
                     // Edge fade — soft falloff at left/right.
                     float dx = abs(vUv.x - 0.5) * 2.0;
                     float edgeAlpha = 1.0 - smoothstep(1.0 - uEdgeFade, 1.0, dx);
 
-                    // Glow boost — proportional to ink luminance, leaks slightly past strokes
+                    // Tight glow halo — small radius so text stays sharp.
                     float lum = (col.r + col.g + col.b) / 3.0;
-                    col += uTint * 0.25 * lum * texA;
+                    col += uTint * 0.10 * lum * texA;
 
                     gl_FragColor = vec4(col, texA * uOpacity * edgeAlpha);
                 }
@@ -20969,11 +20966,28 @@ See also: Health Samurai Lab: Game of Pools.`,
             depthWrite: false,
         });
         const cylinder = new THREE.Mesh(cylGeom, material);
-        // Bias upward — reference image has the screen filling the upper ~60%
-        // of the viewport with the lounge interior visible below it.
         cylinder.position.y = SEG_H * 0.30;
         scene.add(cylinder);
         window.__ssCyl = cylinder;
+
+        // Darkening backplate — slightly behind the holo strokes, dims the
+        // bg scene only inside the screen footprint so text reads cleanly
+        // against a soft dark surface (rather than the colourful lounge).
+        // Same geometry, slightly inflated so it shows past the strokes by
+        // a few pixels at the edges.
+        const dimGeom = cylGeom.clone();
+        const dimMat = new THREE.MeshBasicMaterial({
+            color: 0x050810,
+            transparent: true,
+            opacity: 0.55,
+            side: THREE.DoubleSide,
+            depthWrite: false,
+        });
+        const dimPlate = new THREE.Mesh(dimGeom, dimMat);
+        dimPlate.position.y = SEG_H * 0.30;
+        dimPlate.scale.set(1.005, 1.04, 1.005);
+        dimPlate.renderOrder = -1;  // paint before the holo strokes
+        scene.add(dimPlate);
 
         // No additive halo — the new transparent screen relies on the
         // shader's per-pixel glow around strokes/text only, so the rest
