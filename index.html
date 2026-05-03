@@ -20233,8 +20233,8 @@ See also: Health Samurai Lab: Game of Pools.`,
         const texCtx = texCanvas.getContext('2d');
 
         // ---------- View state ----------
-        // Two modes inside the cylinder: chat or career timeline.
-        const holoState = { view: 'chat' };  // 'chat' | 'career'
+        // Two modes inside the cylinder: career timeline (default) or chat.
+        const holoState = { view: 'career' };  // 'chat' | 'career'
         // Tab transition — when set, drawHolo paints both views shifted so
         // the old slides off and the new slides in.
         // { from, to, start (ms), dur (ms), dir (+1 right, -1 left) }
@@ -20594,8 +20594,8 @@ See also: Health Samurai Lab: Game of Pools.`,
             const cw = CENTER_W - 112;
             const cx = CENTER_X + 56;
             const tabs = [
-                { label: '// CHAT',     id: 'chat' },
-                { label: '// TIMELINE', id: 'career' },
+                { label: '// CAREER TIMELINE',         id: 'career' },
+                { label: '// TALK TO PORTFOLIO AGENT', id: 'chat' },
             ];
             const fontSize = 22;
             const padX = 26;
@@ -20783,15 +20783,15 @@ See also: Health Samurai Lab: Game of Pools.`,
             const lineH = 26;
             let y = 140;  // below the centred tab row
 
-            // Headstrip
+            // Headstrip — meta only; the bigger header lives in the tab row above.
             texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
-            texCtx.fillStyle = accSolid;
-            texCtx.fillText('// CAREER TIMELINE · 2014 → 2026 · 5 ROLES · 3 SIDE PROJECTS', cx, y);
-            y += 26;
-            texCtx.font = `bold 30px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accDim;
+            texCtx.fillText('// 2014 → 2026 · 5 ROLES · 3 SIDE PROJECTS', cx, y);
+            y += 30;
+            texCtx.font = `bold 28px JetBrains Mono, monospace`;
             texCtx.fillStyle = accSoft;
-            texCtx.fillText('Career path since 2014', cx, y);
-            y += 48;
+            texCtx.fillText('Career path since 2014.', cx, y);
+            y += 44;
 
             // Axis: 13 columns covering 2014..2026
             const COLS = 13;
