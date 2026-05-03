@@ -20796,11 +20796,11 @@ See also: Health Samurai Lab: Game of Pools.`,
             // Axis: 13 columns covering 2014..2026
             const COLS = 13;
             const colW = cw / COLS;
-            const axisH = 32;
+            const axisH = 44;
             // Side row sits a bit further below to leave room for its label.
-            const sideLabelY = y + axisH + 18;
-            const sideY = sideLabelY + 18;
-            const yearsY = sideY + axisH + 12;
+            const sideLabelY = y + axisH + 22;
+            const sideY = sideLabelY + 24;
+            const yearsY = sideY + axisH + 14;
 
             // Main row
             for (const [id, r] of Object.entries(ROLES)) {
@@ -20821,18 +20821,18 @@ See also: Health Samurai Lab: Game of Pools.`,
                     texCtx.fillRect(x + 1, y + 1, w - 1, axisH - 1);
                 }
                 texCtx.restore();
-                texCtx.font = `bold ${labelSize}px JetBrains Mono, monospace`;
+                texCtx.font = `bold 18px JetBrains Mono, monospace`;
                 texCtx.fillStyle = isActive ? accSolid : accSoft;
                 const lbl = r.name;
-                const labelX = x + 10;
-                texCtx.fillText(lbl, labelX, y + 9);
+                const labelX = x + 12;
+                texCtx.fillText(lbl, labelX, y + 14);
                 hitZones.push({ x, y, w, h: axisH, action: 'role:' + id });
             }
 
             // Side row label — its own dedicated line so it doesn't crash
             // into either the main row (above) or the side bars (below).
-            texCtx.font = `${labelSize - 2}px JetBrains Mono, monospace`;
-            texCtx.fillStyle = accDim;
+            texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accSoft;
             texCtx.fillText('// SIDE PROJECTS · PART-TIME', cx, sideLabelY);
 
             // Side row
@@ -20853,34 +20853,35 @@ See also: Health Samurai Lab: Game of Pools.`,
                     texCtx.fillRect(x + 1, sideY + 1, w - 1, axisH - 1);
                 }
                 texCtx.restore();
-                texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
-                texCtx.fillStyle = isActive ? accSolid : accFaint;
-                texCtx.fillText(r.name, x + 10, sideY + 9);
+                texCtx.font = `16px JetBrains Mono, monospace`;
+                texCtx.fillStyle = isActive ? accSolid : accSoft;
+                texCtx.fillText(r.name, x + 12, sideY + 14);
                 hitZones.push({ x, y: sideY, w, h: axisH, action: 'role:' + id });
             }
 
             // Years row
             const years = ['2014', "'15", "'16", '2017', "'18", "'19", '2020', "'21", "'22", '2023', "'24", "'25", '2026'];
-            texCtx.font = `${labelSize - 2}px JetBrains Mono, monospace`;
+            texCtx.font = `bold 16px JetBrains Mono, monospace`;
             for (let i = 0; i < years.length; i++) {
                 const isMajor = (i === 0 || i === 3 || i === 6 || i === 9 || i === 12);
-                texCtx.fillStyle = isMajor ? accSolid : accDim;
-                texCtx.fillText(years[i], cx + i * colW + 4, yearsY);
+                texCtx.fillStyle = isMajor ? accSolid : accSoft;
+                texCtx.fillText(years[i], cx + i * colW + 6, yearsY);
             }
 
             // Detail panel for selected role
             const r = ROLES[careerState.selectedRoleId];
             if (!r) return;
-            let dy = yearsY + 36;
+            let dy = yearsY + 40;
             // Header — name on its own line so it doesn't get cut off
-            texCtx.font = 'bold 22px JetBrains Mono, monospace';
+            texCtx.font = 'bold 24px JetBrains Mono, monospace';
             texCtx.fillStyle = accSolid;
             texCtx.fillText(r.name, cx, dy);
-            dy += 28;
+            dy += 32;
+            // Sub-header — same brightness as body so it reads cleanly.
             texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
-            texCtx.fillStyle = accDim;
+            texCtx.fillStyle = accSoft;
             texCtx.fillText(`${r.role} · ${r.period} · ${r.location} · ${r.tag}`, cx, dy);
-            dy += 30;
+            dy += 32;
 
             // Summary
             texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
