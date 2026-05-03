@@ -37,6 +37,25 @@ const subCases = (await getCollection('cases')).sort(
 const rightPanel = (await getCollection('rightPanel')).sort(
   (a, b) => a.data.order - b.data.order
 );
+// Articles for the left-pane "// articles" tab — source from the vault
+// content collection so adding a new MD in /root/vault/portfolio/articles
+// automatically appears in the panel after a rebuild (no manual JS-array
+// editing). Body is the raw markdown — legacy openReader feeds it to
+// marked.js for HTML rendering.
+const articlesEntries = (await getCollection('articles')).sort(
+  (a, b) => +new Date(b.data.date) - +new Date(a.data.date)
+);
+const articlesData = articlesEntries.map((entry) => ({
+  id: entry.data.id ?? entry.id,
+  title: entry.data.title,
+  description: entry.data.description ?? entry.data.desc ?? '',
+  date: typeof entry.data.date === 'string' ? entry.data.date : entry.data.date?.toISOString().slice(0, 10),
+  author: entry.data.author ?? 'Roman Pogorov',
+  readingTime: entry.data.readingTime ?? '',
+  tags: entry.data.tags ?? [],
+  status: entry.data.status ?? 'live',
+  body: entry.body ?? '',
+}));
 const tasks = rightPanel.filter((e) => e.data.kind === 'pain');
 const strengths = rightPanel.filter((e) => e.data.kind === 'strength');
 const releases = rightPanel.filter((e) => e.data.kind === 'release');
@@ -220,6 +239,15 @@ legacyBody = legacyBody.replace(
   'const DETAIL = window.__RIGHT_PANEL_DETAIL || {};'
 );
 
+// Same trick for ARTICLES — replace the legacy hard-coded JS array with a
+// window-injected list built from the vault content collection. Adding a
+// new MD in /root/vault/portfolio/articles/ now automatically appears in
+// the left-pane // articles tab on next build, no manual array edits.
+legacyBody = legacyBody.replace(
+  /const ARTICLES = \[[\s\S]*?\n\s+\];/,
+  'const ARTICLES = window.__ARTICLES || [];'
+);
+
 const [legacyBefore, afterAmericor] = legacyBody.split('<!-- AMERICOR_OVERLAY_MARKER -->');
 const [legacyMid, legacyAfter] = afterAmericor.split('<!-- HS_OVERLAY_MARKER -->');
 
@@ -229,6 +257,7 @@ const cs02Data = cs02?.data;
 
 <Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate">
   <script is:inline set:html={`window.__RIGHT_PANEL_DETAIL = ${JSON.stringify(detailDict)};`}></script>
+  <script is:inline set:html={`window.__ARTICLES = ${JSON.stringify(articlesData)};`}></script>
   <Fragment set:html={legacyBefore} />
 
   {Cs01Content && cs01Data && (

@@ -94,10 +94,7 @@ const themeClass = data.theme === 'bright' ? 'cp-light' : '';
 </script>
 
 <style>
-  /* Standalone page wrapper — defeats the legacy .case-page overlay
-     styles (position:fixed, transform:translateY(100%), pointer-events:none,
-     overflow:hidden) so the case actually shows when there's no
-     body.case-open + .case-page.open dance to flip them. */
+  /* Standalone page wrapper — defeats the legacy overlay styles. */
   .case-page.is-standalone {
     position: relative !important;
     inset: auto !important;
@@ -111,4 +108,15 @@ const themeClass = data.theme === 'bright' ? 'cp-light' : '';
     min-height: 100vh;
   }
   .case-page.is-standalone.cp-light { background: #f6f8fb; color: #0f1419; }
+</style>
+<style is:global>
+  /* Body-level overrides for the standalone case route only — legacy.css
+     pins body to crosshair cursor + overflow:hidden for the cyber main
+     page. On a static case page that hides scroll and looks weird. */
+  html, body {
+    overflow: auto !important;
+    cursor: auto !important;
+    height: auto !important;
+    min-height: 100vh;
+  }
 </style>
