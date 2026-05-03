@@ -20232,6 +20232,10 @@ See also: Health Samurai Lab: Game of Pools.`,
         texCanvas.height = TEX_H;
         const texCtx = texCanvas.getContext('2d');
 
+        // ---------- View state ----------
+        // Two modes inside the cylinder: chat or career timeline.
+        const holoState = { view: 'chat' };  // 'chat' | 'career' | 'role'
+
         // ---------- Chat state ----------
         const chatState = {
             messages: [
@@ -20242,12 +20246,47 @@ See also: Health Samurai Lab: Game of Pools.`,
             ],
             pending: false,
             error: null,
-            // Live mirror of the hidden <input> so we can paint a fake
-            // prompt + caret directly on the cylinder.
             draft: '',
             caretAt: 0,
             caretBlink: true,
         };
+
+        // ---------- Career timeline data (mirrors legacy ROLES) ----------
+        const ROLES = {
+            'project-practice': { name: 'Project Practice', role: 'UX/UI Designer · Developer', period: '2014 — 2016', location: 'Moscow', tag: 'PM Tools', s: 1, e: 2, side: false,
+                summary: 'Joined as UX/UI. Started laying out my own designs and building simple features — JS, LESS, CSS, HTML, C# templates. Bridge between design and code that has never closed since.',
+                projects: ['PM-system × 4 redesigns', 'Theming Mechanism', 'CSS → LESS Refactor', 'Mobile App Design', 'Design Processes', 'UX Research'],
+            },
+            'gotrg': { name: 'goTRG', role: 'UX/UI Designer', period: '2016 — 2020', location: 'SPb · Miami', tag: 'SaaS · ERP', s: 3, e: 6, side: false,
+                summary: 'SaaS, Supply Chain & ReCommerce platform. Audited a legacy ERP, built a design system from scratch with legacy-support layer, and launched a brand-new ERP on top of it.',
+                projects: ['ERP Audit', 'Design System', 'New ERP Launch', 'React Layouting', 'CSS Refactoring', 'Interviews & Testing'],
+            },
+            'helix': { name: 'Helix · Medindex', role: 'Lead Product Designer', period: '2020 — 2023', location: 'SPb · Moscow · Astana · Minsk', tag: 'MedTech', s: 7, e: 9, side: false,
+                summary: 'One of the largest medical labs in Eurasia. Built a design team from scratch, modernised legacy desktop apps to web, shipped 3 new apps + a mobile app, plus a token-based design system.',
+                projects: ['3 new applications', 'Mobile application', 'Website redesign', 'Design system + tokens', 'Built design team', 'Multi-platform ecosystem'],
+            },
+            'health-samurai': { name: 'Health Samurai', role: 'Designer-Developer', period: '2023 — now', location: 'Lisbon', tag: 'Healthcare IT', s: 10, e: 11, side: false,
+                summary: 'Healthcare IT since 2004. Built an AI-generated design system on shadCN, a markdown-first landing platform with Claude in the loop, a presentation generator, and shipped two product redesigns.',
+                projects: ['shadCN Design System', 'Figma ↔ Code skill', 'Landing Platform', 'Presentation Generator', 'Embedded Analytics', 'Aidbox v2 + MPI Box', 'Brand & Illustrations', 'FireCamp app'],
+            },
+            'americor': { name: 'Americor', role: 'Lead Product Designer', period: '2024 — now', location: 'Los Angeles', tag: 'FinTech', s: 12, e: 13, side: false,
+                summary: 'FinTech for debt relief. Led the pre-IPO redesign of web + iOS + Android. Built a 3-platform, multi-brand, token-driven design system. Flipped the process to code-first with React + Storybook.',
+                projects: ['Multi-platform Redesign', '3-platform Design System', 'Code-first Process', 'FB Insights Parser', 'NSF Shortfall Simulator', 'Junior Mentoring'],
+            },
+            'code-we-trust': { name: 'Code We Trust', role: 'UX/UI · Part-time', period: '2019 — 2024', location: 'Greece', tag: 'Side · DevTools', s: 6, e: 7, side: true,
+                summary: 'Source-code assessment & audit platform. Designed from scratch — UI lo/hi-fi, prototyping, user testing, React-component layouting, CSS refactoring.',
+                projects: ['UI Design', 'CSS Refactoring', 'React Layouting', 'Prototyping', 'User Testing', 'Code Audit UX'],
+            },
+            'oort-digital': { name: 'Oort Digital', role: 'UX/UI · Part-time', period: '2021 — 2023', location: 'Hong Kong', tag: 'Side · Web3', s: 8, e: 9, side: true,
+                summary: 'Layer-0 NFT solution — utility for NFTs, in-game worlds, community rewards. Web3 pattern research, main app UX/UI, design system creation and expansion.',
+                projects: ['Web3 Pattern Research', 'Main App UX/UI', 'Design System', 'Rapid Prototyping', 'User Interviews', 'NFT World Dive'],
+            },
+            'pavilion': { name: 'Pavilion', role: 'UX/UI · Part-time', period: '2023 — 2024', location: 'Lisbon · Texas', tag: 'Side · ERP', s: 10, e: 11, side: true,
+                summary: 'ERP for the jewellery industry on Salesforce. Deep market research, detailed prototyping, user interviews and testing, Salesforce Lightning components.',
+                projects: ['Market Research', 'Detailed Prototyping', 'User Interviews', 'Lightning Components'],
+            },
+        };
+        const careerState = { selectedRoleId: 'americor' };
         // Hit zones in texture-canvas pixel coords: { x, y, w, h, action }
         const hitZones = [];
 
@@ -20466,8 +20505,44 @@ See also: Health Samurai Lab: Game of Pools.`,
             texCtx.fillText('// holo-frame · live', rx, TEX_H - 56);
             texCtx.textAlign = 'left';
 
-            // ---- CENTRE: chat ----
-            drawChat(accSolid, accSoft, accDim, accFaint);
+            // ---- CENTRE: tabs + view ----
+            drawTabs(accSolid, accSoft, accDim, accFaint);
+            if (holoState.view === 'career') drawCareer(accSolid, accSoft, accDim, accFaint);
+            else drawChat(accSolid, accSoft, accDim, accFaint);
+        }
+
+        function drawTabs(accSolid, accSoft, accDim) {
+            // Two pill tabs at the top-right of the centre column.
+            const cw = CENTER_W - 112;
+            const cx = CENTER_X + 56;
+            const yTab = 50;
+            const tabs = [
+                { label: '// CHAT',     id: 'chat' },
+                { label: '// TIMELINE', id: 'career' },
+            ];
+            texCtx.font = 'bold 12px JetBrains Mono, monospace';
+            let xRight = cx + cw;
+            for (let i = tabs.length - 1; i >= 0; i--) {
+                const t = tabs[i];
+                const isActive = (t.id === 'career' ? holoState.view === 'career' : holoState.view === 'chat');
+                const w = texCtx.measureText(t.label).width + 22;
+                const h = 22;
+                const x = xRight - w;
+                const y = yTab;
+                texCtx.save();
+                if (isActive) {
+                    texCtx.shadowColor = accSolid;
+                    texCtx.shadowBlur = 10;
+                }
+                texCtx.strokeStyle = isActive ? accSolid : accDim;
+                texCtx.lineWidth = 1;
+                texCtx.strokeRect(x + 0.5, y + 0.5, w, h);
+                texCtx.restore();
+                texCtx.fillStyle = isActive ? accSolid : accDim;
+                texCtx.fillText(t.label, x + 11, y + 4);
+                hitZones.push({ x, y, w, h, action: 'tab:' + t.id });
+                xRight = x - 8;
+            }
         }
 
         function drawChat(accSolid, accSoft, accDim, accFaint) {
@@ -20615,6 +20690,144 @@ See also: Health Samurai Lab: Game of Pools.`,
             const hint = '↵ ENTER';
             const hintW = texCtx.measureText(hint).width;
             texCtx.fillText(hint, inX + inW - hintW - 14, inY + 17);
+        }
+
+        function drawCareer(accSolid, accSoft, accDim, accFaint) {
+            const cx = CENTER_X + 56;
+            const cw = CENTER_W - 112;
+            const labelSize = 12;
+            const bodySize = 16;
+            const lineH = 22;
+            let y = 90;
+
+            // Headstrip
+            texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText('// CAREER TIMELINE · 2014 → 2026 · 5 ROLES · 3 SIDE PROJECTS', cx, y);
+            y += 22;
+            texCtx.font = `bold 26px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accSoft;
+            texCtx.fillText('Career path since 2014', cx, y);
+            y += 38;
+
+            // Axis: 13 columns covering 2014..2026
+            const COLS = 13;
+            const colW = cw / COLS;
+            const axisH = 26;
+            const sideY = y + axisH + 14;
+            const yearsY = sideY + axisH + 10;
+
+            // Main row
+            for (const [id, r] of Object.entries(ROLES)) {
+                if (r.side) continue;
+                const x = cx + (r.s - 1) * colW;
+                const w = (r.e - r.s + 1) * colW - 4;
+                const isActive = id === careerState.selectedRoleId;
+                texCtx.save();
+                if (isActive) {
+                    texCtx.shadowColor = accSolid;
+                    texCtx.shadowBlur = 12;
+                }
+                texCtx.strokeStyle = isActive ? accSolid : accSoft;
+                texCtx.lineWidth = isActive ? 1.5 : 1;
+                texCtx.strokeRect(x + 0.5, y + 0.5, w, axisH);
+                if (isActive) {
+                    texCtx.fillStyle = `rgba(${(getComputedStyle(document.body).getPropertyValue('--acc-rgb') || '0,255,136').trim()}, 0.16)`;
+                    texCtx.fillRect(x + 1, y + 1, w - 1, axisH - 1);
+                }
+                texCtx.restore();
+                texCtx.font = `bold ${labelSize}px JetBrains Mono, monospace`;
+                texCtx.fillStyle = isActive ? accSolid : accSoft;
+                const lbl = r.name;
+                const labelX = x + 8;
+                texCtx.fillText(lbl, labelX, y + 7);
+                hitZones.push({ x, y, w, h: axisH, action: 'role:' + id });
+            }
+
+            // Side row label
+            texCtx.font = `${labelSize - 1}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accDim;
+            texCtx.fillText('// side projects · part-time', cx, sideY - 16);
+
+            // Side row
+            for (const [id, r] of Object.entries(ROLES)) {
+                if (!r.side) continue;
+                const x = cx + (r.s - 1) * colW;
+                const w = (r.e - r.s + 1) * colW - 4;
+                const isActive = id === careerState.selectedRoleId;
+                texCtx.save();
+                if (isActive) { texCtx.shadowColor = accSolid; texCtx.shadowBlur = 10; }
+                texCtx.strokeStyle = isActive ? accSolid : accFaint;
+                texCtx.lineWidth = isActive ? 1.5 : 1;
+                texCtx.setLineDash(isActive ? [] : [3, 3]);
+                texCtx.strokeRect(x + 0.5, sideY + 0.5, w, axisH);
+                texCtx.setLineDash([]);
+                if (isActive) {
+                    texCtx.fillStyle = `rgba(${(getComputedStyle(document.body).getPropertyValue('--acc-rgb') || '0,255,136').trim()}, 0.14)`;
+                    texCtx.fillRect(x + 1, sideY + 1, w - 1, axisH - 1);
+                }
+                texCtx.restore();
+                texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
+                texCtx.fillStyle = isActive ? accSolid : accFaint;
+                texCtx.fillText(r.name, x + 8, sideY + 7);
+                hitZones.push({ x, y: sideY, w, h: axisH, action: 'role:' + id });
+            }
+
+            // Years row
+            const years = ['2014', "'15", "'16", '2017', "'18", "'19", '2020', "'21", "'22", '2023', "'24", "'25", '2026'];
+            texCtx.font = `${labelSize - 2}px JetBrains Mono, monospace`;
+            for (let i = 0; i < years.length; i++) {
+                const isMajor = (i === 0 || i === 3 || i === 6 || i === 9 || i === 12);
+                texCtx.fillStyle = isMajor ? accSolid : accDim;
+                texCtx.fillText(years[i], cx + i * colW + 2, yearsY);
+            }
+
+            // Detail panel for selected role
+            const r = ROLES[careerState.selectedRoleId];
+            if (!r) return;
+            let dy = yearsY + 32;
+            // Header line: name · role · period · location · tag
+            texCtx.font = 'bold 18px JetBrains Mono, monospace';
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText(r.name, cx, dy);
+            const nameW = texCtx.measureText(r.name).width;
+            texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accDim;
+            texCtx.fillText(`· ${r.role} · ${r.period} · ${r.location} · ${r.tag}`, cx + nameW + 8, dy + 4);
+            dy += 28;
+
+            // Summary
+            texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accSoft;
+            const summary = (r.summary || '').replace(/<\/?em>/g, '');
+            const sumLines = wrapLines(summary, cw);
+            for (const ln of sumLines) {
+                texCtx.fillText(ln, cx, dy);
+                dy += lineH;
+                if (dy > TEX_H - 90) return;
+            }
+            dy += 10;
+
+            // Projects
+            texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText('// PROJECTS', cx, dy);
+            dy += 18;
+            texCtx.font = `${bodySize - 1}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accSoft;
+            const colCount = 3;
+            const projColW = cw / colCount;
+            (r.projects || []).forEach((p, i) => {
+                const col = i % colCount;
+                const row = Math.floor(i / colCount);
+                const px = cx + col * projColW;
+                const py = dy + row * 22;
+                if (py > TEX_H - 80) return;
+                texCtx.fillStyle = accSolid;
+                texCtx.fillText('▸', px, py);
+                texCtx.fillStyle = accSoft;
+                texCtx.fillText(p, px + 18, py);
+            });
         }
 
         // (legacy review-list/detail renderers removed — chat replaces them)
@@ -20890,18 +21103,22 @@ See also: Health Samurai Lab: Game of Pools.`,
                 if (tx >= z.x && tx <= z.x + z.w && ty >= z.y && ty <= z.y + z.h) {
                     if (z.action.startsWith('link:')) {
                         const href = z.action.slice(5);
-                        // Close screencast and navigate.
                         document.body.classList.remove('screencast-on');
                         stage.hidden = true;
                         stage.setAttribute('aria-hidden', 'true');
                         if (href.startsWith('/case/')) {
-                            // Existing legacy hash router opens the case overlay.
                             location.hash = '#case/' + href.slice('/case/'.length);
                         } else if (href.startsWith('/')) {
                             location.href = '/rpogorov-dev' + href;
                         } else {
                             window.open(href, '_blank', 'noopener');
                         }
+                    } else if (z.action.startsWith('tab:')) {
+                        holoState.view = z.action.slice(4);
+                        redrawHolo();
+                    } else if (z.action.startsWith('role:')) {
+                        careerState.selectedRoleId = z.action.slice(5);
+                        redrawHolo();
                     }
                     return;
                 }
