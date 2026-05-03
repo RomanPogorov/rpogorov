@@ -20234,7 +20234,29 @@ See also: Health Samurai Lab: Game of Pools.`,
 
         // ---------- View state ----------
         // Two modes inside the cylinder: chat or career timeline.
-        const holoState = { view: 'chat' };  // 'chat' | 'career' | 'role'
+        const holoState = { view: 'chat' };  // 'chat' | 'career'
+        // Tab transition — when set, drawHolo paints both views shifted so
+        // the old slides off and the new slides in.
+        // { from, to, start (ms), dur (ms), dir (+1 right, -1 left) }
+        let holoTransition = null;
+        function startHoloTransition(toView) {
+            if (toView === holoState.view && !holoTransition) return;
+            holoTransition = {
+                from: holoState.view,
+                to: toView,
+                start: performance.now(),
+                dur: 520,
+                dir: toView === 'career' ? +1 : -1,
+            };
+            holoState.view = toView;
+            const tick = () => {
+                if (!holoTransition) return;
+                drawHolo();
+                texture.needsUpdate = true;
+                requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        }
 
         // ---------- Chat state ----------
         const chatState = {
@@ -20507,8 +20529,63 @@ See also: Health Samurai Lab: Game of Pools.`,
 
             // ---- CENTRE: tabs + view ----
             drawTabs(accSolid, accSoft, accDim, accFaint);
-            if (holoState.view === 'career') drawCareer(accSolid, accSoft, accDim, accFaint);
-            else drawChat(accSolid, accSoft, accDim, accFaint);
+
+            const drawView = (view) => {
+                if (view === 'career') drawCareer(accSolid, accSoft, accDim, accFaint);
+                else drawChat(accSolid, accSoft, accDim, accFaint);
+            };
+
+            if (!holoTransition) {
+                drawView(holoState.view);
+                return;
+            }
+
+            // Compute progress 0..1, ease-out cubic.
+            const elapsed = performance.now() - holoTransition.start;
+            let t = Math.min(1, elapsed / holoTransition.dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            const slide = CENTER_W * eased;
+            // Clip to the centre column so neither view bleeds into the side
+            // widgets while sliding.
+            const clipX = CENTER_X;
+            const clipW = CENTER_W;
+            texCtx.save();
+            texCtx.beginPath();
+            texCtx.rect(clipX, 0, clipW, TEX_H);
+            texCtx.clip();
+
+            // Old view slides off in the opposite direction of the new one.
+            // dir: +1 = new comes from the right (career), -1 = from the left (chat).
+            const fromShift = -holoTransition.dir * slide;       // old goes opposite
+            const toShift   = holoTransition.dir * (CENTER_W - slide);  // new comes in
+
+            // Hit zones during transition would be misaligned with what's
+            // drawn — temporarily redirect them into a sink so clicks during
+            // the slide don't open random items.
+            const _hzReal = hitZones;
+            // (we operate on the same array; cleared at start of drawHolo)
+
+            texCtx.save();
+            texCtx.translate(fromShift, 0);
+            drawView(holoTransition.from);
+            texCtx.restore();
+
+            // Clear hit zones registered for the FROM view — they're sliding
+            // off-screen and shouldn't fire.
+            hitZones.length = 0;
+
+            texCtx.save();
+            texCtx.translate(toShift, 0);
+            drawView(holoTransition.to);
+            texCtx.restore();
+
+            // Hit zones registered for TO view need shifting to match the
+            // visible position so clicks during the slide land correctly.
+            for (const z of hitZones) z.x += toShift;
+
+            texCtx.restore();
+
+            if (t >= 1) holoTransition = null;
         }
 
         function drawTabs(accSolid, accSoft, accDim) {
@@ -20902,7 +20979,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 uMap:        { value: texture },
                 uTime:       { value: 0 },
                 uScanCount:  { value: 720.0 },
-                uScanStrength: { value: 0.10 },
+                uScanStrength: { value: 0.18 },
                 uChroma:     { value: 0.0006 },   // tiny base RGB split — boosted briefly during glitch
                 uTint:       { value: new THREE.Color(0x00ff88) },
                 uTintMix:    { value: 0.10 },
@@ -20958,31 +21035,41 @@ See also: Health Samurai Lab: Game of Pools.`,
                     // Lock to accent colour.
                     col = mix(col, uTint, 0.6);
 
-                    // Scanlines.
+                    // Scanlines on the inked pixels (modulate brightness).
                     float scan = 0.5 + 0.5 * sin(vUv.y * uScanCount + uTime * 6.0);
                     scan = pow(scan, 2.0);
                     col *= 1.0 - uScanStrength * (1.0 - scan);
 
-                    // Tear-line: a single wider scanline that drifts slowly
-                    // up the screen, brighter — gives the "rolling shutter"
-                    // hologram cue without ruining readability.
+                    // Tear-line: a brighter horizontal band drifting up the
+                    // screen — visible everywhere, including the dim bg.
                     float tearY = fract(uTime * 0.06);
                     float tearD = 1.0 - smoothstep(0.0, 0.012, abs(vUv.y - tearY));
-                    col += uTint * 0.18 * tearD * texA;
 
                     // Flicker.
                     float fl = 0.97 + 0.03 * sin(uTime * 30.0 + vUv.y * 12.0);
                     col *= mix(1.0, fl, uFlicker);
 
-                    // Edge fade — soft falloff at left/right.
+                    // Edge fade.
                     float dx = abs(vUv.x - 0.5) * 2.0;
                     float edgeAlpha = 1.0 - smoothstep(1.0 - uEdgeFade, 1.0, dx);
 
-                    // Tight glow halo.
+                    // Tight glow on inked pixels.
                     float lum = (col.r + col.g + col.b) / 3.0;
                     col += uTint * 0.10 * lum * texA;
 
-                    gl_FragColor = vec4(col, texA * uOpacity * edgeAlpha);
+                    // Base scanline alpha — visible even where there's no ink,
+                    // so the entire screen area reads as a CRT/holographic
+                    // surface rather than just floating text.
+                    float baseScan = pow(1.0 - scan, 3.0);          // 0..1, peaks on dark rows
+                    float baseAlpha = baseScan * 0.22 + tearD * 0.35;
+                    vec3 baseCol = uTint;
+
+                    // Composite ink + base scanline. Where ink present, ink
+                    // dominates; where empty, base scanline shows faintly.
+                    vec3 outCol = mix(baseCol, col, texA);
+                    float outAlpha = max(texA, baseAlpha) * uOpacity * edgeAlpha;
+
+                    gl_FragColor = vec4(outCol, outAlpha);
                 }
             `,
             transparent: true,
@@ -21168,8 +21255,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                             window.open(href, '_blank', 'noopener');
                         }
                     } else if (z.action.startsWith('tab:')) {
-                        holoState.view = z.action.slice(4);
-                        redrawHolo();
+                        startHoloTransition(z.action.slice(4));
                     } else if (z.action.startsWith('role:')) {
                         careerState.selectedRoleId = z.action.slice(5);
                         redrawHolo();
