@@ -5442,6 +5442,10 @@ See also: Health Samurai Lab: Game of Pools.`,
                 // need WebGL effects. Idle (>0.95) just shows the original
                 // HTML video bg — R3F frameloop pauses, GPU stays cool.
                 document.body.classList.toggle('sim-engaged', norm < 0.95);
+                // Calm-zero: at signal≈0 we kill ALL glitch/effect layers and
+                // leave only the wireframe 3D scene visible. Per Roman's spec —
+                // "только 3D сцена, без линий, глитчей и эффектов".
+                document.body.classList.toggle('sim-quiet', norm <= 0.02);
                 // Cubic falloff so heavy layers stay nearly invisible above
                 // mid-signal and only ramp up sharply near zero.
                 const inv = 1 - norm;
@@ -5475,7 +5479,7 @@ See also: Health Samurai Lab: Game of Pools.`,
 
             // ------ Tear-bars: horizontal RGB-split slices ------
             function spawnTear() {
-                if (signal > 0.85 || document.hidden) return;
+                if (signal > 0.85 || signal <= 0.02 || document.hidden) return;
                 const bar = document.createElement('div');
                 bar.className = 'tear-bar';
                 bar.style.top = (Math.random() * window.innerHeight) + 'px';
@@ -5484,7 +5488,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 setTimeout(() => bar.remove(), 240);
             }
             function tearLoop() {
-                if (!document.hidden && signal < 0.85) {
+                if (!document.hidden && signal < 0.85 && signal > 0.02) {
                     // Burst sometimes
                     const burst = Math.random() < 0.18 + (1 - signal) * 0.4
                         ? 2 + Math.floor(Math.random() * 3) : 1;
@@ -5510,7 +5514,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 setTimeout(() => cell.remove(), 480);
             }
             function cellLoop() {
-                if (!document.hidden && signal < 0.95) {
+                if (!document.hidden && signal < 0.95 && signal > 0.02) {
                     const burst = Math.random() < 0.22 + (1 - signal) * 0.5
                         ? 2 + Math.floor(Math.random() * 3) : 1;
                     for (let i = 0; i < burst; i++) setTimeout(spawnGlitchCell, i * 60);
@@ -5530,7 +5534,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             ];
             let glitchIdx = 0;
             function elementGlitchLoop() {
-                if (!document.hidden && signal < 0.45) {
+                if (!document.hidden && signal < 0.45 && signal > 0.02) {
                     const sel = GLITCH_SELECTORS[glitchIdx % GLITCH_SELECTORS.length];
                     glitchIdx++;
                     const els = document.querySelectorAll(sel);
@@ -7009,13 +7013,19 @@ See also: Health Samurai Lab: Game of Pools.`,
             const inv = 1 - signal;
             const fall = inv * inv * inv;
             const idle = signal > 0.95;
+            // Calm-zero: at signal≈0 the user wants a clean wireframe scene
+            // with no glitch, no chromatic aberration, no scanlines. We drop
+            // the entire postprocess pipeline so only the raw R3F canvas
+            // renders. Per Roman's spec — "просто 3D сцена, без эффектов".
+            const quiet = signal <= 0.02;
             const caOffset = useMemo(() => new Vector2(0, 0), []);
             useFrame(() => {
-                if (idle) { caOffset.x = 0; caOffset.y = 0; return; }
+                if (idle || quiet) { caOffset.x = 0; caOffset.y = 0; return; }
                 const jitter = 0.0002 + inv * 0.012;
                 caOffset.x = (Math.random() - 0.5) * jitter;
                 caOffset.y = (Math.random() - 0.5) * jitter * 0.6;
             });
+            if (quiet) return null;
             // At idle (signal ~= 1) keep only Vignette so the postprocess
             // pipeline isn't doing 6 fullscreen passes on a hot GPU.
             if (idle) {
