@@ -122,8 +122,11 @@ const importMapJson = `{
     --surface-frame: #16191e;
     --border-soft: rgba(var(--acc-rgb), 0.18);
     --border-card: rgba(var(--acc-rgb), 0.22);
-    --measure-content: 720px;
-    --measure-body: 720px;
+    /* Don't override --measure-content / --measure-body here — they're
+       declared in tokens.css (920px / 760px). Pinning them to 720 breaks
+       cs02's sub-cases grid that expects 4 columns to fit (Roman: «поехали,
+       сжались очень узко»). Pre-token-cascade prose-narrowness is enforced
+       per-element by content.css (.cnt-body :where(p,ul,...) max-width).  */
   }
 
   /* Accent scale — derived from the case's --acc so a block can paint with
