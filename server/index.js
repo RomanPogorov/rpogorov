@@ -220,6 +220,32 @@ async function tgGetUpdates() {
       state.lastActiveThread = threadId;
       console.log(`roman → thread ${threadId.slice(0,8)}: ${text.slice(0, 80)}`);
       appendMsg(threadId, 'roman', text);
+      // Roman's messages also wake Claude so it can react if Roman is
+      // addressing it. The system prompt tells Claude to emit [silent]
+      // when the message is between Roman and the visitor — server then
+      // suppresses that turn.
+      claudeQueue.run(() => {
+        const history = (state.threads[threadId]?.msgs || []).slice(-12);
+        const messages = history.map((m) => {
+          if (m.role === 'roman') {
+            return { role: 'user', content: `[ROMAN — owner of this portfolio, in the chat]: ${m.text}` };
+          }
+          if (m.role === 'visitor') {
+            return { role: 'user', content: m.text };
+          }
+          return { role: 'assistant', content: m.text };
+        });
+        return callClaude(messages);
+      }).then((reply) => {
+        if (!reply) return;
+        const r = reply.trim();
+        // Skip empty / silent turns.
+        if (!r || /^\[silent\]$/i.test(r)) return;
+        appendMsg(threadId, 'claude', r);
+        sendTelegramMessage(ROMAN_CHAT_ID, `🤖 [#${threadId.slice(0, 8)}] claude:\n${r}`).catch(() => {});
+      }).catch((err) => {
+        console.error('claude (roman-trigger) error:', err);
+      });
     }
     saveLater();
   } catch (e) {
@@ -499,7 +525,19 @@ REPLY STYLE:
 - Never fabricate metrics, dates, projects, or quotes that aren't listed above. If a question is outside Roman's listed work, say so briefly and offer the closest relevant case.
 - Don't roleplay as Roman. You're Claude answering ABOUT him.
 
-If the user just says hi, greet briefly and suggest 2–3 directions you can dig into (e.g. "design system at Health Samurai", "Americor +72% NPS engagement case", "code-design pipeline").`;
+If the user just says hi, greet briefly and suggest 2–3 directions you can dig into (e.g. "design system at Health Samurai", "Americor +72% NPS engagement case", "code-design pipeline").
+
+THREE-SPEAKER ROOM
+The thread has three voices: the visitor (the website user), Roman (the owner — joins from his Telegram bot, his messages are tagged [ROMAN — owner of this portfolio, in the chat]), and you. You receive a turn whenever ANYONE writes — visitor or Roman.
+
+When the latest turn is from Roman:
+- If he's addressing you directly ("клод, расскажи про X", "claude, what was the metric on Y", "собери кейс про Z" or any direct question) — respond normally to him. Speak to Roman by name when natural.
+- If he's giving you a heads-up that he'll come back with custom content / asking you to wait / saying he'll handle it himself ("секунду", "минуту", "сейчас приду", "я займусь", "ща клод соберёт") — output literally [silent] and nothing else. The server will suppress the turn.
+- If he's chatting with the VISITOR (small talk, "привет всем", explaining something to them) — also output [silent].
+
+When the latest turn is from the visitor, respond normally as before.
+
+Never emit [silent] when the visitor asked something — they're waiting on you.`;
 
 // Sequential queue — Roman's instruction: claude CLI calls strictly serial
 // (parallel only with explicit ask) so background invocations don't trample
