@@ -11413,6 +11413,12 @@
                 </div>
                 <span class="sim-signal-value" id="sim-signal-value">100%</span>
             </div>
+            <button
+                class="terminal-mode-btn"
+                data-screencast-toggle
+                type="button"
+                aria-label="Open terminal mode"
+            >// TERMINAL MODE</button>
         </div>
 
         <!-- Right-side panel: 3D perspective, tilts on mouse -->
@@ -19972,31 +19978,35 @@ See also: Health Samurai Lab: Game of Pools.`,
          filter applied to the iframe — content actually bends in 3D, not just
          rounded edges. -->
     <style>
-        .ss-toggle {
-            position: fixed;
-            top: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 90;
+        /* Old top-center SCREENCAST button — replaced by .terminal-mode-btn
+           inside the bottom-left HUD next to the signal slider. Kept the
+           selector so any leftover JS hooks still resolve, but visually it's
+           hidden. */
+        .ss-toggle { display: none; }
+
+        .terminal-mode-btn {
+            margin-left: 14px;
             appearance: none;
-            border: 1px solid rgba(0, 255, 136, 0.45);
-            background: rgba(5, 8, 10, 0.6);
-            color: #00ff88;
+            border: 1px solid rgba(var(--acc-rgb), 0.55);
+            background: rgba(5, 8, 10, 0.55);
+            color: var(--acc);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.625rem;
-            letter-spacing: 0.4em;
-            padding: 8px 18px;
+            font-size: 0.6875rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            padding: 7px 12px;
             cursor: pointer;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            transition: border-color 0.18s, color 0.18s, background 0.18s;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            transition: border-color 0.18s, color 0.18s, background 0.18s, box-shadow 0.18s;
         }
-        .ss-toggle:hover {
-            border-color: #00ff88;
+        .terminal-mode-btn:hover {
+            border-color: var(--acc);
             color: #fff;
-            background: rgba(0, 255, 136, 0.1);
+            background: rgba(var(--acc-rgb), 0.10);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.45);
         }
-        body.screencast-on .ss-toggle { display: none; }
+        body.screencast-on .terminal-mode-btn { display: none; }
 
         /* Holographic mode: the curved display floats over the live bg.mp4 +
            R3F scene, so we keep the stage and 3D background visible. We hide
@@ -20489,27 +20499,64 @@ See also: Health Samurai Lab: Game of Pools.`,
 
             texCtx.textBaseline = 'top';
 
-            // ---- LEFT widget ----
-            const lx = 56;
+            // ---- LEFT widget — mode description ----
+            const lx = 40;
+            const lw = SIDE_W - 72;
+            let ly = 50;
+            // Title
             texCtx.font = 'bold 22px JetBrains Mono, monospace';
             texCtx.fillStyle = accSolid;
-            texCtx.fillText('// LIVE LINK 15.02.A', lx, 56);
-            texCtx.font = '16px JetBrains Mono, monospace';
+            texCtx.fillText('// TERMINAL MODE', lx, ly);
+            ly += 30;
+            // Subtitle
+            texCtx.font = '13px JetBrains Mono, monospace';
             texCtx.fillStyle = accSoft;
-            texCtx.fillText('RPOGOROV · CLAUDE BRIDGE', lx, 90);
-            texCtx.fillText(chatState.pending ? '▸ thinking…' : '▸ ready', lx, 116);
-            // Pulse bars
-            texCtx.font = '12px JetBrains Mono, monospace';
+            texCtx.fillText('A LIVE WORKSPACE', lx, ly);
+            ly += 18;
+            texCtx.fillText('FOR DIGGING INTO ROMAN\'S WORK.', lx, ly);
+            ly += 32;
+
+            // Body description with section labels.
+            const drawBlock = (label, lines) => {
+                texCtx.font = 'bold 12px JetBrains Mono, monospace';
+                texCtx.fillStyle = accSolid;
+                texCtx.fillText(label, lx, ly);
+                ly += 18;
+                texCtx.font = '13px JetBrains Mono, monospace';
+                texCtx.fillStyle = accSoft;
+                for (const line of lines) {
+                    const wrapped = wrapLines(line, lw);
+                    for (const w of wrapped) {
+                        texCtx.fillText(w, lx, ly);
+                        ly += 17;
+                    }
+                    ly += 4;
+                }
+                ly += 16;
+            };
+
+            drawBlock('// CAREER TIMELINE', [
+                'Scroll 15 years of work — companies, roles, side projects with full meta.',
+            ]);
+            drawBlock('// PORTFOLIO AGENT', [
+                'Trained on Roman\'s full body of work. Ask anything — cases, methodology, decisions, metrics. Replies link to the relevant source case.',
+            ]);
+            drawBlock('// OWNER ON THE LINE', [
+                'Roman can join the chat at any time and assemble a custom case live for whatever you\'re curious about.',
+            ]);
+
+            // Footer status — pulse bars
+            texCtx.font = '11px JetBrains Mono, monospace';
             texCtx.fillStyle = accDim;
-            texCtx.fillText('STATUS', lx, TEX_H - 130);
-            texCtx.font = 'bold 18px JetBrains Mono, monospace';
+            texCtx.fillText('// STATUS', lx, TEX_H - 96);
+            texCtx.font = 'bold 14px JetBrains Mono, monospace';
             texCtx.fillStyle = accSolid;
-            texCtx.fillText('STABLE', lx, TEX_H - 110);
+            texCtx.fillText('LIVE · STABLE', lx, TEX_H - 78);
             for (let i = 0; i < 10; i++) {
-                const bx = lx + i * 12;
-                const bh = 4 + ((i * 7 + Date.now() / 80) % 14);
+                const bx = lx + i * 11;
+                const bh = 3 + ((i * 7 + Date.now() / 80) % 12);
                 texCtx.fillStyle = i % 3 === 0 ? accSolid : accFaint;
-                texCtx.fillRect(bx, TEX_H - 76 - bh, 5, bh);
+                texCtx.fillRect(bx, TEX_H - 50 - bh, 5, bh);
             }
 
             // ---- RIGHT widget ----
@@ -21114,7 +21161,9 @@ See also: Health Samurai Lab: Game of Pools.`,
             depthWrite: false,
         });
         const cylinder = new THREE.Mesh(cylGeom, material);
-        cylinder.position.y = SEG_H * 0.30;
+        // Slight upward bias only — too much and the top clipped against
+        // the viewport. Lower it so the entire holo fits.
+        cylinder.position.y = SEG_H * 0.10;
         scene.add(cylinder);
         window.__ssCyl = cylinder;
 
@@ -21199,7 +21248,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             depthWrite: false,
         });
         const dimPlate = new THREE.Mesh(dimGeom, dimMat);
-        dimPlate.position.y = SEG_H * 0.30;
+        dimPlate.position.y = SEG_H * 0.10;
         dimPlate.scale.set(1.005, 1.04, 1.005);
         dimPlate.renderOrder = -1;
         scene.add(dimPlate);
