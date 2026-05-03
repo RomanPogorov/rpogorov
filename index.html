@@ -20102,68 +20102,32 @@ See also: Health Samurai Lab: Game of Pools.`,
             pointer-events: none;
         }
 
-        /* Chat input — native HTML overlay positioned at the bottom of the
-           stage (below the curved screen). Styled to match the holo accent. */
+        /* Hidden chat form — the actual <input> stays in the DOM (so it can
+           receive focus + keystrokes + the OS keyboard) but is visually
+           collapsed. The "fake" prompt + caret + value get drawn into the
+           holo texture in JS, so it looks like you're typing inside the
+           cylinder. We refocus the hidden input on canvas click so users
+           can keep typing after they tap the screen. */
         .ss-chat-form {
             position: absolute;
             left: 50%;
-            bottom: 28px;
+            bottom: 0;
             transform: translateX(-50%);
             z-index: 6;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: min(72vw, 900px);
-            padding: 10px 16px;
-            background: rgba(2, 6, 12, 0.55);
-            border: 1px solid var(--ui-acc, #00ff88);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow:
-                0 0 14px rgba(var(--ui-acc-rgb, 0,255,136), 0.45),
-                0 0 36px rgba(var(--ui-acc-rgb, 0,255,136), 0.18);
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
         }
-        .ss-chat-prompt {
-            color: var(--ui-acc);
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 700;
-        }
+        .ss-chat-prompt, .ss-chat-send { display: none; }
         .ss-chat-input {
-            flex: 1;
-            background: transparent;
+            width: 1px;
+            height: 1px;
             border: 0;
             outline: none;
-            color: rgba(234, 246, 255, 0.92);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
-            letter-spacing: 0.02em;
-        }
-        .ss-chat-input::placeholder { color: rgba(var(--ui-acc-rgb), 0.45); }
-        .ss-chat-send {
-            appearance: none;
             background: transparent;
-            border: 1px solid rgba(var(--ui-acc-rgb), 0.55);
-            color: var(--ui-acc);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.6875rem;
-            letter-spacing: 0.32em;
-            text-transform: uppercase;
-            padding: 5px 12px;
-            cursor: pointer;
-            transition: border-color 0.18s, background 0.18s, color 0.18s;
-        }
-        .ss-chat-send:hover {
-            border-color: var(--ui-acc);
-            background: rgba(var(--ui-acc-rgb), 0.1);
-            color: #fff;
-        }
-        .ss-chat-send:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-        }
-        @media (max-width: 760px) {
-            .ss-chat-form { width: calc(100vw - 24px); padding: 8px 12px; gap: 8px; }
-            .ss-chat-input { font-size: 0.8125rem; }
+            color: transparent;
         }
 
         .ss-exit {
@@ -20278,6 +20242,11 @@ See also: Health Samurai Lab: Game of Pools.`,
             ],
             pending: false,
             error: null,
+            // Live mirror of the hidden <input> so we can paint a fake
+            // prompt + caret directly on the cylinder.
+            draft: '',
+            caretAt: 0,
+            caretBlink: true,
         };
         // Hit zones in texture-canvas pixel coords: { x, y, w, h, action }
         const hitZones = [];
@@ -20508,7 +20477,9 @@ See also: Health Samurai Lab: Game of Pools.`,
             const bodySize = 17;
             const lineH = 22;
             const yTop = 56;
-            const yBottom = TEX_H - 60;
+            // Reserve room at the bottom for the prompt input row.
+            const inputRowH = 44;
+            const yBottom = TEX_H - 60 - inputRowH - 16;
 
             // Header
             texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
@@ -20600,6 +20571,50 @@ See also: Health Samurai Lab: Game of Pools.`,
                 }
                 y += 18;
             }
+
+            // ---- Bottom prompt input row (fake) ----
+            const inX = cx;
+            const inY = TEX_H - 60 - inputRowH;
+            const inW = cw;
+            // Box border with glow
+            texCtx.save();
+            texCtx.shadowColor = accSolid;
+            texCtx.shadowBlur = 12;
+            texCtx.strokeStyle = accSolid;
+            texCtx.lineWidth = 1.5;
+            texCtx.strokeRect(inX + 0.5, inY + 0.5, inW, inputRowH);
+            texCtx.restore();
+            // Prompt arrow
+            texCtx.font = `bold ${bodySize}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accSolid;
+            texCtx.fillText('▸', inX + 14, inY + 13);
+            // Value or placeholder
+            texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
+            const placeholder = chatState.pending ? '…thinking' : 'ask claude about roman\'s work…';
+            const showText = chatState.draft.length > 0 ? chatState.draft : '';
+            const textX = inX + 36;
+            const textY = inY + 13;
+            if (chatState.draft.length === 0) {
+                texCtx.fillStyle = accDim;
+                texCtx.fillText(placeholder, textX, textY);
+            } else {
+                texCtx.fillStyle = accSoft;
+                texCtx.fillText(showText, textX, textY);
+            }
+            // Caret — at the position of caretAt within the draft
+            if (chatState.caretBlink && !chatState.pending) {
+                const caretIdx = Math.min(chatState.caretAt, chatState.draft.length);
+                const before = chatState.draft.slice(0, caretIdx);
+                const beforeW = texCtx.measureText(before).width;
+                texCtx.fillStyle = accSolid;
+                texCtx.fillRect(textX + beforeW, textY + 2, 9, bodySize);
+            }
+            // ENTER hint on the right
+            texCtx.font = `bold ${labelSize}px JetBrains Mono, monospace`;
+            texCtx.fillStyle = accDim;
+            const hint = '↵ ENTER';
+            const hintW = texCtx.measureText(hint).width;
+            texCtx.fillText(hint, inX + inW - hintW - 14, inY + 17);
         }
 
         // (legacy review-list/detail renderers removed — chat replaces them)
@@ -20893,22 +20908,56 @@ See also: Health Samurai Lab: Game of Pools.`,
             }
         });
 
-        // Hook the chat form
+        // Hook the chat form. The native <input> is hidden but still gets
+        // keystrokes — we mirror its value into chatState.draft and redraw
+        // the holo so the user "sees" what they're typing inside the cylinder.
         const chatForm = document.querySelector('[data-ss-chat-form]');
         const chatInput = document.querySelector('[data-ss-chat-input]');
-        const chatSend = document.querySelector('[data-ss-chat-send]');
+        function syncDraft() {
+            chatState.draft = chatInput.value;
+            chatState.caretAt = chatInput.selectionStart ?? chatInput.value.length;
+            redrawHolo();
+        }
         if (chatForm && chatInput) {
             chatForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const v = chatInput.value;
                 chatInput.value = '';
-                if (chatSend) chatSend.disabled = true;
+                chatState.draft = '';
+                chatState.caretAt = 0;
+                redrawHolo();
                 sendChatMessage(v).finally(() => {
-                    if (chatSend) chatSend.disabled = false;
                     chatInput.focus();
                 });
             });
+            ['input', 'keyup', 'click', 'select'].forEach((ev) => chatInput.addEventListener(ev, syncDraft));
+            // Refocus the hidden input whenever the user clicks anywhere on
+            // the cylinder canvas — that way they can keep typing after they
+            // tap a link or just clicked away. setTimeout lets the regular
+            // click handler (links etc.) run first so we don't fight focus.
+            mount.addEventListener('click', () => {
+                setTimeout(() => { try { chatInput.focus(); } catch (_) {} }, 0);
+            });
         }
+
+        // Caret blink — toggle every 530ms and rebuild the texture.
+        setInterval(() => {
+            chatState.caretBlink = !chatState.caretBlink;
+            // Cheap repaint: only redraw if the screencast is open.
+            if (document.body.classList.contains('screencast-on')) redrawHolo();
+        }, 530);
+
+        // Auto-focus the hidden input when screencast opens so users can
+        // start typing immediately. MutationObserver on the body class
+        // catches the toggle.
+        const focusObs = new MutationObserver(() => {
+            if (document.body.classList.contains('screencast-on')) {
+                setTimeout(() => { try { chatInput.focus(); } catch (_) {} }, 50);
+            }
+        });
+        focusObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        // Initial focus if we're already in screencast mode (e.g. hot reload).
+        if (document.body.classList.contains('screencast-on')) chatInput.focus();
 
         // Wheel: swallow so it doesn't scroll the page beneath.
         mount.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
