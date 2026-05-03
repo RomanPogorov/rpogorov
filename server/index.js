@@ -493,18 +493,18 @@ async function runOwnerBuild(threadId, taskText) {
   appendMsg(threadId, 'claude', `// owner build started\n▸ task: ${taskText.slice(0, 200)}\n▸ status: spinning up agent…`);
 
   return new Promise((resolve) => {
-    // bypassPermissions instead of --dangerously-skip-permissions because
-    // the systemd service runs as root and Claude refuses the latter under
-    // root for safety. bypassPermissions does the same thing without the
-    // root check.
+    // claude refuses --dangerously-skip-permissions / bypassPermissions
+    // under systemd as root. Workaround: explicit allowlist Bash(*) +
+    // file tools, and --permission-mode acceptEdits so file writes
+    // auto-approve without prompts.
     const child = spawn('/root/bin/claude-headless', [
       '--print',
       '--model', 'claude-sonnet-4-6',
-      '--allowedTools', 'Bash', 'Edit', 'Write', 'Read', 'Glob', 'Grep',
+      '--allowedTools', 'Bash(*)', 'Edit', 'Write', 'Read', 'Glob', 'Grep',
       '--add-dir', '/root/vault/portfolio',
       '--add-dir', '/root/rpogorov-dev/site',
       '--append-system-prompt', BUILD_SYSTEM_PROMPT,
-      '--permission-mode', 'bypassPermissions',
+      '--permission-mode', 'acceptEdits',
       taskText,
     ], { cwd: '/root/rpogorov-dev/site', stdio: ['ignore', 'pipe', 'pipe'] });
 
