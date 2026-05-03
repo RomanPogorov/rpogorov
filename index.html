@@ -20548,9 +20548,9 @@ See also: Health Samurai Lab: Game of Pools.`,
         function drawChat(accSolid, accSoft, accDim, accFaint) {
             const cx = CENTER_X + 56;
             const cw = CENTER_W - 112;
-            const labelSize = 12;
-            const bodySize = 17;
-            const lineH = 22;
+            const labelSize = 14;
+            const bodySize = 20;
+            const lineH = 26;
             const yTop = 56;
             // Reserve room at the bottom for the prompt input row.
             const inputRowH = 44;
@@ -20695,27 +20695,29 @@ See also: Health Samurai Lab: Game of Pools.`,
         function drawCareer(accSolid, accSoft, accDim, accFaint) {
             const cx = CENTER_X + 56;
             const cw = CENTER_W - 112;
-            const labelSize = 12;
-            const bodySize = 16;
-            const lineH = 22;
-            let y = 90;
+            const labelSize = 14;
+            const bodySize = 19;
+            const lineH = 26;
+            let y = 100;
 
             // Headstrip
             texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
             texCtx.fillStyle = accSolid;
             texCtx.fillText('// CAREER TIMELINE · 2014 → 2026 · 5 ROLES · 3 SIDE PROJECTS', cx, y);
-            y += 22;
-            texCtx.font = `bold 26px JetBrains Mono, monospace`;
+            y += 26;
+            texCtx.font = `bold 30px JetBrains Mono, monospace`;
             texCtx.fillStyle = accSoft;
             texCtx.fillText('Career path since 2014', cx, y);
-            y += 38;
+            y += 48;
 
             // Axis: 13 columns covering 2014..2026
             const COLS = 13;
             const colW = cw / COLS;
-            const axisH = 26;
-            const sideY = y + axisH + 14;
-            const yearsY = sideY + axisH + 10;
+            const axisH = 32;
+            // Side row sits a bit further below to leave room for its label.
+            const sideLabelY = y + axisH + 18;
+            const sideY = sideLabelY + 18;
+            const yearsY = sideY + axisH + 12;
 
             // Main row
             for (const [id, r] of Object.entries(ROLES)) {
@@ -20739,15 +20741,16 @@ See also: Health Samurai Lab: Game of Pools.`,
                 texCtx.font = `bold ${labelSize}px JetBrains Mono, monospace`;
                 texCtx.fillStyle = isActive ? accSolid : accSoft;
                 const lbl = r.name;
-                const labelX = x + 8;
-                texCtx.fillText(lbl, labelX, y + 7);
+                const labelX = x + 10;
+                texCtx.fillText(lbl, labelX, y + 9);
                 hitZones.push({ x, y, w, h: axisH, action: 'role:' + id });
             }
 
-            // Side row label
-            texCtx.font = `${labelSize - 1}px JetBrains Mono, monospace`;
+            // Side row label — its own dedicated line so it doesn't crash
+            // into either the main row (above) or the side bars (below).
+            texCtx.font = `${labelSize - 2}px JetBrains Mono, monospace`;
             texCtx.fillStyle = accDim;
-            texCtx.fillText('// side projects · part-time', cx, sideY - 16);
+            texCtx.fillText('// SIDE PROJECTS · PART-TIME', cx, sideLabelY);
 
             // Side row
             for (const [id, r] of Object.entries(ROLES)) {
@@ -20769,7 +20772,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                 texCtx.restore();
                 texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
                 texCtx.fillStyle = isActive ? accSolid : accFaint;
-                texCtx.fillText(r.name, x + 8, sideY + 7);
+                texCtx.fillText(r.name, x + 10, sideY + 9);
                 hitZones.push({ x, y: sideY, w, h: axisH, action: 'role:' + id });
             }
 
@@ -20779,22 +20782,22 @@ See also: Health Samurai Lab: Game of Pools.`,
             for (let i = 0; i < years.length; i++) {
                 const isMajor = (i === 0 || i === 3 || i === 6 || i === 9 || i === 12);
                 texCtx.fillStyle = isMajor ? accSolid : accDim;
-                texCtx.fillText(years[i], cx + i * colW + 2, yearsY);
+                texCtx.fillText(years[i], cx + i * colW + 4, yearsY);
             }
 
             // Detail panel for selected role
             const r = ROLES[careerState.selectedRoleId];
             if (!r) return;
-            let dy = yearsY + 32;
-            // Header line: name · role · period · location · tag
-            texCtx.font = 'bold 18px JetBrains Mono, monospace';
+            let dy = yearsY + 36;
+            // Header — name on its own line so it doesn't get cut off
+            texCtx.font = 'bold 22px JetBrains Mono, monospace';
             texCtx.fillStyle = accSolid;
             texCtx.fillText(r.name, cx, dy);
-            const nameW = texCtx.measureText(r.name).width;
+            dy += 28;
             texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
             texCtx.fillStyle = accDim;
-            texCtx.fillText(`· ${r.role} · ${r.period} · ${r.location} · ${r.tag}`, cx + nameW + 8, dy + 4);
-            dy += 28;
+            texCtx.fillText(`${r.role} · ${r.period} · ${r.location} · ${r.tag}`, cx, dy);
+            dy += 30;
 
             // Summary
             texCtx.font = `${bodySize}px JetBrains Mono, monospace`;
@@ -20804,29 +20807,28 @@ See also: Health Samurai Lab: Game of Pools.`,
             for (const ln of sumLines) {
                 texCtx.fillText(ln, cx, dy);
                 dy += lineH;
-                if (dy > TEX_H - 90) return;
+                if (dy > TEX_H - 100) return;
             }
-            dy += 10;
+            dy += 14;
 
             // Projects
             texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
             texCtx.fillStyle = accSolid;
             texCtx.fillText('// PROJECTS', cx, dy);
-            dy += 18;
-            texCtx.font = `${bodySize - 1}px JetBrains Mono, monospace`;
-            texCtx.fillStyle = accSoft;
+            dy += 22;
+            texCtx.font = `${bodySize - 2}px JetBrains Mono, monospace`;
             const colCount = 3;
             const projColW = cw / colCount;
             (r.projects || []).forEach((p, i) => {
                 const col = i % colCount;
                 const row = Math.floor(i / colCount);
                 const px = cx + col * projColW;
-                const py = dy + row * 22;
+                const py = dy + row * 26;
                 if (py > TEX_H - 80) return;
                 texCtx.fillStyle = accSolid;
                 texCtx.fillText('▸', px, py);
                 texCtx.fillStyle = accSoft;
-                texCtx.fillText(p, px + 18, py);
+                texCtx.fillText(p, px + 20, py);
             });
         }
 
@@ -20900,13 +20902,15 @@ See also: Health Samurai Lab: Game of Pools.`,
                 uMap:        { value: texture },
                 uTime:       { value: 0 },
                 uScanCount:  { value: 720.0 },
-                uScanStrength: { value: 0.07 },   // softer scanlines
-                uChroma:     { value: 0.0006 },   // tiny RGB split — keeps the holo feel without doubling text
+                uScanStrength: { value: 0.10 },
+                uChroma:     { value: 0.0006 },   // tiny base RGB split — boosted briefly during glitch
                 uTint:       { value: new THREE.Color(0x00ff88) },
                 uTintMix:    { value: 0.10 },
                 uOpacity:    { value: 0.95 },
                 uEdgeFade:   { value: 0.10 },
-                uFlicker:    { value: 0.45 },     // half the wobble
+                uFlicker:    { value: 0.45 },
+                uGlitch:     { value: 0.0 },      // 0..1, JS animates this in random bursts
+                uGlitchSeed: { value: 0.0 },
             },
             vertexShader: `
                 varying vec2 vUv;
@@ -20926,27 +20930,47 @@ See also: Health Samurai Lab: Game of Pools.`,
                 uniform float uOpacity;
                 uniform float uEdgeFade;
                 uniform float uFlicker;
+                uniform float uGlitch;
+                uniform float uGlitchSeed;
                 varying vec2 vUv;
 
+                float hash(float n) { return fract(sin(n) * 43758.5453); }
+
                 void main() {
-                    // Tiny chromatic split — just enough to read as holo.
-                    vec4 cR = texture2D(uMap, vUv + vec2( uChroma, 0.0));
-                    vec4 cG = texture2D(uMap, vUv);
-                    vec4 cB = texture2D(uMap, vUv + vec2(-uChroma, 0.0));
+                    // Glitch: during a glitch burst, slice the image into a
+                    // few horizontal bands and shove each band sideways by a
+                    // hash-based offset. Otherwise no offset.
+                    float band = floor(vUv.y * 18.0);
+                    float h = hash(band + uGlitchSeed * 17.0);
+                    float bandOffset = (h - 0.5) * 0.06 * uGlitch * step(0.55, h);
+
+                    vec2 uv = vUv;
+                    uv.x += bandOffset;
+
+                    // Chromatic split — base + boosted during glitch.
+                    float chroma = uChroma + uGlitch * 0.004;
+                    vec4 cR = texture2D(uMap, uv + vec2( chroma, 0.0));
+                    vec4 cG = texture2D(uMap, uv);
+                    vec4 cB = texture2D(uMap, uv + vec2(-chroma, 0.0));
                     vec3 col = vec3(cR.r, cG.g, cB.b);
                     float texA = max(max(cR.a, cG.a), cB.a);
 
-                    // Push pixel toward the pure accent so canvas-drawn text
-                    // is exactly the theme colour (counters the per-channel
-                    // mix that the chromatic split introduces).
+                    // Lock to accent colour.
                     col = mix(col, uTint, 0.6);
 
-                    // Subtle scanlines.
+                    // Scanlines.
                     float scan = 0.5 + 0.5 * sin(vUv.y * uScanCount + uTime * 6.0);
                     scan = pow(scan, 2.0);
                     col *= 1.0 - uScanStrength * (1.0 - scan);
 
-                    // Mild flicker.
+                    // Tear-line: a single wider scanline that drifts slowly
+                    // up the screen, brighter — gives the "rolling shutter"
+                    // hologram cue without ruining readability.
+                    float tearY = fract(uTime * 0.06);
+                    float tearD = 1.0 - smoothstep(0.0, 0.012, abs(vUv.y - tearY));
+                    col += uTint * 0.18 * tearD * texA;
+
+                    // Flicker.
                     float fl = 0.97 + 0.03 * sin(uTime * 30.0 + vUv.y * 12.0);
                     col *= mix(1.0, fl, uFlicker);
 
@@ -20954,7 +20978,7 @@ See also: Health Samurai Lab: Game of Pools.`,
                     float dx = abs(vUv.x - 0.5) * 2.0;
                     float edgeAlpha = 1.0 - smoothstep(1.0 - uEdgeFade, 1.0, dx);
 
-                    // Tight glow halo — small radius so text stays sharp.
+                    // Tight glow halo.
                     float lum = (col.r + col.g + col.b) / 3.0;
                     col += uTint * 0.10 * lum * texA;
 
@@ -21078,11 +21102,27 @@ See also: Health Samurai Lab: Game of Pools.`,
         resize();
         window.addEventListener('resize', resize);
 
-        // Render loop — also drives the shader time uniform for flicker/scan animation.
+        // Render loop — drives shader time + glitch state.
         const clock = new THREE.Clock();
+        // Glitch state: target value 0 most of the time, briefly 1 when a
+        // burst fires; the shader uses uGlitch for chroma + horizontal band
+        // offsets. We schedule bursts every 6–14 seconds.
+        const glitchState = { until: 0, seed: 0 };
+        function scheduleGlitch() {
+            const delay = 6000 + Math.random() * 8000;
+            setTimeout(() => {
+                glitchState.until = clock.getElapsedTime() + 0.16 + Math.random() * 0.18;
+                glitchState.seed = Math.random() * 1000;
+                scheduleGlitch();
+            }, delay);
+        }
+        scheduleGlitch();
         function render() {
             requestAnimationFrame(render);
-            material.uniforms.uTime.value = clock.getElapsedTime();
+            const t = clock.getElapsedTime();
+            material.uniforms.uTime.value = t;
+            material.uniforms.uGlitch.value = t < glitchState.until ? 1.0 : 0.0;
+            material.uniforms.uGlitchSeed.value = glitchState.seed;
             renderer.render(scene, camera);
         }
         render();
