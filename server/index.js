@@ -539,7 +539,56 @@ const server = http.createServer(async (req, res) => {
 });
 
 // ---------- Claude helpers ----------
-const CLAUDE_SYSTEM_PROMPT = `You are Claude, answering questions about ROMAN POGOROV on his portfolio site (clauderunner.com/rpogorov-dev/). You are NOT Roman — you speak ABOUT him.
+// The visitor-side Claude reads its context from two sources:
+// 1. The static prompt below (role, tone, three-speaker rules, formatting).
+// 2. A dynamically-loaded snapshot of /root/vault/cases/* and the published
+//    /root/vault/portfolio/articles/* — Roman's raw experience texts that
+//    he keeps adding to over time. We rebuild the prompt on every request,
+//    cached for 60s, so dropping a new MD into vault automatically enriches
+//    the agent on the next visitor turn (no server restart needed).
+
+let vaultCacheText = '';
+let vaultCacheTs = 0;
+function loadVaultContext() {
+  const now = Date.now();
+  if (now - vaultCacheTs < 60_000 && vaultCacheText) return vaultCacheText;
+  const blocks = [];
+  const ROOTS = [
+    { dir: '/root/vault/cases', label: 'EXPERIENCE — case archive' },
+    { dir: '/root/vault/portfolio/articles', label: 'PUBLISHED ARTICLES' },
+    { dir: '/root/vault/portfolio/cases', label: 'PUBLISHED CASE PAGES' },
+  ];
+  function walk(dir) {
+    let out = [];
+    try {
+      for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+        const p = path.join(dir, ent.name);
+        if (ent.isDirectory()) out = out.concat(walk(p));
+        else if (/\.(md|mdx)$/i.test(ent.name) && ent.name !== 'CLAUDE.md') out.push(p);
+      }
+    } catch (_) {}
+    return out;
+  }
+  for (const r of ROOTS) {
+    const files = walk(r.dir).sort();
+    if (!files.length) continue;
+    blocks.push(`\n=== ${r.label} (${files.length} files) ===`);
+    for (const f of files) {
+      try {
+        let body = fs.readFileSync(f, 'utf-8');
+        // Strip frontmatter to keep the prompt lean
+        body = body.replace(/^---\n[\s\S]*?\n---\n/, '');
+        const rel = f.replace('/root/vault/', '');
+        blocks.push(`\n--- ${rel} ---\n${body.trim()}`);
+      } catch (_) {}
+    }
+  }
+  vaultCacheText = blocks.join('\n');
+  vaultCacheTs = now;
+  return vaultCacheText;
+}
+
+const CLAUDE_STATIC_PROMPT = `You are Claude, answering questions about ROMAN POGOROV on his portfolio site (clauderunner.com/rpogorov-dev/). You are NOT Roman — you speak ABOUT him.
 
 ROMAN POGOROV — Product Designer · 15 years in design.
 - Now: Senior Product Designer at Health Samurai (2024 → present)
@@ -596,6 +645,16 @@ C. If Roman is giving a heads-up ("секунду", "минуту", "ща при
 When the latest turn is from the VISITOR, respond normally about Roman's work.
 
 Never emit [silent] when the visitor asked something — they're waiting on you.`;
+
+function buildClaudeSystemPrompt() {
+  const vault = loadVaultContext();
+  if (!vault) return CLAUDE_STATIC_PROMPT;
+  return CLAUDE_STATIC_PROMPT + '\n\n=========================================\n' +
+    'DEEP CONTEXT — Roman\'s vault (cases, articles, raw experience texts).\n' +
+    'Use this to answer questions with detail. Quote a specific case file or article when grounding a claim. Don\'t fabricate beyond what\'s in here.\n' +
+    '=========================================\n' +
+    vault;
+}
 
 // Sequential queue — Roman's instruction: claude CLI calls strictly serial
 // (parallel only with explicit ask) so background invocations don't trample
@@ -772,10 +831,17 @@ function callClaude(messages) {
 
     // No --bare: use Roman's Max-plan OAuth (claude-headless --bare requires
     // an explicit ANTHROPIC_API_KEY which we don't have).
+    // Write the system prompt to a temp file — the dynamic vault context
+    // is too large (~85KB+) to fit in argv (E2BIG). claude reads it via
+    // --append-system-prompt-file.
+    const promptFile = `/tmp/portfolio-claude-prompt-${process.pid}-${Date.now()}.txt`;
+    try { fs.writeFileSync(promptFile, buildClaudeSystemPrompt()); } catch (e) {
+      return reject(new Error('failed to write prompt file: ' + e.message));
+    }
     const child = spawn('/root/bin/claude-headless', [
       '--print',
       '--model', 'claude-sonnet-4-6',
-      '--append-system-prompt', CLAUDE_SYSTEM_PROMPT,
+      '--append-system-prompt-file', promptFile,
       prompt,
     ], { stdio: ['ignore', 'pipe', 'pipe'] });
 
@@ -787,12 +853,17 @@ function callClaude(messages) {
     child.stderr.on('data', (d) => err += d);
     child.on('close', (code) => {
       clearTimeout(killer);
+      try { fs.unlinkSync(promptFile); } catch (_) {}
       if (code !== 0) return reject(new Error(`claude exit ${code}: ${err.slice(0, 300)}`));
       const reply = out.trim();
       if (!reply) return reject(new Error('claude returned empty output'));
       resolve(reply);
     });
-    child.on('error', (e) => { clearTimeout(killer); reject(e); });
+    child.on('error', (e) => {
+      clearTimeout(killer);
+      try { fs.unlinkSync(promptFile); } catch (_) {}
+      reject(e);
+    });
   });
 }
 
