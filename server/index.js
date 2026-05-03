@@ -554,13 +554,15 @@ function loadVaultContext() {
   if (now - vaultCacheTs < 60_000 && vaultCacheText) return vaultCacheText;
   const blocks = [];
   const ROOTS = [
-    // Single source of truth — vault/portfolio/cases now holds both raw
-    // experience texts (companies subfolders, free-form .md) AND the
-    // published case .mdx pages with frontmatter. Astro picks up only
-    // .mdx for the content collection (subfolder .md is invisible to it
-    // but still loaded into agent context).
-    { dir: '/root/vault/portfolio/cases', label: 'EXPERIENCE — case archive (raw + published)' },
+    // Three sources, by purpose:
+    //   /portfolio/rag       → raw experience dumps Roman keeps adding
+    //                          (notes, stories, context). NOT published.
+    //                          PRIMARY source for grounding answers.
+    //   /portfolio/articles  → published markdown articles on the site.
+    //   /portfolio/cases     → published .mdx case pages with frontmatter.
+    { dir: '/root/vault/portfolio/rag', label: 'RAW EXPERIENCE — Roman\'s knowledge dump (primary grounding source)' },
     { dir: '/root/vault/portfolio/articles', label: 'PUBLISHED ARTICLES' },
+    { dir: '/root/vault/portfolio/cases', label: 'PUBLISHED CASE PAGES' },
   ];
   function walk(dir) {
     let out = [];
