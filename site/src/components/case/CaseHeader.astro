@@ -1,0 +1,105 @@
+---
+/**
+ * CaseHeader — shared sticky header for ALL case overlays (company-level
+ * cs01/cs02 AND sub-cases). Uses the existing .cp-crumbs-bar + .dc-* shape,
+ * which already has light/dark theming via :is(.dc-page.dc-bright,
+ * .case-page.cp-light) selectors in legacy.css.
+ *
+ * Crumb stack (builds left → right, skipping omitted segments):
+ *   1. "Main page"   data-cp-crumb="main"      always present
+ *   2. "Showcase"    data-cp-crumb="showcase"  always present
+ *   3. <Company>     data-cp-crumb-company=ID  only for sub-cases
+ *   4. <Current>     .dc-crumb-current         the current page
+ *
+ * The body block (meta/title/desc/tags/impact) is optional per-prop so the
+ * same component drives the company-level hero and the sub-case hero.
+ */
+type ImpactItem = { num: string; lbl: string };
+
+interface Props {
+  /** Crumb segments after Main + Showcase. */
+  companyLabel?: string;
+  companyId?: string;
+  currentLabel: string;
+  /** Body block. */
+  metaItems?: string[];
+  title: string;
+  titleHtml?: string;
+  desc?: string;
+  tags?: string[];
+  impact?: ImpactItem[];
+  /** Layout flavor — 'dc' uses dc-inner/dc-title (sub-case), 'cp' uses cp-inner/cp-title (company). */
+  flavor?: 'dc' | 'cp';
+}
+
+const {
+  companyLabel,
+  companyId,
+  currentLabel,
+  metaItems,
+  title,
+  titleHtml,
+  desc,
+  tags,
+  impact,
+  flavor = 'dc',
+} = Astro.props;
+
+const innerClass = flavor === 'cp' ? 'cp-inner cp-hero-inner' : 'cp-inner dc-inner';
+const titleClass = flavor === 'cp' ? 'cp-title' : 'dc-title';
+---
+
+<div class="cp-crumbs-bar">
+  <nav class="dc-crumbs" aria-label="Breadcrumbs">
+    <button type="button" class="dc-crumb" data-cp-crumb="main">Main</button>
+    <span class="dc-crumb-sep">‹</span>
+    <button type="button" class="dc-crumb" data-cp-crumb="showcase">Showcase</button>
+    {companyLabel && companyId && (
+      <>
+        <span class="dc-crumb-sep">‹</span>
+        <button type="button" class="dc-crumb" data-cp-crumb-company={companyId}>{companyLabel}</button>
+      </>
+    )}
+    <span class="dc-crumb-sep">‹</span>
+    <span class="dc-crumb-current">{currentLabel}</span>
+  </nav>
+  <button type="button" class="dc-close" data-cp-close aria-label="Close case">ESC</button>
+</div>
+
+<div class={innerClass}>
+  {metaItems && metaItems.length > 0 && (
+    <div class="dc-meta-row">
+      {metaItems.map((m, i) => (
+        <Fragment>
+          {i === 0 ? (
+            <span class="dc-meta-company">{m}</span>
+          ) : (
+            <span class="dc-meta-metric">{m}</span>
+          )}
+        </Fragment>
+      ))}
+    </div>
+  )}
+  {titleHtml ? (
+    <h1 class={titleClass} set:html={titleHtml} />
+  ) : (
+    <h1 class={titleClass}>{title}</h1>
+  )}
+  {tags && tags.length > 0 && (
+    <ul class="dc-tags">
+      {tags.map((t) => <li>{t}</li>)}
+    </ul>
+  )}
+  {desc && <p class="dc-desc">{desc}</p>}
+  {impact && impact.length > 0 && (
+    <div class="dc-impact">
+      {impact.map((it) => (
+        <div class="dc-impact-cell">
+          <div class="num">{it.num}</div>
+          <div class="lbl">{it.lbl}</div>
+        </div>
+      ))}
+    </div>
+  )}
+  <slot />
+</div>

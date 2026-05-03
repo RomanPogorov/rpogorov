@@ -2612,6 +2612,11 @@
             overflow-y: auto;
             overflow-x: hidden;
         }
+        /* "Main" crumb fast-close: shorter slide-out so jumping to home
+           feels snappy instead of leisurely. */
+        .case-page.is-fast-close {
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         .case-page * { box-sizing: border-box; }
 
         .cp-inner {

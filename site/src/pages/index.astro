@@ -24,6 +24,7 @@
  */
 import Layout from '@layouts/Layout.astro';
 import Lightbox from '@components/case-rich/Lightbox.astro';
+import CaseHeader from '@components/case/CaseHeader.astro';
 import legacyBodyRaw from '../legacy-body.html?raw';
 import { getCollection, render } from 'astro:content';
 
@@ -232,28 +233,17 @@ const cs02Data = cs02?.data;
 
   {Cs01Content && cs01Data && (
     <section class="case-page" id="case-page-cs01" data-case-page="cs01" aria-label={`${cs01Data.name} case study`}>
-      <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
-        <span class="cp-close-arrow" aria-hidden="true">↑</span>
-        <span>back to showcase</span>
-      </button>
-      <div class="cp-inner">
-        <header class="cp-hero">
-          <div class="cp-meta">
-            <span class="cp-meta-no">CS/01</span>
-            <span class="cp-meta-divider"></span>
-            <span>{cs01Data.name}</span>
-            <span class="cp-meta-divider"></span>
-            <span>{cs01Data.role}</span>
-            <span class="cp-meta-divider"></span>
-            <span>{cs01Data.year}</span>
-          </div>
-          <h1 class="cp-title" set:html={cs01Data.title} />
-          <p class="cp-sub">{cs01Data.desc}</p>
-        </header>
+      <CaseHeader
+        currentLabel={cs01Data.name}
+        metaItems={[cs01Data.name, `${cs01Data.role} · ${cs01Data.year}`]}
+        title={cs01Data.title}
+        titleHtml={cs01Data.title}
+        desc={cs01Data.desc}
+      >
         <article class="cnt-body">
           <Cs01Content />
         </article>
-      </div>
+      </CaseHeader>
     </section>
   )}
 
@@ -261,18 +251,17 @@ const cs02Data = cs02?.data;
 
   {Cs02Content && cs02Data && (
     <section class="case-page cp-hs" id="case-page-cs02" data-case-page="cs02" aria-label={`${cs02Data.name} case study`}>
-      <button class="cp-close" data-cp-close type="button" aria-label="Back to showcase">
-        <span class="cp-close-arrow" aria-hidden="true">↑</span>
-        <span>back to showcase</span>
-      </button>
-      <header class="hs-hero">
-        <div class="hs-eyebrow">{cs02Data.name} · {cs02Data.year} · 12 deep dives</div>
-        <h1 class="hs-h1" set:html={cs02Data.title} />
-        <p class="hs-lead">{cs02Data.desc}</p>
-      </header>
-      <div class="cnt-body">
-        <Cs02Content />
-      </div>
+      <CaseHeader
+        currentLabel={cs02Data.name}
+        metaItems={[cs02Data.name, `${cs02Data.role} · ${cs02Data.year}`]}
+        title={cs02Data.title}
+        titleHtml={cs02Data.title}
+        desc={cs02Data.desc}
+      >
+        <article class="cnt-body">
+          <Cs02Content />
+        </article>
+      </CaseHeader>
     </section>
   )}
 
@@ -303,42 +292,20 @@ const cs02Data = cs02?.data;
           style={accentStyle}
           aria-label={`${d.title} case study`}
         >
-          <div class="cp-crumbs-bar">
-            <nav class="dc-crumbs" aria-label="Breadcrumbs">
-              <button type="button" class="dc-crumb" data-cp-crumb="showcase">Showcase</button>
-              <span class="dc-crumb-sep">‹</span>
-              <button type="button" class="dc-crumb" data-cp-crumb-company={d.company}>{d.companyLabel}</button>
-              <span class="dc-crumb-sep">‹</span>
-              <span class="dc-crumb-current">{d.deeplink.toUpperCase()}</span>
-            </nav>
-            <button type="button" class="dc-close" data-cp-close aria-label="Close case">ESC</button>
-          </div>
-          <div class="cp-inner dc-inner">
-            <div class="dc-meta-row">
-              <span class="dc-meta-company">{d.companyLabel}</span>
-              {d.metric && <span class="dc-meta-metric">{d.metric}</span>}
-            </div>
-            <h1 class="dc-title">{d.title}</h1>
-            {d.tags && (
-              <ul class="dc-tags">
-                {d.tags.map((t) => <li>{t}</li>)}
-              </ul>
-            )}
-            {d.desc && <p class="dc-desc">{d.desc}</p>}
-            {d.impact && d.impact.length > 0 && (
-              <div class="dc-impact">
-                {d.impact.map((it) => (
-                  <div class="dc-impact-cell">
-                    <div class="num">{it.num}</div>
-                    <div class="lbl">{it.lbl}</div>
-                  </div>
-                ))}
-              </div>
-            )}
+          <CaseHeader
+            companyLabel={d.companyLabel}
+            companyId={d.company}
+            currentLabel={d.title}
+            metaItems={[d.companyLabel, ...(d.metric ? [d.metric] : [])]}
+            title={d.title}
+            desc={d.desc}
+            tags={d.tags}
+            impact={d.impact}
+          >
             <article class="cnt-body">
               <Content />
             </article>
-          </div>
+          </CaseHeader>
         </section>
       );
     })
@@ -534,6 +501,44 @@ const cs02Data = cs02?.data;
         history.pushState(null, '', `#case/${company}`);
         window.__cp.open(company);
       });
+
+      // Wire "Showcase" crumb — pre-rendered bar bypasses legacy ensureCrumbsBar
+      // delegate, so we wire it ourselves. Closes case + opens showcase by-cases.
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-cp-crumb="showcase"]');
+        if (!btn) return;
+        window.__cp?.close?.();
+        if (!document.body.classList.contains('showcase-open')) window.__sc?.open?.();
+        window.__sc?.setView?.('cases');
+        if (location.hash !== '#showcase/cases') {
+          history.pushState(null, '', '#showcase/cases');
+        }
+      });
+
+      // Wire "Main" crumb — fast close: drops case + showcase, returns home.
+      // Adds .is-fast-close on the open case-page so transition speeds up,
+      // then __cp.close shuts both layers and clears the URL hash.
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-cp-crumb="main"]');
+        if (!btn) return;
+        document.querySelectorAll('.case-page.open').forEach((cp) => cp.classList.add('is-fast-close'));
+        window.__cp?.close?.();
+        if (document.body.classList.contains('showcase-open')) window.__sc?.close?.();
+        if (location.hash) history.pushState(null, '', location.pathname + location.search);
+        // Clean up the speed-up class once the slide-out finishes.
+        setTimeout(() => {
+          document.querySelectorAll('.case-page.is-fast-close').forEach((cp) => cp.classList.remove('is-fast-close'));
+        }, 360);
+      });
+
+      // Reinforce ESC for case-page (legacy handler at legacy-body.html:2242
+      // already covers this, but a redundant capture-phase listener guards
+      // against future refactors that strip it).
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        if (!document.body.classList.contains('case-open')) return;
+        window.__cp?.close?.();
+      }, true);
     });
   </script>
 

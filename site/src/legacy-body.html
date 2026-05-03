@@ -1461,7 +1461,20 @@
                 let insideAnyTab = null;       // tab whose rect contains the cursor (any Y)
                 let bestNew = null;
                 let bestNewDist = Infinity;
-                document.querySelectorAll(SNAP_SEL).forEach(t => {
+                // Skip the snap pass entirely when the tabs panel is hidden
+                // (case-open / showcase-open / chat-fullscreen / dw-open).
+                // The htl-items still occupy their grid coordinates even at
+                // opacity:0, so without this guard the magnetic dot pins to
+                // invisible tabs when the user hovers near the case header.
+                const tabsHidden = document.body.classList.contains('case-open')
+                    || document.body.classList.contains('showcase-open')
+                    || document.body.classList.contains('chat-fullscreen')
+                    || document.body.classList.contains('dw-open');
+                if (tabsHidden) {
+                    pinKey = null;
+                    pinAnchor = null;
+                }
+                if (!tabsHidden) document.querySelectorAll(SNAP_SEL).forEach(t => {
                     const r  = t.getBoundingClientRect();
                     const cx = r.left + r.width / 2;
                     const cy = r.top;
