@@ -23,6 +23,12 @@
             --panel: rgba(4, 12, 18, 0.55);
             --grid: rgba(var(--acc-rgb), 0.09);
             --glow: 0 0 12px rgba(var(--acc-rgb), 0.7), 0 0 32px rgba(var(--acc-rgb), 0.35);
+            /* Interface accent — the global matrix green. Used by chrome that
+               sits OUTSIDE the case-content scope (breadcrumb bar, ESC button,
+               etc.) so it stays consistent regardless of the per-case --acc
+               override that lives on .case-page. */
+            --ui-acc: #00ff88;
+            --ui-acc-rgb: 0, 255, 136;
         }
 
         /* MONO — white/grayscale */
@@ -1551,7 +1557,7 @@
             gap: 16px;
             padding: 18px 36px;
             background: linear-gradient(180deg, rgba(6, 7, 8, 0.95), rgba(6, 7, 8, 0.85));
-            border-bottom: 1px solid rgba(var(--acc-rgb), 0.18);
+            border-bottom: 1px solid rgba(var(--ui-acc-rgb), 0.18);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
@@ -1572,7 +1578,7 @@
             background: transparent;
             border: 0;
             font: inherit;
-            color: var(--acc);
+            color: var(--ui-acc);
             cursor: pointer;
             padding: 2px 0;
             text-decoration: none;
@@ -1580,17 +1586,17 @@
         }
         .dc-crumb:hover {
             color: #fff;
-            text-shadow: 0 0 8px rgba(var(--acc-rgb), 0.65);
+            text-shadow: 0 0 8px rgba(var(--ui-acc-rgb), 0.65);
         }
         .dc-crumb-current {
             color: rgba(255, 255, 255, 0.95);
             cursor: default;
         }
-        .dc-crumb-sep { color: rgba(var(--acc-rgb), 0.5); }
+        .dc-crumb-sep { color: rgba(var(--ui-acc-rgb), 0.5); }
         .dc-close {
             appearance: none;
             background: transparent;
-            border: 1px solid rgba(var(--acc-rgb), 0.3);
+            border: 1px solid rgba(var(--ui-acc-rgb), 0.3);
             color: var(--dim);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.5625rem;
@@ -1602,9 +1608,9 @@
             flex-shrink: 0;
         }
         .dc-close:hover {
-            color: var(--acc);
-            border-color: rgba(var(--acc-rgb), 0.6);
-            background: rgba(var(--acc-rgb), 0.06);
+            color: var(--ui-acc);
+            border-color: rgba(var(--ui-acc-rgb), 0.6);
+            background: rgba(var(--ui-acc-rgb), 0.06);
         }
         .dc-inner {
             max-width: 880px;
@@ -2095,15 +2101,21 @@
         :is(.dc-page.dc-bright, .case-page.cp-light) {
             --acc: #059669;
             --acc-rgb: 5, 150, 105;
+            /* Bright theme tones the interface green down to emerald-600 so it
+               reads on white. Same role as --ui-acc in dark mode — it does not
+               flex with per-case accent. */
+            --ui-acc: #059669;
+            --ui-acc-rgb: 5, 150, 105;
             background: #f6f8fb;
             color: #0f1419;
         }
-        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-head {
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-head,
+        :is(.dc-page.dc-bright, .case-page.cp-light) .cp-crumbs-bar {
             background: linear-gradient(180deg, rgba(246, 248, 251, 0.96), rgba(246, 248, 251, 0.84));
             border-bottom-color: #e2e6ec;
         }
         :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumbs { color: #6b7280; }
-        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb { color: var(--acc); }
+        :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb { color: var(--ui-acc); }
         :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb:hover { color: #0f1419; text-shadow: none; }
         :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb-current { color: #0f1419; }
         :is(.dc-page.dc-bright, .case-page.cp-light) .dc-crumb-sep { color: #c7ccd4; }
@@ -2113,9 +2125,9 @@
             background: #fff;
         }
         :is(.dc-page.dc-bright, .case-page.cp-light) .dc-close:hover {
-            color: var(--acc);
-            border-color: var(--acc);
-            background: rgba(var(--acc-rgb), 0.06);
+            color: var(--ui-acc);
+            border-color: var(--ui-acc);
+            background: rgba(var(--ui-acc-rgb), 0.06);
         }
         :is(.dc-page.dc-bright, .case-page.cp-light) .dc-meta-company { color: #6b7280; }
         :is(.dc-page.dc-bright, .case-page.cp-light) .dc-meta-metric {
