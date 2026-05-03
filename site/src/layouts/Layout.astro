@@ -101,7 +101,19 @@ const importMapJson = `{
      full case-page width, which is the legacy intent. Make sure it can
      reach the scrollable .case-page top edge without the cnt-body's
      own max-width clamping its negative margins. */
-  .case-page .cnt-body > .cp-timeline {
+  .case-page .cnt-body > .cp-timeline,
+  /* cs02 (Health Samurai) wide blocks — each declares its own max-width
+     1280px and padding, designed to span the case-page rather than the
+     920px cnt-body column. Break them out of cnt-body's clamp so the
+     internal 1280px / centred grids actually fit. Without this all the
+     .hs-* sections sat in the 920 column with their interior 4-col
+     bento-grid squashed into 3 narrow tiles ("сжались очень узко"). */
+  .case-page .cnt-body > .hs-hero,
+  .case-page .cnt-body > .hs-toc-layout,
+  .case-page .cnt-body > .hs-meta-row,
+  .case-page .cnt-body > .hs-tldr-wrap,
+  .case-page .cnt-body > .hs-grid-overview,
+  .case-page .cnt-body > .hs-timeline-wrap {
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
     width: 100vw;

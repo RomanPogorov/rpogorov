@@ -283,7 +283,11 @@ video {
 
 /* ---- Images / figures ---- */
 .cnt-body :where(figure) {
-  margin: var(--space-7) 0;
+  /* margin-block only — leaving margin-left/right alone so legacy
+     full-bleed figures (.cp-hero-shot, .dc-figure) keep their negative
+     calc(-50vw + 50%) horizontal margins that escape the cnt-body column.
+     The earlier `margin: ... 0` shorthand killed the breakout. */
+  margin-block: var(--space-7);
 }
 .cnt-body :where(figure img) {
   border-radius: var(--radius-md);
