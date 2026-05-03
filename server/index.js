@@ -238,9 +238,17 @@ async function tgGetUpdates() {
         return callClaude(messages);
       }).then((reply) => {
         if (!reply) return;
-        const r = reply.trim();
-        // Skip empty / silent turns.
+        let r = reply.trim();
         if (!r || /^\[silent\]$/i.test(r)) return;
+        // Strip HANDOFF marker if present and queue a build request for
+        // the main agent (Roman's terminal Claude session).
+        const handoffMatch = r.match(/HANDOFF:\s*(.+?)(?:\n|$)/);
+        if (handoffMatch) {
+          const task = handoffMatch[1].trim();
+          r = r.replace(/HANDOFF:.*$/m, '').trim();
+          enqueueBuild(threadId, task);
+        }
+        if (!r) return;
         appendMsg(threadId, 'claude', r);
         sendTelegramMessage(ROMAN_CHAT_ID, `🤖 [#${threadId.slice(0, 8)}] claude:\n${r}`).catch(() => {});
       }).catch((err) => {
@@ -332,9 +340,17 @@ const server = http.createServer(async (req, res) => {
         });
         return callClaude(messages.slice(-12));
       }).then((reply) => {
-        appendMsg(thread, 'claude', reply);
-        // Forward Claude's reply to Roman's TG so he sees it
-        sendTelegramMessage(ROMAN_CHAT_ID, `🤖 [#${thread.slice(0, 8)}] claude:\n${reply}`).catch(() => {});
+        let r = (reply || '').trim();
+        if (/^\[silent\]$/i.test(r)) return;
+        const handoffMatch = r.match(/HANDOFF:\s*(.+?)(?:\n|$)/);
+        if (handoffMatch) {
+          const task = handoffMatch[1].trim();
+          r = r.replace(/HANDOFF:.*$/m, '').trim();
+          enqueueBuild(thread, task);
+        }
+        if (!r) return;
+        appendMsg(thread, 'claude', r);
+        sendTelegramMessage(ROMAN_CHAT_ID, `🤖 [#${thread.slice(0, 8)}] claude:\n${r}`).catch(() => {});
       }).catch((err) => {
         console.error('claude bg error:', err);
         appendMsg(thread, 'claude', '// internal: claude error — try again in a moment');
@@ -442,6 +458,40 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, { ok: true, msg: m });
   }
 
+  // ---------- Build queue (localhost-only) ----------
+  if (req.method === 'GET' && url.pathname === '/internal/chat/queue') {
+    const localAddr = req.socket.remoteAddress || '';
+    if (!localAddr.includes('127.0.0.1') && !localAddr.includes('::1')) {
+      return send(res, 403, { error: 'localhost only' });
+    }
+    const showClaimed = url.searchParams.get('claimed') === '1';
+    const queue = (state.buildQueue || [])
+      .filter((e) => showClaimed || !e.claimed)
+      .map((e) => {
+        const t = state.threads[e.threadId];
+        const last3 = (t?.msgs || []).slice(-6).map((m) => `${m.role}: ${m.text.slice(0, 100)}`);
+        return { ...e, threadShort: e.threadId.slice(0, 8), recentTurns: last3 };
+      })
+      .sort((a, b) => b.ts - a.ts);
+    return send(res, 200, { queue });
+  }
+
+  if (req.method === 'POST' && url.pathname === '/internal/chat/queue/claim') {
+    const localAddr = req.socket.remoteAddress || '';
+    if (!localAddr.includes('127.0.0.1') && !localAddr.includes('::1')) {
+      return send(res, 403, { error: 'localhost only' });
+    }
+    let body;
+    try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
+    const id = String(body.id || '');
+    const entry = (state.buildQueue || []).find((e) => e.id === id);
+    if (!entry) return send(res, 404, { error: 'not found' });
+    entry.claimed = true;
+    entry.claimedAt = Date.now();
+    saveLater();
+    return send(res, 200, { ok: true, entry });
+  }
+
   // ---------- List threads (localhost-only) so Roman can pick one ----------
   if (req.method === 'GET' && url.pathname === '/internal/chat/threads') {
     const localAddr = req.socket.remoteAddress || '';
@@ -531,11 +581,19 @@ THREE-SPEAKER ROOM
 The thread has three voices: the visitor (the website user), Roman (the owner — joins from his Telegram bot, his messages are tagged [ROMAN — owner of this portfolio, in the chat]), and you. You receive a turn whenever ANYONE writes — visitor or Roman.
 
 When the latest turn is from Roman:
-- If he's addressing you directly ("клод, расскажи про X", "claude, what was the metric on Y", "собери кейс про Z" or any direct question) — respond normally to him. Speak to Roman by name when natural.
-- If he's giving you a heads-up that he'll come back with custom content / asking you to wait / saying he'll handle it himself ("секунду", "минуту", "сейчас приду", "я займусь", "ща клод соберёт") — output literally [silent] and nothing else. The server will suppress the turn.
-- If he's chatting with the VISITOR (small talk, "привет всем", explaining something to them) — also output [silent].
 
-When the latest turn is from the visitor, respond normally as before.
+A. **CASE BUILD REQUEST** — when Roman asks you to build / assemble / put together / собрать / сделать a case (e.g. "клод, собери кейс про X", "build me a case on Y", "сделай кейс про маркетинг") — DO NOT discuss permissions, capabilities, access rights, or limitations. DO NOT say "у меня нет доступа" or "I'd need…". Just confirm and hand off:
+   - In Russian: "Понял. Занимаюсь — это займёт 3-5 минут, передал основному агенту."
+   - In English: "Got it. On it — 3–5 minutes, the main agent will assemble it."
+   Then on a NEW LINE, emit a structured handoff marker the server will scrape:
+   HANDOFF: <one short clean line restating what Roman wants assembled>
+   The server will queue the request for the main agent (Roman's terminal Claude) and ping Roman to come refine it. Don't attempt to write any files yourself.
+
+B. If Roman is addressing you directly with a NON-build question ("клод, расскажи про X", "что там по дизайн-системе") — respond normally about Roman's work as you'd respond to the visitor.
+
+C. If Roman is giving a heads-up ("секунду", "минуту", "ща приду") or chatting WITH the visitor ("привет всем", explaining something to them directly) — output literally [silent] and nothing else. Server suppresses the turn.
+
+When the latest turn is from the VISITOR, respond normally about Roman's work.
 
 Never emit [silent] when the visitor asked something — they're waiting on you.`;
 
@@ -590,6 +648,27 @@ Tools allowed: Bash, Edit, Write, Read, Glob, Grep. Use them as needed. The site
 
 // pendingBuilds[threadId] = { originalTask, turns: [{q, a}], status: 'awaiting-claude'|'awaiting-roman' }
 const pendingBuilds = {};
+
+// ---------- Build queue (handoff to Roman's terminal Claude) ----------
+// Each entry: { id, threadId, task, ts, claimed: bool }
+// Stored in state.buildQueue so it survives restarts.
+if (!Array.isArray(state.buildQueue)) state.buildQueue = [];
+function enqueueBuild(threadId, task) {
+  const entry = {
+    id: 'q_' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4),
+    threadId,
+    task,
+    ts: Date.now(),
+    claimed: false,
+  };
+  state.buildQueue.push(entry);
+  // Cap queue at 50 to avoid unbounded growth.
+  if (state.buildQueue.length > 50) state.buildQueue.splice(0, state.buildQueue.length - 50);
+  saveLater();
+  // Ping Roman in TG so he knows to walk to the terminal.
+  sendTelegramMessage(ROMAN_CHAT_ID,
+    `🔔 BUILD REQUEST QUEUED — [#${threadId.slice(0, 8)}]\n${task}\n\nGo to your terminal — main claude is waiting.`).catch(() => {});
+}
 
 async function runOwnerBuild(threadId, taskText, opts = {}) {
   // opts.resume = true means we're continuing a Q&A loop; don't post the
