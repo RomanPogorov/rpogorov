@@ -20589,36 +20589,42 @@ See also: Health Samurai Lab: Game of Pools.`,
         }
 
         function drawTabs(accSolid, accSoft, accDim) {
-            // Two pill tabs at the top-right of the centre column.
+            // Header-style tab row: two big pills centred above the content,
+            // big enough to read as a section header.
             const cw = CENTER_W - 112;
             const cx = CENTER_X + 56;
-            const yTab = 50;
             const tabs = [
                 { label: '// CHAT',     id: 'chat' },
                 { label: '// TIMELINE', id: 'career' },
             ];
-            texCtx.font = 'bold 12px JetBrains Mono, monospace';
-            let xRight = cx + cw;
-            for (let i = tabs.length - 1; i >= 0; i--) {
+            const fontSize = 22;
+            const padX = 26;
+            const h = 42;
+            const gap = 22;
+            const yTab = 56;
+
+            texCtx.font = `bold ${fontSize}px JetBrains Mono, monospace`;
+            // Measure each label width and total row width to centre the row.
+            const widths = tabs.map((t) => texCtx.measureText(t.label).width + padX * 2);
+            const totalW = widths.reduce((a, b) => a + b, 0) + gap * (tabs.length - 1);
+            let x = cx + (cw - totalW) / 2;
+            for (let i = 0; i < tabs.length; i++) {
                 const t = tabs[i];
+                const w = widths[i];
                 const isActive = (t.id === 'career' ? holoState.view === 'career' : holoState.view === 'chat');
-                const w = texCtx.measureText(t.label).width + 22;
-                const h = 22;
-                const x = xRight - w;
-                const y = yTab;
                 texCtx.save();
                 if (isActive) {
                     texCtx.shadowColor = accSolid;
-                    texCtx.shadowBlur = 10;
+                    texCtx.shadowBlur = 14;
                 }
                 texCtx.strokeStyle = isActive ? accSolid : accDim;
-                texCtx.lineWidth = 1;
-                texCtx.strokeRect(x + 0.5, y + 0.5, w, h);
+                texCtx.lineWidth = isActive ? 2 : 1;
+                texCtx.strokeRect(x + 0.5, yTab + 0.5, w, h);
                 texCtx.restore();
                 texCtx.fillStyle = isActive ? accSolid : accDim;
-                texCtx.fillText(t.label, x + 11, y + 4);
-                hitZones.push({ x, y, w, h, action: 'tab:' + t.id });
-                xRight = x - 8;
+                texCtx.fillText(t.label, x + padX, yTab + 9);
+                hitZones.push({ x, y: yTab, w, h, action: 'tab:' + t.id });
+                x += w + gap;
             }
         }
 
@@ -20628,7 +20634,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             const labelSize = 14;
             const bodySize = 20;
             const lineH = 26;
-            const yTop = 56;
+            const yTop = 130;  // below the centred tab row
             // Reserve room at the bottom for the prompt input row.
             const inputRowH = 44;
             const yBottom = TEX_H - 60 - inputRowH - 16;
@@ -20775,7 +20781,7 @@ See also: Health Samurai Lab: Game of Pools.`,
             const labelSize = 14;
             const bodySize = 19;
             const lineH = 26;
-            let y = 100;
+            let y = 140;  // below the centred tab row
 
             // Headstrip
             texCtx.font = `${labelSize}px JetBrains Mono, monospace`;
