@@ -392,6 +392,53 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, { ok: true, threads: Object.keys(state.threads).length });
   }
 
+  // ---------- Localhost-only inject endpoint ----------
+  // Lets Roman (or his agent in another Claude session) drop a message
+  // into any thread, in any role. Used when Roman wants to collaborate
+  // on a case in his terminal Claude session and then ship the result
+  // into the visitor's chat. Path is intentionally /internal/* so Caddy
+  // (which only proxies /api/chat/*) doesn't expose it externally.
+  if (req.method === 'POST' && url.pathname === '/internal/chat/post') {
+    const localAddr = req.socket.remoteAddress || '';
+    if (!localAddr.includes('127.0.0.1') && !localAddr.includes('::1')) {
+      return send(res, 403, { error: 'localhost only' });
+    }
+    let body;
+    try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
+    const thread = String(body.thread || '').slice(0, 64);
+    const role = String(body.role || 'claude');
+    const text = String(body.text || '').trim();
+    if (!thread || !text) return send(res, 400, { error: 'thread and text required' });
+    if (!['visitor', 'claude', 'roman'].includes(role)) return send(res, 400, { error: 'role must be visitor|claude|roman' });
+    const m = appendMsg(thread, role, text);
+    // Also forward to Roman's TG so he sees the same thing in the bot.
+    sendTelegramMessage(ROMAN_CHAT_ID, `📨 [#${thread.slice(0, 8)}] ${role}:\n${text}`).catch(() => {});
+    return send(res, 200, { ok: true, msg: m });
+  }
+
+  // ---------- List threads (localhost-only) so Roman can pick one ----------
+  if (req.method === 'GET' && url.pathname === '/internal/chat/threads') {
+    const localAddr = req.socket.remoteAddress || '';
+    if (!localAddr.includes('127.0.0.1') && !localAddr.includes('::1')) {
+      return send(res, 403, { error: 'localhost only' });
+    }
+    const threads = Object.entries(state.threads)
+      .map(([id, t]) => {
+        const msgs = t.msgs || [];
+        const last = msgs[msgs.length - 1];
+        return {
+          id,
+          msgCount: msgs.length,
+          lastTs: last?.ts || 0,
+          lastRole: last?.role,
+          lastText: (last?.text || '').slice(0, 120),
+        };
+      })
+      .sort((a, b) => b.lastTs - a.lastTs)
+      .slice(0, 20);
+    return send(res, 200, { threads });
+  }
+
   // ---------- /api/chat/claude — visitor talks to Roman's Claude ----------
   // POST { messages: [{role: 'user'|'assistant', content: string}, ...] }
   // Returns { reply: string }.
@@ -473,6 +520,12 @@ const claudeQueue = (() => {
 // portfolio repo) to assemble a custom case MDX, build it, and post the
 // resulting URL into the chat thread. Only triggered by Roman's /build
 // command on Telegram.
+//
+// Q&A loop: if Claude can't understand the brief, it can emit
+//   ASK: <one specific question>
+// and exit. The server posts that question into the thread (visitor sees
+// it too), waits for Roman's reply, and re-spawns Claude with the full
+// turn history.
 const BUILD_SYSTEM_PROMPT = `You are Claude operating in OWNER MODE on Roman Pogorov's portfolio site. Roman has just asked you (via a /build command from his Telegram bot) to assemble a custom case page LIVE for a visitor who is watching the chat unfold on the portfolio site.
 
 YOUR TASK
@@ -485,12 +538,43 @@ YOUR TASK
    If build fails, output:
    BUILD_FAIL <one-line error>
 
+CLARIFY-FIRST RULE
+If the brief is too vague to commit to a confident case (e.g. "marketing case", "что-то про дизайн" — no specific project, role, metric, or angle), DO NOT start writing files. Instead exit immediately with ONE line:
+   ASK: <one short, specific question for Roman>
+Examples:
+   ASK: about which company — Health Samurai or Americor?
+   ASK: what should the headline metric be — onboarding lift, conversion, retention?
+The server will surface that question to Roman in the chat. He'll answer in his Telegram bot, the server will re-spawn you with his answer in context, and you can continue (or ASK again if still unclear). Don't ask more than one question at a time. Don't ASK about anything you can reasonably guess from his existing cases.
+
 Concise progress notes are welcome (one line per phase: "drafting", "writing mdx", "building"). Don't dump giant transcripts.
 
 Tools allowed: Bash, Edit, Write, Read, Glob, Grep. Use them as needed. The site repo is at /root/rpogorov-dev/site, the cases live at /root/vault/portfolio/cases (which is symlinked into src/content/cases).`;
 
-async function runOwnerBuild(threadId, taskText) {
-  appendMsg(threadId, 'claude', `// owner build started\n▸ task: ${taskText.slice(0, 200)}\n▸ status: spinning up agent…`);
+// pendingBuilds[threadId] = { originalTask, turns: [{q, a}], status: 'awaiting-claude'|'awaiting-roman' }
+const pendingBuilds = {};
+
+async function runOwnerBuild(threadId, taskText, opts = {}) {
+  // opts.resume = true means we're continuing a Q&A loop; don't post the
+  // "spinning up" intro again, just feed the agent the new turn.
+  const pending = pendingBuilds[threadId] || { originalTask: taskText, turns: [], status: 'awaiting-claude' };
+  pending.status = 'awaiting-claude';
+  pendingBuilds[threadId] = pending;
+
+  if (!opts.resume) {
+    appendMsg(threadId, 'claude', `// owner build started\n▸ task: ${taskText.slice(0, 200)}\n▸ status: spinning up agent…`);
+  } else {
+    appendMsg(threadId, 'claude', `// resuming with your answer…`);
+  }
+
+  // Compose the prompt — original task + accumulated Q&A history.
+  let prompt = `Roman's brief:\n${pending.originalTask}`;
+  if (pending.turns.length) {
+    prompt += '\n\nClarification trail so far:';
+    for (const t of pending.turns) {
+      prompt += `\n  Q (you asked): ${t.q}\n  A (Roman answered): ${t.a}`;
+    }
+    prompt += '\n\nNow continue. If still unclear, you may ASK once more; otherwise build.';
+  }
 
   return new Promise((resolve) => {
     // claude refuses --dangerously-skip-permissions / bypassPermissions
@@ -505,7 +589,7 @@ async function runOwnerBuild(threadId, taskText) {
       '--add-dir', '/root/rpogorov-dev/site',
       '--append-system-prompt', BUILD_SYSTEM_PROMPT,
       '--permission-mode', 'acceptEdits',
-      taskText,
+      prompt,
     ], { cwd: '/root/rpogorov-dev/site', stdio: ['ignore', 'pipe', 'pipe'] });
 
     let out = '', err = '';
