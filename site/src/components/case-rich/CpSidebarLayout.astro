@@ -1,0 +1,31 @@
+---
+/**
+ * CpSidebarLayout — single-column wrapper that floats CpSidebar to the
+ * left of the content column without subtracting from its width.
+ *
+ * The sidebar is absolutely positioned with a negative left offset, so it
+ * lives in the gutter outside `.cp-inner`. Default-slot content keeps its
+ * original width. Below 1500px viewport (no room in the gutter) the rail
+ * hides and the `mobile-nav` slot (CpTimeline) renders above the content.
+ *
+ * Usage in MDX:
+ *   <CpSidebarLayout>
+ *     <CpSidebar slot="sidebar" groups={GROUPS} />
+ *     <CpTimeline slot="mobile-nav" items={FLAT_ITEMS} />
+ *     <a id="hs-01"></a>
+ *     ## 01 — …
+ *   </CpSidebarLayout>
+ */
+---
+
+<div class="cp-sb-mobile">
+  <slot name="mobile-nav" />
+</div>
+<div class="cp-sb-layout">
+  <aside class="cp-sb-rail">
+    <div class="cp-sb-sticky">
+      <slot name="sidebar" />
+    </div>
+  </aside>
+  <slot />
+</div>

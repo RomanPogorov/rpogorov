@@ -1,0 +1,120 @@
+---
+/**
+ * CpSidebar — vertical grouped section nav for case pages.
+ *
+ * Sticky left rail with grouped numbered items. Same scroll-spy + smooth-
+ * scroll behavior as CpTimeline, designed to live inside CpSidebarLayout's
+ * `sidebar` slot. Markup uses divs (not ol/ul) to avoid inheriting the
+ * .cnt-body global list styling that would inject decorative counters.
+ *
+ * Usage in MDX:
+ *   <CpSidebar groups={GROUPS} accent="#EB5234" />
+ *
+ * Props:
+ *   groups — array of { label, items: [{ target, num, name }] }.
+ *   accent — optional CSS color for the active-item color and the left rule.
+ *            Falls back to var(--hs-red) then var(--acc) if omitted.
+ */
+interface Item {
+  target: string;
+  num: string;
+  name: string;
+}
+interface Group {
+  label: string;
+  items: Item[];
+}
+interface Props {
+  groups: Group[];
+  accent?: string;
+}
+const { groups, accent } = Astro.props;
+const styleAttr = accent ? `--cp-sb-accent: ${accent}` : undefined;
+---
+
+<nav class="cp-sidebar" aria-label="Case section nav" style={styleAttr}>
+  {groups.map((g) => (
+    <div class="cp-sb-group">
+      <div class="cp-sb-group-label">{g.label}</div>
+      <div class="cp-sb-list" role="list">
+        {g.items.map((it) => (
+          <div role="listitem">
+            <button class="cp-sb-item" data-target={it.target} type="button">
+              <span class="cp-sb-num">{it.num}</span>
+              <span class="cp-sb-name">{it.name}</span>
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</nav>
+
+<script is:inline>
+  function initCpSidebar() {
+    document.querySelectorAll('.cp-sidebar:not([data-cp-sb-init])').forEach((nav) => {
+      nav.setAttribute('data-cp-sb-init', '1');
+      const items = Array.from(nav.querySelectorAll('.cp-sb-item'));
+      const targetMap = new Map();
+      items.forEach((btn) => {
+        const id = btn.dataset.target;
+        const el = id ? document.getElementById(id) : null;
+        if (el) targetMap.set(el, btn);
+      });
+
+      function findScrollRoot(el) {
+        let p = el?.parentElement;
+        while (p && p !== document.body) {
+          const cs = getComputedStyle(p);
+          if (
+            (cs.overflowY === 'auto' || cs.overflowY === 'scroll') &&
+            p.scrollHeight > p.clientHeight
+          ) {
+            return p;
+          }
+          p = p.parentElement;
+        }
+        return null;
+      }
+
+      if ('IntersectionObserver' in window && targetMap.size) {
+        const firstTarget = targetMap.keys().next().value;
+        const root = findScrollRoot(firstTarget);
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const btn = targetMap.get(entry.target);
+              if (!btn) return;
+              if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+                items.forEach((b) => b.classList.toggle('active', b === btn));
+              }
+            });
+          },
+          { threshold: [0.3, 0.6], root }
+        );
+        targetMap.forEach((_, el) => io.observe(el));
+      }
+
+      items.forEach((btn) => {
+        const id = btn.dataset.target;
+        const el = id ? document.getElementById(id) : null;
+        if (!el) return;
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const root = findScrollRoot(el);
+          if (root) {
+            const target = el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop - 24;
+            root.scrollTo({ top: target, behavior: 'smooth' });
+          } else {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCpSidebar, { once: true });
+  } else {
+    initCpSidebar();
+  }
+</script>

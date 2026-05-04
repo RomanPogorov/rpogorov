@@ -11357,3 +11357,120 @@
                 rgba(var(--acc-rgb), 0.08);
             filter: drop-shadow(0 0 6px rgba(var(--acc-rgb), 0.5));
         }
+
+        /* ============ CpSidebar — vertical grouped section nav ============
+           The rail is absolutely positioned in the layout's left gutter so
+           it floats outside the content column without subtracting width.
+           cp-inner is 980px max-width centered; the rail sits to the left
+           of cp-inner's left edge in the page gutter. */
+        .cp-sb-layout { position: relative; }
+        .cp-sb-main { min-width: 0; }
+        .cp-sb-mobile { display: none; }
+
+        .cp-sb-rail {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 240px;
+            /* Pull leftward outside cp-inner. cnt-body sits at cp-inner's
+               left edge (cp-inner padding-left: 40px), so we subtract 40px
+               of cp-inner padding + 240px sidebar + 32px gap = 312px. */
+            left: -312px;
+            pointer-events: auto;
+        }
+        .cp-sb-sticky {
+            position: sticky;
+            top: 96px; /* clear cp-crumbs-bar (~54px) + breathing room */
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.08) transparent;
+            padding-right: 4px;
+        }
+        .cp-sb-sticky::-webkit-scrollbar { width: 4px; }
+        .cp-sb-sticky::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.08);
+            border-radius: 4px;
+        }
+
+        .cp-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .cp-sb-group { display: flex; flex-direction: column; gap: 4px; }
+        .cp-sb-group-label {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.42);
+            margin-bottom: 6px;
+        }
+        .cp-sb-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .cp-sb-list > [role="listitem"] {
+            /* Neutralize .cnt-body :where(ol/ul) li::before counters/bullets
+               that would otherwise inject decorative numbers/dots. */
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .cp-sb-list > [role="listitem"]::before { content: none !important; }
+        .cp-sb-item {
+            display: grid;
+            grid-template-columns: 22px 1fr;
+            gap: 12px;
+            align-items: baseline;
+            width: 100%;
+            text-align: left;
+            padding: 7px 0 7px 12px;
+            margin-left: -12px;
+            border: 0;
+            background: transparent;
+            color: rgba(255,255,255,0.72);
+            cursor: pointer;
+            font-family: inherit;
+            border-left: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .cp-sb-num {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            color: rgba(255,255,255,0.45);
+        }
+        .cp-sb-name {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            line-height: 1.4;
+            letter-spacing: 0.005em;
+        }
+        .cp-sb-item:hover { color: #fff; }
+        .cp-sb-item:hover .cp-sb-num { color: rgba(255,255,255,0.7); }
+        .cp-sb-item.active {
+            color: var(--cp-sb-accent, var(--hs-red, var(--acc)));
+            border-left-color: var(--cp-sb-accent, var(--hs-red, var(--acc)));
+        }
+        .cp-sb-item.active .cp-sb-num {
+            color: var(--cp-sb-accent, var(--hs-red, var(--acc)));
+        }
+
+        /* Light theme override (used by cp-light cases) */
+        .cp-light .cp-sb-group-label { color: rgba(15,20,25,0.42); }
+        .cp-light .cp-sb-item { color: rgba(15,20,25,0.72); }
+        .cp-light .cp-sb-num { color: rgba(15,20,25,0.45); }
+        .cp-light .cp-sb-item:hover { color: #0f1419; }
+        .cp-light .cp-sb-item:hover .cp-sb-num { color: rgba(15,20,25,0.7); }
+
+        /* Below 1500px there's no room in the gutter — drop the rail and
+           show the horizontal CpTimeline above the content instead. */
+        @media (max-width: 1499px) {
+            .cp-sb-rail { display: none; }
+            .cp-sb-mobile { display: block; }
+        }
