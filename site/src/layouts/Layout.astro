@@ -102,22 +102,33 @@ const importMapJson = `{
      reach the scrollable .case-page top edge without the cnt-body's
      own max-width clamping its negative margins. */
   .case-page .cnt-body > .cp-timeline,
-  /* cs02 (Health Samurai) wide blocks — each declares its own max-width
-     1280px and padding, designed to span the case-page rather than the
-     920px cnt-body column. Break them out of cnt-body's clamp so the
-     internal 1280px / centred grids actually fit. Without this all the
-     .hs-* sections sat in the 920 column with their interior 4-col
-     bento-grid squashed into 3 narrow tiles ("сжались очень узко"). */
+  /* cs02 (Health Samurai) wide blocks — only the genuinely-wide ones
+     break out of the 920 cnt-body column. TLDR and meta-row are body
+     copy and stay inside the column to match cs01's standard (cp-tldr
+     sits naturally in cnt-body, never goes full-bleed). The grid /
+     timeline / hero are the legitimate wide layouts: bento-cards and
+     12-subcase grid need 1280px to breathe. */
   .case-page .cnt-body > .hs-hero,
   .case-page .cnt-body > .hs-toc-layout,
-  .case-page .cnt-body > .hs-meta-row,
-  .case-page .cnt-body > .hs-tldr-wrap,
   .case-page .cnt-body > .hs-grid-overview,
   .case-page .cnt-body > .hs-timeline-wrap {
     margin-left: calc(-50vw + 50%);
     margin-right: calc(-50vw + 50%);
     width: 100vw;
     max-width: 100vw;
+  }
+  /* TLDR / meta-row inside cnt-body: drop the wrapper's interior
+     horizontal padding so the inner card aligns flush with the column.
+     The hs-tldr-wrap was originally designed for full-bleed page
+     (max-width 1280, padding 0 64px); inside the 920 column those 64px
+     would compress the actual content card to ~790px. */
+  .case-page .cnt-body > .hs-tldr-wrap,
+  .case-page .cnt-body > .hs-meta-row {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   /* Default content tokens (dark theme) — case components reference these
