@@ -17,6 +17,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { spawn } = require('child_process');
 
 const PORT = parseInt(process.env.PORT || '3055', 10);
@@ -434,6 +435,39 @@ const server = http.createServer(async (req, res) => {
     return send(res, 200, { ok: true, threads: Object.keys(state.threads).length });
   }
 
+  // ---------- /api/webhook/vault — GitHub push → vault pull + Astro build ----------
+  // GitHub posts on every push to the obsidianVault repo. We HMAC-verify the
+  // payload, ack 202 immediately so GitHub doesn't retry, then run
+  // git pull + npm run build out of band. Build is ~7s, total cycle ~10s.
+  if (req.method === 'POST' && url.pathname === '/api/webhook/vault') {
+    const secret = process.env.VAULT_WEBHOOK_SECRET;
+    if (!secret) return send(res, 500, { error: 'webhook secret not configured' });
+    const sigHeader = req.headers['x-hub-signature-256'] || '';
+    const eventType = req.headers['x-github-event'] || '';
+    const raw = await readBody(req);
+    const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(raw).digest('hex');
+    let valid = false;
+    try {
+      valid = sigHeader.length === expected.length &&
+        crypto.timingSafeEqual(Buffer.from(sigHeader), Buffer.from(expected));
+    } catch (_) { valid = false; }
+    if (!valid) {
+      console.log(`[webhook/vault] rejected — bad signature (event=${eventType})`);
+      return send(res, 401, { error: 'invalid signature' });
+    }
+    if (eventType === 'ping') {
+      console.log('[webhook/vault] ping ok');
+      return send(res, 200, { ok: true, pong: true });
+    }
+    if (eventType !== 'push') {
+      return send(res, 200, { ok: true, ignored: eventType });
+    }
+    // Ack first, build async.
+    send(res, 202, { ok: true, queued: true });
+    rebuildVault();
+    return;
+  }
+
   // ---------- Localhost-only inject endpoint ----------
   // Lets Roman (or his agent in another Claude session) drop a message
   // into any thread, in any role. Used when Roman wants to collaborate
@@ -719,6 +753,60 @@ function buildClaudeSystemPrompt() {
     'Use this to answer questions with detail. Quote a specific case file or article when grounding a claim. Don\'t fabricate beyond what\'s in here.\n' +
     '=========================================\n' +
     vault;
+}
+
+// ---------- Vault rebuild ----------
+// Pulls /root/vault and rebuilds /root/rpogorov-dev/site. Serialized so a
+// burst of pushes only triggers one in-flight build at a time, with at
+// most one queued follow-up that absorbs all pushes received during the
+// previous build.
+let rebuildInFlight = false;
+let rebuildPending = false;
+function rebuildVault() {
+  if (rebuildInFlight) {
+    rebuildPending = true;
+    console.log('[webhook/vault] build in flight — queuing follow-up');
+    return;
+  }
+  rebuildInFlight = true;
+  rebuildPending = false;
+  const startTs = Date.now();
+  console.log('[webhook/vault] starting git pull + astro build');
+  const sh = spawn('bash', ['-lc',
+    'cd /root/vault && git pull --rebase --autostash 2>&1 && ' +
+    'cd /root/rpogorov-dev/site && npm run build 2>&1'
+  ], { stdio: ['ignore', 'pipe', 'pipe'] });
+  let out = '';
+  sh.stdout.on('data', (d) => out += d);
+  sh.stderr.on('data', (d) => out += d);
+  sh.on('close', (code) => {
+    const dur = ((Date.now() - startTs) / 1000).toFixed(1);
+    if (code === 0) {
+      console.log(`[webhook/vault] build ok in ${dur}s`);
+    } else {
+      console.error(`[webhook/vault] build failed (exit ${code}, ${dur}s):\n${out.slice(-2000)}`);
+      // Notify Roman on failure so he doesn't think the deploy went through.
+      try {
+        const msg = `🚨 vault rebuild failed (exit ${code}, ${dur}s)\n\`\`\`\n${out.slice(-1500)}\n\`\`\``;
+        const tgUrl = `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/sendMessage`;
+        fetch(tgUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: process.env.ROMAN_CHAT_ID,
+            text: msg,
+            parse_mode: 'Markdown',
+          }),
+        }).catch(() => {});
+      } catch (_) {}
+    }
+    rebuildInFlight = false;
+    if (rebuildPending) {
+      rebuildPending = false;
+      console.log('[webhook/vault] running queued follow-up build');
+      rebuildVault();
+    }
+  });
 }
 
 // Sequential queue — Roman's instruction: claude CLI calls strictly serial
