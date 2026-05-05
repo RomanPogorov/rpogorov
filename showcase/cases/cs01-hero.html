@@ -163,11 +163,10 @@ html, body {
 .mock-side-list { display:flex; flex-direction:column; gap: 4px; margin-top: 6px; }
 .mock-side-item {
   font-size: 8.5px; padding: 5px 8px; border-radius: 6px;
-  color: var(--ink-3); display:flex; align-items:center; gap: 6px;
+  color: var(--ink-3); display:flex; align-items:center;
 }
 .mock-side-item.is-on { background: #ECEEF2; color: var(--ink); font-weight: 500; }
-.mock-side-item .ic { width: 8px; height: 8px; border-radius: 2px; background: var(--ink-4); }
-.mock-side-item.is-on .ic { background: var(--accent); }
+.mock-side-item .ic { display: none; }
 
 .mock-main {
   flex: 1; padding: 14px; display:flex; flex-direction:column; gap: 10px;
