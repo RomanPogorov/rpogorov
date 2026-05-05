@@ -4517,14 +4517,20 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            cursor: default;
+            cursor: pointer;
             position: relative;
             transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+            text-align: left;
         }
         .am-tl-bar:hover {
             transform: translateY(-1px);
             filter: brightness(1.18);
             z-index: 2;
+        }
+        .am-tl-bar.is-active {
+            outline: 2px solid var(--acc);
+            outline-offset: 3px;
+            z-index: 3;
         }
         .am-tl-bar--primary {
             background: linear-gradient(135deg, var(--acc), color-mix(in srgb, var(--acc) 55%, white));
@@ -4592,6 +4598,60 @@
         }
         .am-tl-foot b { color: var(--acc); font-weight: 500; }
 
+        /* Detail panel below the timeline. Populated by JS on bar click;
+           the first bar of the first stream is active by default. */
+        .am-tl-detail {
+            margin: 28px clamp(20px, 4vw, 56px) 0;
+            padding: 22px 28px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.02);
+            border-radius: 6px;
+        }
+        .am-tl-detail-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 10px;
+        }
+        .am-tl-detail-stream {
+            color: var(--acc);
+            font-weight: 600;
+        }
+        .am-tl-detail-period::before {
+            content: '·';
+            margin-right: 14px;
+            opacity: 0.5;
+        }
+        .am-tl-detail-headline {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: clamp(1.125rem, 2vw, 1.375rem);
+            font-weight: 600;
+            letter-spacing: -0.005em;
+            color: rgba(255,255,255,0.95);
+            margin: 0 0 12px;
+            line-height: 1.3;
+        }
+        .am-tl-detail-desc {
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.78);
+            max-width: 72ch;
+            margin: 0;
+        }
+        /* Light theme override for cp-light cases */
+        .cp-light .am-tl-detail {
+            border-color: rgba(15,20,25,0.08);
+            background: rgba(15,20,25,0.02);
+        }
+        .cp-light .am-tl-detail-meta { color: rgba(15,20,25,0.45); }
+        .cp-light .am-tl-detail-headline { color: #0f1419; }
+        .cp-light .am-tl-detail-desc { color: rgba(15,20,25,0.78); }
+
         @media (max-width: 880px) {
             .am-tl-bleed { padding: 8px 0 24px; }
             .am-tl-frame {
@@ -4609,6 +4669,8 @@
             }
             .am-tl-grid::after { display: none; }
             .am-tl-row { min-width: 880px; }
+            .am-tl-detail { margin: 22px 18px 0; padding: 18px 20px; }
+            .am-tl-detail-headline { font-size: 1.0625rem; }
         }
 
         /* ============ LIGHTBOX — fullscreen viewer ============ */

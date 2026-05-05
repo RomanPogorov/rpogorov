@@ -21,6 +21,7 @@ interface Bar {
   e: number;
   label: string;
   title?: string;
+  description?: string;
 }
 
 interface Stream {
@@ -38,6 +39,17 @@ interface Props {
 
 const { stamp, quarters, nowIdx, streams } = Astro.props;
 const cols = quarters.length;
+
+// Compute the period label for a bar from the quarters array.
+// s/e are 1-indexed positions into `quarters`. If s === e, use that
+// single quarter; otherwise render a range "Q1 25 — Q3 25".
+function periodFor(s: number, e: number): string {
+  const a = quarters[s - 1];
+  const b = quarters[e - 1];
+  if (!a) return '';
+  if (a === b || !b) return a;
+  return `${a} — ${b}`;
+}
 ---
 
 <div class="cp-fullbleed am-tl-bleed">
@@ -76,15 +88,68 @@ const cols = quarters.length;
               <span class="am-tl-sub">{stream.sub}</span>
             </div>
             <div class="am-tl-track">
-              {stream.bars.map((b) => (
-                <div class:list={['am-tl-bar', `am-tl-bar--${b.kind}`]} style={`--s: ${b.s}; --e: ${b.e};`} title={b.title ?? b.label}>
+              {stream.bars.map((b, bi) => (
+                <button
+                  type="button"
+                  class:list={['am-tl-bar', `am-tl-bar--${b.kind}`]}
+                  style={`--s: ${b.s}; --e: ${b.e};`}
+                  data-stream={stream.name}
+                  data-period={periodFor(b.s, b.e)}
+                  data-headline={b.label}
+                  data-description={b.description ?? b.title ?? ''}
+                  data-default-active={i === 0 && bi === 0 ? '1' : null}
+                >
                   {b.label}
-                </div>
+                </button>
               ))}
             </div>
           </div>
         ))
       }
     </div>
+
+    <div class="am-tl-detail" data-am-tl-detail aria-live="polite">
+      <div class="am-tl-detail-meta">
+        <span class="am-tl-detail-stream"></span>
+        <span class="am-tl-detail-period"></span>
+      </div>
+      <h3 class="am-tl-detail-headline"></h3>
+      <p class="am-tl-detail-desc"></p>
+    </div>
   </div>
 </div>
+
+<script is:inline>
+  function initAmTimeline() {
+    document.querySelectorAll('.am-tl-frame:not([data-am-tl-init])').forEach((frame) => {
+      frame.setAttribute('data-am-tl-init', '1');
+      const bars = Array.from(frame.querySelectorAll('.am-tl-bar'));
+      const detail = frame.querySelector('[data-am-tl-detail]');
+      if (!bars.length || !detail) return;
+      const elStream = detail.querySelector('.am-tl-detail-stream');
+      const elPeriod = detail.querySelector('.am-tl-detail-period');
+      const elHead = detail.querySelector('.am-tl-detail-headline');
+      const elDesc = detail.querySelector('.am-tl-detail-desc');
+
+      function activate(bar) {
+        bars.forEach((b) => b.classList.toggle('is-active', b === bar));
+        elStream.textContent = bar.dataset.stream || '';
+        elPeriod.textContent = bar.dataset.period || '';
+        elHead.textContent = bar.dataset.headline || '';
+        elDesc.textContent = bar.dataset.description || '';
+      }
+
+      bars.forEach((bar) => {
+        bar.addEventListener('click', () => activate(bar));
+      });
+
+      const fallback = bars.find((b) => b.dataset.defaultActive === '1') || bars[0];
+      if (fallback) activate(fallback);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAmTimeline, { once: true });
+  } else {
+    initAmTimeline();
+  }
+</script>
