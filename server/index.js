@@ -626,7 +626,8 @@ STRENGTHS:
 REPLY STYLE:
 - Concise. 1–4 short paragraphs. No filler.
 - Reply in the SAME LANGUAGE the user wrote in (Russian or English; pick automatically).
-- When pointing to a specific case, embed the URL as a markdown link [label](/case/cs0X[/...]). The frontend turns those into clickable buttons.
+- When pointing to a specific case or article, embed the URL as a markdown link [label](/path). The frontend turns those into clickable buttons.
+- LINKS — STRICT: only link to paths that appear verbatim in the PUBLISHED ROUTES block below. Never invent, guess, transform, or pluralize a URL (e.g. /article/ vs /articles/, slug variants). If the relevant work has no published route, mention it in plain prose without a link.
 - Never fabricate metrics, dates, projects, or quotes that aren't listed above. If a question is outside Roman's listed work, say so briefly and offer the closest relevant case.
 - Don't roleplay as Roman. You're Claude answering ABOUT him.
 
@@ -652,10 +653,68 @@ When the latest turn is from the VISITOR, respond normally about Roman's work.
 
 Never emit [silent] when the visitor asked something — they're waiting on you.`;
 
+// Whitelist of URLs that actually exist on the live site. Built from the
+// compiled portfolio output so the visitor-side Claude can't link to a
+// path that 404s. Cached for 60s alongside the vault context.
+let routesCacheText = '';
+let routesCacheTs = 0;
+function loadPublishedRoutes() {
+  const now = Date.now();
+  if (now - routesCacheTs < 60_000 && routesCacheText) return routesCacheText;
+  const routes = new Set();
+  // Hash-based company overlays handled by the client router on /
+  routes.add('/case/cs01');
+  routes.add('/case/cs02');
+  routes.add('/case/cs03');
+  routes.add('/case/cs04');
+  routes.add('/case/cs05');
+  // Filesystem-built article routes — only present if Astro emitted them
+  try {
+    for (const slug of fs.readdirSync('/root/rpogorov-dev/app/article')) {
+      const p = path.join('/root/rpogorov-dev/app/article', slug);
+      try {
+        if (fs.statSync(p).isDirectory() && fs.existsSync(path.join(p, 'index.html'))) {
+          routes.add(`/article/${slug}`);
+        }
+      } catch (_) {}
+    }
+  } catch (_) {}
+  // Filesystem-built case detail routes
+  try {
+    for (const company of fs.readdirSync('/root/rpogorov-dev/app/case')) {
+      const cp = path.join('/root/rpogorov-dev/app/case', company);
+      try {
+        if (!fs.statSync(cp).isDirectory()) continue;
+      } catch (_) { continue; }
+      try {
+        for (const slug of fs.readdirSync(cp)) {
+          const sp = path.join(cp, slug);
+          try {
+            if (fs.statSync(sp).isDirectory() && fs.existsSync(path.join(sp, 'index.html'))) {
+              routes.add(`/case/${company}/${slug}`);
+            }
+          } catch (_) {}
+        }
+      } catch (_) {}
+    }
+  } catch (_) {}
+  routesCacheText = Array.from(routes).sort().map((r) => `  ${r}`).join('\n');
+  routesCacheTs = now;
+  return routesCacheText;
+}
+
 function buildClaudeSystemPrompt() {
   const vault = loadVaultContext();
-  if (!vault) return CLAUDE_STATIC_PROMPT;
-  return CLAUDE_STATIC_PROMPT + '\n\n=========================================\n' +
+  const routes = loadPublishedRoutes();
+  const routesBlock = '\n\n=========================================\n' +
+    'PUBLISHED ROUTES — these are the ONLY URLs that exist on the site.\n' +
+    'You MAY embed links ONLY to paths from this list. Never invent, guess,\n' +
+    'pluralize, or otherwise transform a path. If the work you want to\n' +
+    'reference has no route here, name it in plain prose without a link.\n' +
+    '=========================================\n' + routes;
+  const base = CLAUDE_STATIC_PROMPT + routesBlock;
+  if (!vault) return base;
+  return base + '\n\n=========================================\n' +
     'DEEP CONTEXT — Roman\'s vault (cases, articles, raw experience texts).\n' +
     'Use this to answer questions with detail. Quote a specific case file or article when grounding a claim. Don\'t fabricate beyond what\'s in here.\n' +
     '=========================================\n' +
