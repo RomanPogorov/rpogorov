@@ -22,6 +22,9 @@ interface Bar {
   label: string;
   title?: string;
   description?: string;
+  /** 1-indexed lane within the stream row. Use to stack overlapping bars
+   *  vertically (e.g. parallel sub-projects). Default: 1. */
+  lane?: number;
 }
 
 interface Stream {
@@ -92,7 +95,7 @@ function periodFor(s: number, e: number): string {
                 <button
                   type="button"
                   class:list={['am-tl-bar', `am-tl-bar--${b.kind}`]}
-                  style={`--s: ${b.s}; --e: ${b.e};`}
+                  style={`--s: ${b.s}; --e: ${b.e}; --lane: ${b.lane ?? 1};`}
                   data-stream={stream.name}
                   data-period={periodFor(b.s, b.e)}
                   data-headline={b.label}
