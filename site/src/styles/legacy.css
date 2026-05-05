@@ -4461,11 +4461,15 @@
             position: relative;
             display: grid;
             grid-template-columns: repeat(var(--am-tl-cols, 8), 1fr);
+            grid-auto-rows: minmax(22px, auto);
+            row-gap: 2px;
+            align-content: center;
             background:
                 linear-gradient(90deg, rgba(var(--acc-rgb), 0.13) 1px, transparent 1px) 0 0 / calc(100% / var(--am-tl-cols, 8)) 100%;
             border-left: 1px solid rgba(var(--acc-rgb), 0.18);
             border-right: 1px solid rgba(var(--acc-rgb), 0.13);
             min-height: 30px;
+            padding: 4px 0;
         }
         .am-tl-row--head .am-tl-track {
             background: none;
@@ -4509,9 +4513,9 @@
         .am-tl-bar {
             grid-column: var(--s) / calc(var(--e) + 1);
             grid-row: var(--lane, 1);
-            align-self: center;
-            margin: 4px 4px;
-            padding: 6px 10px;
+            align-self: stretch;
+            margin: 0 4px;
+            padding: 3px 10px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.6875rem;
             letter-spacing: 0.04em;
