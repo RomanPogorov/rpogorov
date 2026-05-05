@@ -118,12 +118,14 @@ function periodFor(s: number, e: number): string {
     </div>
 
     <div class="am-tl-detail" data-am-tl-detail aria-live="polite">
-      <div class="am-tl-detail-meta">
-        <span class="am-tl-detail-stream"></span>
-        <span class="am-tl-detail-period"></span>
+      <div class="am-tl-detail-left">
+        <div class="am-tl-detail-stream"></div>
+        <h3 class="am-tl-detail-headline"></h3>
+        <div class="am-tl-detail-duration"></div>
       </div>
-      <h3 class="am-tl-detail-headline"></h3>
-      <p class="am-tl-detail-desc"></p>
+      <div class="am-tl-detail-right">
+        <p class="am-tl-detail-desc"></p>
+      </div>
     </div>
   </div>
 </div>
@@ -136,15 +138,26 @@ function periodFor(s: number, e: number): string {
       const detail = frame.querySelector('[data-am-tl-detail]');
       if (!bars.length || !detail) return;
       const elStream = detail.querySelector('.am-tl-detail-stream');
-      const elPeriod = detail.querySelector('.am-tl-detail-period');
       const elHead = detail.querySelector('.am-tl-detail-headline');
+      const elDuration = detail.querySelector('.am-tl-detail-duration');
       const elDesc = detail.querySelector('.am-tl-detail-desc');
 
       function activate(bar) {
         bars.forEach((b) => b.classList.toggle('is-active', b === bar));
         elStream.textContent = bar.dataset.stream || '';
-        elPeriod.textContent = bar.dataset.period || '';
-        elHead.textContent = bar.dataset.headline || '';
+        // Split the bar label on " · " so the part after the first separator
+        // (typically the duration: "1.5 мес", "2 мес active", "part-time 3 мес")
+        // can render below the headline as a secondary line, while the bar
+        // shows the full label as before.
+        const raw = bar.dataset.headline || '';
+        const idx = raw.indexOf(' · ');
+        if (idx > -1) {
+          elHead.textContent = raw.slice(0, idx);
+          elDuration.textContent = raw.slice(idx + 3);
+        } else {
+          elHead.textContent = raw;
+          elDuration.textContent = '';
+        }
         elDesc.textContent = bar.dataset.description || '';
       }
 

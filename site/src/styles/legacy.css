@@ -4642,10 +4642,17 @@
         /* Detail panel below the timeline grid. Populated by JS on bar click;
            the first bar of the first stream is active by default. Spans the
            full inner width of the .am-tl-frame so it visually "lands" the
-           grid above instead of floating in a narrow strip. */
+           grid above instead of floating in a narrow strip.
+           Two columns — left has stream label, headline (title without
+           duration), and duration as a separate small line; right has the
+           full description paragraph. */
         .am-tl-detail {
+            display: grid;
+            grid-template-columns: minmax(260px, 38%) 1fr;
+            gap: 40px;
+            align-items: start;
             margin: 28px 0 0;
-            padding: 24px 28px 26px;
+            padding: 26px 30px 28px;
             border: 1px solid rgba(var(--acc-rgb), 0.30);
             background:
                 linear-gradient(180deg, rgba(var(--acc-rgb), 0.10), rgba(var(--acc-rgb), 0.04)),
@@ -4655,25 +4662,16 @@
                 0 0 40px rgba(var(--acc-rgb), 0.10),
                 inset 0 0 0 1px rgba(255,255,255,0.02);
         }
-        .am-tl-detail-meta {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+        .am-tl-detail-left { min-width: 0; }
+        .am-tl-detail-right { min-width: 0; }
+        .am-tl-detail-stream {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.55);
-            margin-bottom: 12px;
-        }
-        .am-tl-detail-stream {
             color: var(--acc);
             font-weight: 700;
-        }
-        .am-tl-detail-period::before {
-            content: '·';
-            margin-right: 14px;
-            opacity: 0.5;
+            margin-bottom: 12px;
         }
         .am-tl-detail-headline {
             font-family: 'Inter', system-ui, sans-serif;
@@ -4681,9 +4679,16 @@
             font-weight: 600;
             letter-spacing: -0.01em;
             color: #fff;
-            margin: 0 0 14px;
+            margin: 0 0 8px;
             line-height: 1.25;
         }
+        .am-tl-detail-duration {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: rgba(255,255,255,0.62);
+        }
+        .am-tl-detail-duration:empty { display: none; }
         .am-tl-detail-desc {
             font-size: 0.9375rem;
             line-height: 1.65;
@@ -4698,9 +4703,18 @@
                 linear-gradient(180deg, rgba(var(--acc-rgb), 0.08), rgba(var(--acc-rgb), 0.03)),
                 rgba(255,255,255,0.6);
         }
-        .cp-light .am-tl-detail-meta { color: rgba(15,20,25,0.6); }
+        .cp-light .am-tl-detail-stream { color: var(--acc); }
         .cp-light .am-tl-detail-headline { color: #0f1419; }
+        .cp-light .am-tl-detail-duration { color: rgba(15,20,25,0.62); }
         .cp-light .am-tl-detail-desc { color: rgba(15,20,25,0.82); }
+        /* Stack on narrow viewports */
+        @media (max-width: 720px) {
+            .am-tl-detail {
+                grid-template-columns: 1fr;
+                gap: 18px;
+                padding: 20px 22px;
+            }
+        }
 
         @media (max-width: 880px) {
             .am-tl-bleed { padding: 8px 0 24px; }
