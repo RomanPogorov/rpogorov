@@ -110,6 +110,7 @@ const cardsHtml = companies
     const tags = d.showcaseTags ?? d.tags;
     const tools = d.showcaseTools ?? [];
     const thumb = d.thumb ?? '';
+    const embed = d.showcaseEmbed ?? '';
     const overlayId = OVERLAY_ID[c.id];
 
     const mediaCls = overlayId ? 'case-media is-openable' : 'case-media';
@@ -123,9 +124,12 @@ const cardsHtml = companies
       ? `<button class="case-open-btn" data-open-case="${overlayId}" type="button" aria-label="Open full case"><span class="open-arrow" aria-hidden="true">↓</span><span>Open case</span></button>`
       : '';
 
+    const mediaInner = embed
+      ? `<iframe class="case-embed" src="${escapeHtml(embed)}" title="${escapeHtml(d.name)} — hero animation" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>`
+      : `<img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`;
     return `<article class="case" data-case="${c.id}">
       <div class="${mediaCls}"${mediaTrigger}>
-        <img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">
+        ${mediaInner}
         ${openCue}
       </div>
       <div class="case-body">

@@ -74,6 +74,10 @@ const companies = defineCollection({
     showcaseTags: z.array(z.string()).optional(),
     showcaseMeta: z.string().optional(),
     showcaseTools: z.array(z.string()).optional(),
+    /** Optional path to an HTML file rendered as an iframe in the showcase
+     *  card instead of the static `thumb` image. Use for animated hero
+     *  mocks that aren't a single PNG. */
+    showcaseEmbed: z.string().optional(),
   }),
 });
 
