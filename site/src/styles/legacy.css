@@ -4650,7 +4650,7 @@
             display: grid;
             grid-template-columns: minmax(260px, 38%) 1fr;
             gap: 40px;
-            align-items: start;
+            align-items: stretch;
             margin: 28px 0 0;
             padding: 26px 30px 28px;
             border: 1px solid rgba(var(--acc-rgb), 0.30);
@@ -4662,17 +4662,17 @@
                 0 0 40px rgba(var(--acc-rgb), 0.10),
                 inset 0 0 0 1px rgba(255,255,255,0.02);
         }
-        .am-tl-detail-left { min-width: 0; }
-        .am-tl-detail-right { min-width: 0; }
-        .am-tl-detail-stream {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.6875rem;
-            letter-spacing: 0.22em;
-            text-transform: uppercase;
-            color: var(--acc);
-            font-weight: 700;
-            margin-bottom: 12px;
+        /* Left column stretches to right column's height (description). The
+           top group (headline + duration) sits at the top so it lines up
+           with the description's first line; the stream label is pushed to
+           the bottom via margin-top:auto. */
+        .am-tl-detail-left {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
         }
+        .am-tl-detail-top { display: contents; }
+        .am-tl-detail-right { min-width: 0; }
         .am-tl-detail-headline {
             font-family: 'Inter', system-ui, sans-serif;
             font-size: clamp(1.25rem, 2.2vw, 1.5rem);
@@ -4689,6 +4689,16 @@
             color: rgba(255,255,255,0.62);
         }
         .am-tl-detail-duration:empty { display: none; }
+        .am-tl-detail-stream {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+            font-weight: 700;
+            margin-top: auto;
+            padding-top: 18px;
+        }
         .am-tl-detail-desc {
             font-size: 0.9375rem;
             line-height: 1.65;
