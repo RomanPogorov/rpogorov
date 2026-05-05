@@ -4461,15 +4461,11 @@
             position: relative;
             display: grid;
             grid-template-columns: repeat(var(--am-tl-cols, 8), 1fr);
-            grid-auto-rows: minmax(28px, auto);
-            row-gap: 4px;
-            align-content: center;
             background:
                 linear-gradient(90deg, rgba(var(--acc-rgb), 0.13) 1px, transparent 1px) 0 0 / calc(100% / var(--am-tl-cols, 8)) 100%;
             border-left: 1px solid rgba(var(--acc-rgb), 0.18);
             border-right: 1px solid rgba(var(--acc-rgb), 0.13);
             min-height: 30px;
-            padding: 6px 0;
         }
         .am-tl-row--head .am-tl-track {
             background: none;
