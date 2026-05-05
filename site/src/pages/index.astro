@@ -113,7 +113,8 @@ const cardsHtml = companies
     const embed = d.showcaseEmbed ?? '';
     const overlayId = OVERLAY_ID[c.id];
 
-    const mediaCls = overlayId ? 'case-media is-openable' : 'case-media';
+    const baseMediaCls = overlayId ? 'case-media is-openable' : 'case-media';
+    const mediaCls = embed ? `${baseMediaCls} has-embed` : baseMediaCls;
     const mediaTrigger = overlayId
       ? ` data-open-case="${overlayId}" role="button" tabindex="0" aria-label="Open ${escapeHtml(d.name)} case study"`
       : '';
