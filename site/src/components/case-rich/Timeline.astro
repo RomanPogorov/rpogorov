@@ -25,6 +25,13 @@ interface Bar {
   /** 1-indexed lane within the stream row. Use to stack overlapping bars
    *  vertically (e.g. parallel sub-projects). Default: 1. */
   lane?: number;
+  /** Override what shows in the detail panel as the headline. Falls back
+   *  to the part of `label` before the first " · ". Set when bar label
+   *  needs to be short for the strip but the panel wants a fuller title. */
+  panelTitle?: string;
+  /** Override the duration line under the panel headline. Falls back to
+   *  the part of `label` after the first " · ". */
+  panelDuration?: string;
 }
 
 interface Stream {
@@ -104,6 +111,8 @@ function periodFor(s: number, e: number): string {
                     data-stream={stream.name}
                     data-period={periodFor(b.s, b.e)}
                     data-headline={b.label}
+                    data-panel-title={b.panelTitle ?? null}
+                    data-panel-duration={b.panelDuration ?? null}
                     data-description={b.description ?? b.title ?? ''}
                     data-default-active={i === 0 && bi === 0 ? '1' : null}
                   >
@@ -120,7 +129,7 @@ function periodFor(s: number, e: number): string {
     <div class="am-tl-detail" data-am-tl-detail aria-live="polite">
       <div class="am-tl-detail-left">
         <div class="am-tl-detail-top">
-          <h3 class="am-tl-detail-headline"></h3>
+          <div class="am-tl-detail-headline" role="heading" aria-level="3"></div>
           <div class="am-tl-detail-duration"></div>
         </div>
         <div class="am-tl-detail-stream"></div>
@@ -147,19 +156,17 @@ function periodFor(s: number, e: number): string {
       function activate(bar) {
         bars.forEach((b) => b.classList.toggle('is-active', b === bar));
         elStream.textContent = bar.dataset.stream || '';
-        // Split the bar label on " · " so the part after the first separator
-        // (typically the duration: "1.5 мес", "2 мес active", "part-time 3 мес")
-        // can render below the headline as a secondary line, while the bar
-        // shows the full label as before.
+        // panelTitle / panelDuration override the auto-split fallback so a
+        // short bar label like "4 слоя · 3 мес" can have a fuller panel
+        // headline like "Создание дизайн системы".
+        const explicitTitle = bar.dataset.panelTitle;
+        const explicitDuration = bar.dataset.panelDuration;
         const raw = bar.dataset.headline || '';
         const idx = raw.indexOf(' · ');
-        if (idx > -1) {
-          elHead.textContent = raw.slice(0, idx);
-          elDuration.textContent = raw.slice(idx + 3);
-        } else {
-          elHead.textContent = raw;
-          elDuration.textContent = '';
-        }
+        const splitTitle = idx > -1 ? raw.slice(0, idx) : raw;
+        const splitDuration = idx > -1 ? raw.slice(idx + 3) : '';
+        elHead.textContent = explicitTitle || splitTitle;
+        elDuration.textContent = explicitDuration || splitDuration;
         elDesc.textContent = bar.dataset.description || '';
       }
 
