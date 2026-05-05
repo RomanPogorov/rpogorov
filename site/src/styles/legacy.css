@@ -1325,6 +1325,22 @@
             pointer-events: none;
             background: transparent;
         }
+        /* Static image fallback for mobile — rendered alongside iframe in
+           markup, hidden on desktop. Below the carousel breakpoint the
+           iframe is hidden and the PNG takes over. */
+        .case-media .case-fallback {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        @media (max-width: 900px) {
+            .case-media.has-embed .case-embed { display: none; }
+            .case-media.has-embed .case-fallback { display: block; }
+            .case-media.has-embed { aspect-ratio: auto; min-height: 38vh; }
+        }
         /* Image overlay scanlines for that CRT feel */
         .case-media::marker { content: none; }
 

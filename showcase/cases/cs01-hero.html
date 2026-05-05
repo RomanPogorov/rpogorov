@@ -46,9 +46,9 @@ html, body {
 }
 .stage-logo {
   position: absolute;
-  top: clamp(16px, 3vw, 36px);
-  left: clamp(20px, 4vw, 60px);
-  height: clamp(20px, 2.6vw, 28px);
+  top: clamp(20px, 3.5vw, 48px);
+  left: clamp(24px, 4vw, 64px);
+  height: clamp(60px, 7.8vw, 84px);
   width: auto;
   z-index: 5;
 }
@@ -356,6 +356,65 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   .laptop, .phone { animation: none; }
 }
+
+/* =====================================================================
+   SKELETON — все текстовые элементы превращаются в нейтральные серые
+   плашки. Iframe рендерится в сильно уменьшенном масштабе по сравнению
+   с дизайном, читать там нельзя — поэтому показываем структуру без
+   контента. Иконки, банковские круги, чек-боксы и шаги остаются
+   видимыми, потому что у них собственный фон.
+===================================================================== */
+.mock-side-item,
+.mock-greet h3,
+.mock-greet h3 > span,
+.nums > span,
+.nums b,
+.mock-card .lbl,
+.mock-card .big,
+.mock-card .pill,
+.mock-card .ddep,
+.mock-h,
+.info,
+.mock-check,
+.mock-cr .name,
+.mock-cr .price,
+.mock-cr .btn,
+.mock-cr-bank .pill,
+.mock-cr .stage-lbl,
+.m-greet h4,
+.m-greet small,
+.m-deposit .lbl,
+.m-deposit .val,
+.m-deposit .pill,
+.m-cr .name,
+.m-cr .price,
+.m-cr .btn,
+.m-cr-head .pill,
+.m-tabbar .tb {
+  color: transparent !important;
+  background-color: rgba(11, 12, 15, 0.10) !important;
+  border-radius: 3px;
+}
+/* Текст-внутри-блока не должен тоже получать собственный фон, иначе
+   получаются скелетоны поверх скелетонов. Внутренний span в h3 уже
+   color:transparent через каскад, оставляем без своего фона. */
+.mock-greet h3 > span,
+.mock-cr .price.strike { background: transparent !important; }
+/* "Аккаунт-баланс" пилюля на синей карточке — белая на тёмно-синем.
+   Заменяем на чуть менее контрастный полупрозрачный белый. */
+.mock-card.deposit .lbl,
+.mock-card.deposit .big,
+.mock-card.deposit .pill,
+.mock-card.deposit .ddep,
+.m-deposit .lbl,
+.m-deposit .val,
+.m-deposit .pill {
+  background-color: rgba(255, 255, 255, 0.18) !important;
+}
+.mock-cr .btn,
+.m-cr .btn {
+  background-color: rgba(30, 95, 255, 0.65) !important;
+}
 </style>
 </head>
 <body>
@@ -403,7 +462,6 @@ html, body {
                   <div class="mock-checks">
                     <div class="mock-check"><span class="ck"></span>Make first deposit</div>
                     <div class="mock-check"><span class="ck"></span>Upload proof of ID</div>
-                    <div class="mock-check"><span class="ck"></span>Review creditor calls</div>
                     <div class="mock-check done"><span class="ck"></span>Help center section</div>
                   </div>
                 </div>

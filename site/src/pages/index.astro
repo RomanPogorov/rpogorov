@@ -125,8 +125,11 @@ const cardsHtml = companies
       ? `<button class="case-open-btn" data-open-case="${overlayId}" type="button" aria-label="Open full case"><span class="open-arrow" aria-hidden="true">↓</span><span>Open case</span></button>`
       : '';
 
+    // When embed is set, render both the iframe (desktop) and the static
+    // image (mobile fallback). CSS media query toggles which one shows so
+    // narrow viewports get a fast PNG instead of a tiny squished iframe.
     const mediaInner = embed
-      ? `<iframe class="case-embed" src="${escapeHtml(embed)}" title="${escapeHtml(d.name)} — hero animation" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>`
+      ? `<iframe class="case-embed" src="${escapeHtml(embed)}" title="${escapeHtml(d.name)} — hero animation" loading="lazy" tabindex="-1" aria-hidden="true"></iframe><img class="case-fallback" src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`
       : `<img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`;
     return `<article class="case" data-case="${c.id}">
       <div class="${mediaCls}"${mediaTrigger}>
