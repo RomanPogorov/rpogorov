@@ -44,11 +44,14 @@ const { stamp, quarters, nowIdx, streams } = Astro.props;
 const cols = quarters.length;
 
 // Compute the period label for a bar from the quarters array.
-// s/e are 1-indexed positions into `quarters`. If s === e, use that
-// single quarter; otherwise render a range "Q1 25 — Q3 25".
+// s/e are fractional column-line indices: s=1.0 starts col 1, e=2.0 ends
+// col 1 (= starts col 2). Convert to a list of quarter labels the bar
+// visually spans, then join into a "Q1 25 — Q3 25" range.
 function periodFor(s: number, e: number): string {
-  const a = quarters[s - 1];
-  const b = quarters[e - 1];
+  const startCol = Math.max(1, Math.floor(s));
+  const endCol = Math.max(startCol, Math.ceil(e - 0.001));
+  const a = quarters[startCol - 1];
+  const b = quarters[endCol - 1];
   if (!a) return '';
   if (a === b || !b) return a;
   return `${a} — ${b}`;
@@ -99,7 +102,7 @@ function periodFor(s: number, e: number): string {
                     class:list={['am-tl-bar', `am-tl-bar--${b.kind}`]}
                     style={`--s: ${b.s}; --e: ${b.e}; --lane: ${b.lane ?? 1};`}
                     data-stream={stream.name}
-                    data-period={periodFor(Math.floor(b.s), Math.ceil(b.e))}
+                    data-period={periodFor(b.s, b.e)}
                     data-headline={b.label}
                     data-description={b.description ?? b.title ?? ''}
                     data-default-active={i === 0 && bi === 0 ? '1' : null}

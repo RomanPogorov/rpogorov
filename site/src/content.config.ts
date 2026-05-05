@@ -73,6 +73,7 @@ const companies = defineCollection({
     showcaseDesc: z.string().optional(),
     showcaseTags: z.array(z.string()).optional(),
     showcaseMeta: z.string().optional(),
+    showcaseTools: z.array(z.string()).optional(),
   }),
 });
 

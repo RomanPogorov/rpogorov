@@ -108,7 +108,7 @@ const cardsHtml = companies
     const title = d.showcaseTitle ?? d.title;
     const desc = d.showcaseDesc ?? d.desc;
     const tags = d.showcaseTags ?? d.tags;
-    const meta = d.showcaseMeta ?? `${d.name} · ${d.role} · ${d.year}`;
+    const tools = d.showcaseTools ?? [];
     const thumb = d.thumb ?? '';
     const overlayId = OVERLAY_ID[c.id];
 
@@ -138,7 +138,7 @@ const cardsHtml = companies
         <ul class="case-tags">
           ${tags.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}
         </ul>
-        <div class="case-meta">${escapeHtml(meta)}</div>
+        ${tools.length ? `<ul class="case-tools" aria-label="Tools"><li class="case-tools-label">tools</li>${tools.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul>` : ''}
         ${openBtn}
       </div>
     </article>`;
