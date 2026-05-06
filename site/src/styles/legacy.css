@@ -11543,15 +11543,50 @@
                 rgba(0, 0, 0, 0.42);
             padding: 24px clamp(20px, 3vw, 40px) 28px;
         }
+        .t2-headstrip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
         .t2-stamp {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.6875rem;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: rgba(255, 255, 255, 0.55);
-            margin-bottom: 18px;
         }
         .t2-stamp b { color: var(--acc); font-weight: 600; }
+        .t2-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.14em;
+            color: rgba(255, 255, 255, 0.62);
+            text-transform: uppercase;
+        }
+        .t2-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+        .t2-sw {
+            display: inline-block;
+            width: 18px;
+            height: 8px;
+            border-radius: 2px;
+        }
+        .t2-sw--primary {
+            background: linear-gradient(90deg, rgba(var(--acc-rgb), 0.92), rgba(var(--acc-rgb), 0.18));
+        }
+        .t2-sw--pair {
+            background:
+                repeating-linear-gradient(135deg, transparent 0 3px, rgba(0, 0, 0, 0.18) 3px 4px),
+                linear-gradient(90deg, rgba(var(--acc-rgb), 0.78), rgba(var(--acc-rgb), 0.18));
+        }
+        .t2-sw--side {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.10));
+        }
 
         .t2-grid {
             display: grid;
@@ -11628,18 +11663,32 @@
         }
 
         /* The bar itself — gradient encodes active vs part-time. Active
-           portion (0% → --active-pct) stays solid accent, then fades. */
+           portion (0% → --active-pct) stays solid accent, then fades.
+           Kind variants overlay a hatched pattern (pair) or swap the
+           gradient stops for grey (side). */
         .t2-bar {
             position: absolute;
             left: calc((var(--s) - 1) / var(--t2-cols, 7) * 100%);
             width: calc((var(--e) - var(--s)) / var(--t2-cols, 7) * 100%);
             top: 4px;
             bottom: 4px;
+            border: 0;
             border-radius: 4px;
             padding: 0 12px;
             display: flex;
             align-items: center;
             overflow: hidden;
+            text-align: left;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+            transition: transform 0.18s ease, filter 0.18s ease, outline-color 0.18s ease;
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        .t2-bar--primary {
             background:
                 linear-gradient(
                     90deg,
@@ -11647,16 +11696,34 @@
                     rgba(var(--acc-rgb), 0.92) var(--active-pct, 100%),
                     rgba(var(--acc-rgb), 0.18) 100%
                 );
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.12),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.18);
-            cursor: default;
-            transition: transform 0.18s ease, filter 0.18s ease;
+        }
+        .t2-bar--pair {
+            background:
+                repeating-linear-gradient(135deg, transparent 0 5px, rgba(0, 0, 0, 0.16) 5px 6px),
+                linear-gradient(
+                    90deg,
+                    rgba(var(--acc-rgb), 0.78) 0%,
+                    rgba(var(--acc-rgb), 0.78) var(--active-pct, 100%),
+                    rgba(var(--acc-rgb), 0.16) 100%
+                );
+        }
+        .t2-bar--side {
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.50) 0%,
+                    rgba(255, 255, 255, 0.50) var(--active-pct, 100%),
+                    rgba(255, 255, 255, 0.10) 100%
+                );
         }
         .t2-bar:hover {
             transform: translateY(-1px);
             filter: brightness(1.08);
             z-index: 2;
+        }
+        .t2-bar.is-active {
+            outline-color: var(--acc);
+            z-index: 3;
         }
         .t2-bar-text {
             display: flex;
@@ -11680,6 +11747,77 @@
             color: rgba(6, 7, 8, 0.62);
             text-transform: uppercase;
         }
+        .t2-bar--side .t2-bar-label { color: rgba(0, 0, 0, 0.78); }
+        .t2-bar--side .t2-bar-duration { color: rgba(0, 0, 0, 0.55); }
+
+        /* Detail panel — same shape as Timeline.astro's .am-tl-detail.
+           Left col: headline + duration at the top, stream label pinned
+           to bottom. Right col: full description. */
+        .t2-detail {
+            display: grid;
+            grid-template-columns: minmax(260px, 38%) 1fr;
+            gap: 40px;
+            align-items: stretch;
+            margin: 28px 0 0;
+            padding: 26px 30px 28px;
+            border: 1px solid rgba(var(--acc-rgb), 0.30);
+            background:
+                linear-gradient(180deg, rgba(var(--acc-rgb), 0.10), rgba(var(--acc-rgb), 0.04)),
+                rgba(0, 0, 0, 0.35);
+            border-radius: 4px;
+            box-shadow:
+                0 0 40px rgba(var(--acc-rgb), 0.10),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+        }
+        .t2-detail-left {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .t2-detail-top { display: contents; }
+        .t2-detail-right { min-width: 0; }
+        .t2-detail-headline {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: #fff;
+            margin: 0 0 8px;
+            line-height: 1.25;
+        }
+        .t2-detail-duration {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.62);
+        }
+        .t2-detail-duration:empty { display: none; }
+        .t2-detail-stream {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--acc);
+            font-weight: 700;
+            margin-top: auto;
+            padding-top: 18px;
+        }
+        .t2-detail-desc {
+            font-size: 0.9375rem;
+            line-height: 1.65;
+            color: rgba(255, 255, 255, 0.88);
+            max-width: 72ch;
+            margin: 0;
+        }
+        .cp-light .t2-detail {
+            border-color: rgba(var(--acc-rgb), 0.32);
+            background:
+                linear-gradient(180deg, rgba(var(--acc-rgb), 0.08), rgba(var(--acc-rgb), 0.03)),
+                rgba(255, 255, 255, 0.6);
+        }
+        .cp-light .t2-detail-headline { color: #0f1419; }
+        .cp-light .t2-detail-duration { color: rgba(15, 20, 25, 0.62); }
+        .cp-light .t2-detail-desc { color: rgba(15, 20, 25, 0.82); }
 
         /* Light-theme override (cp-light cases) */
         .cp-light .t2-frame {

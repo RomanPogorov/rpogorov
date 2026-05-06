@@ -25,9 +25,17 @@ interface T2Bar {
    *  (no part-time tail). The bar gradient stays solid up to this point
    *  and fades from there to e. */
   activeUntil?: number;
+  /** Kind of work — drives the bar visual.
+   *   primary — Roman led this end-to-end (solid accent gradient)
+   *   pair    — paired with another designer (hatched accent)
+   *   side    — side / supporting project (grey-neutral) */
+  kind?: 'primary' | 'pair' | 'side';
   label: string;
   duration?: string;
   title?: string;
+  /** Panel-only overrides — same pattern as Timeline.astro. */
+  panelTitle?: string;
+  panelDuration?: string;
 }
 interface T2Stream {
   sub: string;
@@ -46,7 +54,14 @@ const cols = quarters.length;
 
 <div class="cp-fullbleed t2-bleed">
   <div class="t2-frame">
-    {stamp && <div class="t2-stamp" set:html={stamp} />}
+    <div class="t2-headstrip">
+      {stamp && <div class="t2-stamp" set:html={stamp} />}
+      <div class="t2-legend">
+        <span class="t2-legend-item"><i class="t2-sw t2-sw--primary"></i> Основное</span>
+        <span class="t2-legend-item"><i class="t2-sw t2-sw--pair"></i> В паре с другими дизайнерами</span>
+        <span class="t2-legend-item"><i class="t2-sw t2-sw--side"></i> Сайд-проект / поддержка</span>
+      </div>
+    </div>
 
     <div class="t2-grid">
       <div class="t2-row t2-row--head">
@@ -71,26 +86,81 @@ const cols = quarters.length;
             {nowIdx !== undefined && (
               <div class="t2-now-line" style={`--c: ${nowIdx + 1}`}></div>
             )}
-            {stream.bars.map((b) => {
+            {stream.bars.map((b, bi) => {
               const span = Math.max(0.0001, b.e - b.s);
               const activeUntil = b.activeUntil ?? b.e;
               const activePct = Math.max(0, Math.min(100, ((activeUntil - b.s) / span) * 100));
+              const kind = b.kind ?? 'primary';
               return (
-                <div
-                  class="t2-bar"
+                <button
+                  type="button"
+                  class:list={['t2-bar', `t2-bar--${kind}`]}
                   style={`--s: ${b.s}; --e: ${b.e}; --active-pct: ${activePct}%;`}
-                  title={b.title ?? b.label}
+                  data-stream={stream.name}
+                  data-headline={b.label}
+                  data-panel-title={b.panelTitle ?? null}
+                  data-panel-duration={b.panelDuration ?? b.duration ?? null}
+                  data-description={b.title ?? ''}
+                  data-default-active={bi === 0 && stream === streams[0] ? '1' : null}
                 >
                   <span class="t2-bar-text">
                     <span class="t2-bar-label">{b.label}</span>
                     {b.duration && <span class="t2-bar-duration">{b.duration}</span>}
                   </span>
-                </div>
+                </button>
               );
             })}
           </div>
         </div>
       ))}
     </div>
+
+    <div class="t2-detail" data-t2-detail aria-live="polite">
+      <div class="t2-detail-left">
+        <div class="t2-detail-top">
+          <div class="t2-detail-headline" role="heading" aria-level="3"></div>
+          <div class="t2-detail-duration"></div>
+        </div>
+        <div class="t2-detail-stream"></div>
+      </div>
+      <div class="t2-detail-right">
+        <p class="t2-detail-desc"></p>
+      </div>
+    </div>
   </div>
 </div>
+
+<script is:inline>
+  function initT2() {
+    document.querySelectorAll('.t2-frame:not([data-t2-init])').forEach((frame) => {
+      frame.setAttribute('data-t2-init', '1');
+      const bars = Array.from(frame.querySelectorAll('.t2-bar'));
+      const detail = frame.querySelector('[data-t2-detail]');
+      if (!bars.length || !detail) return;
+      const elStream = detail.querySelector('.t2-detail-stream');
+      const elHead = detail.querySelector('.t2-detail-headline');
+      const elDuration = detail.querySelector('.t2-detail-duration');
+      const elDesc = detail.querySelector('.t2-detail-desc');
+
+      function activate(bar) {
+        bars.forEach((b) => b.classList.toggle('is-active', b === bar));
+        elStream.textContent = bar.dataset.stream || '';
+        const explicitTitle = bar.dataset.panelTitle;
+        const explicitDuration = bar.dataset.panelDuration;
+        const raw = bar.dataset.headline || '';
+        elHead.textContent = explicitTitle || raw;
+        elDuration.textContent = explicitDuration || '';
+        elDesc.textContent = bar.dataset.description || '';
+      }
+
+      bars.forEach((bar) => bar.addEventListener('click', () => activate(bar)));
+      const fallback = bars.find((b) => b.dataset.defaultActive === '1') || bars[0];
+      if (fallback) activate(fallback);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initT2, { once: true });
+  } else {
+    initT2();
+  }
+</script>
