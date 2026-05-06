@@ -11590,7 +11590,7 @@
 
         .t2-grid {
             display: grid;
-            row-gap: 6px;
+            row-gap: 2px;
         }
         .t2-row {
             display: grid;
@@ -11598,8 +11598,24 @@
             gap: 18px;
             align-items: stretch;
             min-height: 36px;
+            padding: 4px 0;
+            border-radius: 3px;
         }
-        .t2-row--head { min-height: 24px; margin-bottom: 8px; }
+        /* Зебра/матрас по строкам — чётные ряды светлее, нечётные темнее.
+           Только тело таймлайна, шапку с кварталами не трогаем. */
+        .t2-row:not(.t2-row--head):nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.018);
+        }
+        .t2-row:not(.t2-row--head):nth-of-type(even) {
+            background-color: rgba(255, 255, 255, 0.045);
+        }
+        .cp-light .t2-row:not(.t2-row--head):nth-of-type(odd) {
+            background-color: rgba(15, 20, 25, 0.020);
+        }
+        .cp-light .t2-row:not(.t2-row--head):nth-of-type(even) {
+            background-color: rgba(15, 20, 25, 0.045);
+        }
+        .t2-row--head { min-height: 24px; margin-bottom: 4px; padding: 0; background: transparent !important; }
         .t2-label {
             display: flex;
             align-items: center;
