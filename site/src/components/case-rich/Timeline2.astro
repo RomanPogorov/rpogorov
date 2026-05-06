@@ -1,0 +1,96 @@
+---
+/**
+ * Timeline2 — second-pass roadmap. Cleaner than Timeline.astro: one bar
+ * per project (active + part-time merged via internal gradient), labels
+ * live inside the bar, no kind-legend chrome. Same s/e semantics: s/e
+ * are fractional column-line indices over `quarters`.
+ *
+ * Data shape:
+ *   <Timeline2
+ *     stamp="// timeline · Dec 2024 → Q2 2026"
+ *     quarters={['Q4 24', ..., 'Q2 26']}
+ *     nowIdx={6}
+ *     streams={[
+ *       { sub: '01', name: 'Онбординг и аудит', bars: [
+ *         { s: 1.73, e: 2.23, activeUntil: 2.23, label: 'Аудит', duration: '1.5 мес', title: '...' },
+ *       ]},
+ *       …
+ *     ]}
+ *   />
+ */
+interface T2Bar {
+  s: number;
+  e: number;
+  /** Position on the timeline where the active phase ends. Defaults to e
+   *  (no part-time tail). The bar gradient stays solid up to this point
+   *  and fades from there to e. */
+  activeUntil?: number;
+  label: string;
+  duration?: string;
+  title?: string;
+}
+interface T2Stream {
+  sub: string;
+  name: string;
+  bars: T2Bar[];
+}
+interface Props {
+  stamp?: string;
+  quarters: string[];
+  nowIdx?: number;
+  streams: T2Stream[];
+}
+const { stamp, quarters, nowIdx, streams } = Astro.props;
+const cols = quarters.length;
+---
+
+<div class="cp-fullbleed t2-bleed">
+  <div class="t2-frame">
+    {stamp && <div class="t2-stamp" set:html={stamp} />}
+
+    <div class="t2-grid">
+      <div class="t2-row t2-row--head">
+        <div class="t2-label" aria-hidden="true"></div>
+        <div class="t2-track t2-track--head" style={`--t2-cols: ${cols};`}>
+          {quarters.map((q, i) => (
+            <div class:list={['t2-quarter', i === nowIdx ? 'is-now' : '']} style={`--c: ${i + 1}`}>
+              {q}
+              {i === nowIdx && <span class="t2-now-badge">NOW</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {streams.map((stream) => (
+        <div class="t2-row">
+          <div class="t2-label">
+            <span class="t2-num">{stream.sub}</span>
+            <span class="t2-name">{stream.name}</span>
+          </div>
+          <div class="t2-track" style={`--t2-cols: ${cols};`}>
+            {nowIdx !== undefined && (
+              <div class="t2-now-line" style={`--c: ${nowIdx + 1}`}></div>
+            )}
+            {stream.bars.map((b) => {
+              const span = Math.max(0.0001, b.e - b.s);
+              const activeUntil = b.activeUntil ?? b.e;
+              const activePct = Math.max(0, Math.min(100, ((activeUntil - b.s) / span) * 100));
+              return (
+                <div
+                  class="t2-bar"
+                  style={`--s: ${b.s}; --e: ${b.e}; --active-pct: ${activePct}%;`}
+                  title={b.title ?? b.label}
+                >
+                  <span class="t2-bar-text">
+                    <span class="t2-bar-label">{b.label}</span>
+                    {b.duration && <span class="t2-bar-duration">{b.duration}</span>}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
