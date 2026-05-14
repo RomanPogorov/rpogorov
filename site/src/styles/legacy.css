@@ -12003,6 +12003,19 @@
             .cp-sb-mobile { display: block; }
         }
 
+        /* Uniform Row3: force every tile to the same aspect + cover so a
+           mix of photos / videos sits as a clean strip. */
+        .case-page .am-row3-uniform .dc-grid-3 .dc-figure {
+            aspect-ratio: 912 / 681;
+            overflow: hidden;
+        }
+        .case-page .am-row3-uniform .dc-grid-3 .dc-figure img,
+        .case-page .am-row3-uniform .dc-grid-3 .dc-figure video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         /* === Case media: no frame, rounded corners on all images === */
         .case-page .dc-figure {
             border: 0;
