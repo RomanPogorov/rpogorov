@@ -12021,6 +12021,7 @@
             border: 0;
             background: transparent;
             padding: 0;
+            outline: none;
         }
         .case-page .cp-fullbleed {
             background: transparent;
@@ -12042,4 +12043,13 @@
         .case-page .am-ba-after-wrap {
             border-radius: 8px;
             overflow: hidden;
+        }
+        /* Suppress accent-coloured borders/outlines on case media — barely
+           visible neutral instead. */
+        .case-page .dc-figure img,
+        .case-page .dc-figure video,
+        .case-page .cp-fullbleed img,
+        .case-page .cp-fullbleed video {
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            outline: none;
         }
