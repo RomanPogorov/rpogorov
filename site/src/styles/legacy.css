@@ -12022,6 +12022,15 @@
             background: transparent;
             padding: 0;
         }
+        .case-page .cp-fullbleed {
+            background: transparent;
+        }
+        .case-page .cp-fullbleed > img,
+        .case-page .cp-fullbleed > video {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
         .case-page .dc-figure img,
         .case-page .dc-figure video,
         .case-page .cp-fullbleed img,
