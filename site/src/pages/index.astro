@@ -594,7 +594,7 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
         if (e.key !== 'Escape') return;
         if (!document.body.classList.contains('case-open')) return;
         // If a lightbox is open, let it eat ESC first — don't close the case.
-        const lb = document.querySelector('.dc-lightbox.open');
+        const lb = document.querySelector('.am-lightbox.open, .dc-lightbox.is-open');
         if (lb) return;
         window.__cp?.close?.();
       }, true);

@@ -2256,7 +2256,7 @@
             document.addEventListener('keydown', (e) => {
                 if (!body.classList.contains('case-open')) return;
                 if (e.key !== 'Escape') return;
-                if (document.querySelector('.dc-lightbox.open')) return;
+                if (document.querySelector('.am-lightbox.open, .dc-lightbox.is-open')) return;
                 e.stopPropagation();
                 closeCase();
             }, true);
