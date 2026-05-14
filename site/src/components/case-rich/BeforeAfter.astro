@@ -27,6 +27,8 @@ interface Scene {
   thumb: string;
   desktop?: ImagePair;
   mobile?: ImagePair;
+  fit?: 'contain' | 'cover';
+  aspect?: string;
 }
 interface Props {
   platforms?: Array<'desktop' | 'mobile'>;
@@ -39,7 +41,12 @@ const platformLabel = { desktop: 'Desktop', mobile: 'Mobile' } as const;
 
 const sceneMap = JSON.stringify(
   Object.fromEntries(
-    scenes.map((s) => [s.id, { desktop: s.desktop ?? { before: '', after: '' }, mobile: s.mobile ?? { before: '', after: '' } }])
+    scenes.map((s) => [s.id, {
+      desktop: s.desktop ?? { before: '', after: '' },
+      mobile: s.mobile ?? { before: '', after: '' },
+      fit: s.fit ?? 'contain',
+      aspect: s.aspect ?? '',
+    }])
   )
 );
 ---
@@ -69,6 +76,8 @@ const sceneMap = JSON.stringify(
       <div
         class="am-ba-stage"
         data-platform={p}
+        data-fit={initialScene.fit ?? 'contain'}
+        style={p === 'desktop' && initialScene.aspect ? `aspect-ratio: ${initialScene.aspect};` : undefined}
         {...(i === 0 ? {} : { hidden: true })}
       >
         <img class="am-ba-img am-ba-before-img" src={pair.before} alt={`${platformLabel[p]} до редизайна`} />
@@ -153,6 +162,10 @@ const sceneMap = JSON.stringify(
         if (beforeImg) beforeImg.src = pair?.before || '';
         if (afterImg) afterImg.src = pair?.after || '';
         stage.classList.toggle('is-scene-empty', !pair?.before && !pair?.after);
+        if (platform === 'desktop') {
+          stage.style.aspectRatio = data.aspect || '';
+          stage.dataset.fit = data.fit || 'contain';
+        }
       });
     }
     sceneBtns.forEach((btn) => btn.addEventListener('click', () => activateScene(btn)));

@@ -3739,6 +3739,10 @@
             pointer-events: none;
             background: #f4f6f9;
         }
+        .am-ba-stage[data-fit="cover"] .am-ba-img {
+            object-fit: cover;
+            object-position: center;
+        }
         .am-ba-after-wrap {
             position: absolute;
             inset: 0;
