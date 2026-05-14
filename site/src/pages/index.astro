@@ -131,7 +131,9 @@ const cardsHtml = companies
     const mediaInner = embed
       ? `<iframe class="case-embed" src="${escapeHtml(embed)}" title="${escapeHtml(d.name)} — hero animation" loading="lazy" tabindex="-1" aria-hidden="true"></iframe><img class="case-fallback" src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`
       : `<img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`;
-    return `<article class="case" data-case="${c.id}">
+    const cardAccent = companyAccentStyle(d);
+    const cardStyle = cardAccent ? ` style="${cardAccent}"` : '';
+    return `<article class="case" data-case="${c.id}"${cardStyle}>
       <div class="${mediaCls}"${mediaTrigger}>
         ${mediaInner}
         ${openCue}
@@ -264,7 +266,7 @@ const cs02Data = cs02?.data;
 
 const COMPANY_ACCENT_PRESETS: Record<string, { hex: string; rgb: string }> = {
   green: { hex: '#059669', rgb: '5, 150, 105' },
-  blue:  { hex: '#0065FF', rgb: '0, 101, 255' },
+  blue:  { hex: '#2684FF', rgb: '38, 132, 255' },
   red:   { hex: '#dc2626', rgb: '220, 38, 38' },
   cyan:  { hex: '#00e5ff', rgb: '0, 229, 255' },
 };
