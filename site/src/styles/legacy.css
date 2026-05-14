@@ -12002,3 +12002,22 @@
             .cp-sb-rail { display: none; }
             .cp-sb-mobile { display: block; }
         }
+
+        /* === Case media: no frame, rounded corners on all images === */
+        .case-page .dc-figure {
+            border: 0;
+            background: transparent;
+            padding: 0;
+        }
+        .case-page .dc-figure img,
+        .case-page .dc-figure video,
+        .case-page .cp-fullbleed img,
+        .case-page .cp-fullbleed video,
+        .case-page .am-media img,
+        .case-page .am-media video,
+        .case-page .am-ba-stage,
+        .case-page .am-ba-img,
+        .case-page .am-ba-after-wrap {
+            border-radius: 8px;
+            overflow: hidden;
+        }
