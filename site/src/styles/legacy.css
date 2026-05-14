@@ -3064,22 +3064,36 @@
             font-style: normal;
             font-weight: 500;
         }
-        .cp-tldr ul { list-style: none; padding: 0; margin: 0; }
-        .cp-tldr li {
+        .cp-tldr ul,
+        .cnt-body .cp-tldr ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 16px;
+            max-width: none;
+        }
+        .cp-tldr li,
+        .cnt-body .cp-tldr ul li {
             font-size: 1rem;
             line-height: 1.55;
-            padding: 7px 0 7px 26px;
+            padding: 6px 0 6px 26px;
+            margin-bottom: 0;
             position: relative;
             color: rgba(255,255,255,0.94);
             font-weight: 400;
+            list-style: none;
         }
-        .cp-tldr li::before {
+        .cp-tldr li::before,
+        .cnt-body .cp-tldr ul li::before {
             content: '';
             position: absolute;
             left: 0;
-            top: 17px;
-            width: 14px; height: 1px;
+            top: calc(6px + 0.775em);
+            width: 14px;
+            height: 1px;
+            border-radius: 0;
             background: var(--acc);
+            opacity: 1;
+            transform: translateY(-50%);
         }
 
         /* Timeline (sticky nav) */
