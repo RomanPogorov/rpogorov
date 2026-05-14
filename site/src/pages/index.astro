@@ -261,6 +261,22 @@ const [legacyMid, legacyAfter] = afterAmericor.split('<!-- HS_OVERLAY_MARKER -->
 
 const cs01Data = cs01?.data;
 const cs02Data = cs02?.data;
+
+const COMPANY_ACCENT_PRESETS: Record<string, { hex: string; rgb: string }> = {
+  green: { hex: '#059669', rgb: '5, 150, 105' },
+  blue:  { hex: '#0065FF', rgb: '0, 101, 255' },
+  red:   { hex: '#dc2626', rgb: '220, 38, 38' },
+  cyan:  { hex: '#00e5ff', rgb: '0, 229, 255' },
+};
+function companyAccentStyle(d: any): string | undefined {
+  const a = d?.accent;
+  if (!a) return undefined;
+  const resolved = typeof a === 'string' ? COMPANY_ACCENT_PRESETS[a] : a;
+  if (!resolved) return undefined;
+  return `--acc: ${resolved.hex}; --acc-rgb: ${resolved.rgb};`;
+}
+const cs01AccentStyle = companyAccentStyle(cs01Data);
+const cs02AccentStyle = companyAccentStyle(cs02Data);
 ---
 
 <Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate">
@@ -269,7 +285,7 @@ const cs02Data = cs02?.data;
   <Fragment set:html={legacyBefore} />
 
   {Cs01Content && cs01Data && (
-    <section class="case-page" id="case-page-cs01" data-case-page="cs01" aria-label={`${cs01Data.name} case study`}>
+    <section class="case-page" id="case-page-cs01" data-case-page="cs01" data-accent={typeof cs01Data.accent === 'string' ? cs01Data.accent : (cs01AccentStyle ? 'custom' : undefined)} style={cs01AccentStyle} aria-label={`${cs01Data.name} case study`}>
       <CaseHeader
         currentLabel={cs01Data.name}
         metaItems={[cs01Data.name, `${cs01Data.role} · ${cs01Data.year}`]}
@@ -287,7 +303,7 @@ const cs02Data = cs02?.data;
   <Fragment set:html={legacyMid} />
 
   {Cs02Content && cs02Data && (
-    <section class="case-page cp-hs" id="case-page-cs02" data-case-page="cs02" aria-label={`${cs02Data.name} case study`}>
+    <section class="case-page cp-hs" id="case-page-cs02" data-case-page="cs02" data-accent={typeof cs02Data.accent === 'string' ? cs02Data.accent : (cs02AccentStyle ? 'custom' : undefined)} style={cs02AccentStyle} aria-label={`${cs02Data.name} case study`}>
       <CaseHeader
         currentLabel={cs02Data.name}
         metaItems={[cs02Data.name, `${cs02Data.role} · ${cs02Data.year}`]}

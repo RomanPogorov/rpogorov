@@ -78,6 +78,14 @@ const companies = defineCollection({
      *  card instead of the static `thumb` image. Use for animated hero
      *  mocks that aren't a single PNG. */
     showcaseEmbed: z.string().optional(),
+    /** Per-company accent — drives --acc / --acc-rgb on the .case-page
+     *  wrapper. Same shape as sub-cases. */
+    accent: z
+      .union([
+        z.enum(['green', 'blue', 'red', 'cyan']),
+        z.object({ hex: z.string(), rgb: z.string() }),
+      ])
+      .optional(),
   }),
 });
 
