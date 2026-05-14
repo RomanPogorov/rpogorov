@@ -2251,13 +2251,14 @@
                 btn.addEventListener('click', closeCase);
             });
 
-            // ESC closes case-page first; capture-phase so it runs before the showcase handler
+            // ESC closes case-page first; capture-phase so it runs before the showcase handler.
+            // Skip if a lightbox is open — let the lightbox handle ESC.
             document.addEventListener('keydown', (e) => {
                 if (!body.classList.contains('case-open')) return;
-                if (e.key === 'Escape') {
-                    e.stopPropagation();
-                    closeCase();
-                }
+                if (e.key !== 'Escape') return;
+                if (document.querySelector('.dc-lightbox.open')) return;
+                e.stopPropagation();
+                closeCase();
             }, true);
 
             function initTimeline(page) {
