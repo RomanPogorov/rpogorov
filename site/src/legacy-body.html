@@ -2272,6 +2272,9 @@
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
                 if (e.key === 'ArrowDown') {
+                    // Only open company case from the "By Company" carousel.
+                    // In "By Cases" grid view ↓ should do nothing.
+                    if (document.body.dataset.scView !== 'company') return;
                     const active = items[currentIndex()];
                     const id = active?.dataset.case;
                     if (!id) return;
