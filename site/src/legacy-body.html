@@ -458,8 +458,8 @@
     <section class="showcase" id="showcase" aria-label="Recent works">
         <div class="showcase-inner">
             <div class="showcase-intro">
-                <span class="showcase-tag">// archive · 2010 — 2026 · selected works</span>
-                <p class="showcase-sub">scroll · drag · <span class="blink">← →</span></p>
+                <span class="showcase-tag">// archive · 2014 — 2026 · selected works</span>
+                <p class="showcase-sub">scroll · drag · <span class="blink showcase-sub-arrows">← → ↑ ↓</span></p>
             </div>
 
             <nav class="sc-tabs" role="tablist" aria-label="Showcase view mode">
@@ -2359,6 +2359,7 @@
         (() => {
             const hud = document.getElementById('perf-hud');
             if (!hud) return;
+            if (!/[?&]perf=1\b/.test(location.search)) return;
             hud.hidden = false;
             const fpsEl = hud.querySelector('.perf-fps');
             const jankEl = hud.querySelector('.perf-jank');

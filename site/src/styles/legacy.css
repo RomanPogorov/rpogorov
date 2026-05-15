@@ -992,8 +992,7 @@
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
         .showcase-intro.faded {
-            opacity: 0.18;
-            transform: translateY(-4px);
+            opacity: 1;
         }
         .showcase-tag {
             color: var(--acc);
@@ -1023,6 +1022,11 @@
             animation: blink 1s steps(1) infinite;
             margin-left: 4px;
             color: var(--acc);
+        }
+        .showcase-sub-arrows {
+            font-size: 0.85rem;
+            letter-spacing: 0.18em;
+            vertical-align: -1px;
         }
 
         /* ============ SHOWCASE TABS — by company / by cases =================
