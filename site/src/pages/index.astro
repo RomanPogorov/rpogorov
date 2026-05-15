@@ -162,7 +162,6 @@ const cardsHtml = companies
         <ul class="case-tags">
           ${tags.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}
         </ul>
-        ${tools.length ? `<ul class="case-tools" aria-label="Tools"><li class="case-tools-label">tools</li>${tools.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul>` : ''}
         ${openBtn}
       </div>
     </article>`;
