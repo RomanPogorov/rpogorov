@@ -449,8 +449,13 @@
     <div class="backdrop"></div>
 
     <!-- Showcase — basement slide with carousel of recent works -->
+    <div class="showcase-cue" id="showcase-cue" role="button" tabindex="0" aria-label="Open showcase">
+        <span class="showcase-cue-arrow" aria-hidden="true">↓</span>
+        <span class="showcase-cue-label">Showcase</span>
+    </div>
 
     <section class="showcase" id="showcase" aria-label="Recent works">
+        <div class="showcase-drag-handle" aria-hidden="true"></div>
         <div class="showcase-inner">
             <div class="showcase-intro">
                 <span class="showcase-tag">// archive · 2014 — 2026 · selected works</span>
@@ -1967,6 +1972,7 @@
     <!-- Showcase: down-arrow opens basement section with cases carousel -->
     <script>
         (() => {
+            const cue = document.getElementById('showcase-cue');
             const back = document.getElementById('showcase-back');
             const cases = document.getElementById('cases');
             const prev = document.getElementById('cases-prev');
@@ -2036,6 +2042,12 @@
                 setView,
             };
             back.addEventListener('click', close);
+            if (cue) {
+                cue.addEventListener('click', () => open());
+                cue.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+                });
+            }
 
             // === Vertical drag: pull up from main → opens; pull down on the
             // showcase intro strip → closes. Threshold 120px or velocity > 0.7 px/ms.

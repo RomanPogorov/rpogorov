@@ -12068,3 +12068,42 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
             outline: none;
         }
+
+        /* ============ DRAG AFFORDANCES ============================= */
+        /* Pill handle at the very top of the showcase — visual hint for
+           the "pull down to close" zone (top 140px band). */
+        .showcase-drag-handle {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 56px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(var(--acc-rgb), 0.35);
+            z-index: 6;
+            pointer-events: none;
+            transition: background 0.2s ease, width 0.2s ease;
+        }
+        body.is-pulling .showcase-drag-handle {
+            background: rgba(var(--acc-rgb), 0.7);
+            width: 80px;
+        }
+        /* Close-drag zone (top 140px while showcase is open) gets grab cursor. */
+        body.showcase-open .showcase-inner > .showcase-intro,
+        body.showcase-open .showcase-inner > .sc-tabs {
+            cursor: grab;
+        }
+        body.showcase-open.is-pulling .showcase-inner > .showcase-intro,
+        body.showcase-open.is-pulling .showcase-inner > .sc-tabs {
+            cursor: grabbing;
+        }
+        /* Carousel cards already get cursor:grab via JS, but reinforce it
+           on case-body areas (non-button regions) so the affordance reads
+           on hover even without movement. */
+        .cases .case .case-body {
+            cursor: grab;
+        }
+        .cases .case .case-body :where(button, a, input, textarea, [role="button"]) {
+            cursor: pointer;
+        }
