@@ -64,6 +64,7 @@ const companies = defineCollection({
     name: z.string(),
     role: z.string(),
     year: z.string(),
+    duration: z.string().optional(),
     title: z.string(),
     desc: z.string(),
     tags: z.array(z.string()).default([]),
