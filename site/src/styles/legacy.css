@@ -12204,3 +12204,31 @@
         .cp-hs .hs-meta-row .hs-meta-dot {
             background: rgba(var(--hs-red-rgb), 0.55);
         }
+
+        /* cs02: dc-meta-row used as the hero eyebrow strip with multiple
+           items separated by red dots. Override .dc-meta-row's flex layout
+           (justify space-between is for company+metric only). */
+        .cp-hs .dc-meta-row {
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 10px 18px;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            color: var(--hs-red);
+            margin-bottom: 28px;
+        }
+        .cp-hs .dc-meta-company {
+            color: var(--hs-text-muted);
+            font-weight: 600;
+        }
+        .cp-hs .dc-meta-metric {
+            color: rgba(var(--hs-red-rgb), 0.85);
+            font-weight: 500;
+            text-shadow: none;
+        }
+        .cp-hs .dc-meta-metric::before {
+            content: '·';
+            margin-right: 14px;
+            color: rgba(var(--hs-red-rgb), 0.55);
+            font-weight: 700;
+        }

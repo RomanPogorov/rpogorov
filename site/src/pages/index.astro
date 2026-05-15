@@ -306,7 +306,13 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
     <section class="case-page cp-hs" id="case-page-cs02" data-case-page="cs02" data-accent={typeof cs02Data.accent === 'string' ? cs02Data.accent : (cs02AccentStyle ? 'custom' : undefined)} style={cs02AccentStyle} aria-label={`${cs02Data.name} case study`}>
       <CaseHeader
         currentLabel={cs02Data.name}
-        metaItems={[cs02Data.name]}
+        metaItems={[
+          cs02Data.name,
+          `Role · ${cs02Data.role}`,
+          cs02Data.year,
+          'FHIR-native infrastructure',
+          'Flat org · No QAs · No PMs',
+        ]}
         title={cs02Data.title}
         titleHtml={cs02Data.title}
         desc={cs02Data.desc}
