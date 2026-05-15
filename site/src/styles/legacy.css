@@ -12107,3 +12107,14 @@
         .cases .case .case-body :where(button, a, input, textarea, [role="button"]) {
             cursor: pointer;
         }
+
+        /* cs02 (Health Samurai) — widen content column to match legacy
+           1280px grid. Generic .cp-inner is 980/40; HS legacy uses 1280/64. */
+        .cp-hs .cp-inner {
+            max-width: 1280px;
+            padding-left: 64px;
+            padding-right: 64px;
+        }
+        @media (max-width: 768px) {
+            .cp-hs .cp-inner { padding-left: 24px; padding-right: 24px; }
+        }
