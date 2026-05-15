@@ -2086,6 +2086,49 @@
             prev.addEventListener('click', () => scrollTo(currentIndex() - 1));
             next.addEventListener('click', () => scrollTo(currentIndex() + 1));
 
+            // Drag-to-pan the carousel. Pointer-based so mouse + touch both
+            // work. Ignores drags that started on a case-open trigger so the
+            // card "open case" click still fires.
+            (() => {
+                let down = false;
+                let dragged = false;
+                let startX = 0;
+                let startScroll = 0;
+                cases.style.cursor = 'grab';
+                cases.addEventListener('pointerdown', (e) => {
+                    if (e.button !== 0 && e.pointerType === 'mouse') return;
+                    if (e.target.closest('[data-open-case], .case-open-btn, button, a, input, textarea')) return;
+                    down = true;
+                    dragged = false;
+                    startX = e.clientX;
+                    startScroll = cases.scrollLeft;
+                    cases.style.cursor = 'grabbing';
+                    cases.setPointerCapture?.(e.pointerId);
+                });
+                cases.addEventListener('pointermove', (e) => {
+                    if (!down) return;
+                    const dx = e.clientX - startX;
+                    if (Math.abs(dx) > 4) dragged = true;
+                    cases.scrollLeft = startScroll - dx;
+                });
+                const endDrag = (e) => {
+                    if (!down) return;
+                    down = false;
+                    cases.style.cursor = 'grab';
+                    if (dragged) {
+                        // Snap to nearest card centre after drag.
+                        const idx = currentIndex();
+                        scrollTo(idx);
+                        // Suppress the click that would otherwise fire after drag.
+                        const block = (ev) => { ev.preventDefault(); ev.stopPropagation(); };
+                        cases.addEventListener('click', block, { capture: true, once: true });
+                    }
+                };
+                cases.addEventListener('pointerup', endDrag);
+                cases.addEventListener('pointercancel', endDrag);
+                cases.addEventListener('pointerleave', endDrag);
+            })();
+
             let scrollHashTimer;
             cases.addEventListener('scroll', () => {
                 const idx = currentIndex();
