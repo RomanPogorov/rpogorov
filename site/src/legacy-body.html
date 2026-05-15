@@ -2046,6 +2046,111 @@
             });
             back.addEventListener('click', close);
 
+            // === Vertical drag: pull up from main → opens; pull down on the
+            // showcase intro strip → closes. Threshold 120px or velocity > 0.7 px/ms.
+            (() => {
+                const showcase = document.getElementById('showcase');
+                const introStrip = document.querySelector('.showcase-intro');
+                if (!showcase) return;
+                const THRESHOLD = 120;
+                const VELOCITY = 0.7;
+                let mode = null; // 'open' or 'close'
+                let active = false;
+                let startY = 0;
+                let startT = 0;
+                let lastY = 0;
+                let lastT = 0;
+                let pointerId = null;
+
+                function isInteractive(target) {
+                    return !!target.closest('a, button, input, textarea, [contenteditable=true], #showcase-cue, [data-open-case], .case-open-btn, .dc-close, .dc-crumb, .cases, .case-media, .case-page, .am-lightbox, .dc-lightbox, .right-panel, .left-pane, .ctl, .text-toggle, .info-toggle, [data-shot-board], [data-shot-tab]');
+                }
+
+                function setTransform(dy) {
+                    showcase.style.transition = 'none';
+                    showcase.style.transform = `translateY(${dy}px)`;
+                }
+                function clearTransform(snap) {
+                    showcase.style.transition = snap ? 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)' : '';
+                    showcase.style.transform = '';
+                    // After the snap finishes, drop the inline transition so the
+                    // open/close class transitions own the motion again.
+                    if (snap) {
+                        setTimeout(() => { showcase.style.transition = ''; }, 480);
+                    }
+                }
+
+                document.addEventListener('pointerdown', (e) => {
+                    if (e.pointerType === 'mouse' && e.button !== 0) return;
+                    if (document.body.classList.contains('case-open')) return;
+                    if (document.body.classList.contains('reader-open')) return;
+                    if (document.body.classList.contains('dw-open')) return;
+                    if (document.body.classList.contains('chat-fullscreen')) return;
+                    if (isInteractive(e.target)) return;
+
+                    const isOpen = document.body.classList.contains('showcase-open');
+                    if (!isOpen) {
+                        mode = 'open';
+                    } else {
+                        // Only close if drag starts on the intro strip area.
+                        if (!introStrip || !introStrip.contains(e.target)
+                            && !e.target.classList.contains('showcase-intro')
+                            && !e.target.classList.contains('showcase-tag')
+                            && !e.target.classList.contains('showcase-sub')
+                            && !e.target.closest('.showcase-intro')) return;
+                        mode = 'close';
+                    }
+                    active = true;
+                    pointerId = e.pointerId;
+                    startY = lastY = e.clientY;
+                    startT = lastT = performance.now();
+                });
+
+                document.addEventListener('pointermove', (e) => {
+                    if (!active || e.pointerId !== pointerId) return;
+                    const dy = e.clientY - startY;
+                    lastY = e.clientY;
+                    lastT = performance.now();
+                    if (mode === 'open') {
+                        // Drag up → dy < 0. Pull showcase up; clamp to [-vh, 0].
+                        const pull = Math.min(0, Math.max(-window.innerHeight, dy));
+                        setTransform(pull);
+                    } else {
+                        // From open state: drag down → dy > 0. Push showcase down.
+                        const pull = Math.max(0, Math.min(window.innerHeight, dy));
+                        setTransform(pull);
+                    }
+                });
+
+                function commit(e) {
+                    if (!active || e.pointerId !== pointerId) return;
+                    active = false;
+                    const dy = lastY - startY;
+                    const dt = Math.max(1, lastT - startT);
+                    const v = Math.abs(dy) / dt;
+                    const passed = Math.abs(dy) > THRESHOLD || v > VELOCITY;
+                    if (mode === 'open') {
+                        if (passed && dy < 0) {
+                            clearTransform(false);
+                            open();
+                        } else {
+                            clearTransform(true);
+                        }
+                    } else {
+                        if (passed && dy > 0) {
+                            clearTransform(false);
+                            close();
+                        } else {
+                            clearTransform(true);
+                        }
+                    }
+                    mode = null;
+                    pointerId = null;
+                }
+                document.addEventListener('pointerup', commit);
+                document.addEventListener('pointercancel', commit);
+            })();
+
             // IntersectionObserver: which case is in viewport → .active for entry anim
             const intro = document.querySelector('.showcase-intro');
             const io = new IntersectionObserver((entries) => {
