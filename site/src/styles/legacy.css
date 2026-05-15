@@ -12029,7 +12029,8 @@
             user-select: none !important;
             -webkit-user-select: none !important;
         }
-        body.is-pulling { cursor: grabbing !important; }
+        /* While pulling, keep the page's crosshair theme — direction is
+           already conveyed by the axis-aware cursor on the drag zone. */
 
         /* === Case media: no frame, rounded corners on all images === */
         .case-page .dc-figure {
@@ -12089,20 +12090,14 @@
             background: rgba(var(--acc-rgb), 0.7);
             width: 80px;
         }
-        /* Close-drag zone (top 140px while showcase is open) gets grab cursor. */
+        /* Direction-aware native cursors fit the crosshair theme better
+           than grab/grabbing — and they hint the drag axis. */
         body.showcase-open .showcase-inner > .showcase-intro,
         body.showcase-open .showcase-inner > .sc-tabs {
-            cursor: grab;
+            cursor: ns-resize;
         }
-        body.showcase-open.is-pulling .showcase-inner > .showcase-intro,
-        body.showcase-open.is-pulling .showcase-inner > .sc-tabs {
-            cursor: grabbing;
-        }
-        /* Carousel cards already get cursor:grab via JS, but reinforce it
-           on case-body areas (non-button regions) so the affordance reads
-           on hover even without movement. */
         .cases .case .case-body {
-            cursor: grab;
+            cursor: ew-resize;
         }
         .cases .case .case-body :where(button, a, input, textarea, [role="button"]) {
             cursor: pointer;
