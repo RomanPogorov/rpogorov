@@ -135,9 +135,7 @@ const cardsHtml = companies
     const openCue = overlayId
       ? `<div class="case-media-open-cue" aria-hidden="true"><span class="arrow">↓</span><span>Open case</span></div>`
       : '';
-    const openBtn = overlayId
-      ? `<button class="case-open-btn" data-open-case="${overlayId}" type="button" aria-label="Open full case"><span class="open-arrow" aria-hidden="true">↓</span><span>Open case</span></button>`
-      : '';
+    const openBtn = '';
 
     // When embed is set, render both the iframe (desktop) and the static
     // image (mobile fallback). CSS media query toggles which one shows so
