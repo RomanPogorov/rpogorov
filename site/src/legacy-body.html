@@ -4215,6 +4215,17 @@
             const dcBody = document.getElementById('dc-body');
             if (!lb || !stage || !dcBody) return;
 
+            function inheritAccent() {
+                const cp = document.querySelector('.case-page.open');
+                ['--acc','--acc-rgb','--dim','--ink'].forEach(v => lb.style.removeProperty(v));
+                if (!cp) return;
+                const cs = getComputedStyle(cp);
+                ['--acc','--acc-rgb','--dim','--ink'].forEach(v => {
+                    const val = cs.getPropertyValue(v).trim();
+                    if (val) lb.style.setProperty(v, val);
+                });
+            }
+
             function open(media) {
                 stage.innerHTML = '';
                 let node;
@@ -4235,6 +4246,7 @@
                     node.alt = media.alt || '';
                 }
                 stage.appendChild(node);
+                inheritAccent();
                 lb.classList.add('is-open');
                 lb.setAttribute('aria-hidden', 'false');
             }

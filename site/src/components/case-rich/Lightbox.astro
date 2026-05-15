@@ -76,10 +76,28 @@
       counterEl.textContent = `${idx + 1} of ${tiles.length}`;
     }
 
+    function inheritAccent() {
+      // Pull the current case-page's accent vars onto the lightbox so the
+      // image border, nav arrows and ESC button match the active case theme.
+      const cp = document.querySelector('.case-page.open');
+      const reset = () => { lb.style.removeProperty('--acc'); lb.style.removeProperty('--acc-rgb'); lb.style.removeProperty('--dim'); lb.style.removeProperty('--ink'); };
+      if (!cp) { reset(); return; }
+      const cs = getComputedStyle(cp);
+      const acc = cs.getPropertyValue('--acc').trim();
+      const accRgb = cs.getPropertyValue('--acc-rgb').trim();
+      const dim = cs.getPropertyValue('--dim').trim();
+      const ink = cs.getPropertyValue('--ink').trim();
+      if (acc) lb.style.setProperty('--acc', acc);
+      if (accRgb) lb.style.setProperty('--acc-rgb', accRgb);
+      if (dim) lb.style.setProperty('--dim', dim);
+      if (ink) lb.style.setProperty('--ink', ink);
+    }
+
     function open(i) {
       // refresh tiles each time — MDX inside the case overlay can be
       // hidden until __cp.open mounts it; new tiles may appear later
       tiles = Array.from(document.querySelectorAll('[data-media]'));
+      inheritAccent();
       render(i);
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
