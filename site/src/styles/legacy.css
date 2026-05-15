@@ -12236,3 +12236,7 @@
         .cp-hs .cp-sb-rail {
             padding-right: 24px;
         }
+
+        /* cs02 timeline: match cs01 t2-bleed padding for breathing room. */
+        .hs-tl-bleed { padding: 32px clamp(20px, 4vw, 56px); }
+        @media (max-width: 768px) { .hs-tl-bleed { padding: 16px 0; } }
