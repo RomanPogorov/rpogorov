@@ -2063,7 +2063,7 @@
                 let pointerId = null;
 
                 function isInteractive(target) {
-                    return !!target.closest('a, button, input, textarea, [contenteditable=true], #showcase-cue, [data-open-case], .case-open-btn, .dc-close, .dc-crumb, .cases, .case-media, .case-page, .am-lightbox, .dc-lightbox, .right-panel, .left-pane, .ctl, .text-toggle, .info-toggle, [data-shot-board], [data-shot-tab]');
+                    return !!target.closest('a, button, input, textarea, [contenteditable=true], #showcase-cue, [data-open-case], .case-open-btn, .dc-close, .dc-crumb, .case-page, .am-lightbox, .dc-lightbox, .right-panel, .left-pane, .ctl, .text-toggle, .info-toggle, [data-shot-board], [data-shot-tab]');
                 }
 
                 function setTransform(dy) {
@@ -2201,23 +2201,27 @@
                 cases.style.cursor = 'grab';
                 cases.addEventListener('pointerdown', (e) => {
                     if (e.button !== 0 && e.pointerType === 'mouse') return;
-                    if (e.target.closest('[data-open-case], .case-open-btn, button, a, input, textarea')) return;
+                    if (e.target.closest('[data-open-case], .case-open-btn, button, a, input, textarea, .showcase-back, .showcase-intro, .sc-tab')) return;
+                    // Skip if vertical close-drag zone of the showcase top bar.
+                    if (document.body.classList.contains('showcase-open') && e.clientY <= 140) return;
                     down = true;
                     dragged = false;
                     startX = e.clientX;
                     startScroll = cases.scrollLeft;
-                    cases.style.cursor = 'grabbing';
-                    cases.setPointerCapture?.(e.pointerId);
                 });
                 cases.addEventListener('pointermove', (e) => {
                     if (!down) return;
-                    e.preventDefault();
                     const dx = e.clientX - startX;
-                    if (Math.abs(dx) > 4) {
+                    if (!dragged && Math.abs(dx) > 4) {
                         dragged = true;
                         document.body.classList.add('is-pulling');
+                        cases.style.cursor = 'grabbing';
+                        try { cases.setPointerCapture?.(e.pointerId); } catch {}
                     }
-                    cases.scrollLeft = startScroll - dx;
+                    if (dragged) {
+                        e.preventDefault();
+                        cases.scrollLeft = startScroll - dx;
+                    }
                 });
                 const endDrag = (e) => {
                     if (!down) return;
