@@ -2106,15 +2106,15 @@
 
                 document.addEventListener('pointermove', (e) => {
                     if (!active || e.pointerId !== pointerId) return;
+                    e.preventDefault();
                     const dy = e.clientY - startY;
                     lastY = e.clientY;
                     lastT = performance.now();
+                    document.body.classList.add('is-pulling');
                     if (mode === 'open') {
-                        // Drag up → dy < 0. Pull showcase up; clamp to [-vh, 0].
                         const pull = Math.min(0, Math.max(-window.innerHeight, dy));
                         setTransform(pull);
                     } else {
-                        // From open state: drag down → dy > 0. Push showcase down.
                         const pull = Math.max(0, Math.min(window.innerHeight, dy));
                         setTransform(pull);
                     }
@@ -2123,6 +2123,7 @@
                 function commit(e) {
                     if (!active || e.pointerId !== pointerId) return;
                     active = false;
+                    document.body.classList.remove('is-pulling');
                     const dy = lastY - startY;
                     const dt = Math.max(1, lastT - startT);
                     const v = Math.abs(dy) / dt;
@@ -2210,14 +2211,20 @@
                 });
                 cases.addEventListener('pointermove', (e) => {
                     if (!down) return;
+                    e.preventDefault();
                     const dx = e.clientX - startX;
-                    if (Math.abs(dx) > 4) dragged = true;
+                    if (Math.abs(dx) > 4) {
+                        dragged = true;
+                        document.body.classList.add('is-pulling');
+                    }
                     cases.scrollLeft = startScroll - dx;
                 });
                 const endDrag = (e) => {
                     if (!down) return;
                     down = false;
+                    document.body.classList.remove('is-pulling');
                     cases.style.cursor = 'grab';
+                    try { cases.releasePointerCapture?.(e.pointerId); } catch {}
                     if (dragged) {
                         // Snap to nearest card centre after drag.
                         const idx = currentIndex();

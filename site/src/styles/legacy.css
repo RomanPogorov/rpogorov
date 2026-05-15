@@ -12021,6 +12021,14 @@
             object-fit: cover;
         }
 
+        /* Drag-in-progress lock — no text selection / native scroll-touch
+           while we're driving showcase pull or carousel pan ourselves. */
+        body.is-pulling, body.is-pulling * {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+        }
+        body.is-pulling { cursor: grabbing !important; }
+
         /* === Case media: no frame, rounded corners on all images === */
         .case-page .dc-figure {
             border: 0;
