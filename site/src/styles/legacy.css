@@ -11907,10 +11907,9 @@
             top: 0;
             bottom: 0;
             width: 240px;
-            /* Pull leftward outside cp-inner. cnt-body sits at cp-inner's
-               left edge (cp-inner padding-left: 40px), so we subtract 40px
-               of cp-inner padding + 240px sidebar + 32px gap = 312px. */
-            left: -312px;
+            /* Right rail: 32px gap from cnt-body + 240 sidebar + 40 cp-inner pad = 312. */
+            right: -312px;
+            left: auto;
             pointer-events: auto;
         }
         .cp-sb-sticky {
