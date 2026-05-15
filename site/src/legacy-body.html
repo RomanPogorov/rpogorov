@@ -2065,18 +2065,22 @@
                     return !!target.closest('a, button, input, textarea, [contenteditable=true], #showcase-cue, [data-open-case], .case-open-btn, .dc-close, .dc-crumb, .case-page, .am-lightbox, .dc-lightbox, .right-panel, .left-pane, .ctl, .text-toggle, .info-toggle, [data-shot-board], [data-shot-tab]');
                 }
 
-                function setTransform(dy) {
+                function setPull(dy) {
+                    const vh = window.innerHeight;
+                    // base top depending on state, dy adds to it
+                    const base = document.body.classList.contains('showcase-open') ? 0 : vh;
+                    let nextTop = base + dy;
+                    nextTop = Math.max(-vh, Math.min(nextTop, vh));
                     showcase.style.transition = 'none';
-                    showcase.style.transform = `translateY(${dy}px)`;
+                    showcase.style.top = nextTop + 'px';
                 }
-                function clearTransform(snap) {
-                    showcase.style.transition = snap ? 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)' : '';
-                    showcase.style.transform = '';
-                    // After the snap finishes, drop the inline transition so the
-                    // open/close class transitions own the motion again.
-                    if (snap) {
-                        setTimeout(() => { showcase.style.transition = ''; }, 480);
-                    }
+                function releasePull() {
+                    // Hand control back to the class-driven CSS transition.
+                    // The browser will animate `top` from its current value
+                    // to the class-resolved value (0 if showcase-open, 100vh
+                    // otherwise) using the existing 0.85s ease curve.
+                    showcase.style.transition = '';
+                    showcase.style.top = '';
                 }
 
                 document.addEventListener('pointerdown', (e) => {
@@ -2111,11 +2115,9 @@
                     lastT = performance.now();
                     document.body.classList.add('is-pulling');
                     if (mode === 'open') {
-                        const pull = Math.min(0, Math.max(-window.innerHeight, dy));
-                        setTransform(pull);
+                        setPull(Math.min(0, dy));
                     } else {
-                        const pull = Math.max(0, Math.min(window.innerHeight, dy));
-                        setTransform(pull);
+                        setPull(Math.max(0, dy));
                     }
                 });
 
@@ -2128,19 +2130,11 @@
                     const v = Math.abs(dy) / dt;
                     const passed = Math.abs(dy) > THRESHOLD || v > VELOCITY;
                     if (mode === 'open') {
-                        if (passed && dy < 0) {
-                            clearTransform(false);
-                            open();
-                        } else {
-                            clearTransform(true);
-                        }
+                        if (passed && dy < 0) open();
+                        releasePull();
                     } else {
-                        if (passed && dy > 0) {
-                            clearTransform(false);
-                            close();
-                        } else {
-                            clearTransform(true);
-                        }
+                        if (passed && dy > 0) close();
+                        releasePull();
                     }
                     mode = null;
                     pointerId = null;
