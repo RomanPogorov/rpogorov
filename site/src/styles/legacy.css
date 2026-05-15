@@ -10681,7 +10681,8 @@
             letter-spacing: 0.06em;
         }
         .article-date, .case-no { color: var(--acc); letter-spacing: 0.1em; }
-        .article-time, .case-role { color: var(--dim); opacity: 0.7; letter-spacing: 0.06em; text-transform: uppercase; }
+        .article-time { color: var(--dim); opacity: 0.7; letter-spacing: 0.06em; text-transform: uppercase; }
+        .case-role { color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase; }
         .article-title, .case-name {
             color: var(--ink);
             font-family: 'JetBrains Mono', monospace;
