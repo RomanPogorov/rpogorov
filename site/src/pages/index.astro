@@ -61,18 +61,12 @@ const strengths = rightPanel.filter((e) => e.data.kind === 'strength');
 const releases = rightPanel.filter((e) => e.data.kind === 'release');
 
 const cs01 = companies.find((c) => c.id === 'cs01');
-const cs01En = companies.find((c) => c.id === 'cs01.en');
 const cs01Render = cs01 ? await render(cs01) : null;
-const cs01EnRender = cs01En ? await render(cs01En) : null;
 const Cs01Content = cs01Render?.Content ?? null;
-const Cs01EnContent = cs01EnRender?.Content ?? null;
 
 const cs02 = companies.find((c) => c.id === 'cs02');
-const cs02En = companies.find((c) => c.id === 'cs02.en');
 const cs02Render = cs02 ? await render(cs02) : null;
-const cs02EnRender = cs02En ? await render(cs02En) : null;
 const Cs02Content = cs02Render?.Content ?? null;
-const Cs02EnContent = cs02EnRender?.Content ?? null;
 
 const subRendered = await Promise.all(
   subCases.map(async (entry) => {
@@ -291,7 +285,7 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
   <Fragment set:html={legacyBefore} />
 
   {Cs01Content && cs01Data && (
-    <section class="case-page i18n-ru" id="case-page-cs01" data-case-page="cs01" data-lang="ru" data-accent={typeof cs01Data.accent === 'string' ? cs01Data.accent : (cs01AccentStyle ? 'custom' : undefined)} style={cs01AccentStyle} aria-label={`${cs01Data.name} case study`}>
+    <section class="case-page" id="case-page-cs01" data-case-page="cs01" data-accent={typeof cs01Data.accent === 'string' ? cs01Data.accent : (cs01AccentStyle ? 'custom' : undefined)} style={cs01AccentStyle} aria-label={`${cs01Data.name} case study`}>
       <CaseHeader
         currentLabel={cs01Data.name}
         metaItems={[cs01Data.name]}
@@ -305,26 +299,11 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
       </CaseHeader>
     </section>
   )}
-  {Cs01EnContent && cs01En && (
-    <section class="case-page i18n-en" id="case-page-cs01-en" data-case-page="cs01" data-lang="en" data-accent={typeof cs01En.data.accent === 'string' ? cs01En.data.accent : (cs01AccentStyle ? 'custom' : undefined)} style={cs01AccentStyle} aria-label={`${cs01En.data.name} case study`}>
-      <CaseHeader
-        currentLabel={cs01En.data.name}
-        metaItems={[cs01En.data.name]}
-        title={cs01En.data.title}
-        titleHtml={cs01En.data.title}
-        desc={cs01En.data.desc}
-      >
-        <article class="cnt-body">
-          <Cs01EnContent />
-        </article>
-      </CaseHeader>
-    </section>
-  )}
 
   <Fragment set:html={legacyMid} />
 
   {Cs02Content && cs02Data && (
-    <section class="case-page cp-hs i18n-ru" id="case-page-cs02" data-case-page="cs02" data-lang="ru" data-accent={typeof cs02Data.accent === 'string' ? cs02Data.accent : (cs02AccentStyle ? 'custom' : undefined)} style={cs02AccentStyle} aria-label={`${cs02Data.name} case study`}>
+    <section class="case-page cp-hs" id="case-page-cs02" data-case-page="cs02" data-accent={typeof cs02Data.accent === 'string' ? cs02Data.accent : (cs02AccentStyle ? 'custom' : undefined)} style={cs02AccentStyle} aria-label={`${cs02Data.name} case study`}>
       <CaseHeader
         currentLabel={cs02Data.name}
         metaItems={[cs02Data.name]}
@@ -334,21 +313,6 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
       >
         <article class="cnt-body">
           <Cs02Content />
-        </article>
-      </CaseHeader>
-    </section>
-  )}
-  {Cs02EnContent && cs02En && (
-    <section class="case-page cp-hs i18n-en" id="case-page-cs02-en" data-case-page="cs02" data-lang="en" data-accent={typeof cs02En.data.accent === 'string' ? cs02En.data.accent : (cs02AccentStyle ? 'custom' : undefined)} style={cs02AccentStyle} aria-label={`${cs02En.data.name} case study`}>
-      <CaseHeader
-        currentLabel={cs02En.data.name}
-        metaItems={[cs02En.data.name]}
-        title={cs02En.data.title}
-        titleHtml={cs02En.data.title}
-        desc={cs02En.data.desc}
-      >
-        <article class="cnt-body">
-          <Cs02EnContent />
         </article>
       </CaseHeader>
     </section>
