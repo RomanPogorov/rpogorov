@@ -2827,18 +2827,18 @@
 
             // Whole reveal sequence runs only after the audio gate is dismissed
             const startSequence = () => {
-                // Right console materializes at t=10s with elegant bell SFX
+                // Right console materializes at t=4s with elegant bell SFX
                 setTimeout(() => {
                     document.body.classList.add('console-revealed');
                     window.__sfx?.materialize?.();
-                }, 10000);
+                }, 4000);
 
-                // Random update loop starts after items have appeared (~12.5s)
+                // Random update loop starts shortly after items have appeared
                 setTimeout(() => {
                     (function loop() {
                         setTimeout(() => { tick(); loop(); }, 1400 + Math.random() * 1800);
                     })();
-                }, 12500);
+                }, 5500);
 
                 // (was: 20s-delayed FLOW-WATCH alert injected into agents-list. Replaced with the
                 // static yellow .showcase-tip block at the bottom of the dashboard, revealed in the
