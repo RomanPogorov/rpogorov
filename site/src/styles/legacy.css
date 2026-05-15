@@ -12107,3 +12107,67 @@
         .cases .case .case-body :where(button, a, input, textarea, [role="button"]) {
             cursor: pointer;
         }
+
+        /* ============ cs02 (Health Samurai) — match legacy layout ===
+           Override the generic .cp-inner (max-width:980; padding:64)
+           because cs02's hs-* blocks already manage their own 1280px
+           container + 64px gutters. Without this override the title +
+           meta-row get nested inside an 980 column → content butts the
+           edge once 64px of inner padding gets added on top. */
+        .cp-hs .cp-inner {
+            max-width: none;
+            padding: 0;
+        }
+        .cp-hs .cp-crumbs-bar {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-left: 64px;
+            padding-right: 64px;
+            box-sizing: border-box;
+        }
+        .cp-hs .dc-meta-row {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 64px;
+            box-sizing: border-box;
+        }
+        .cp-hs .cp-title {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 64px;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(2.5rem, 5.4vw, 4.75rem);
+            font-weight: 800;
+            line-height: 1.04;
+            letter-spacing: -0.022em;
+        }
+        .cp-hs .dc-desc {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 64px;
+            box-sizing: border-box;
+            font-size: 1.1875rem;
+            line-height: 1.55;
+        }
+        /* Meta row reads better one-line — drop letter-spacing a bit, allow tighter wrap. */
+        .cp-hs .hs-meta-row {
+            font-size: 0.65rem;
+            letter-spacing: 0.14em;
+            gap: 10px 18px;
+            padding-top: 12px;
+        }
+        /* Bento sits in same 1280px column. */
+        .cp-hs .hs-grid-overview {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 64px 64px;
+            box-sizing: border-box;
+        }
+        @media (max-width: 768px) {
+            .cp-hs .cp-crumbs-bar,
+            .cp-hs .dc-meta-row,
+            .cp-hs .cp-title,
+            .cp-hs .dc-desc,
+            .cp-hs .hs-grid-overview { padding-left: 24px; padding-right: 24px; }
+        }
