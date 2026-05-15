@@ -12118,3 +12118,18 @@
         @media (max-width: 768px) {
             .cp-hs .cp-inner { padding-left: 24px; padding-right: 24px; }
         }
+
+        /* cs02 — zero out hs-* inner gutters (they would double over .cp-inner). */
+        .cp-hs .hs-meta-row,
+        .cp-hs .hs-tldr-wrap,
+        .cp-hs .hs-grid-overview,
+        .cp-hs .hs-hero {
+            max-width: none;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .cp-hs .hs-cta { margin-top: 12px; margin-bottom: 22px; }
+        .cp-hs .hs-meta-row { padding-top: 0; padding-bottom: 28px; }
+        .cp-hs .hs-tldr-wrap { padding-bottom: 56px; }
