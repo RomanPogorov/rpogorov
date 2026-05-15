@@ -12133,3 +12133,11 @@
         .cp-hs .hs-cta { margin-top: 12px; margin-bottom: 22px; }
         .cp-hs .hs-meta-row { padding-top: 0; padding-bottom: 28px; }
         .cp-hs .hs-tldr-wrap { padding-bottom: 56px; }
+
+        /* In cs02 the cnt-body wrapper auto-centers at measure-content (~920px)
+           leaving a 116px left margin inside cp-inner. We want the hs-* blocks
+           to align with the page title, so let cnt-body span the full cp-inner. */
+        .case-page.cp-hs .cnt-body {
+            max-width: none;
+            margin: 0;
+        }
