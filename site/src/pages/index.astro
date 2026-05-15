@@ -604,9 +604,8 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
         window.__cp?.close?.();
       }, true);
 
-      // Arrow / Page keys scroll the open case-page (the fixed-positioned
-      // .case-page.open scrolls internally — default browser arrow-scroll
-      // doesn't kick in unless the element has focus, so we drive it here).
+      // Arrow / Page keys scroll the open case-page (capture-phase so this
+      // wins over any inner handlers, and works without click-to-focus).
       document.addEventListener('keydown', (e) => {
         if (!document.body.classList.contains('case-open')) return;
         if (document.querySelector('.am-lightbox.open, .dc-lightbox.is-open')) return;
@@ -614,19 +613,16 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
         if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
         const cp = document.querySelector('.case-page.open');
         if (!cp) return;
-        const STEP = 80;
         const PAGE = Math.max(cp.clientHeight - 80, 200);
         let dy = 0;
-        if (e.key === 'ArrowDown') dy = STEP;
-        else if (e.key === 'ArrowUp') dy = -STEP;
-        else if (e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) dy = PAGE;
-        else if (e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) dy = -PAGE;
+        if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) dy = PAGE;
+        else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) dy = -PAGE;
         else if (e.key === 'Home') { e.preventDefault(); cp.scrollTo({ top: 0, behavior: 'smooth' }); return; }
         else if (e.key === 'End') { e.preventDefault(); cp.scrollTo({ top: cp.scrollHeight, behavior: 'smooth' }); return; }
         else return;
         e.preventDefault();
         cp.scrollBy({ top: dy, behavior: 'smooth' });
-      });
+      }, true);
     });
   </script>
 
