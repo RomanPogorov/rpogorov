@@ -449,9 +449,6 @@
     <div class="backdrop"></div>
 
     <!-- Showcase — basement slide with carousel of recent works -->
-    <div class="showcase-cue" id="showcase-cue" role="button" tabindex="0" aria-label="Open showcase" hidden>
-        <span class="showcase-cue-label">Showcase</span>
-    </div>
 
     <section class="showcase" id="showcase" aria-label="Recent works">
         <div class="showcase-inner">
@@ -1970,13 +1967,12 @@
     <!-- Showcase: down-arrow opens basement section with cases carousel -->
     <script>
         (() => {
-            const cue = document.getElementById('showcase-cue');
             const back = document.getElementById('showcase-back');
             const cases = document.getElementById('cases');
             const prev = document.getElementById('cases-prev');
             const next = document.getElementById('cases-next');
             const dotsList = document.getElementById('cases-dots');
-            if (!cue || !cases) return;
+            if (!cases) return;
             const items = Array.from(cases.querySelectorAll('.case'));
 
             // Build dots
@@ -2039,10 +2035,6 @@
                 indexForCase: (id) => items.findIndex(el => el.dataset.case === id),
                 setView,
             };
-            cue.addEventListener('click', open);
-            cue.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-            });
             back.addEventListener('click', close);
 
             // === Vertical drag: pull up from main → opens; pull down on the
