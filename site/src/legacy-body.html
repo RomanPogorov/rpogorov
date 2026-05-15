@@ -2092,12 +2092,10 @@
                     if (!isOpen) {
                         mode = 'open';
                     } else {
-                        // Only close if drag starts on the intro strip area.
-                        if (!introStrip || !introStrip.contains(e.target)
-                            && !e.target.classList.contains('showcase-intro')
-                            && !e.target.classList.contains('showcase-tag')
-                            && !e.target.classList.contains('showcase-sub')
-                            && !e.target.closest('.showcase-intro')) return;
+                        // Close-drag: anywhere in the top header zone of the
+                        // showcase — covers .showcase-intro on the left and the
+                        // empty band stretching right of the tabs. ~140px deep.
+                        if (e.clientY > 140) return;
                         mode = 'close';
                     }
                     active = true;
