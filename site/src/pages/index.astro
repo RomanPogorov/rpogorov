@@ -559,15 +559,20 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
       });
 
       // Wire "Showcase" crumb — pre-rendered bar bypasses legacy ensureCrumbsBar
-      // delegate, so we wire it ourselves. Closes case + opens showcase by-cases.
+      // delegate, so we wire it ourselves. Picks the showcase view based on what
+      // we're closing: company case (cs01/cs02) → BY COMPANY, sub-case → BY CASE.
       document.addEventListener('click', (e) => {
         const btn = e.target.closest('button[data-cp-crumb="showcase"]');
         if (!btn) return;
+        const openCase = document.querySelector('.case-page.open');
+        const isCompany = openCase && /^cs0\d+$/.test(openCase.dataset.casePage || '');
+        const targetView = isCompany ? 'company' : 'cases';
         window.__cp?.close?.();
         if (!document.body.classList.contains('showcase-open')) window.__sc?.open?.();
-        window.__sc?.setView?.('cases');
-        if (location.hash !== '#showcase/cases') {
-          history.pushState(null, '', '#showcase/cases');
+        window.__sc?.setView?.(targetView);
+        const hash = targetView === 'cases' ? '#showcase/cases' : '#showcase';
+        if (location.hash !== hash) {
+          history.pushState(null, '', hash);
         }
       });
 

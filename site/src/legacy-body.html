@@ -2190,11 +2190,15 @@
                 bar.addEventListener('click', (e) => {
                     const crumb = e.target.closest('button[data-cp-crumb="showcase"]');
                     if (!crumb) return;
+                    const openCase = document.querySelector('.case-page.open');
+                    const isCompany = openCase && /^cs0\d+$/.test(openCase.dataset.casePage || '');
+                    const targetView = isCompany ? 'company' : 'cases';
                     closeCase();
                     if (!body.classList.contains('showcase-open')) window.__sc?.open?.();
-                    window.__sc?.setView?.('cases');
-                    if (location.hash !== '#showcase/cases') {
-                        history.pushState(null, '', '#showcase/cases');
+                    window.__sc?.setView?.(targetView);
+                    const hash = targetView === 'cases' ? '#showcase/cases' : '#showcase';
+                    if (location.hash !== hash) {
+                        history.pushState(null, '', hash);
                     }
                 });
             }
