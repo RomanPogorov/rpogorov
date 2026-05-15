@@ -611,7 +611,7 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
       let upHoldFired = false;
       let downHoldTimer = null;
       let downHoldFired = false;
-      const HOLD_MS = 1500;
+      const HOLD_MS = 1000;
       function clearHolds() {
         if (upHoldTimer) { clearTimeout(upHoldTimer); upHoldTimer = null; }
         if (downHoldTimer) { clearTimeout(downHoldTimer); downHoldTimer = null; }
