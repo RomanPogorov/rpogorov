@@ -12141,3 +12141,34 @@
             max-width: none;
             margin: 0;
         }
+
+        /* cs02 — match legacy hs-h1 typography: Inter bold, larger size,
+           no glow shadow (HS has its own clean style). */
+        .cp-hs .dc-title {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-weight: 800;
+            font-size: clamp(2.5rem, 5.4vw, 4.75rem);
+            line-height: 1.04;
+            letter-spacing: -0.022em;
+            text-shadow: none;
+            margin: 0 0 24px;
+        }
+        .cp-hs .dc-title em {
+            color: var(--hs-red);
+            font-style: italic;
+            font-weight: 800;
+        }
+        .cp-hs .dc-desc {
+            font-size: 1.1875rem;
+            line-height: 1.55;
+            color: var(--hs-text-secondary);
+            margin: 0 0 28px;
+            max-width: 60ch;
+        }
+        .cp-hs .dc-meta-row {
+            margin-bottom: 18px;
+        }
+        .cp-hs .dc-meta-company {
+            color: var(--hs-text-muted);
+            font-weight: 600;
+        }
