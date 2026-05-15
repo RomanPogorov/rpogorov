@@ -10,6 +10,7 @@ interface Props {
   description?: string;
   bodyClass?: string;
   bodyTheme?: 'green' | 'cyan' | 'mono' | 'ember';
+  lang?: 'en' | 'ru';
 }
 
 const {
@@ -17,6 +18,7 @@ const {
   description,
   bodyClass = '',
   bodyTheme = 'green',
+  lang = 'en',
 } = Astro.props;
 
 const importMapJson = `{
@@ -36,12 +38,15 @@ const importMapJson = `{
 ---
 
 <!doctype html>
-<html lang="ru">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <link rel="alternate" hreflang="en" href="/rpogorov-dev/app/" />
+    <link rel="alternate" hreflang="ru" href="/rpogorov-dev/app/ru/" />
+    <link rel="alternate" hreflang="x-default" href="/rpogorov-dev/app/" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

@@ -25,27 +25,12 @@
 import Layout from '@layouts/Layout.astro';
 import Lightbox from '@components/case-rich/Lightbox.astro';
 import CaseHeader from '@components/case/CaseHeader.astro';
-import legacyBodyRaw from '../legacy-body.html?raw';
+import legacyBodyRaw from '../../legacy-body.html?raw';
 import { getCollection, render } from 'astro:content';
 
-// EN site — keep RU companies for slug-based lookups (cs01, cs02 ids),
-// but pick the EN-translated entry per company for render/data when
-// available. Falls back to RU original if EN twin doesn't exist yet.
-const _companiesRu = (await getCollection('companies')).sort(
+const companies = (await getCollection('companies')).sort(
   (a, b) => a.data.order - b.data.order
 );
-const _companiesEn = (await getCollection('companiesEn')).sort(
-  (a, b) => a.data.order - b.data.order
-);
-function pickByLang(ruEntry: any) {
-  return _companiesEn.find((e) => e.data.id === ruEntry.data.id) ?? ruEntry;
-}
-const companies = _companiesRu;
-const localized = (id: string) => {
-  const ru = _companiesRu.find((c) => c.id === id);
-  if (!ru) return null;
-  return pickByLang(ru);
-};
 const subCases = (await getCollection('cases')).sort(
   (a, b) => a.data.order - b.data.order
 );
@@ -75,11 +60,11 @@ const tasks = rightPanel.filter((e) => e.data.kind === 'pain');
 const strengths = rightPanel.filter((e) => e.data.kind === 'strength');
 const releases = rightPanel.filter((e) => e.data.kind === 'release');
 
-const cs01 = localized('cs01');
+const cs01 = companies.find((c) => c.id === 'cs01');
 const cs01Render = cs01 ? await render(cs01) : null;
 const Cs01Content = cs01Render?.Content ?? null;
 
-const cs02 = localized('cs02');
+const cs02 = companies.find((c) => c.id === 'cs02');
 const cs02Render = cs02 ? await render(cs02) : null;
 const Cs02Content = cs02Render?.Content ?? null;
 
@@ -131,18 +116,16 @@ const OVERLAY_ID: Record<string, string> = {
   cs02: 'cs02',
 };
 
-const cardsHtml = _companiesRu
-  .map((ruEntry, i) => {
-    const c = pickByLang(ruEntry);
+const cardsHtml = companies
+  .map((c, i) => {
     const d = c.data;
-    const slug = ruEntry.id;
     const title = d.showcaseTitle ?? d.title;
     const desc = d.showcaseDesc ?? d.desc;
     const tags = d.showcaseTags ?? d.tags;
     const tools = d.showcaseTools ?? [];
     const thumb = d.thumb ?? '';
     const embed = d.showcaseEmbed ?? '';
-    const overlayId = OVERLAY_ID[slug];
+    const overlayId = OVERLAY_ID[c.id];
 
     const baseMediaCls = overlayId ? 'case-media is-openable' : 'case-media';
     const mediaCls = embed ? `${baseMediaCls} has-embed` : baseMediaCls;
@@ -162,14 +145,14 @@ const cardsHtml = _companiesRu
       : `<img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`;
     const cardAccent = companyAccentStyle(d);
     const cardStyle = cardAccent ? ` style="${cardAccent}"` : '';
-    return `<article class="case" data-case="${slug}"${cardStyle}>
+    return `<article class="case" data-case="${c.id}"${cardStyle}>
       <div class="${mediaCls}"${mediaTrigger}>
         ${mediaInner}
         ${openCue}
       </div>
       <div class="case-body">
         <div class="case-head">
-          <span class="case-no">${caseLabel(slug, i)}</span>
+          <span class="case-no">${caseLabel(c.id, i)}</span>
           <span class="case-role">${escapeHtml(d.duration ? `${d.role} · ${d.duration}` : d.role)}</span>
         </div>
         <h3 class="case-title">${withEm(title)}</h3>
@@ -296,7 +279,7 @@ const cs01AccentStyle = companyAccentStyle(cs01Data);
 const cs02AccentStyle = companyAccentStyle(cs02Data);
 ---
 
-<Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate" lang="en">
+<Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate" lang="ru">
   <script is:inline set:html={`window.__RIGHT_PANEL_DETAIL = ${JSON.stringify(detailDict)};`}></script>
   <script is:inline set:html={`window.__ARTICLES = ${JSON.stringify(articlesData)};`}></script>
   <Fragment set:html={legacyBefore} />

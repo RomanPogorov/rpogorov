@@ -57,9 +57,7 @@ const cases = defineCollection({
   }),
 });
 
-const companies = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/companies' }),
-  schema: z.object({
+const companiesSchema = z.object({
     id: z.string(),
     name: z.string(),
     role: z.string(),
@@ -87,7 +85,16 @@ const companies = defineCollection({
         z.object({ hex: z.string(), rgb: z.string() }),
       ])
       .optional(),
-  }),
+  });
+
+const companies = defineCollection({
+  loader: glob({ pattern: ['**/*.{md,mdx}', '!**/*.en.{md,mdx}'], base: './src/content/companies' }),
+  schema: companiesSchema,
+});
+
+const companiesEn = defineCollection({
+  loader: glob({ pattern: '**/*.en.{md,mdx}', base: './src/content/companies' }),
+  schema: companiesSchema,
 });
 
 const articles = defineCollection({
@@ -146,4 +153,4 @@ const rightPanel = defineCollection({
   }),
 });
 
-export const collections = { cases, articles, companies, rightPanel };
+export const collections = { cases, articles, companies, companiesEn, rightPanel };
