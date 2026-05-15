@@ -12232,3 +12232,231 @@
             color: rgba(var(--hs-red-rgb), 0.55);
             font-weight: 700;
         }
+
+        /* ============ TIMELINE3 — clean Gantt grid, themed via --acc =====
+           Mirrors cs02 HS timeline visual but uses case accent color so it
+           works for any cs0X via inheriting from .case-page styles. */
+        .tl3-wrap {
+            margin: 24px 0 56px;
+        }
+        .tl3-head { margin-bottom: 24px; }
+        .tl3-eyebrow {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--acc);
+            margin-bottom: 16px;
+        }
+        .tl3-h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+            font-weight: 700;
+            line-height: 1.18;
+            letter-spacing: -0.012em;
+            color: var(--ink);
+            margin: 0 0 12px;
+        }
+        .tl3-h2 em { color: var(--acc); font-style: normal; }
+        .tl3-sub {
+            font-size: 1rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 60ch;
+            margin: 0;
+        }
+        .tl3-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 28px 28px 26px;
+            overflow: hidden;
+        }
+        .tl3-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                rgba(var(--acc-rgb), 0) 0%,
+                rgba(var(--acc-rgb), 0.35) 50%,
+                rgba(var(--acc-rgb), 0) 100%);
+        }
+        .tl3-headstrip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+            margin-bottom: 18px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .tl3-stamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            color: rgba(255, 255, 255, 0.55);
+        }
+        .tl3-stamp b { color: var(--acc); font-weight: 600; }
+        .tl3-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.65);
+        }
+        .tl3-legend-item { display: inline-flex; align-items: center; gap: 8px; }
+        .tl3-sw {
+            display: inline-block;
+            width: 14px; height: 10px;
+            border-radius: 2px;
+        }
+        .tl3-sw--primary { background: var(--acc); }
+        .tl3-sw--product {
+            background: rgba(var(--acc-rgb), 0.12);
+            border: 1px solid rgba(var(--acc-rgb), 0.42);
+        }
+        .tl3-sw--bg {
+            background: repeating-linear-gradient(45deg,
+                rgba(255,255,255,0.05) 0 4px,
+                rgba(255,255,255,0.12) 4px 8px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .tl3-sw--short {
+            background: rgba(var(--acc-rgb), 0.06);
+            border: 1px dashed rgba(var(--acc-rgb), 0.5);
+        }
+        .tl3-grid { display: flex; flex-direction: column; gap: 4px; }
+        .tl3-row {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 12px;
+            align-items: stretch;
+            min-height: 40px;
+        }
+        .tl3-row--head .tl3-label,
+        .tl3-row--head .tl3-track {
+            min-height: 0;
+        }
+        .tl3-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8125rem;
+            color: rgba(255, 255, 255, 0.85);
+            padding: 4px 12px 4px 0;
+        }
+        .tl3-dash {
+            display: inline-block;
+            width: 10px;
+            height: 1px;
+            background: var(--acc);
+            flex-shrink: 0;
+        }
+        .tl3-name { flex: 1; min-width: 0; }
+        .tl3-sub-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            color: rgba(255, 255, 255, 0.4);
+            flex-shrink: 0;
+        }
+        .tl3-track {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(var(--tl3-cols, 8), 1fr);
+            background:
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / calc(100% / var(--tl3-cols, 8)) 100%;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            min-height: 30px;
+        }
+        .tl3-row--head .tl3-track {
+            background: none;
+            border: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 0;
+        }
+        .tl3-quarter {
+            grid-column: var(--c) / span 1;
+            padding: 6px 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.45);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .tl3-quarter:first-child { border-left: 0; }
+        .tl3-quarter.is-now { color: var(--acc); }
+        .tl3-now {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 7px;
+            background: var(--acc);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.5625rem;
+            letter-spacing: 0.22em;
+            border-radius: 3px;
+        }
+        .tl3-bar {
+            grid-column: var(--s) / calc(var(--e) + 1);
+            align-self: center;
+            margin: 4px 4px;
+            padding: 6px 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: default;
+            position: relative;
+            border-radius: 4px;
+            transition: transform 0.18s ease, filter 0.18s ease;
+        }
+        .tl3-bar:hover { transform: translateY(-1px); filter: brightness(1.08); z-index: 2; }
+        .tl3-bar--primary {
+            background: var(--acc);
+            color: #fff;
+            font-weight: 600;
+        }
+        .tl3-bar--product {
+            background: rgba(var(--acc-rgb), 0.12);
+            border: 1px solid rgba(var(--acc-rgb), 0.42);
+            color: var(--ink);
+        }
+        .tl3-bar--bg {
+            background: repeating-linear-gradient(45deg,
+                rgba(255,255,255,0.03) 0 5px,
+                rgba(255,255,255,0.08) 5px 10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .tl3-bar--short {
+            background: rgba(var(--acc-rgb), 0.06);
+            border: 1px dashed rgba(var(--acc-rgb), 0.5);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        @media (max-width: 768px) {
+            .tl3-row { grid-template-columns: 1fr; }
+            .tl3-row--head { display: none; }
+            .tl3-label { padding: 8px 0 4px; }
+        }

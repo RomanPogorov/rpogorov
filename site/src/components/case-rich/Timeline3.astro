@@ -1,0 +1,116 @@
+---
+/**
+ * Timeline3 — clean Gantt-style grid (ported from cs02 legacy HS timeline).
+ * Same data shape as Timeline2 (streams with bars, fractional s/e), but
+ * rendered as the cleaner card layout with legend strip, labelled
+ * quarters and discrete bars. Themed via var(--acc) — no hardcoded HS red.
+ */
+interface T3Bar {
+  s: number;
+  e: number;
+  kind?: 'primary' | 'pair' | 'side';
+  label: string;
+  title?: string;
+}
+interface T3Stream {
+  sub: string;
+  name: string;
+  bars: T3Bar[];
+}
+interface Props {
+  eyebrow?: string;
+  heading?: string;
+  headingEm?: string;
+  sub?: string;
+  stamp?: string;
+  quarters: string[];
+  nowIdx?: number;
+  streams: T3Stream[];
+  legend?: { label: string; kind: 'primary' | 'pair' | 'side' | 'short' }[];
+}
+
+const {
+  eyebrow = 'Timeline',
+  heading = '',
+  headingEm = '',
+  sub = '',
+  stamp = '',
+  quarters,
+  nowIdx,
+  streams,
+  legend = [
+    { label: 'Основное направление',  kind: 'primary' },
+    { label: 'Работа над продуктом',   kind: 'pair'    },
+    { label: 'Идёт фоном',             kind: 'side'    },
+  ],
+} = Astro.props as Props;
+
+const colCount = quarters.length;
+const kindClass: Record<string, string> = {
+  primary: 'tl3-bar--primary',
+  pair:    'tl3-bar--product',
+  side:    'tl3-bar--bg',
+  short:   'tl3-bar--short',
+};
+function colStart(v: number) { return Math.max(1, Math.round(v)); }
+function colEnd(v: number)   { return Math.max(colStart(v) + 1, Math.round(v) + 1); }
+---
+
+<section class="tl3-wrap" aria-label="Timeline">
+  {(eyebrow || heading || sub) && (
+    <div class="tl3-head">
+      {eyebrow && <span class="tl3-eyebrow">{eyebrow}</span>}
+      {(heading || headingEm) && (
+        <h2 class="tl3-h2">{heading} {headingEm && <em>{headingEm}</em>}</h2>
+      )}
+      {sub && <p class="tl3-sub">{sub}</p>}
+    </div>
+  )}
+
+  <div class="tl3-card">
+    <div class="tl3-headstrip">
+      <div class="tl3-stamp" set:html={stamp}></div>
+      <div class="tl3-legend">
+        {legend.map((l) => (
+          <span class="tl3-legend-item">
+            <i class={`tl3-sw tl3-sw--${l.kind}`}></i> {l.label}
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <div class="tl3-grid" style={`--tl3-cols: ${colCount};`}>
+      <div class="tl3-row tl3-row--head">
+        <div class="tl3-label" aria-hidden="true"></div>
+        <div class="tl3-track">
+          {quarters.map((q, i) => (
+            <div class={`tl3-quarter${i === nowIdx ? ' is-now' : ''}`} style={`--c: ${i + 1}`}>
+              {q}{i === nowIdx && <span class="tl3-now">NOW</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {streams.map((s, idx) => (
+        <div class="tl3-row" style={`--tl3-delay: ${(idx + 1) * 60}ms;`}>
+          <div class="tl3-label">
+            <span class="tl3-dash"></span>
+            <span class="tl3-name">{s.name}</span>
+            <span class="tl3-sub-num">{s.sub}</span>
+          </div>
+          <div class="tl3-track">
+            {s.bars.map((b) => (
+              <div
+                class={`tl3-bar ${kindClass[b.kind || 'primary']}`}
+                style={`--s: ${colStart(b.s)}; --e: ${colEnd(b.e) - 1};`}
+                title={b.title || b.label}
+              >
+                {b.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
