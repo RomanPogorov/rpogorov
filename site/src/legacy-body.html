@@ -2200,8 +2200,10 @@
                 cases.style.cursor = 'grab';
                 cases.addEventListener('pointerdown', (e) => {
                     if (e.button !== 0 && e.pointerType === 'mouse') return;
-                    if (e.target.closest('[data-open-case], .case-open-btn, button, a, input, textarea, .showcase-back, .showcase-intro, .sc-tab')) return;
-                    // Skip if vertical close-drag zone of the showcase top bar.
+                    // Buttons/links inside the card still get their own click;
+                    // body areas (image, title, description) initiate drag.
+                    if (e.target.closest('.case-open-btn, button, a, input, textarea')) return;
+                    // Skip vertical close-drag zone of the showcase top bar.
                     if (document.body.classList.contains('showcase-open') && e.clientY <= 140) return;
                     down = true;
                     dragged = false;
