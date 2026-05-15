@@ -11898,18 +11898,18 @@
            it floats outside the content column without subtracting width.
            cp-inner is 980px max-width centered; the rail sits to the left
            of cp-inner's left edge in the page gutter. */
-        .cp-sb-layout { position: relative; }
+        .cp-sb-layout {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 240px;
+            gap: 32px;
+        }
         .cp-sb-main { min-width: 0; }
         .cp-sb-mobile { display: none; }
 
         .cp-sb-rail {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 240px;
-            /* Right rail: 32px gap from cnt-body + 240 sidebar + 40 cp-inner pad = 312. */
-            right: -312px;
-            left: auto;
+            position: relative;
+            min-width: 0;
             pointer-events: auto;
         }
         .cp-sb-sticky {
