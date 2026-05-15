@@ -106,7 +106,7 @@ function companyAccentStyle(d: any): string | undefined {
   if (!a) return undefined;
   const resolved = typeof a === 'string' ? COMPANY_ACCENT_PRESETS[a] : a;
   if (!resolved) return undefined;
-  return `--acc: ${resolved.hex}; --acc-rgb: ${resolved.rgb}; --dim: rgba(${resolved.rgb}, 0.55);`;
+  return `--acc: ${resolved.hex}; --acc-rgb: ${resolved.rgb}; --dim: ${resolved.hex};`;
 }
 
 // cs0X cards with a deep overlay wired up. cs01 → MDX overlay below;
