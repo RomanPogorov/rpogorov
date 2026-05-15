@@ -12172,3 +12172,17 @@
             color: var(--hs-text-muted);
             font-weight: 600;
         }
+
+        /* cs02: undo the fullbleed escape on hs-* wide blocks — now that
+           .cp-hs .cnt-body spans the full cp-inner column (1280px), the
+           bento and timeline already have enough room. The fullbleed rule
+           in Layout.astro would push them out to 100vw on top of that. */
+        .case-page.cp-hs .cnt-body > .hs-grid-overview,
+        .case-page.cp-hs .cnt-body > .hs-timeline-wrap,
+        .case-page.cp-hs .cnt-body > .hs-hero,
+        .case-page.cp-hs .cnt-body > .hs-toc-layout {
+            margin-left: 0;
+            margin-right: 0;
+            width: auto;
+            max-width: none;
+        }
