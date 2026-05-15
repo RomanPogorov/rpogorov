@@ -11898,18 +11898,19 @@
            it floats outside the content column without subtracting width.
            cp-inner is 980px max-width centered; the rail sits to the left
            of cp-inner's left edge in the page gutter. */
-        .cp-sb-layout {
-            position: relative;
-            display: grid;
-            grid-template-columns: 1fr 240px;
-            gap: 32px;
-        }
+        .cp-sb-layout { position: relative; }
         .cp-sb-main { min-width: 0; }
         .cp-sb-mobile { display: none; }
 
         .cp-sb-rail {
-            position: relative;
-            min-width: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 240px;
+            /* Right gutter outside cp-inner. cp-inner padding-right: 40px,
+               so rail sits 32px to the right of the content column. */
+            right: -312px;
+            left: auto;
             pointer-events: auto;
         }
         .cp-sb-sticky {
@@ -12107,16 +12108,7 @@
             cursor: pointer;
         }
 
-        /* cs02 (Health Samurai) — widen content column to match legacy
-           1280px grid. Generic .cp-inner is 980/40; HS legacy uses 1280/64. */
-        .cp-hs .cp-inner {
-            max-width: 1280px;
-            padding-left: 64px;
-            padding-right: 64px;
-        }
-        @media (max-width: 768px) {
-            .cp-hs .cp-inner { padding-left: 24px; padding-right: 24px; }
-        }
+        /* cs02 — use same cp-inner width as cs01 (default 980/40). */
 
         /* cs02 — zero out hs-* inner gutters (they would double over .cp-inner). */
         .cp-hs .hs-meta-row,
