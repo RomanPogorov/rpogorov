@@ -12186,3 +12186,21 @@
             width: auto;
             max-width: none;
         }
+
+        /* cs02: meta-row styled as a secondary eyebrow strip — picks up
+           the accent color from HEALTH SAMURAI eyebrow above it. */
+        .cp-hs .hs-meta-row {
+            color: var(--hs-red);
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+        }
+        .cp-hs .hs-meta-row .hs-meta-item {
+            color: rgba(var(--hs-red-rgb), 0.85);
+        }
+        .cp-hs .hs-meta-row .hs-meta-item strong {
+            color: var(--hs-text);
+            font-weight: 700;
+        }
+        .cp-hs .hs-meta-row .hs-meta-dot {
+            background: rgba(var(--hs-red-rgb), 0.55);
+        }
