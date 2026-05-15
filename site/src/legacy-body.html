@@ -1,4 +1,33 @@
 
+    <!-- Language toggle: top-right pill. Persists via localStorage 'lang'. -->
+    <div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-lang-set="ru" aria-pressed="true">RU</button>
+        <button type="button" data-lang-set="en" aria-pressed="false">EN</button>
+    </div>
+    <script>
+        (() => {
+            const saved = (() => { try { return localStorage.getItem('lang'); } catch { return null; } })();
+            const initial = saved === 'en' ? 'en' : 'ru';
+            const apply = (lang) => {
+                document.body.classList.toggle('lang-en', lang === 'en');
+                document.body.classList.toggle('lang-ru', lang === 'ru');
+                document.documentElement.setAttribute('lang', lang);
+                document.querySelectorAll('.lang-toggle button[data-lang-set]').forEach(b => {
+                    const on = b.dataset.langSet === lang;
+                    b.classList.toggle('is-active', on);
+                    b.setAttribute('aria-pressed', String(on));
+                });
+                try { localStorage.setItem('lang', lang); } catch {}
+            };
+            apply(initial);
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest?.('.lang-toggle button[data-lang-set]');
+                if (!btn) return;
+                apply(btn.dataset.langSet);
+            });
+        })();
+    </script>
+
     <!-- Perf HUD: hidden by default, enable with ?perf=1 in URL (e.g. clauderunner.com/rpogorov/?perf=1). -->
     <div class="perf-hud" id="perf-hud" hidden>
         <span class="perf-fps">— fps</span>
@@ -2362,7 +2391,9 @@
             }
 
             function openCase(id, opts) {
-                const page = document.querySelector(`.case-page[data-case-page="${id}"]`);
+                const lang = document.body.classList.contains('lang-en') ? 'en' : 'ru';
+                let page = document.querySelector(`.case-page[data-case-page="${id}"][data-lang="${lang}"]`);
+                if (!page) page = document.querySelector(`.case-page[data-case-page="${id}"]`);
                 if (!page) return;
                 ensureCrumbsBar(page);
                 pages.forEach(p => p.classList.toggle('open', p === page));
