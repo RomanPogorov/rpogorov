@@ -12231,3 +12231,16 @@
             color: rgba(var(--hs-red-rgb), 0.55);
             font-weight: 700;
         }
+
+        /* cs02: timeline at top — full-bleed (user wants it spanning
+           the viewport, not constrained to cp-inner). */
+        .case-page.cp-hs .cnt-body > .hs-timeline-wrap {
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            width: 100vw;
+            max-width: 100vw;
+        }
+        /* Push sidebar nav inward from the viewport right edge. */
+        .cp-hs .cp-sb-rail {
+            padding-right: 24px;
+        }
