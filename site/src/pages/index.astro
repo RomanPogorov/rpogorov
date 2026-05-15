@@ -606,6 +606,21 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
 
       // Arrow / Page keys scroll the open case-page (capture-phase so this
       // wins over any inner handlers, and works without click-to-focus).
+      // Holding ArrowUp for 1.5s smooth-scrolls to top; ArrowDown to bottom.
+      let upHoldTimer = null;
+      let upHoldFired = false;
+      let downHoldTimer = null;
+      let downHoldFired = false;
+      const HOLD_MS = 1500;
+      function clearHolds() {
+        if (upHoldTimer) { clearTimeout(upHoldTimer); upHoldTimer = null; }
+        if (downHoldTimer) { clearTimeout(downHoldTimer); downHoldTimer = null; }
+        upHoldFired = false;
+        downHoldFired = false;
+      }
+      document.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') clearHolds();
+      }, true);
       document.addEventListener('keydown', (e) => {
         if (!document.body.classList.contains('case-open')) return;
         if (document.querySelector('.am-lightbox.open, .dc-lightbox.is-open')) return;
@@ -614,6 +629,26 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
         const cp = document.querySelector('.case-page.open');
         if (!cp) return;
         const PAGE = Math.max(cp.clientHeight - 80, 200);
+
+        if (e.key === 'ArrowUp' && !e.repeat) {
+          clearHolds();
+          upHoldTimer = setTimeout(() => {
+            upHoldFired = true;
+            cp.scrollTo({ top: 0, behavior: 'smooth' });
+          }, HOLD_MS);
+        }
+        if (e.key === 'ArrowDown' && !e.repeat) {
+          clearHolds();
+          downHoldTimer = setTimeout(() => {
+            downHoldFired = true;
+            cp.scrollTo({ top: cp.scrollHeight, behavior: 'smooth' });
+          }, HOLD_MS);
+        }
+        if ((e.key === 'ArrowUp' && upHoldFired) || (e.key === 'ArrowDown' && downHoldFired)) {
+          e.preventDefault();
+          return;
+        }
+
         let dy = 0;
         if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) dy = PAGE;
         else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) dy = -PAGE;
@@ -621,7 +656,7 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
         else if (e.key === 'End') { e.preventDefault(); cp.scrollTo({ top: cp.scrollHeight, behavior: 'smooth' }); return; }
         else return;
         e.preventDefault();
-        cp.scrollBy({ top: dy, behavior: 'smooth' });
+        if (!e.repeat) cp.scrollBy({ top: dy, behavior: 'smooth' });
       }, true);
     });
   </script>
