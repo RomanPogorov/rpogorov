@@ -1665,7 +1665,7 @@
             appearance: none;
             background: transparent;
             border: 1px solid rgba(var(--ui-acc-rgb), 0.3);
-            color: var(--dim);
+            color: rgba(var(--ui-acc-rgb), 0.7);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.5625rem;
             letter-spacing: 0.35em;
