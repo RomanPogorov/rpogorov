@@ -82,12 +82,17 @@ const importMapJson = `{
   .cnt-body .cp-timeline-list,
   .cnt-body .cp-timeline-list li,
   .cnt-body .am-deeplinks,
-  .cnt-body .am-deeplinks > a,
   .cnt-body .am-plans,
-  .cnt-body .am-plans > div,
-  .cnt-body .am-gallery,
-  .cnt-body .am-gallery > figure {
+  .cnt-body .am-gallery {
     padding-left: 0;
+    margin-bottom: 0;
+  }
+  /* Don't strip padding from the inner cards themselves — they each
+     declare their own padding (16-20px). The generic reset above was
+     stripping the cards along with the wrapper, gluing text to the edge. */
+  .cnt-body .am-deeplinks > a,
+  .cnt-body .am-plans > div,
+  .cnt-body .am-gallery > figure {
     margin-bottom: 0;
   }
   .cnt-body .cp-timeline-list li::before,
