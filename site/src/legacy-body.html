@@ -5337,6 +5337,36 @@
         (() => {
             const page = document.getElementById('case-page-cs02');
             if (!page) return;
+            // Helper: smooth-scroll the case page to a sub-section id.
+            const smoothJump = (id) => {
+                const target = document.getElementById(id);
+                if (!target) return;
+                const top = target.offsetTop - 24;
+                page.scrollTo({ top, behavior: 'smooth' });
+            };
+            // Bento grid cards always wire up — they exist even when TOC doesn't.
+            page.querySelectorAll('[data-grid-target]').forEach(card => {
+                if (card.__gtBound) return;
+                card.__gtBound = true;
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    smoothJump(card.dataset.gridTarget);
+                    window.__router?.set({ case: 'cs02', sub: card.dataset.gridTarget });
+                });
+            });
+            // Same for the "Start with the system" CTA which links to #hs-01.
+            page.querySelectorAll('a.hs-cta[href^="#hs-"]').forEach(a => {
+                if (a.__ctaBound) return;
+                a.__ctaBound = true;
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const id = a.getAttribute('href').slice(1);
+                    smoothJump(id);
+                    window.__router?.set({ case: 'cs02', sub: id });
+                });
+            });
             const tocLinks = Array.from(page.querySelectorAll('.hs-toc a[data-toc-target]'));
             if (!tocLinks.length) return;
             const sections = tocLinks
@@ -5377,26 +5407,11 @@
             }, { root: page, rootMargin: '-20% 0px -40% 0px', threshold: 0 });
             sections.forEach(s => io.observe(s));
 
-            const smoothJump = (id) => {
-                const target = document.getElementById(id);
-                if (!target) return;
-                const top = target.offsetTop - 24;
-                page.scrollTo({ top, behavior: 'smooth' });
-            };
-
             tocLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     smoothJump(link.dataset.tocTarget);
                     window.__router?.set({ case: 'cs02', sub: link.dataset.tocTarget });
-                });
-            });
-
-            page.querySelectorAll('[data-grid-target]').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    smoothJump(card.dataset.gridTarget);
-                    window.__router?.set({ case: 'cs02', sub: card.dataset.gridTarget });
                 });
             });
 
