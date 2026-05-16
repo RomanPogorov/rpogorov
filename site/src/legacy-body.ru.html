@@ -51,7 +51,7 @@
     </svg>
 
     <!-- Audio gate: requests permission for sound on entry -->
-    <div class="audio-gate" id="audio-gate" role="dialog" aria-label="Разрешение звука">
+    <div class="audio-gate" id="audio-gate" role="dialog" aria-label="Разрешение на звук">
         <div class="audio-gate-bg"></div>
         <div class="audio-gate-frame">
             <span class="audio-gate-corner tl"></span>
@@ -60,7 +60,7 @@
             <span class="audio-gate-corner br"></span>
             <div class="audio-gate-label">// audio link</div>
             <h2 class="audio-gate-title">ВКЛЮЧИТЬ ЗВУК</h2>
-            <div class="audio-gate-desc">ambient track · interface beeps · ui feedback</div>
+            <div class="audio-gate-desc">ambient track · интерфейсные сигналы · ui feedback</div>
             <div class="audio-gate-actions">
                 <button class="audio-gate-btn primary" id="audio-gate-enable" type="button">▶ Принять</button>
                 <button class="audio-gate-btn ghost" id="audio-gate-mute" type="button">Тихий режим</button>
@@ -144,7 +144,7 @@
     <!-- Top-center mini Gantt strip — opens the full hologram timeline modal -->
     <button type="button" class="ctl-fab" id="career-tl-btn" aria-haspopup="dialog" aria-controls="career-tl-modal" aria-label="Открыть карьерный timeline">
         <div class="ctl-fab-head">
-            <span class="ctl-fab-eyebrow">// мой карьерный трек</span>
+            <span class="ctl-fab-eyebrow">// мой карьерный путь</span>
             <span class="ctl-fab-cta"><b>2014 → 2026</b></span>
         </div>
 
@@ -157,7 +157,7 @@
         </div>
     </button>
 
-    <!-- Карьера timeline hologram modal -->
+    <!-- Career timeline hologram modal -->
     <div class="ctl-modal" id="career-tl-modal" role="dialog" aria-modal="true" aria-labelledby="career-tl-title" hidden>
         <div class="ctl-pane" data-ctl-pane>
             <button type="button" class="ctl-close" id="career-tl-close" aria-label="Закрыть timeline">ESC</button>
@@ -177,11 +177,11 @@
                     <button type="button" class="ctl-co is-active" data-role="americor" style="--s: 12; --e: 13;" aria-label="Americor">Americor</button>
                 </div>
 
-                <span class="ctl-axis-tag">// побочные проекты · part-time</span>
+                <span class="ctl-axis-tag">// side projects · part-time</span>
                 <div class="ctl-axis-row ctl-axis-row--side" data-ctl-row="side">
                     <button type="button" class="ctl-co ctl-co--side" data-role="code-we-trust" style="--s: 6; --e: 7;" aria-label="Code We Trust">Code We Trust</button>
                     <button type="button" class="ctl-co ctl-co--side" data-role="oort-digital" style="--s: 8; --e: 9;" aria-label="Oort Digital">Oort Digital</button>
-                    <button type="button" class="ctl-co ctl-co--side" data-role="pavilion" style="--s: 10; --e: 11;" aria-label="Павильон">Павильон</button>
+                    <button type="button" class="ctl-co ctl-co--side" data-role="pavilion" style="--s: 10; --e: 11;" aria-label="Pavilion">Pavilion</button>
                 </div>
 
                 <div class="ctl-axis-years">
@@ -213,7 +213,7 @@
     <!-- HUD -->
     <div class="hud">
         <div class="corner bl">
-            <!-- Настройки hide behind a single cog button. Click expands a popover with mute toggle,
+            <!-- Settings hide behind a single cog button. Click expands a popover with mute toggle,
                  theme dots and A− / A+ text-size controls. -->
             <div class="settings-cog">
                 <button type="button" class="settings-cog-btn" id="settings-cog-btn" aria-label="Настройки" aria-expanded="false">
@@ -255,7 +255,7 @@
                     </div>
                     <div class="settings-row">
                         <span class="settings-row-label">// text shadow</span>
-                        <button type="button" class="text-scale-btn shadow-toggle-btn" id="shadow-toggle" aria-pressed="true">ВКЛ</button>
+                        <button type="button" class="text-scale-btn shadow-toggle-btn" id="shadow-toggle" aria-pressed="true">ON</button>
                     </div>
                 </div>
             </div>
@@ -263,7 +263,7 @@
 
             <!-- Signal-of-the-simulation slider — drives --sim-signal CSS var -->
             <div class="sim-signal" role="group" aria-label="Сигнал симуляции">
-                <span class="sim-signal-label">// signal</span>
+                <span class="sim-signal-label">// сигнал</span>
                 <div class="sim-signal-track">
                     <span class="sim-signal-fill" aria-hidden="true"></span>
                     <span class="sim-signal-thumb" aria-hidden="true"></span>
@@ -280,16 +280,16 @@
                 <div class="corner tr agents-feed">
                     <div class="welcome-block">
                         <span class="agents-clock" id="clock">00:00:00</span>
-                        <p class="welcome-text"><strong>Привет, незнакомец!</strong><br>Ты в рабочем пространстве <em>дизайнер, который ждал своей технологии</em>. Пятнадцать лет в дизайне, последние два как <em>product shipper на грани design и code</em> — Figma теперь мой скетчбук, прототип живёт в production.</p>
+                        <p class="welcome-text"><strong>Эй, незнакомец!</strong><br>Ты в рабочем пространстве <em>дизайнер, который дождался своей технологии</em>. Пятнадцать лет в дизайне, последние два как <em>продуктовый shipper на стыке дизайна и кода</em> — Figma теперь мой скетчбук, прототип живёт в production.</p>
                     </div>
 
                     <div class="tasks-block">
-                        <span class="label sub">// я тебе нужен, если</span>
+                        <span class="label sub">// ты нужен мне если</span>
                         <ul class="tasks-list" id="tasks-list">
                             <li class="task-item" data-id="pain-ai-paralysis" tabindex="0"><span class="task-text">Не знаешь, что делать с AI — все хайпят, ничего не понятно.</span></li>
                             <li class="task-item" data-id="pain-language-gap" tabindex="0"><span class="task-text">Инженеры и дизайнеры говорят на разных языках.</span></li>
-                            <li class="task-item" data-id="pain-orphan-prototypes" tabindex="0"><span class="task-text">У каждого дизайнера есть свой прототип, которым больше никто не пользуется.</span></li>
-                            <li class="task-item" data-id="pain-talk-no-ship" tabindex="0"><span class="task-text">Все любят говорить об AI — никто реально не запускает.</span></li>
+                            <li class="task-item" data-id="pain-orphan-prototypes" tabindex="0"><span class="task-text">У каждого дизайнера свой прототип, которым никто больше не пользуется.</span></li>
+                            <li class="task-item" data-id="pain-talk-no-ship" tabindex="0"><span class="task-text">Все любят говорить об AI — никто реально его не отгружает.</span></li>
                         </ul>
                     </div>
 
@@ -300,15 +300,15 @@
                                 <span class="agent-dot"></span>
                                 <div class="agent-body">
                                     <div class="agent-name">CODE × DESIGN <span class="agent-tag">// гипотезы</span></div>
-                                    <div class="agent-task" data-task>много гипотез → выбор идеального UX</div>
-                                    <div class="agent-meta" data-meta>быстрые итерации на реальных прототипах, а не слайдах</div>
+                                    <div class="agent-task" data-task>множество гипотез → выбор идеального UX</div>
+                                    <div class="agent-meta" data-meta>быстрая итерация на реальных прототипах, не слайдах</div>
                                 </div>
                             </li>
                             <li class="agent-item" data-id="prototypes">
                                 <span class="agent-dot"></span>
                                 <div class="agent-body">
                                     <div class="agent-name">НАСТОЯЩИЕ ПРОТОТИПЫ <span class="agent-tag">// production</span></div>
-                                    <div class="agent-task" data-task>создание прототипов, которые становятся production</div>
+                                    <div class="agent-task" data-task>создаю прототипы, которые становятся production</div>
                                     <div class="agent-meta" data-meta>code-first → handoff остаётся консистентным</div>
                                 </div>
                             </li>
@@ -316,15 +316,15 @@
                                 <span class="agent-dot"></span>
                                 <div class="agent-body">
                                     <div class="agent-name">FIGMA + AI <span class="agent-tag">// multitool</span></div>
-                                    <div class="agent-task" data-task>глубокое погружение в figma + ai multitooling</div>
-                                    <div class="agent-meta" data-meta>token sync, claude skills, автоматизация</div>
+                                    <div class="agent-task" data-task>глубокая работа в Figma + ai multitooling</div>
+                                    <div class="agent-meta" data-meta>token sync, claude skills, automation</div>
                                 </div>
                             </li>
                         </ul>
                     </div>
 
                     <div class="releases-block">
-                        <span class="label">// недавние работы</span>
+                        <span class="label">// последние работы</span>
                         <ul class="releases-list" id="releases-list">
                             <li class="release-item" data-id="americor" tabindex="0">
                                 <div class="release-meta-row">
@@ -332,7 +332,7 @@
                                     <span class="release-date">2023 — 2025</span>
                                 </div>
                                 <div class="release-name">Americor · FinTech</div>
-                                <div class="release-summary">Мультибрендовая платформа для урегулирования долгов. 4-слойная DS для iOS / Android / Web, редизайн к IPO, code-first прототипы, внутренний Facebook analyzer + NSF simulator.</div>
+                                <div class="release-summary">Мультибрендовая платформа реструктуризации долгов. 4-слойная DS для iOS / Android / Web, редизайн под IPO, code-first прототипы, внутренний Facebook analyzer + NSF simulator.</div>
                             </li>
                             <li class="release-item" data-id="health-samurai" tabindex="0">
                                 <div class="release-meta-row">
@@ -340,7 +340,7 @@
                                     <span class="release-date">2024 — сейчас</span>
                                 </div>
                                 <div class="release-name">Health Samurai · Healthcare IT</div>
-                                <div class="release-summary">FHIR-native инфраструктура. Design system shadCN синхронизирована Figma↔code через Claude skill, платформа лендингов 1.5 мес → 3–4 дня, генераторы deck + kudos, приложение FireCamp — за неделю.</div>
+                                <div class="release-summary">FHIR-нативная инфра. shadCN design system синхронизирована Figma↔code через Claude skill, landing platform 1.5мес → 3-4д, генераторы презентаций + kudos, приложение FireCamp отгружено за неделю.</div>
                             </li>
                         </ul>
                     </div>
@@ -349,18 +349,18 @@
                         <span class="label">// опыт</span>
                         <div class="exp-row">
                             <div class="exp-stat"><div class="exp-stat-k">Лет</div><div class="exp-stat-v">10+</div></div>
-                            <div class="exp-stat"><div class="exp-stat-k">Флагман</div><div class="exp-stat-v">2 активных</div></div>
+                            <div class="exp-stat"><div class="exp-stat-k">Flagship</div><div class="exp-stat-v">2 активных</div></div>
                             <div class="exp-stat"><div class="exp-stat-k">Стиль</div><div class="exp-stat-v">design ↔ code</div></div>
                         </div>
-                        <p class="exp-blurb">Склонность к запуску, а не шлифовке. Комфортно от начала до конца — design systems, прототипы в коде и небольшие внутренние инструменты, которые окупают себя.</p>
+                        <p class="exp-blurb">Приоритет отгрузки над полировкой. Комфортно end-to-end — design system, прототипы в коде и небольшие внутренние инструменты, которые окупаются.</p>
                     </div>
 
                     <button type="button" class="showcase-tip" id="showcase-tip" aria-label="Открыть витрину">
                         <span class="showcase-tip-head">
                             <span class="showcase-tip-dot"></span>
-                            <span class="showcase-tip-label">// совет</span>
+                            <span class="showcase-tip-label">// подсказка</span>
                         </span>
-                        <span class="showcase-tip-text">Ах да — это <em>полные кейс-стади</em> живут в витрине ниже ↓</span>
+                        <span class="showcase-tip-text">Ах да — это <em>полные кейсы</em> живёт в витрине ниже ↓</span>
                     </button>
                 </div>
                 <!-- Chat pane (hidden by default, swaps with dashboard via tabs) -->
@@ -368,7 +368,7 @@
                     <div class="chat-head">
                         <span class="chat-online">
                             <span class="online-dot"></span>
-                            <span class="chat-online-text">Roman онлайн</span>
+                            <span class="chat-online-text">Roman online</span>
                         </span>
                         <button id="chat-fs-toggle" class="chat-fs-btn" type="button" aria-label="Полноэкранный чат">
                             <svg class="icon-expand" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -400,12 +400,12 @@
                         <button type="submit" class="chat-send" aria-label="Отправить">→</button>
                     </form>
                     <div class="chat-pickup" id="chat-pickup">
-                        <button type="button" class="chat-pickup-trigger" id="chat-pickup-trigger">→ продолжить в telegram</button>
+                        <button type="button" class="chat-pickup-trigger" id="chat-pickup-trigger">→ продолжить в Telegram</button>
                         <div class="chat-pickup-form">
                             <button type="button" class="chat-pickup-close" id="chat-pickup-close" aria-label="Закрыть">×</button>
                             <div class="chat-pickup-row">
                                 <input type="text" id="chat-pickup-username" placeholder="@your_telegram" maxlength="32" autocomplete="off">
-                                <button type="button" id="chat-pickup-btn" class="chat-pickup-btn">перейти в TG →</button>
+                                <button type="button" id="chat-pickup-btn" class="chat-pickup-btn">в TG →</button>
                             </div>
                             <span class="chat-pickup-status" id="chat-pickup-status"></span>
                         </div>
@@ -435,11 +435,11 @@
                 <span>Roman Pogorov Portfolio 2026</span>
             </div>
             <div class="name" id="prompt-roles">Дизайнер</div>
-            <h1 class="role-hero">Claude Runner</h1>
-            <div class="slogan">хватит быть статичным — <em>устал рисовать кейсы вручную?</em> Я привожу <em>LLM × design</em> своей команде и запускай.</div>
+            <h1 class="role-hero">CLAUDE RUNNER</h1>
+            <div class="slogan">хватит быть статичным — <em>устал рисовать кейсы вручную?</em> Я привожу <em>LLM × design</em> в свою команду и отгружаешь.</div>
             <div class="cta">
                 <span class="cta-line"></span>
-                <span class="cta-text">подробнее</span>
+                <span class="cta-text">больше информации</span>
                 <span class="cta-line"></span>
             </div>
         </div>
@@ -448,13 +448,13 @@
     <!-- Backdrop with scanlines blur — appears when panel opens -->
     <div class="backdrop"></div>
 
-    <!-- Витрина — basement slide with carousel of recent works -->
+    <!-- Showcase — basement slide with carousel of recent works -->
     <div class="showcase-cue" id="showcase-cue" role="button" tabindex="0" aria-label="Открыть витрину">
         <span class="showcase-cue-arrow" aria-hidden="true">↓</span>
         <span class="showcase-cue-label">Витрина</span>
     </div>
 
-    <section class="showcase" id="showcase" aria-label="Недавние работы">
+    <section class="showcase" id="showcase" aria-label="Последние работы">
         <div class="showcase-drag-handle" aria-hidden="true"></div>
         <div class="showcase-inner">
             <div class="showcase-intro">
@@ -462,7 +462,7 @@
                 <p class="showcase-sub">используй мышь и клавиши · <span class="blink showcase-sub-arrows">↑&#xFE0E; ↓&#xFE0E; ←&#xFE0E; →&#xFE0E;</span></p>
             </div>
 
-            <nav class="sc-tabs" role="tablist" aria-label="Режим витрины">
+            <nav class="sc-tabs" role="tablist" aria-label="Режим просмотра витрины">
                 <button type="button" class="sc-tab is-active" data-sc-tab="company" role="tab" aria-selected="true" aria-controls="sc-view-company">
                     <span class="sc-tab-num">01</span>
                     <span class="sc-tab-label">По компании</span>
@@ -487,10 +487,10 @@
                             <span class="case-no">CS/01</span>
                             <span class="case-role">Дизайнер</span>
                         </div>
-                        <h3 class="case-title">Переосмысляя, как американцы <em>избавление от долгов</em> — мультибрендовый fintech редизайн.</h3>
-                        <p class="case-desc">Аудит трёх платформ, разбор призрачной design system, которая так и не стала компонентами, и запуск 4-слойной архитектуры токенов: root → semantic → brand → platform. Теперь каждый экран говорит на одном языке — iOS, Android и web.</p>
+                        <h3 class="case-title">Переосмысляю то, как американцы <em>выход из долгов</em> — мультибрендовый fintech-редизайн.</h3>
+                        <p class="case-desc">Аудит трёх платформ, распаковка призрачной design system, которой никогда не существовало в виде компонентов, и поставка 4-слойной token-архитектуры: root → semantic → brand → platform. Все экраны теперь говорят на одном языке — iOS, Android и web.</p>
                         <ul class="case-tags">
-                            <li>tokens</li><li>multi-brand</li><li>information arch</li><li>figma ↔ code</li>
+                            <li>tokens</li><li>multi-brand</li><li>информационная архитектура</li><li>figma ↔ code</li>
                         </ul>
                         <div class="case-meta">Americor · Lead PD · 2024</div>
                         <button class="case-open-btn" data-open-case="cs01" type="button" aria-label="Открыть полный кейс">
@@ -514,9 +514,9 @@
                             <span class="case-role">Дизайнер</span>
                         </div>
                         <h3 class="case-title">Design system для <em>пять healthcare-продуктов</em>, половина сгенерирована AI.</h3>
-                        <p class="case-desc">Спроектировано в Figma, запущено в коде, синхронизировано в обе стороны. Написал Claude skill для извлечения компонентов из Figma, когда этого паттерна ещё не существовало. Каждый компонент проходит через Storybook review.</p>
+                        <p class="case-desc">Спроектировано в Figma, отгружено в коде, синхронизировано в обе стороны. Написал Claude skill для вытягивания компонентов из Figma, когда этого паттерна ещё не существовало. Каждый компонент проходит через Storybook review.</p>
                         <ul class="case-tags">
-                            <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>bi-directional sync</li>
+                            <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>двунаправленная синхронизация</li>
                         </ul>
                         <div class="case-meta">Health Samurai · Senior PD · 2023</div>
                         <button class="case-open-btn" data-open-case="cs02" type="button" aria-label="Открыть полный кейс">
@@ -528,15 +528,15 @@
 
                 <article class="case" data-case="cs03">
                     <div class="case-media">
-                        <img src="showcase/cases/cs03-landings.jpg" alt="Pipeline лендинговых страниц">
+                        <img src="showcase/cases/cs03-landings.jpg" alt="Landing page pipeline">
                     </div>
                     <div class="case-body">
                         <div class="case-head">
                             <span class="case-no">CS/03</span>
                             <span class="case-role">Дизайнер</span>
                         </div>
-                        <h3 class="case-title">С 1.5 месяцев до <em>4 дня</em> — pipeline лендинговых страниц.</h3>
-                        <p class="case-desc">C-level верстали лендинги вручную. Пересобрал систему на Markdown + block library, которую могут собирать не-дизайнеры. Владельцы редактируют живо в DOM через MCP-чат. Дизайнер полирует и запускает.</p>
+                        <h3 class="case-title">С 1.5 месяцев до <em>4 дня</em> — pipeline для лендинг-страниц.</h3>
+                        <p class="case-desc">C-level верстал лендинги вручную. Пересобрал систему на Markdown + block library, которую могут собирать не-дизайнеры. Владельцы редактируют живо в DOM через MCP chat. Дизайнер полирует и отгружает.</p>
                         <ul class="case-tags">
                             <li>markdown-first</li><li>block library</li><li>mcp</li><li>dogfooded brand</li>
                         </ul>
@@ -546,7 +546,7 @@
 
                 <article class="case" data-case="cs04">
                     <div class="case-media">
-                        <img src="showcase/cases/cs04-creditor.png" alt="lifecycle карточки кредитора">
+                        <img src="showcase/cases/cs04-creditor.png" alt="Жизненный цикл карточки кредитора">
                     </div>
                     <div class="case-body">
                         <div class="case-head">
@@ -554,7 +554,7 @@
                             <span class="case-role">Дизайнер</span>
                         </div>
                         <h3 class="case-title">Карточка кредитора &amp; её <em>lifecycle</em>.</h3>
-                        <p class="case-desc">Центральный объект вселенной пользователя. Спроектировано 11 состояний, 5 переходов и анимированный timeline, превращающий абстрактный «прогресс программы» во что-то ощутимое — без перегруза для новых пользователей.</p>
+                        <p class="case-desc">Центральный объект вселенной пользователя. Спроектировал 11 состояний, 5 переходов и анимированный timeline, превращающий абстрактный «прогресс программы» во что-то осязаемое — не перегружая новых пользователей.</p>
                         <ul class="case-tags">
                             <li>state design</li><li>micro-interactions</li><li>empty states</li><li>motion</li>
                         </ul>
@@ -564,31 +564,31 @@
 
                 <article class="case" data-case="cs05">
                     <div class="case-media">
-                        <img src="showcase/cases/cs05-databricks.png" alt="Databricks UX-исследование">
+                        <img src="showcase/cases/cs05-databricks.png" alt="Databricks UX exploration">
                     </div>
                     <div class="case-body">
                         <div class="case-head">
                             <span class="case-no">CS/05</span>
-                            <span class="case-role">Консалтинг</span>
+                            <span class="case-role">Consulting</span>
                         </div>
-                        <h3 class="case-title">Databricks — укрощая <em>UX data-платформы</em>.</h3>
-                        <p class="case-desc">Исследование того, как аналитическая платформа для опытных пользователей может оставаться читаемой для новичков без потери плотности. Навигация переработана вокруг того, что пользователи приходят делать, а не где инженеры хранят код.</p>
+                        <h3 class="case-title">Databricks — укрощение <em>data-platform UX</em>.</h3>
+                        <p class="case-desc">Исследование того, как аналитическая платформа для продвинутых пользователей может оставаться понятной новичкам, не теряя плотности. Переработал навигацию вокруг задач пользователя, а не структуры кода.</p>
                         <ul class="case-tags">
-                            <li>плотность информации</li><li>onboarding</li><li>nav restructure</li><li>data viz</li>
+                            <li>плотность информации</li><li>onboarding</li><li>реструктуризация навигации</li><li>data viz</li>
                         </ul>
-                        <div class="case-meta">Databricks · Консалтинг · 2022</div>
+                        <div class="case-meta">Databricks · Consulting · 2022</div>
                     </div>
                 </article>
             </div>
 
-            <!-- По кейсам view — populated by Step 2 from a DEEP_КЕЙСS data array -->
+            <!-- By Cases view — populated by Step 2 from a DEEP_CASES data array -->
             <div class="sc-view-cases" id="sc-view-cases" role="tabpanel" aria-labelledby="sc-tab-cases" aria-hidden="true">
                 <div class="sc-cases-grid" id="sc-cases-grid">
-                    <p class="sc-cases-empty">// загрузка детальных кейсов…</p>
+                    <p class="sc-cases-empty">// загрузка глубоких кейсов…</p>
                 </div>
             </div>
 
-            <nav class="cases-nav" aria-label="Навигация по карусели">
+            <nav class="cases-nav" aria-label="Навигация карусели">
                 <button class="cases-arrow" id="cases-prev" type="button" aria-label="Предыдущий кейс">←</button>
                 <ol class="cases-dots" id="cases-dots"></ol>
                 <button class="cases-arrow" id="cases-next" type="button" aria-label="Следующий кейс">→</button>
@@ -615,7 +615,7 @@
         </header>
         <div class="vibe-term-body">
             <pre class="vibe-term-log" id="vibe-term-log"></pre>
-            <iframe class="vibe-term-iframe" id="vibe-term-iframe" title="demo проекта" loading="lazy"></iframe>
+            <iframe class="vibe-term-iframe" id="vibe-term-iframe" title="Демо проекта" loading="lazy"></iframe>
         </div>
     </div>
 
@@ -623,7 +623,7 @@
     <div class="am-lightbox" id="am-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
         <button class="am-lb-close" id="am-lb-close" type="button">закрыть · esc</button>
         <button class="am-lb-nav am-lb-prev" id="am-lb-prev" type="button" aria-label="Предыдущий">←</button>
-        <button class="am-lb-nav am-lb-next" id="am-lb-next" type="button" aria-label="Далее">→</button>
+        <button class="am-lb-nav am-lb-next" id="am-lb-next" type="button" aria-label="Следующий">→</button>
         <div class="am-lightbox-stage" id="am-lb-stage" aria-live="polite"></div>
         <div class="am-lb-caption" id="am-lb-caption"></div>
         <div class="am-lb-counter" id="am-lb-counter"></div>
@@ -645,7 +645,7 @@
                     <button class="dw-nav" id="dw-prev" type="button" aria-label="Предыдущий">
                         <span class="dw-nav-key">←</span>
                     </button>
-                    <button class="dw-nav" id="dw-next" type="button" aria-label="Далее">
+                    <button class="dw-nav" id="dw-next" type="button" aria-label="Следующий">
                         <span class="dw-nav-key">→</span>
                     </button>
                     <button class="dw-close" id="dw-close" type="button">ESC</button>
@@ -665,7 +665,7 @@
 
             <header class="panel-header">
                 <span class="panel-title">ROMAN.POGOROV / OS</span>
-                <span class="id">SESSIВКЛ · <span id="panel-id">0xA3F4-9C</span></span>
+                <span class="id">SESSION · <span id="panel-id">0xA3F4-9C</span></span>
                 <div class="panel-actions">
                     <button class="panel-nav" id="panel-prev" type="button" aria-label="Предыдущая вкладка">←</button>
                     <button class="panel-nav" id="panel-next" type="button" aria-label="Следующая вкладка">→</button>
@@ -687,7 +687,7 @@
                     <!-- ABOUT -->
                     <section class="view active" data-view="about">
                         <div class="view-header">
-                            <h2>Identity</h2>
+                            <h2>Айдентика</h2>
                             <span class="marker">// 01 · профиль</span>
                         </div>
 
@@ -698,7 +698,7 @@
                             </div>
                             <div class="stat-card">
                                 <div class="k">Класс</div>
-                                <div class="v">Claude Runner</div>
+                                <div class="v">CLAUDE RUNNER</div>
                             </div>
                             <div class="stat-card">
                                 <div class="k">Node</div>
@@ -711,21 +711,21 @@
                         </div>
 
                         <p class="bio">
-                            <em>15 лет в дизайне.</em> Последние два — уже не просто дизайнер, а <em>product shipper</em> на грани design и code. Я привожу LLM в команды, которые говорят об AI, но не запускают его, и объединяю инженеров и дизайнеров вокруг единого живого артефакта: рабочего прототипа.
+                            <em>15 лет в дизайне.</em> Последние два — уже не просто дизайнер, а <em>product shipper</em> на стыке дизайна и кода. Я привожу LLM в команды, которые говорят об AI, но не отгружают его, и выравниваю инженеров и дизайнеров вокруг единого живого артефакта: рабочего прототипа.
                             <br><br>
-                            <em>Хватит быть статичным.</em> Устал рисовать кейсы вручную? Мой flow теперь <em>code-first</em> — Figma — это скетчбук, прототип живёт в репозитории. Гипотезы проверяются на реальном интерфейсе; когда flow приземляется, я генерирую компоненты Figma из кода для handoff. Единый источник истины с обеих сторон.
+                            <em>Хватит быть статичным.</em> Устал рисовать кейсы вручную? Мой флоу теперь <em>code-first</em> — Figma — это скетчбук, прототип живёт в репозитории. Гипотезы проверяются на реальном интерфейсе; когда флоу готов, я генерирую Figma-компоненты из кода для handoff. Единый источник правды с обеих сторон.
                             <br><br>
-                            Подход: <em>узкий охват, жёсткая приоритизация, затем скорость.</em> Склонность к запуску, а не шлифовке; к обучению, а не планированию. Комфортно по всему стеку — от системной архитектуры до попиксельной UI-анимации.
+                            Подход: <em>узкий скоуп, жёсткая приоритизация, затем скорость.</em> Приоритет отгрузки над полировкой, обучения над планированием. Комфортно работаю по всему стеку — от архитектуры систем до UI motion на уровне пикселей.
                         </p>
 
                         <div class="flow-block" style="margin-top:32px;border-left:2px solid var(--acc);padding:14px 18px;background:linear-gradient(135deg, rgba(var(--acc-rgb), 0.06), rgba(var(--acc-rgb), 0));">
-                            <div style="font-family:'JetBrains Mono', monospace;font-size:0.625rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--acc);margin-bottom:10px;">// мой flow сейчас</div>
+                            <div style="font-family:'JetBrains Mono', monospace;font-size:0.625rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--acc);margin-bottom:10px;">// мой флоу сейчас</div>
                             <ul style="margin:0;padding-left:18px;list-style:none;">
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Code-first.</strong> Рабочий React-прототип — источник истины, а не файл Figma.</li>
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Figma как скетчбук.</strong> Открываю для быстрого фрейма, затем перехожу в код.</li>
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Claude как co-pilot.</strong> Custom skills берут на себя рутину — tokens, components, handoff.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Code-first.</strong> Рабочий React-прототип — источник правды, не Figma-файл.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Figma как скетчбук.</strong> Открываю для быстрого фрейма, потом перехожу в код.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Claude как co-pilot.</strong> Custom skills берут на себя рутину — tokens, компоненты, handoff.</li>
                                 <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Storybook + tokens.</strong> Каждый компонент проходит review; дизайнеры и инженеры видят одно и то же.</li>
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Hand-off через обратный pipeline.</strong> Как только flow приземляется в коде, я генерирую компоненты Figma обратно для тикетов и QA.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Hand-off через обратный pipeline.</strong> Когда флоу готов в коде, я генерирую Figma-компоненты обратно для тикетов и QA.</li>
                             </ul>
                         </div>
                     </section>
@@ -733,32 +733,31 @@
                     <!-- CAREER -->
                     <section class="view" data-view="career">
                         <div class="view-header">
-                            <h2>Карьерный трек</h2>
+                            <h2>Карьерный путь</h2>
                             <span class="marker">// 02 · 10+ лет</span>
                         </div>
 
                         <div class="timeline">
                             <div class="tl-item current">
-                                <div class="tl-period">2024 — н.в. <span class="pin">Los Angeles</span></div>
+                                <div class="tl-period">2024 — настоящее <span class="pin">Los Angeles</span></div>
                                 <div class="tl-role">Lead Продукт Дизайнер</div>
                                 <div class="tl-company">@ Americor · FinTech</div>
-                                <div class="tl-summary">FinTech-платформа нового поколения для урегулирования долгов. Рост
-                                    retention/MAU/NPS, редизайн
-                                    web + mobile (iOS, Android), design systems для 3 платформ. NPS +25%, T2M
-                                    сокращён на ~30%.</div>
+                                <div class="tl-summary">FinTech-платформа нового поколения для реструктуризации долгов. Рост retention/MAU/NPS, редизайн
+                                    web + mobile (iOS, Android), design system на 3 платформах. NPS +25%, T2M
+                                    сокращён ~30%.</div>
                                 <div class="tl-tags">
-                                    <span>FinTech</span><span>DS</span><span>Мобильный</span><span>Лидерство</span></div>
+                                    <span>FinTech</span><span>DS</span><span>Mobile</span><span>Leadership</span></div>
                             </div>
 
                             <div class="tl-item current">
-                                <div class="tl-period">2023 — н.в. <span class="pin">Lisbon</span></div>
+                                <div class="tl-period">2023 — настоящее <span class="pin">Лиссабон</span></div>
                                 <div class="tl-role">Дизайнер-Developer</div>
-                                <div class="tl-company">@ Health-Samurai</div>
-                                <div class="tl-summary">Healthcare IT с 2004 года. Создаю AI-генерируемые design systems
+                                <div class="tl-company">@ Health Samurai</div>
+                                <div class="tl-summary">Healthcare IT с 2004 года. Создаю AI-генерируемые design system
                                     и UI-генераторы
-                                    (Landing AI, Presentation AI). Claude Skills для построения разных UI. Запущено
-                                    в production.</div>
-                                <div class="tl-tags"><span>Healthcare</span><span>AI</span><span>Автоматизация</span></div>
+                                    (Landing AI, Presentation AI). Claude Skills для создания разных UI. Отгружено в
+                                    production.</div>
+                                <div class="tl-tags"><span>Healthcare</span><span>AI</span><span>Automation</span></div>
                             </div>
 
                             <div class="tl-item">
@@ -772,11 +771,11 @@
                                     design system with
                                     token theming.</div>
                                 <div class="tl-tags">
-                                    <span>MedTech</span><span>Legacy</span><span>DS</span><span>Мобильный</span></div>
+                                    <span>MedTech</span><span>Legacy</span><span>DS</span><span>Mobile</span></div>
                             </div>
 
                             <div class="tl-item">
-                                <div class="tl-period">2016 — 2020 <span class="pin">СПб · Miami</span></div>
+                                <div class="tl-period">2016 — 2020 <span class="pin">СПб · Майами</span></div>
                                 <div class="tl-role">UX/UI Дизайнер</div>
                                 <div class="tl-company">@ goTRG</div>
                                 <div class="tl-summary">SaaS, Supply Chain & ReCommerce platform. Design audit of legacy
@@ -792,28 +791,27 @@
                                 <div class="tl-period">2014 — 2016 <span class="pin">Москва</span></div>
                                 <div class="tl-role">UX/UI Дизайнер / Developer</div>
                                 <div class="tl-company">@ Project Practice</div>
-                                <div class="tl-summary">Редизайн PM-системы × 4. JS, LESS, CSS, HTML, шаблоны C#. Построил
-                                    theming engine,
-                                    рефакторинг сотен CSS-файлов в единый LESS с переменными (покрытие 80%).
+                                <div class="tl-summary">Редизайн PM-системы × 4. JS, LESS, CSS, HTML, C# шаблоны. Создал theming engine,
+                                    рефакторил сотни CSS-файлов в единый LESS с переменными (покрытие 80%).
                                 </div>
-                                <div class="tl-tags"><span>PM Инструменты</span><span>Theming</span><span>Refactor</span>
+                                <div class="tl-tags"><span>PM Инструменты</span><span>Theming</span><span>Рефакторинг</span>
                                 </div>
                             </div>
 
                             <div class="tl-item">
                                 <div class="tl-period">2012 — 2014 <span class="pin">Москва</span></div>
-                                <div class="tl-role">Дизайнер / Основатель</div>
+                                <div class="tl-role">Дизайнер / Founder</div>
                                 <div class="tl-company">@ Jettap</div>
                                 <div class="tl-summary">Собственная студия. Управлял командой из 6 человек. Web-проекты, мобильные приложения,
                                     full-stack разработка (JS,
                                     CSS, HTML, PHP, AS2/3).</div>
-                                <div class="tl-tags"><span>Студия</span><span>Основатель</span></div>
+                                <div class="tl-tags"><span>Студия</span><span>Founder</span></div>
                             </div>
 
                             <div class="tl-item">
-                                <div class="tl-period">2010 — 2013 <span class="pin">Krasnodar</span></div>
+                                <div class="tl-period">2010 — 2013 <span class="pin">Краснодар</span></div>
                                 <div class="tl-role">Дизайнер</div>
-                                <div class="tl-company">@ Two Pilots / Бренд Master</div>
+                                <div class="tl-company">@ Two Pilots / Brand Master</div>
                                 <div class="tl-summary">Web-проекты, лендинги, брендинг, полиграфия, баннеры, flash.
                                     Откуда
                                     всё началось.</div>
@@ -828,7 +826,7 @@
                                 <span class="cv-title">Скачать CV · PDF</span>
                             </div>
                             <div class="cv-arrow">
-                                <span>получить</span>
+                                <span>получи</span>
                                 <span class="ico">↓</span>
                             </div>
                         </a>
@@ -837,7 +835,7 @@
                     <!-- WORK -->
                     <section class="view" data-view="work">
                         <div class="view-header">
-                            <h2>Операции</h2>
+                            <h2>Operations</h2>
                             <span class="marker">// 03 · проекты</span>
                         </div>
 
@@ -848,20 +846,20 @@
                             </div>
                             <p class="project-desc">Генеративный dashboard в реальном времени для атмосферных данных. Кастомный WebGL
                                 pipeline,
-                                рендерящий 40k частиц, синхронизированных с live-данными погоды.</p>
+                                рендерящий 40k частиц синхронно с live-данными о погоде.</p>
                             <div class="project-tags">
                                 <span>WebGL</span><span>Three.js</span><span>D3</span><span>API</span></div>
                         </div>
 
                         <div class="project">
                             <div class="project-head">
-                                <span class="project-title">Сигнал / Шум</span>
+                                <span class="project-title">Signal / Noise</span>
                                 <span class="project-year">2024</span>
                             </div>
-                            <p class="project-desc">Аудиореактивная identity-система для берлинского музыкального лейбла. Логотип трансформируется
+                            <p class="project-desc">Аудиореактивная система айдентики для берлинского музыкального лейбла. Логотип трансформируется
                                 в реальном времени
-                                под входящий звук — каждый пресс-релиз выглядит по-разному.</p>
-                            <div class="project-tags"><span>Web Audio</span><span>Canvas</span><span>Бренд</span></div>
+                                под входящий звук — каждый пресс-релиз выглядит по-новому.</p>
+                            <div class="project-tags"><span>Web Audio</span><span>Canvas</span><span>Brand</span></div>
                         </div>
 
                         <div class="project">
@@ -869,9 +867,9 @@
                                 <span class="project-title">Holo · OS</span>
                                 <span class="project-year">2024</span>
                             </div>
-                            <p class="project-desc">Рабочая среда в духе киберпанка. Оконный менеджер, terminal
-                                и творческие
-                                инструменты — всё стекло, сканлайны и хроматическая аберрация.</p>
+                            <p class="project-desc">Десктопная среда в стиле киберпанк. Window manager, terminal,
+                                и креативные
+                                инструменты — стекло, scanlines и хроматическая аберрация.</p>
                             <div class="project-tags"><span>Electron</span><span>React</span><span>GLSL</span></div>
                         </div>
 
@@ -882,19 +880,19 @@
                             </div>
                             <p class="project-desc">Интерактивный эссе-сайт о темпе и ритуале. Без фреймворков, без
                                 analytics — только
-                                HTML, CSS и единственный JS-файл в 4kb.</p>
-                            <div class="project-tags"><span>HTML</span><span>CSS</span><span>Публикации</span></div>
+                                HTML, CSS и один JS-файл 4kb.</p>
+                            <div class="project-tags"><span>HTML</span><span>CSS</span><span>Тексты</span></div>
                         </div>
 
                         <div class="project">
                             <div class="project-head">
-                                <span class="project-title">Полевые заметки</span>
+                                <span class="project-title">Заметки</span>
                                 <span class="project-year">в процессе</span>
                             </div>
                             <p class="project-desc">Ежемесячные эксперименты — шейдеры, micro-tools, визуальные поэмы. Студийная
                                 практика
-                                публично.</p>
-                            <div class="project-tags"><span>Лаборатория</span><span>Разные</span></div>
+                                на публику.</p>
+                            <div class="project-tags"><span>Lab</span><span>Разное</span></div>
                         </div>
                     </section>
 
@@ -915,10 +913,10 @@
                                         style="--w:88%"></i></span><span class="pct">88</span></div>
                         </div>
                         <div class="skill-group">
-                            <h3>Разработка</h3>
+                            <h3>Engineering</h3>
                             <div class="skill-row"><span class="name">JavaScript / TS</span><span class="bar"><i
                                         style="--w:90%"></i></span><span class="pct">90</span></div>
-                            <div class="skill-row"><span class="name">React / Далее</span><span class="bar"><i
+                            <div class="skill-row"><span class="name">React / Следующий</span><span class="bar"><i
                                         style="--w:86%"></i></span><span class="pct">86</span></div>
                             <div class="skill-row"><span class="name">CSS / Motion</span><span class="bar"><i
                                         style="--w:95%"></i></span><span class="pct">95</span></div>
@@ -936,7 +934,7 @@
                         </div>
                     </section>
 
-                    <!-- CВКЛTACT -->
+                    <!-- CONTACT -->
                     <section class="view" data-view="contact">
                         <div class="view-header">
                             <h2>Каналы</h2>
@@ -944,20 +942,20 @@
                         </div>
 
                         <p class="bio" style="margin-bottom: 24px;">
-                            ▸ открытые каналы для входящих передач. ответ в течение <em>48ч земного времени</em>.
+                            ▸ открытые каналы для входящих сигналов. ответ в течение <em>48ч земного времени</em>.
                         </p>
 
                         <div class="channel"><span class="ch">Email</span><a
                                 href="mailto:hello@romanpogorov.com">hello@romanpogorov.com</a></div>
                         <div class="channel"><span class="ch">Telegram</span><a href="https://t.me/handle"
-                                tarполучить="_blank">@handle</a></div>
+                                tarполучи="_blank">@handle</a></div>
                         <div class="channel"><span class="ch">GitHub</span><a href="https://github.com/handle"
-                                tarполучить="_blank">github.com/handle</a></div>
+                                tarполучи="_blank">github.com/handle</a></div>
                         <div class="channel"><span class="ch">X</span><a href="https://x.com/handle"
-                                tarполучить="_blank">@handle</a>
+                                tarполучи="_blank">@handle</a>
                         </div>
                         <div class="channel"><span class="ch">LinkedIn</span><a href="#"
-                                tarполучить="_blank">linkedin.com/in/handle</a>
+                                tarполучи="_blank">linkedin.com/in/handle</a>
                         </div>
                     </section>
 
@@ -970,12 +968,12 @@
         </svg>
     </aside>
 
-    <!-- Generic deep-case page — single overlay reused for any DEEP_КЕЙСS
+    <!-- Generic deep-case page — single overlay reused for any DEEP_CASES
          entry. Content rendered from data: hero placeholder, breadcrumbs,
          meta (company + metric + tags), title, body. -->
-    <section class="dc-page" id="dc-page" data-dc-page aria-hidden="true" aria-label="Детальный кейс">
+    <section class="dc-page" id="dc-page" data-dc-page aria-hidden="true" aria-label="Глубокий кейс">
         <header class="dc-head">
-            <nav class="dc-crumbs" id="dc-crumbs" aria-label="Breadcrumbs"></nav>
+            <nav class="dc-crumbs" id="dc-crumbs" aria-label="Хлебные крошки"></nav>
             <button type="button" class="dc-close" id="dc-close" aria-label="Закрыть кейс">ESC</button>
         </header>
         <div class="dc-inner">
@@ -1969,7 +1967,7 @@
     </script>
 
 
-    <!-- Витрина: down-arrow opens basement section with cases carousel -->
+    <!-- Showcase: down-arrow opens basement section with cases carousel -->
     <script>
         (() => {
             const cue = document.getElementById('showcase-cue');
@@ -3306,7 +3304,7 @@
         })();
     </script>
 
-    <!-- Детальный кейсs: data array + grid render for the showcase "По кейсам" tab.
+    <!-- Deep cases: data array + grid render for the showcase "By Cases" tab.
          Source of truth for nested project cases inside each company. To be
          migrated to MD files in a later step. -->
     <script>
@@ -4283,7 +4281,7 @@
         })();
     </script>
 
-    <!-- Статьи: data, list rendering, badge ↔ panel ↔ reader wiring, MD rendering via marked.js -->
+    <!-- Articles: data, list rendering, badge ↔ panel ↔ reader wiring, MD rendering via marked.js -->
     <script>
         const ARTICLES = window.__ARTICLES || [];
 
@@ -4640,7 +4638,7 @@
         })();
     </script>
 
-    <!-- Карьера timeline hologram modal: open/close, ESC, click-outside, mouse-tilt, role detail -->
+    <!-- Career timeline hologram modal: open/close, ESC, click-outside, mouse-tilt, role detail -->
     <script>
         (() => {
             const fab    = document.getElementById('career-tl-btn');
@@ -5040,7 +5038,7 @@
         })();
     </script>
 
-    <!-- Настройки cog popover toggle + A− / A+ text scale (no persistence) -->
+    <!-- Settings cog popover toggle + A− / A+ text scale (no persistence) -->
     <script>
         (() => {
             const cogBtn = document.getElementById('settings-cog-btn');

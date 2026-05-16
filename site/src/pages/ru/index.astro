@@ -25,7 +25,12 @@
 import Layout from '@layouts/Layout.astro';
 import Lightbox from '@components/case-rich/Lightbox.astro';
 import CaseHeader from '@components/case/CaseHeader.astro';
-import legacyBodyRaw from '../../legacy-body.ru.html?raw';
+import legacyBodyRawSource from '../../legacy-body.ru.html?raw';
+// On /ru/ the page sits one level deeper than the asset root, so relative
+// paths like "showcase/..." or "cases/..." resolve to /rpogorov-dev/app/ru/...
+// (broken). Rewrite them to absolute /rpogorov-dev/app/-prefixed paths.
+const legacyBodyRaw = legacyBodyRawSource
+  .replace(/(\b(?:src|href|poster)=")(showcase\/|cases\/|articles\/|bg\.|audio\.|favicon\.)/g, '$1/rpogorov-dev/app/$2');
 import { getCollection, render } from 'astro:content';
 
 const companies = (await getCollection('companies')).sort(
@@ -234,7 +239,7 @@ const detailDict = Object.fromEntries(
 );
 
 let legacyBody = legacyBodyRaw.replace(
-  /<div class="cases" id="cases">[\s\S]*?<\/div>(?=\s*\n\s*<!--\s*By Cases view)/,
+  /<div class="cases" id="cases">[\s\S]*?<\/div>(?=\s*\n\s*<!--\s*(?:By Cases view|По кейсам view))/,
   `<div class="cases" id="cases">\n${cardsHtml}\n            </div>`
 );
 

@@ -18,12 +18,11 @@ await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
 await page.waitForTimeout(2000);
 // dismiss audio gate if present
 await page.evaluate(() => {
-  document.querySelectorAll('button').forEach(b => {
-    if (/accept|silent/i.test(b.textContent || '')) b.click();
-  });
-  document.querySelectorAll('.audio-gate, .gate-overlay, [data-audio-gate]').forEach(n => n.remove());
+  const silent = document.getElementById('audio-gate-mute');
+  const accept = document.getElementById('audio-gate-enable');
+  (silent || accept)?.click();
 });
-await page.waitForTimeout(6000);
+await page.waitForTimeout(10000);
 const scrollY = parseInt(process.env.SCROLL || '0', 10);
 if (scrollY > 0) {
   await page.evaluate((y) => {

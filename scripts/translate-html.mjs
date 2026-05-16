@@ -10,9 +10,11 @@ const DST = '/root/rpogorov-dev/site/src/legacy-body.ru.html';
 
 const html = await readFile(SRC, 'utf8');
 
-// 1. Mask out <script> and <style> blocks so we don't extract from them
+// 1. Mask out <script>, <style> AND <!-- comments --> so we don't extract
+//    from them. Comments often carry structural markers (e.g. "By Cases view")
+//    that regexes in index.astro rely on — translating them breaks the build.
 const blocks = [];
-let masked = html.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, (m) => {
+let masked = html.replace(/<(script|style)\b[\s\S]*?<\/\1>|<!--[\s\S]*?-->/gi, (m) => {
   const k = `__BLOCK_${blocks.length}__`;
   blocks.push(m);
   return k;
