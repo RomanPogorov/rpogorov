@@ -11,6 +11,9 @@ import { spawnSync } from 'node:child_process';
 const ROOTS = [
   '/root/vault/portfolio/company/cases',
   '/root/vault/portfolio/cases',
+  '/root/vault/portfolio/right-panel/tasks',
+  '/root/vault/portfolio/right-panel/agents',
+  '/root/vault/portfolio/right-panel/releases',
 ];
 
 const MODEL = process.env.TRANSLATE_MODEL || 'sonnet';

@@ -111,9 +111,7 @@ const articles = defineCollection({
   }),
 });
 
-const rightPanel = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/right-panel' }),
-  schema: z.object({
+const rightPanelSchema = z.object({
     id: z.string(),
     kind: z.enum(['pain', 'strength', 'agent', 'release']),
     tag: z.string(),
@@ -150,7 +148,16 @@ const rightPanel = defineCollection({
       })
       .optional(),
     order: z.number().default(0),
-  }),
+  });
+
+const rightPanel = defineCollection({
+  loader: glob({ pattern: ['**/*.{md,mdx}', '!**/*.en.{md,mdx}'], base: './src/content/right-panel' }),
+  schema: rightPanelSchema,
 });
 
-export const collections = { cases, articles, companies, companiesEn, rightPanel };
+const rightPanelEn = defineCollection({
+  loader: glob({ pattern: '**/*.en.{md,mdx}', base: './src/content/right-panel' }),
+  schema: rightPanelSchema,
+});
+
+export const collections = { cases, articles, companies, companiesEn, rightPanel, rightPanelEn };

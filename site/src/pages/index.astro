@@ -49,9 +49,18 @@ const localized = (id: string) => {
 const subCases = (await getCollection('cases')).sort(
   (a, b) => a.data.order - b.data.order
 );
-const rightPanel = (await getCollection('rightPanel')).sort(
+// EN site — prefer EN-translated right-panel entries (*.en.md), fall
+// back to RU originals if no EN twin exists.
+const _rightPanelRu = (await getCollection('rightPanel')).sort(
   (a, b) => a.data.order - b.data.order
 );
+const _rightPanelEn = (await getCollection('rightPanelEn')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const rightPanel = _rightPanelRu.map((ru) => {
+  const en = _rightPanelEn.find((e) => e.data.id === ru.data.id);
+  return en ?? ru;
+});
 // Articles for the left-pane "// articles" tab — source from the vault
 // content collection so adding a new MD in /root/vault/portfolio/articles
 // automatically appears in the panel after a rebuild (no manual JS-array
