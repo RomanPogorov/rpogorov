@@ -81,9 +81,9 @@ if (r.status !== 0) {
 
 let out = r.stdout.trim();
 out = out.replace(/^```(?:json)?\s*\n/, '').replace(/\n```\s*$/, '').trim();
-// If wrapper text, try to extract the first JSON object
-const objMatch = out.match(/\{[\s\S]*\}/);
-if (objMatch) out = objMatch[0];
+// Some Sonnet runs return body without the wrapping braces — auto-wrap.
+if (!out.startsWith('{')) out = '{' + out;
+if (!out.endsWith('}')) out = out + '}';
 
 let dict;
 try {
@@ -96,24 +96,24 @@ try {
 
 console.log(`Got ${Object.keys(dict).length} translations`);
 
-// 4. Substitute in the original (unmasked) HTML — we want to preserve all
-//    blocks intact. Substitution order: longest-first to avoid partial matches.
-let result = html;
+// 4. Substitute ONLY in masked HTML (script/style blocks already
+//    replaced with placeholders), then unmask. This guarantees we never
+//    touch JS/CSS code even if an English word appears both in UI text
+//    and inside getElementById/className/etc.
+let result = masked;
 const sorted = Object.entries(dict).sort((a, b) => b[0].length - a[0].length);
 let count = 0;
 for (const [en, ru] of sorted) {
   if (!ru || ru === en) continue;
-  // Build a regex that finds the EN string in attribute values OR text content,
-  // not inside <script>/<style>. We'll do simple text-level replace and accept
-  // the risk that EN matches inside script will also flip — but the strings we
-  // extracted came from non-script regions, so collisions should be rare.
-  // Escape regex specials.
   const re = new RegExp(en.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
   const before = result;
   result = result.replace(re, ru);
   if (before !== result) count++;
 }
 console.log(`Substituted ${count} unique strings`);
+
+// Restore blocks
+result = result.replace(/__BLOCK_(\d+)__/g, (_, i) => blocks[+i]);
 
 await writeFile(DST, result, 'utf8');
 console.log(`Wrote ${DST} (${result.length} chars)`);

@@ -51,14 +51,14 @@
     </svg>
 
     <!-- Audio gate: requests permission for sound on entry -->
-    <div class="audio-gate" id="audio-gate" role="dialog" aria-label="Разрешение на звук">
+    <div class="audio-gate" id="audio-gate" role="dialog" aria-label="Разрешение звука">
         <div class="audio-gate-bg"></div>
         <div class="audio-gate-frame">
             <span class="audio-gate-corner tl"></span>
             <span class="audio-gate-corner tr"></span>
             <span class="audio-gate-corner bl"></span>
             <span class="audio-gate-corner br"></span>
-            <div class="audio-gate-label">// аудио-ссылка</div>
+            <div class="audio-gate-label">// audio link</div>
             <h2 class="audio-gate-title">ВКЛЮЧИТЬ ЗВУК</h2>
             <div class="audio-gate-desc">ambient track · interface beeps · ui feedback</div>
             <div class="audio-gate-actions">
@@ -142,7 +142,7 @@
     </div>
 
     <!-- Top-center mini Gantt strip — opens the full hologram timeline modal -->
-    <button type="button" class="ctl-fab" id="career-tl-btn" aria-haspopup="dialog" aria-controls="career-tl-modal" aria-label="Открыть timeline карьеры">
+    <button type="button" class="ctl-fab" id="career-tl-btn" aria-haspopup="dialog" aria-controls="career-tl-modal" aria-label="Открыть карьерный timeline">
         <div class="ctl-fab-head">
             <span class="ctl-fab-eyebrow">// мой карьерный трек</span>
             <span class="ctl-fab-cta"><b>2014 → 2026</b></span>
@@ -163,7 +163,7 @@
             <button type="button" class="ctl-close" id="career-tl-close" aria-label="Закрыть timeline">ESC</button>
 
             <div class="ctl-headstrip">
-                <span class="ctl-eyebrow">// timeline карьеры · <b>2014 → 2026</b> · 5 ролей · 3 сайд-проекта</span>
+                <span class="ctl-eyebrow">// карьерный timeline · <b>2014 → 2026</b> · 5 ролей · 3 side projects</span>
             </div>
             <h2 class="ctl-title" id="career-tl-title">Как сложилась карьера <em>с 2014.</em></h2>
 
@@ -177,11 +177,11 @@
                     <button type="button" class="ctl-co is-active" data-role="americor" style="--s: 12; --e: 13;" aria-label="Americor">Americor</button>
                 </div>
 
-                <span class="ctl-axis-tag">// сайд-проекты · part-time</span>
+                <span class="ctl-axis-tag">// побочные проекты · part-time</span>
                 <div class="ctl-axis-row ctl-axis-row--side" data-ctl-row="side">
                     <button type="button" class="ctl-co ctl-co--side" data-role="code-we-trust" style="--s: 6; --e: 7;" aria-label="Code We Trust">Code We Trust</button>
                     <button type="button" class="ctl-co ctl-co--side" data-role="oort-digital" style="--s: 8; --e: 9;" aria-label="Oort Digital">Oort Digital</button>
-                    <button type="button" class="ctl-co ctl-co--side" data-role="pavilion" style="--s: 10; --e: 11;" aria-label="Pavilion">Pavilion</button>
+                    <button type="button" class="ctl-co ctl-co--side" data-role="pavilion" style="--s: 10; --e: 11;" aria-label="Павильон">Павильон</button>
                 </div>
 
                 <div class="ctl-axis-years">
@@ -224,7 +224,7 @@
                 </button>
                 <div class="settings-popover" id="settings-popover" hidden>
                     <div class="settings-row">
-                        <span class="settings-row-label">// вайб</span>
+                        <span class="settings-row-label">// vibe</span>
                         <div class="vibe-row">
                             <button id="ap-toggle" class="ap-btn ap-grunge" type="button" aria-label="Включить звук">
                                 <svg class="icon-unmuted" viewBox="0 0 14 12" aria-hidden="true">
@@ -268,7 +268,7 @@
                     <span class="sim-signal-fill" aria-hidden="true"></span>
                     <span class="sim-signal-thumb" aria-hidden="true"></span>
                     <input type="range" id="sim-signal-input" min="0" max="100" step="1" value="100"
-                           aria-label="Уровень сигнала симуляции">
+                           aria-label="Мощность сигнала симуляции">
                 </div>
                 <span class="sim-signal-value" id="sim-signal-value">100%</span>
             </div>
@@ -280,16 +280,16 @@
                 <div class="corner tr agents-feed">
                     <div class="welcome-block">
                         <span class="agents-clock" id="clock">00:00:00</span>
-                        <p class="welcome-text"><strong>Привет, незнакомец!</strong><br>Вы в рабочем пространстве <em>дизайнер, который ждал свою технологию</em>. Пятнадцать лет дизайна, последние два — <em>product shipper на стыке дизайна и кода</em> — Figma теперь мой скетчбук, prototype живёт в production.</p>
+                        <p class="welcome-text"><strong>Привет, незнакомец!</strong><br>Ты в рабочем пространстве <em>дизайнер, который ждал своей технологии</em>. Пятнадцать лет в дизайне, последние два как <em>product shipper на грани design и code</em> — Figma теперь мой скетчбук, прототип живёт в production.</p>
                     </div>
 
                     <div class="tasks-block">
-                        <span class="label sub">// тебе нужен я, если</span>
+                        <span class="label sub">// я тебе нужен, если</span>
                         <ul class="tasks-list" id="tasks-list">
-                            <li class="task-item" data-id="pain-ai-paralysis" tabindex="0"><span class="task-text">Ты не знаешь, что делать с AI — все хайпят, ничего не понятно.</span></li>
-                            <li class="task-item" data-id="pain-language-gap" tabindex="0"><span class="task-text">Инженеры и дизайнеры не говорят на одном языке.</span></li>
+                            <li class="task-item" data-id="pain-ai-paralysis" tabindex="0"><span class="task-text">Не знаешь, что делать с AI — все хайпят, ничего не понятно.</span></li>
+                            <li class="task-item" data-id="pain-language-gap" tabindex="0"><span class="task-text">Инженеры и дизайнеры говорят на разных языках.</span></li>
                             <li class="task-item" data-id="pain-orphan-prototypes" tabindex="0"><span class="task-text">У каждого дизайнера есть свой прототип, которым больше никто не пользуется.</span></li>
-                            <li class="task-item" data-id="pain-talk-no-ship" tabindex="0"><span class="task-text">Все любят говорить об AI — никто на самом деле его не выпускает.</span></li>
+                            <li class="task-item" data-id="pain-talk-no-ship" tabindex="0"><span class="task-text">Все любят говорить об AI — никто реально не запускает.</span></li>
                         </ul>
                     </div>
 
@@ -301,14 +301,14 @@
                                 <div class="agent-body">
                                     <div class="agent-name">CODE × DESIGN <span class="agent-tag">// гипотезы</span></div>
                                     <div class="agent-task" data-task>много гипотез → выбор идеального UX</div>
-                                    <div class="agent-meta" data-meta>быстрая итерация на реальных прототипах, не слайдах</div>
+                                    <div class="agent-meta" data-meta>быстрые итерации на реальных прототипах, а не слайдах</div>
                                 </div>
                             </li>
                             <li class="agent-item" data-id="prototypes">
                                 <span class="agent-dot"></span>
                                 <div class="agent-body">
                                     <div class="agent-name">НАСТОЯЩИЕ ПРОТОТИПЫ <span class="agent-tag">// production</span></div>
-                                    <div class="agent-task" data-task>делаю прототипы, которые уходят в production</div>
+                                    <div class="agent-task" data-task>создание прототипов, которые становятся production</div>
                                     <div class="agent-meta" data-meta>code-first → handoff остаётся консистентным</div>
                                 </div>
                             </li>
@@ -324,7 +324,7 @@
                     </div>
 
                     <div class="releases-block">
-                        <span class="label">// последние работы</span>
+                        <span class="label">// недавние работы</span>
                         <ul class="releases-list" id="releases-list">
                             <li class="release-item" data-id="americor" tabindex="0">
                                 <div class="release-meta-row">
@@ -332,15 +332,15 @@
                                     <span class="release-date">2023 — 2025</span>
                                 </div>
                                 <div class="release-name">Americor · FinTech</div>
-                                <div class="release-summary">Мультибрендовая платформа для выхода из долгов. 4-слойный DS для iOS / Android / Web, редизайн под IPO, code-first прототипы, внутренний Facebook analyzer + NSF simulator.</div>
+                                <div class="release-summary">Мультибрендовая платформа для урегулирования долгов. 4-слойная DS для iOS / Android / Web, редизайн к IPO, code-first прототипы, внутренний Facebook analyzer + NSF simulator.</div>
                             </li>
                             <li class="release-item" data-id="health-samurai" tabindex="0">
                                 <div class="release-meta-row">
                                     <span class="release-version">Senior PD</span>
                                     <span class="release-date">2024 — сейчас</span>
                                 </div>
-                                <div class="release-name">Health Samurai · Здравоохранение IT</div>
-                                <div class="release-summary">FHIR-native инфраструктура. shadCN design system синхронизирован Figma↔code через Claude skill, landing platform 1.5 мес → 3–4 дня, генераторы deck + kudos, приложение FireCamp выпущено за неделю.</div>
+                                <div class="release-name">Health Samurai · Healthcare IT</div>
+                                <div class="release-summary">FHIR-native инфраструктура. Design system shadCN синхронизирована Figma↔code через Claude skill, платформа лендингов 1.5 мес → 3–4 дня, генераторы deck + kudos, приложение FireCamp — за неделю.</div>
                             </li>
                         </ul>
                     </div>
@@ -352,15 +352,15 @@
                             <div class="exp-stat"><div class="exp-stat-k">Флагман</div><div class="exp-stat-v">2 активных</div></div>
                             <div class="exp-stat"><div class="exp-stat-k">Стиль</div><div class="exp-stat-v">design ↔ code</div></div>
                         </div>
-                        <p class="exp-blurb">Приоритет выпуска над полировкой. Уверенно работаю от начала до конца — design systems, прототипы в коде и небольшие внутренние инструменты, которые окупают себя.</p>
+                        <p class="exp-blurb">Склонность к запуску, а не шлифовке. Комфортно от начала до конца — design systems, прототипы в коде и небольшие внутренние инструменты, которые окупают себя.</p>
                     </div>
 
-                    <button type="button" class="showcase-tip" id="showcase-tip" aria-label="Открыть showcase">
+                    <button type="button" class="showcase-tip" id="showcase-tip" aria-label="Открыть витрину">
                         <span class="showcase-tip-head">
                             <span class="showcase-tip-dot"></span>
-                            <span class="showcase-tip-label">// подсказка</span>
+                            <span class="showcase-tip-label">// совет</span>
                         </span>
-                        <span class="showcase-tip-text">Ах да — <em>полные кейсы</em> смотри в showcase ниже ↓</span>
+                        <span class="showcase-tip-text">Ах да — это <em>полные кейс-стади</em> живут в витрине ниже ↓</span>
                     </button>
                 </div>
                 <!-- Chat pane (hidden by default, swaps with dashboard via tabs) -->
@@ -368,7 +368,7 @@
                     <div class="chat-head">
                         <span class="chat-online">
                             <span class="online-dot"></span>
-                            <span class="chat-online-text">Roman online</span>
+                            <span class="chat-online-text">Roman онлайн</span>
                         </span>
                         <button id="chat-fs-toggle" class="chat-fs-btn" type="button" aria-label="Полноэкранный чат">
                             <svg class="icon-expand" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -387,12 +387,12 @@
                     </div>
                     <div class="chat-thread" id="chat-thread">
                         <div class="chat-msg from-system">
-                            <div class="chat-msg-text">Привет · спрашивай что угодно. Ответы приходят из Telegram, обычно быстро.</div>
+                            <div class="chat-msg-text">Привет · спрашивай что угодно. Отвечаю из Telegram, обычно быстро.</div>
                         </div>
                     </div>
                     <div class="chat-sug" id="chat-sug">
                         <button type="button" class="chat-sug-btn" data-text="Какой у тебя стек?">Какой у тебя стек?</button>
-                        <button type="button" class="chat-sug-btn" data-text="Расскажи о Prism">Расскажи о Prism</button>
+                        <button type="button" class="chat-sug-btn" data-text="Расскажи мне о Prism">Расскажи мне о Prism</button>
                         <button type="button" class="chat-sug-btn" data-text="Открыт для проектов?">Открыт для проектов?</button>
                     </div>
                     <form class="chat-input-row" id="chat-form" autocomplete="off">
@@ -436,7 +436,7 @@
             </div>
             <div class="name" id="prompt-roles">Дизайнер</div>
             <h1 class="role-hero">Claude Runner</h1>
-            <div class="slogan">хватит быть статичным — <em>устал рисовать кейсы вручную?</em> Я привношу <em>LLM × design</em> в свою команду и выпускай.</div>
+            <div class="slogan">хватит быть статичным — <em>устал рисовать кейсы вручную?</em> Я привожу <em>LLM × design</em> своей команде и запускай.</div>
             <div class="cta">
                 <span class="cta-line"></span>
                 <span class="cta-text">подробнее</span>
@@ -448,13 +448,13 @@
     <!-- Backdrop with scanlines blur — appears when panel opens -->
     <div class="backdrop"></div>
 
-    <!-- Showcase — basement slide with carousel of recent works -->
-    <div class="showcase-cue" id="showcase-cue" role="button" tabindex="0" aria-label="Открыть showcase">
+    <!-- Витрина — basement slide with carousel of recent works -->
+    <div class="showcase-cue" id="showcase-cue" role="button" tabindex="0" aria-label="Открыть витрину">
         <span class="showcase-cue-arrow" aria-hidden="true">↓</span>
-        <span class="showcase-cue-label">Showcase</span>
+        <span class="showcase-cue-label">Витрина</span>
     </div>
 
-    <section class="showcase" id="showcase" aria-label="Последние работы">
+    <section class="showcase" id="showcase" aria-label="Недавние работы">
         <div class="showcase-drag-handle" aria-hidden="true"></div>
         <div class="showcase-inner">
             <div class="showcase-intro">
@@ -462,7 +462,7 @@
                 <p class="showcase-sub">используй мышь и клавиши · <span class="blink showcase-sub-arrows">↑&#xFE0E; ↓&#xFE0E; ←&#xFE0E; →&#xFE0E;</span></p>
             </div>
 
-            <nav class="sc-tabs" role="tablist" aria-label="Режим просмотра showcase">
+            <nav class="sc-tabs" role="tablist" aria-label="Режим витрины">
                 <button type="button" class="sc-tab is-active" data-sc-tab="company" role="tab" aria-selected="true" aria-controls="sc-view-company">
                     <span class="sc-tab-num">01</span>
                     <span class="sc-tab-label">По компании</span>
@@ -476,7 +476,7 @@
             <div class="cases" id="cases">
                 <article class="case" data-case="cs01">
                     <div class="case-media is-openable" data-open-case="cs01" role="button" tabindex="0" aria-label="Открыть кейс Americor">
-                        <img src="showcase/cases/cs01-americor.png" alt="Americor мультибрендовый design system">
+                        <img src="showcase/cases/cs01-americor.png" alt="Americor мультибрендовая design system">
                         <div class="case-media-open-cue" aria-hidden="true">
                             <span class="arrow">↓</span>
                             <span>Открыть кейс</span>
@@ -487,8 +487,8 @@
                             <span class="case-no">CS/01</span>
                             <span class="case-role">Дизайнер</span>
                         </div>
-                        <h3 class="case-title">Переосмысляем, как американцы <em>выбраться из долгов</em> — мультибрендовый FinTech-редизайн.</h3>
-                        <p class="case-desc">Аудит трёх платформ, распакован design system-призрак, который никогда не существовал в виде компонентов, и выпущена 4-слойная token-архитектура: root → semantic → brand → platform. Каждый экран теперь говорит на одном языке — iOS, Android и web.</p>
+                        <h3 class="case-title">Переосмысляя, как американцы <em>избавление от долгов</em> — мультибрендовый fintech редизайн.</h3>
+                        <p class="case-desc">Аудит трёх платформ, разбор призрачной design system, которая так и не стала компонентами, и запуск 4-слойной архитектуры токенов: root → semantic → brand → platform. Теперь каждый экран говорит на одном языке — iOS, Android и web.</p>
                         <ul class="case-tags">
                             <li>tokens</li><li>multi-brand</li><li>information arch</li><li>figma ↔ code</li>
                         </ul>
@@ -513,10 +513,10 @@
                             <span class="case-no">CS/02</span>
                             <span class="case-role">Дизайнер</span>
                         </div>
-                        <h3 class="case-title">Design system для <em>пять продуктов для здравоохранения</em>, половина сгенерирована AI.</h3>
-                        <p class="case-desc">Спроектировано в Figma, выпущено в коде, синхронизировано в обе стороны. Написал Claude skill для вытаскивания компонентов из Figma, когда такого паттерна ещё не существовало. Каждый компонент проходит через Storybook review.</p>
+                        <h3 class="case-title">Design system для <em>пять healthcare-продуктов</em>, половина сгенерирована AI.</h3>
+                        <p class="case-desc">Спроектировано в Figma, запущено в коде, синхронизировано в обе стороны. Написал Claude skill для извлечения компонентов из Figma, когда этого паттерна ещё не существовало. Каждый компонент проходит через Storybook review.</p>
                         <ul class="case-tags">
-                            <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>двусторонняя синхронизация</li>
+                            <li>shadcn</li><li>fhir-ready</li><li>ai-assisted</li><li>bi-directional sync</li>
                         </ul>
                         <div class="case-meta">Health Samurai · Senior PD · 2023</div>
                         <button class="case-open-btn" data-open-case="cs02" type="button" aria-label="Открыть полный кейс">
@@ -528,15 +528,15 @@
 
                 <article class="case" data-case="cs03">
                     <div class="case-media">
-                        <img src="showcase/cases/cs03-landings.jpg" alt="Landing page pipeline">
+                        <img src="showcase/cases/cs03-landings.jpg" alt="Pipeline лендинговых страниц">
                     </div>
                     <div class="case-body">
                         <div class="case-head">
                             <span class="case-no">CS/03</span>
                             <span class="case-role">Дизайнер</span>
                         </div>
-                        <h3 class="case-title">С 1,5 месяцев до <em>4 дня</em> — pipeline для лендинг-страниц.</h3>
-                        <p class="case-desc">C-level верстали лендинги вручную. Система перестроена вокруг Markdown + block library, которую могут собирать не-дизайнеры. Владельцы редактируют прямо в DOM через MCP chat. Дизайнер полирует и выпускает.</p>
+                        <h3 class="case-title">С 1.5 месяцев до <em>4 дня</em> — pipeline лендинговых страниц.</h3>
+                        <p class="case-desc">C-level верстали лендинги вручную. Пересобрал систему на Markdown + block library, которую могут собирать не-дизайнеры. Владельцы редактируют живо в DOM через MCP-чат. Дизайнер полирует и запускает.</p>
                         <ul class="case-tags">
                             <li>markdown-first</li><li>block library</li><li>mcp</li><li>dogfooded brand</li>
                         </ul>
@@ -546,15 +546,15 @@
 
                 <article class="case" data-case="cs04">
                     <div class="case-media">
-                        <img src="showcase/cases/cs04-creditor.png" alt="Жизненный цикл карточки кредитора">
+                        <img src="showcase/cases/cs04-creditor.png" alt="lifecycle карточки кредитора">
                     </div>
                     <div class="case-body">
                         <div class="case-head">
                             <span class="case-no">CS/04</span>
                             <span class="case-role">Дизайнер</span>
                         </div>
-                        <h3 class="case-title">Карточка кредитора &amp; её <em>жизненный цикл</em>.</h3>
-                        <p class="case-desc">Центральный объект вселенной пользователя. Спроектировано 11 состояний, 5 переходов и анимированный timeline, превращающий абстрактный «прогресс программы» во что-то осязаемое — без перегрузки новых пользователей.</p>
+                        <h3 class="case-title">Карточка кредитора &amp; её <em>lifecycle</em>.</h3>
+                        <p class="case-desc">Центральный объект вселенной пользователя. Спроектировано 11 состояний, 5 переходов и анимированный timeline, превращающий абстрактный «прогресс программы» во что-то ощутимое — без перегруза для новых пользователей.</p>
                         <ul class="case-tags">
                             <li>state design</li><li>micro-interactions</li><li>empty states</li><li>motion</li>
                         </ul>
@@ -569,14 +569,14 @@
                     <div class="case-body">
                         <div class="case-head">
                             <span class="case-no">CS/05</span>
-                            <span class="case-role">Consulting</span>
+                            <span class="case-role">Консалтинг</span>
                         </div>
-                        <h3 class="case-title">Databricks — укрощаем <em>data-platform UX</em>.</h3>
-                        <p class="case-desc">Исследование того, как аналитическая платформа для опытных пользователей может оставаться понятной для новичков, не теряя плотности. Навигация реорганизована вокруг задач пользователей, а не того, где инженеры держат код.</p>
+                        <h3 class="case-title">Databricks — укрощая <em>UX data-платформы</em>.</h3>
+                        <p class="case-desc">Исследование того, как аналитическая платформа для опытных пользователей может оставаться читаемой для новичков без потери плотности. Навигация переработана вокруг того, что пользователи приходят делать, а не где инженеры хранят код.</p>
                         <ul class="case-tags">
-                            <li>плотность информации</li><li>onboarding</li><li>реструктуризация навигации</li><li>data viz</li>
+                            <li>плотность информации</li><li>onboarding</li><li>nav restructure</li><li>data viz</li>
                         </ul>
-                        <div class="case-meta">Databricks · Consulting · 2022</div>
+                        <div class="case-meta">Databricks · Консалтинг · 2022</div>
                     </div>
                 </article>
             </div>
@@ -584,7 +584,7 @@
             <!-- По кейсам view — populated by Step 2 from a DEEP_КЕЙСS data array -->
             <div class="sc-view-cases" id="sc-view-cases" role="tabpanel" aria-labelledby="sc-tab-cases" aria-hidden="true">
                 <div class="sc-cases-grid" id="sc-cases-grid">
-                    <p class="sc-cases-empty">// загрузка глубоких кейсов…</p>
+                    <p class="sc-cases-empty">// загрузка детальных кейсов…</p>
                 </div>
             </div>
 
@@ -615,14 +615,14 @@
         </header>
         <div class="vibe-term-body">
             <pre class="vibe-term-log" id="vibe-term-log"></pre>
-            <iframe class="vibe-term-iframe" id="vibe-term-iframe" title="Демо проекта" loading="lazy"></iframe>
+            <iframe class="vibe-term-iframe" id="vibe-term-iframe" title="demo проекта" loading="lazy"></iframe>
         </div>
     </div>
 
     <!-- Lightbox (shared across the page; opens images & videos at fullscreen with scrubbing) -->
     <div class="am-lightbox" id="am-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
         <button class="am-lb-close" id="am-lb-close" type="button">закрыть · esc</button>
-        <button class="am-lb-nav am-lb-prev" id="am-lb-prev" type="button" aria-label="Назад">←</button>
+        <button class="am-lb-nav am-lb-prev" id="am-lb-prev" type="button" aria-label="Предыдущий">←</button>
         <button class="am-lb-nav am-lb-next" id="am-lb-next" type="button" aria-label="Далее">→</button>
         <div class="am-lightbox-stage" id="am-lb-stage" aria-live="polite"></div>
         <div class="am-lb-caption" id="am-lb-caption"></div>
@@ -642,7 +642,7 @@
                     <h2 class="dw-title" id="dw-title">SIGNAL</h2>
                 </div>
                 <div class="dw-actions">
-                    <button class="dw-nav" id="dw-prev" type="button" aria-label="Назад">
+                    <button class="dw-nav" id="dw-prev" type="button" aria-label="Предыдущий">
                         <span class="dw-nav-key">←</span>
                     </button>
                     <button class="dw-nav" id="dw-next" type="button" aria-label="Далее">
@@ -675,7 +675,7 @@
 
             <div class="panel-content">
                 <nav class="tabs" role="tablist">
-                    <button class="tab active" data-view="about"><span class="num">01</span>Обо мне</button>
+                    <button class="tab active" data-view="about"><span class="num">01</span>О себе</button>
                     <button class="tab" data-view="career"><span class="num">02</span>Карьера</button>
                     <button class="tab" data-view="work"><span class="num">03</span>Работа</button>
                     <button class="tab" data-view="skills"><span class="num">04</span>Стек</button>
@@ -687,7 +687,7 @@
                     <!-- ABOUT -->
                     <section class="view active" data-view="about">
                         <div class="view-header">
-                            <h2>Айдентика</h2>
+                            <h2>Identity</h2>
                             <span class="marker">// 01 · профиль</span>
                         </div>
 
@@ -711,21 +711,21 @@
                         </div>
 
                         <p class="bio">
-                            <em>15 лет в дизайне.</em> Последние два — уже не просто дизайнер, а <em>product shipper</em> на стыке дизайна и кода. Я привожу LLMs в команды, которые говорят об AI, но не выпускают его, и выравниваю инженеров и дизайнеров вокруг единого живого артефакта: рабочего прототипа.
+                            <em>15 лет в дизайне.</em> Последние два — уже не просто дизайнер, а <em>product shipper</em> на грани design и code. Я привожу LLM в команды, которые говорят об AI, но не запускают его, и объединяю инженеров и дизайнеров вокруг единого живого артефакта: рабочего прототипа.
                             <br><br>
-                            <em>Хватит быть статичным.</em> Устал рисовать кейсы вручную? Мой flow теперь <em>code-first</em> — Figma — это скетчбук, prototype живёт в репозитории. Гипотезы проверяются на реальном интерфейсе; когда flow готов, я генерирую Figma-компоненты из кода для handoff. Единый источник правды с обеих сторон.
+                            <em>Хватит быть статичным.</em> Устал рисовать кейсы вручную? Мой flow теперь <em>code-first</em> — Figma — это скетчбук, прототип живёт в репозитории. Гипотезы проверяются на реальном интерфейсе; когда flow приземляется, я генерирую компоненты Figma из кода для handoff. Единый источник истины с обеих сторон.
                             <br><br>
-                            Подход: <em>узкий охват, жёсткая приоритизация, затем скорость.</em> Приоритет выпуска над полировкой, обучения над планированием. Уверенно работаю по всему стеку — от системной архитектуры до покадровой UI motion.
+                            Подход: <em>узкий охват, жёсткая приоритизация, затем скорость.</em> Склонность к запуску, а не шлифовке; к обучению, а не планированию. Комфортно по всему стеку — от системной архитектуры до попиксельной UI-анимации.
                         </p>
 
                         <div class="flow-block" style="margin-top:32px;border-left:2px solid var(--acc);padding:14px 18px;background:linear-gradient(135deg, rgba(var(--acc-rgb), 0.06), rgba(var(--acc-rgb), 0));">
                             <div style="font-family:'JetBrains Mono', monospace;font-size:0.625rem;letter-spacing:0.32em;text-transform:uppercase;color:var(--acc);margin-bottom:10px;">// мой flow сейчас</div>
                             <ul style="margin:0;padding-left:18px;list-style:none;">
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Code-first.</strong> Рабочий React-прототип — источник правды, а не Figma-файл.</li>
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Figma как скетчбук.</strong> Я открываю его для быстрого фрейма, затем перехожу в код.</li>
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Claude как co-pilot.</strong> Кастомные skills берут на себя рутину — tokens, компоненты, handoff.</li>
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Storybook + tokens.</strong> Каждый компонент проходит через review; дизайнеры и инженеры видят одно и то же.</li>
-                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Hand-off через обратный pipeline.</strong> Когда flow переходит в код, я генерирую Figma-компоненты обратно для тикетов и QA.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Code-first.</strong> Рабочий React-прототип — источник истины, а не файл Figma.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Figma как скетчбук.</strong> Открываю для быстрого фрейма, затем перехожу в код.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Claude как co-pilot.</strong> Custom skills берут на себя рутину — tokens, components, handoff.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Storybook + tokens.</strong> Каждый компонент проходит review; дизайнеры и инженеры видят одно и то же.</li>
+                                <li style="position:relative;padding-left:18px;margin:6px 0;"><span style="position:absolute;left:0;color:var(--acc);">▸</span><strong>Hand-off через обратный pipeline.</strong> Как только flow приземляется в коде, я генерирую компоненты Figma обратно для тикетов и QA.</li>
                             </ul>
                         </div>
                     </section>
@@ -739,26 +739,26 @@
 
                         <div class="timeline">
                             <div class="tl-item current">
-                                <div class="tl-period">2024 — сейчас <span class="pin">Los Angeles</span></div>
+                                <div class="tl-period">2024 — н.в. <span class="pin">Los Angeles</span></div>
                                 <div class="tl-role">Lead Продукт Дизайнер</div>
                                 <div class="tl-company">@ Americor · FinTech</div>
-                                <div class="tl-summary">FinTech-платформа следующего поколения для выхода из долгов. Рост
+                                <div class="tl-summary">FinTech-платформа нового поколения для урегулирования долгов. Рост
                                     retention/MAU/NPS, редизайн
-                                    web + mobile (iOS, Android), построены design systems для 3 платформ. NPS +25%, T2M
-                                    сокращён ~30%.</div>
+                                    web + mobile (iOS, Android), design systems для 3 платформ. NPS +25%, T2M
+                                    сокращён на ~30%.</div>
                                 <div class="tl-tags">
-                                    <span>FinTech</span><span>DS</span><span>Mobile</span><span>Лидерство</span></div>
+                                    <span>FinTech</span><span>DS</span><span>Мобильный</span><span>Лидерство</span></div>
                             </div>
 
                             <div class="tl-item current">
-                                <div class="tl-period">2023 — сейчас <span class="pin">Lisbon</span></div>
+                                <div class="tl-period">2023 — н.в. <span class="pin">Lisbon</span></div>
                                 <div class="tl-role">Дизайнер-Developer</div>
                                 <div class="tl-company">@ Health-Samurai</div>
-                                <div class="tl-summary">Здравоохранение IT с 2004 года. Создаю AI-генерируемые design systems
+                                <div class="tl-summary">Healthcare IT с 2004 года. Создаю AI-генерируемые design systems
                                     и UI-генераторы
-                                    (Landing AI, Presentation AI). Claude Skills для построения различных UI. Доведено до
-                                    production.</div>
-                                <div class="tl-tags"><span>Здравоохранение</span><span>AI</span><span>Автоматизация</span></div>
+                                    (Landing AI, Presentation AI). Claude Skills для построения разных UI. Запущено
+                                    в production.</div>
+                                <div class="tl-tags"><span>Healthcare</span><span>AI</span><span>Автоматизация</span></div>
                             </div>
 
                             <div class="tl-item">
@@ -772,11 +772,11 @@
                                     design system with
                                     token theming.</div>
                                 <div class="tl-tags">
-                                    <span>MedTech</span><span>Legacy</span><span>DS</span><span>Mobile</span></div>
+                                    <span>MedTech</span><span>Legacy</span><span>DS</span><span>Мобильный</span></div>
                             </div>
 
                             <div class="tl-item">
-                                <div class="tl-period">2016 — 2020 <span class="pin">СПб · Майами</span></div>
+                                <div class="tl-period">2016 — 2020 <span class="pin">СПб · Miami</span></div>
                                 <div class="tl-role">UX/UI Дизайнер</div>
                                 <div class="tl-company">@ goTRG</div>
                                 <div class="tl-summary">SaaS, Supply Chain & ReCommerce platform. Design audit of legacy
@@ -792,11 +792,11 @@
                                 <div class="tl-period">2014 — 2016 <span class="pin">Москва</span></div>
                                 <div class="tl-role">UX/UI Дизайнер / Developer</div>
                                 <div class="tl-company">@ Project Practice</div>
-                                <div class="tl-summary">Редизайн PM-системы × 4. JS, LESS, CSS, HTML, C# шаблоны. Построен
+                                <div class="tl-summary">Редизайн PM-системы × 4. JS, LESS, CSS, HTML, шаблоны C#. Построил
                                     theming engine,
-                                    сотни CSS файлов рефакторингом сведены в единый LESS с переменными (80% покрытие).
+                                    рефакторинг сотен CSS-файлов в единый LESS с переменными (покрытие 80%).
                                 </div>
-                                <div class="tl-tags"><span>PM Инструменты</span><span>Theming</span><span>Рефакторинг</span>
+                                <div class="tl-tags"><span>PM Инструменты</span><span>Theming</span><span>Refactor</span>
                                 </div>
                             </div>
 
@@ -804,18 +804,18 @@
                                 <div class="tl-period">2012 — 2014 <span class="pin">Москва</span></div>
                                 <div class="tl-role">Дизайнер / Основатель</div>
                                 <div class="tl-company">@ Jettap</div>
-                                <div class="tl-summary">Собственная студия. Управлял командой из 6 человек. Веб-проекты, мобильные приложения,
+                                <div class="tl-summary">Собственная студия. Управлял командой из 6 человек. Web-проекты, мобильные приложения,
                                     full-stack разработка (JS,
                                     CSS, HTML, PHP, AS2/3).</div>
                                 <div class="tl-tags"><span>Студия</span><span>Основатель</span></div>
                             </div>
 
                             <div class="tl-item">
-                                <div class="tl-period">2010 — 2013 <span class="pin">Краснодар</span></div>
+                                <div class="tl-period">2010 — 2013 <span class="pin">Krasnodar</span></div>
                                 <div class="tl-role">Дизайнер</div>
                                 <div class="tl-company">@ Two Pilots / Бренд Master</div>
-                                <div class="tl-summary">Веб-проекты, лендинги, брендинг, полиграфия, баннеры, flash.
-                                    Отсюда
+                                <div class="tl-summary">Web-проекты, лендинги, брендинг, полиграфия, баннеры, flash.
+                                    Откуда
                                     всё началось.</div>
                                 <div class="tl-tags"><span>Брендинг</span><span>Web</span></div>
                             </div>
@@ -848,19 +848,19 @@
                             </div>
                             <p class="project-desc">Генеративный dashboard в реальном времени для атмосферных данных. Кастомный WebGL
                                 pipeline,
-                                рендерящий 40к частиц синхронизированных с live weather feeds.</p>
+                                рендерящий 40k частиц, синхронизированных с live-данными погоды.</p>
                             <div class="project-tags">
                                 <span>WebGL</span><span>Three.js</span><span>D3</span><span>API</span></div>
                         </div>
 
                         <div class="project">
                             <div class="project-head">
-                                <span class="project-title">Signal / Noise</span>
+                                <span class="project-title">Сигнал / Шум</span>
                                 <span class="project-year">2024</span>
                             </div>
-                            <p class="project-desc">Аудиореактивная система айдентики для берлинского музыкального лейбла. Логотип трансформируется
+                            <p class="project-desc">Аудиореактивная identity-система для берлинского музыкального лейбла. Логотип трансформируется
                                 в реальном времени
-                                под входящий звук — каждый пресс-релиз выглядит иначе.</p>
+                                под входящий звук — каждый пресс-релиз выглядит по-разному.</p>
                             <div class="project-tags"><span>Web Audio</span><span>Canvas</span><span>Бренд</span></div>
                         </div>
 
@@ -869,9 +869,9 @@
                                 <span class="project-title">Holo · OS</span>
                                 <span class="project-year">2024</span>
                             </div>
-                            <p class="project-desc">Рабочая среда в стиле киберпанка. Window manager, terminal
+                            <p class="project-desc">Рабочая среда в духе киберпанка. Оконный менеджер, terminal
                                 и творческие
-                                инструменты — всё стекло, scanlines и хроматическая аберрация.</p>
+                                инструменты — всё стекло, сканлайны и хроматическая аберрация.</p>
                             <div class="project-tags"><span>Electron</span><span>React</span><span>GLSL</span></div>
                         </div>
 
@@ -882,8 +882,8 @@
                             </div>
                             <p class="project-desc">Интерактивный эссе-сайт о темпе и ритуале. Без фреймворков, без
                                 analytics — только
-                                HTML, CSS и один JS-файл на 4kb.</p>
-                            <div class="project-tags"><span>HTML</span><span>CSS</span><span>Тексты</span></div>
+                                HTML, CSS и единственный JS-файл в 4kb.</p>
+                            <div class="project-tags"><span>HTML</span><span>CSS</span><span>Публикации</span></div>
                         </div>
 
                         <div class="project">
@@ -893,8 +893,8 @@
                             </div>
                             <p class="project-desc">Ежемесячные эксперименты — шейдеры, micro-tools, визуальные поэмы. Студийная
                                 практика
-                                в открытом доступе.</p>
-                            <div class="project-tags"><span>Lab</span><span>Разное</span></div>
+                                публично.</p>
+                            <div class="project-tags"><span>Лаборатория</span><span>Разные</span></div>
                         </div>
                     </section>
 
@@ -909,13 +909,13 @@
                             <h3>Продукт</h3>
                             <div class="skill-row"><span class="name">Стратегия</span><span class="bar"><i
                                         style="--w:92%"></i></span><span class="pct">92</span></div>
-                            <div class="skill-row"><span class="name">Выпуск</span><span class="bar"><i
+                            <div class="skill-row"><span class="name">Shipping</span><span class="bar"><i
                                         style="--w:96%"></i></span><span class="pct">96</span></div>
                             <div class="skill-row"><span class="name">UX / UI</span><span class="bar"><i
                                         style="--w:88%"></i></span><span class="pct">88</span></div>
                         </div>
                         <div class="skill-group">
-                            <h3>Инженерия</h3>
+                            <h3>Разработка</h3>
                             <div class="skill-row"><span class="name">JavaScript / TS</span><span class="bar"><i
                                         style="--w:90%"></i></span><span class="pct">90</span></div>
                             <div class="skill-row"><span class="name">React / Далее</span><span class="bar"><i
@@ -940,7 +940,7 @@
                     <section class="view" data-view="contact">
                         <div class="view-header">
                             <h2>Каналы</h2>
-                            <span class="marker">// 05 · передача</span>
+                            <span class="marker">// 05 · transmission</span>
                         </div>
 
                         <p class="bio" style="margin-bottom: 24px;">
@@ -973,9 +973,9 @@
     <!-- Generic deep-case page — single overlay reused for any DEEP_КЕЙСS
          entry. Content rendered from data: hero placeholder, breadcrumbs,
          meta (company + metric + tags), title, body. -->
-    <section class="dc-page" id="dc-page" data-dc-page aria-hidden="true" aria-label="Глубокий кейс">
+    <section class="dc-page" id="dc-page" data-dc-page aria-hidden="true" aria-label="Детальный кейс">
         <header class="dc-head">
-            <nav class="dc-crumbs" id="dc-crumbs" aria-label="Хлебные крошки"></nav>
+            <nav class="dc-crumbs" id="dc-crumbs" aria-label="Breadcrumbs"></nav>
             <button type="button" class="dc-close" id="dc-close" aria-label="Закрыть кейс">ESC</button>
         </header>
         <div class="dc-inner">
@@ -1041,7 +1041,7 @@
             });
         });
         // also stop click propagation on the switch container itself
-        document.получитьElementById('theme-switch').addEventListener('click', (e) => e.stopPropagation());
+        document.getElementById('theme-switch').addEventListener('click', (e) => e.stopPropagation());
 
         // ===== mouse parallax tracker — DISABLED =====
         // (kept commented for easy re-enable later)
@@ -1050,27 +1050,27 @@
           const root = document.documentElement;
           const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
           if (reduce) { root.style.setProperty('--tilt', '0'); return; }
-          let tarполучитьX = 0, tarполучитьY = 0, currentX = 0, currentY = 0, raf = null;
+          let targetX = 0, targetY = 0, currentX = 0, currentY = 0, raf = null;
           function animate() {
-            currentX += (tarполучитьX - currentX) * 0.08;
-            currentY += (tarполучитьY - currentY) * 0.08;
+            currentX += (targetX - currentX) * 0.08;
+            currentY += (targetY - currentY) * 0.08;
             root.style.setProperty('--mx', currentX.toFixed(4));
             root.style.setProperty('--my', currentY.toFixed(4));
-            if (Math.abs(tarполучитьX - currentX) > 0.001 || Math.abs(tarполучитьY - currentY) > 0.001) {
+            if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
               raf = requestAnimationFrame(animate);
             } else { raf = null; }
           }
-          function setTarполучить(x, y) {
-            tarполучитьX = (x / window.innerWidth - 0.5) * 2;
-            tarполучитьY = (y / window.innerHeight - 0.5) * 2;
+          function setTarget(x, y) {
+            targetX = (x / window.innerWidth - 0.5) * 2;
+            targetY = (y / window.innerHeight - 0.5) * 2;
             if (!raf) raf = requestAnimationFrame(animate);
           }
-          window.addEventListener('mousemove', (e) => setTarполучить(e.clientX, e.clientY), { passive: true });
+          window.addEventListener('mousemove', (e) => setTarget(e.clientX, e.clientY), { passive: true });
         })();
         */
 
         // ===== timecode =====
-        const clock = document.получитьElementById('clock');
+        const clock = document.getElementById('clock');
         const start = Date.now();
         function tick() {
             const t = Math.floor((Date.now() - start) / 1000);
@@ -1083,10 +1083,10 @@
 
         // ===== engage / disengage =====
         const body = document.body;
-        const status = document.получитьElementById('status');
-        const prompt = document.получитьElementById('prompt');
-        const panel = document.получитьElementById('panel');
-        const closeBtn = document.получитьElementById('close');
+        const status = document.getElementById('status');
+        const prompt = document.getElementById('prompt');
+        const panel = document.getElementById('panel');
+        const closeBtn = document.getElementById('close');
 
         function engage() {
             if (body.classList.contains('engaged')) return;
@@ -1127,24 +1127,24 @@
         const tabs = document.querySelectorAll('.tab');
         const views = document.querySelectorAll('.view');
         function activateTab(tab) {
-            const tarполучить = tab.dataset.view;
+            const target = tab.dataset.view;
             tabs.forEach(t => t.classList.toggle('active', t === tab));
-            views.forEach(v => v.classList.toggle('active', v.dataset.view === tarполучить));
+            views.forEach(v => v.classList.toggle('active', v.dataset.view === target));
         }
         tabs.forEach(tab => {
             tab.addEventListener('click', () => activateTab(tab));
         });
         // Prev / next nav in the panel header — cycles through the tabs
         // (with edge clamp), matches the dw-modal arrow pattern.
-        const panelPrev = document.получитьElementById('panel-prev');
-        const panelДалее = document.получитьElementById('panel-next');
+        const panelPrev = document.getElementById('panel-prev');
+        const panelNext = document.getElementById('panel-next');
         function activeTabIdx() {
             return Array.from(tabs).findIndex(t => t.classList.contains('active'));
         }
         function syncNavDisabled() {
             const i = activeTabIdx();
             if (panelPrev) panelPrev.disabled = i <= 0;
-            if (panelДалее) panelДалее.disabled = i >= tabs.length - 1;
+            if (panelNext) panelNext.disabled = i >= tabs.length - 1;
         }
         function flashPanelBtn(btn) {
             if (!btn) return;
@@ -1158,10 +1158,10 @@
             activateTab(tabs[next]);
             syncNavDisabled();
             window.__sfx?.tick?.();
-            flashPanelBtn(dir > 0 ? panelДалее : panelPrev);
+            flashPanelBtn(dir > 0 ? panelNext : panelPrev);
         }
         panelPrev?.addEventListener('click', () => panelGo(-1));
-        panelДалее?.addEventListener('click', () => panelGo(1));
+        panelNext?.addEventListener('click', () => panelGo(1));
         tabs.forEach(tab => tab.addEventListener('click', syncNavDisabled));
         syncNavDisabled();
         // Keyboard arrows when the Claude Runner panel is open.
@@ -1172,12 +1172,12 @@
         });
 
         // ===== draw bevelled border that matches the clip-path =====
-        const borderPath = document.получитьElementById('border-path');
+        const borderPath = document.getElementById('border-path');
         const borderSvg = document.querySelector('.panel-border');
         const BEVEL = 28; // must match clip-path bevel in CSS
 
         function drawBorder() {
-            // offsetWidth/Height ignore CSS transforms, so we получить the panel's true layout size
+            // offsetWidth/Height ignore CSS transforms, so we get the panel's true layout size
             const w = panel.offsetWidth;
             const h = panel.offsetHeight;
             if (!w || !h) return;
@@ -1200,8 +1200,8 @@
         setTimeout(drawBorder, 1000);
 
         // ===== ensure video plays (autoplay quirks) =====
-        const video = document.получитьElementById('bg');
-        const statusEl = document.получитьElementById('status');
+        const video = document.getElementById('bg');
+        const statusEl = document.getElementById('status');
 
         video.addEventListener('error', () => {
             if (statusEl) {
@@ -1243,7 +1243,7 @@
     <!-- Center prompt: subtle 3D parallax + proximity-aware hover scale -->
     <script>
         (() => {
-            const prompt = document.получитьElementById('prompt');
+            const prompt = document.getElementById('prompt');
             const body = document.body;
             if (!prompt) return;
 
@@ -1261,20 +1261,20 @@
             const SCALE_BASE   = 1.0;
             const scaleLerp    = 0.12;
 
-            let tarполучитьRY = baseRY, tarполучитьRX = baseRX;
+            let targetRY = baseRY, targetRX = baseRX;
             let curRY = baseRY, curRX = baseRX;
-            let tarполучитьScale = SCALE_BASE;
+            let targetScale = SCALE_BASE;
             let curScale = SCALE_BASE;
 
             document.addEventListener('mousemove', (e) => {
                 if (body.classList.contains('engaged') ||
                     body.classList.contains('dw-open') ||
                     body.classList.contains('pre-gate')) {
-                    tarполучитьRY = baseRY; tarполучитьRX = baseRX;
-                    tarполучитьScale = SCALE_BASE;
+                    targetRY = baseRY; targetRX = baseRX;
+                    targetScale = SCALE_BASE;
                     return;
                 }
-                const r = prompt.получитьBoundingClientRect();
+                const r = prompt.getBoundingClientRect();
                 const x = e.clientX, y = e.clientY;
                 const inside =
                     x >= r.left && x <= r.right &&
@@ -1283,18 +1283,18 @@
                 if (inside) {
                     const nx = (x - r.left) / r.width - 0.5;
                     const ny = (y - r.top)  / r.height - 0.5;
-                    tarполучитьRY = baseRY + nx * mouseAmpY * 2;
-                    tarполучитьRX = baseRX - ny * mouseAmpX * 2;
-                    tarполучитьScale = SCALE_INSIDE;
+                    targetRY = baseRY + nx * mouseAmpY * 2;
+                    targetRX = baseRX - ny * mouseAmpX * 2;
+                    targetScale = SCALE_INSIDE;
                 } else {
-                    tarполучитьRY = baseRY;
-                    tarполучитьRX = baseRX;
+                    targetRY = baseRY;
+                    targetRX = baseRX;
                     // Distance from cursor to nearest edge of the rect
                     const dx = Math.max(r.left - x, 0, x - r.right);
                     const dy = Math.max(r.top  - y, 0, y - r.bottom);
                     const d  = Math.hypot(dx, dy);
                     const t  = Math.max(0, 1 - d / PROXIMITY);
-                    tarполучитьScale = SCALE_BASE + (SCALE_INSIDE - SCALE_BASE) * t;
+                    targetScale = SCALE_BASE + (SCALE_INSIDE - SCALE_BASE) * t;
                 }
             });
 
@@ -1306,16 +1306,16 @@
                     body.classList.contains('pre-gate')) {
                     curRY *= 0.9;
                     curRX *= 0.9;
-                    tarполучитьRY = 0; tarполучитьRX = 0;
-                    tarполучитьScale = SCALE_BASE;
+                    targetRY = 0; targetRX = 0;
+                    targetScale = SCALE_BASE;
                 } else {
                     const dt = (t - start) / 1000;
                     const idleY = Math.sin(dt * 0.42) * idleAmpY;
                     const idleX = Math.cos(dt * 0.31) * idleAmpX;
-                    curRY += ((tarполучитьRY + idleY) - curRY) * lerp;
-                    curRX += ((tarполучитьRX + idleX) - curRX) * lerp;
+                    curRY += ((targetRY + idleY) - curRY) * lerp;
+                    curRX += ((targetRX + idleX) - curRX) * lerp;
                 }
-                curScale += (tarполучитьScale - curScale) * scaleLerp;
+                curScale += (targetScale - curScale) * scaleLerp;
                 prompt.style.setProperty('--prompt-ry', curRY.toFixed(2) + 'deg');
                 prompt.style.setProperty('--prompt-rx', curRX.toFixed(2) + 'deg');
                 prompt.style.setProperty('--prompt-scale', curScale.toFixed(4));
@@ -1327,7 +1327,7 @@
     <!-- Central panel: hologram parallax (active only when engaged) -->
     <script>
         (() => {
-            const panel = document.получитьElementById('panel');
+            const panel = document.getElementById('panel');
             const body = document.body;
             if (!panel) return;
 
@@ -1339,26 +1339,26 @@
             const idleAmpX = 0.5;
             const lerp = 0.07;
 
-            let tarполучитьRY = baseRY;
-            let tarполучитьRX = baseRX;
+            let targetRY = baseRY;
+            let targetRX = baseRX;
             let curRY = baseRY;
             let curRX = baseRX;
 
             document.addEventListener('mousemove', (e) => {
                 if (!body.classList.contains('engaged')) return;
-                const r = panel.получитьBoundingClientRect();
+                const r = panel.getBoundingClientRect();
                 const inside =
                     e.clientX >= r.left && e.clientX <= r.right &&
                     e.clientY >= r.top  && e.clientY <= r.bottom;
                 if (!inside) {
-                    tarполучитьRY = baseRY;
-                    tarполучитьRX = baseRX;
+                    targetRY = baseRY;
+                    targetRX = baseRX;
                     return;
                 }
                 const nx = (e.clientX - r.left) / r.width - 0.5;
                 const ny = (e.clientY - r.top)  / r.height - 0.5;
-                tarполучитьRY = baseRY + nx * mouseAmpY * 2;
-                tarполучитьRX = baseRX - ny * mouseAmpX * 2;
+                targetRY = baseRY + nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
             });
 
             const start = performance.now();
@@ -1368,8 +1368,8 @@
                 const dt = (t - start) / 1000;
                 const idleY = Math.sin(dt * 0.35) * idleAmpY;
                 const idleX = Math.cos(dt * 0.27) * idleAmpX;
-                curRY += ((tarполучитьRY + idleY) - curRY) * lerp;
-                curRX += ((tarполучитьRX + idleX) - curRX) * lerp;
+                curRY += ((targetRY + idleY) - curRY) * lerp;
+                curRX += ((targetRX + idleX) - curRX) * lerp;
                 panel.style.setProperty('--p-ry', curRY.toFixed(2) + 'deg');
                 panel.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
             }
@@ -1423,7 +1423,7 @@
                 my = e.clientY;
                 show();
                 // hover detection
-                const t = e.tarполучить;
+                const t = e.target;
                 if (!t || !t.closest) return;
                 const overText = t.closest(TEXT_SEL);
                 const overHover = !overText && t.closest(HOVER_SEL);
@@ -1475,7 +1475,7 @@
                     pinAnchor = null;
                 }
                 if (!tabsHidden) document.querySelectorAll(SNAP_SEL).forEach(t => {
-                    const r  = t.получитьBoundingClientRect();
+                    const r  = t.getBoundingClientRect();
                     const cx = r.left + r.width / 2;
                     const cy = r.top;
                     const d  = Math.hypot(cx - mx, cy - my);
@@ -1505,7 +1505,7 @@
                     pinAnchor = { x: insideAnyTab.x, y: insideAnyTab.y };
                 }
 
-                // Compute tarполучить position with reluctant-drift while pinned. While in tabs context,
+                // Compute target position with reluctant-drift while pinned. While in tabs context,
                 // lock Y to the anchor's Y so the dot glides strictly left-right between tabs (no
                 // 2D arcs / springy Y-bounce when transitioning).
                 let tx = mx, ty = my;
@@ -1548,10 +1548,10 @@
     <!-- Audio gate: request explicit user permission for sound on entry -->
     <script>
         (() => {
-            const gate = document.получитьElementById('audio-gate');
-            const accept = document.получитьElementById('audio-gate-enable');
-            const silent = document.получитьElementById('audio-gate-mute');
-            const audio = document.получитьElementById('ap-audio');
+            const gate = document.getElementById('audio-gate');
+            const accept = document.getElementById('audio-gate-enable');
+            const silent = document.getElementById('audio-gate-mute');
+            const audio = document.getElementById('ap-audio');
 
             function dismiss({ withSound }) {
                 if (withSound) {
@@ -1625,7 +1625,7 @@
                 const a = ctx(); if (!a) return;
                 const t = a.currentTime;
                 const buf = a.createBuffer(1, Math.max(1, Math.floor(a.sampleRate * dur)), a.sampleRate);
-                const d = buf.получитьChannelData(0);
+                const d = buf.getChannelData(0);
                 for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
                 const src = a.createBufferSource();
                 src.buffer = buf;
@@ -1682,12 +1682,12 @@
             const TICK_SEL  = '.tab, .agent-item, .release-item, .task-item[data-id]';   // soft minimalist tick
             const CLICK_SEL = '.theme-dot, .ap-btn, .dw-close';     // punchier click for buttons
             document.addEventListener('pointerenter', (e) => {
-                if (e.tarполучить.closest && e.tarполучить.closest(HOVER_SEL)) SFX.hover();
+                if (e.target.closest && e.target.closest(HOVER_SEL)) SFX.hover();
             }, true);
             document.addEventListener('click', (e) => {
-                if (!e.tarполучить.closest) return;
-                if (e.tarполучить.closest(TICK_SEL))  { SFX.tick();  return; }
-                if (e.tarполучить.closest(CLICK_SEL)) { SFX.click(); }
+                if (!e.target.closest) return;
+                if (e.target.closest(TICK_SEL))  { SFX.tick();  return; }
+                if (e.target.closest(CLICK_SEL)) { SFX.click(); }
             }, true);
         })();
     </script>
@@ -1697,18 +1697,18 @@
         (() => {
             const tabs = document.querySelectorAll('.hud-tab');
             const dashboard = document.querySelector('.corner.tr.agents-feed');
-            const chatPane = document.получитьElementById('chat-pane');
+            const chatPane = document.getElementById('chat-pane');
             if (!dashboard || !chatPane) return;
 
             tabs.forEach((tab) => {
                 tab.addEventListener('click', () => {
-                    const tarполучить = tab.dataset.pane;
+                    const target = tab.dataset.pane;
                     tabs.forEach((t) => t.classList.toggle('active', t === tab));
                     window.__sfx?.tick?.();
-                    if (tarполучить === 'chat') {
+                    if (target === 'chat') {
                         dashboard.hidden = true;
                         chatPane.hidden = false;
-                        document.получитьElementById('chat-input')?.focus();
+                        document.getElementById('chat-input')?.focus();
                     } else {
                         // Switching back to dashboard always exits fullscreen
                         if (document.body.classList.contains('chat-fullscreen')) {
@@ -1731,22 +1731,22 @@
             // which establishes a containing block for any position:fixed descendant.
             // To make fullscreen actually relative to the viewport we move the
             // chat-pane node to <body> on enter and return it on exit.
-            const fsBtn = document.получитьElementById('chat-fs-toggle');
+            const fsBtn = document.getElementById('chat-fs-toggle');
             const originalParent = chatPane.parentNode;
-            const originalДалееSibling = chatPane.nextSibling;
+            const originalNextSibling = chatPane.nextSibling;
 
             function enterFullscreen() {
                 if (document.body.classList.contains('chat-fullscreen')) return;
                 document.body.appendChild(chatPane);
                 document.body.classList.add('chat-fullscreen');
                 window.__sfx?.engage?.();
-                requestAnimationFrame(() => document.получитьElementById('chat-input')?.focus());
+                requestAnimationFrame(() => document.getElementById('chat-input')?.focus());
             }
             function exitFullscreen() {
                 if (!document.body.classList.contains('chat-fullscreen')) return;
                 document.body.classList.remove('chat-fullscreen');
-                if (originalДалееSibling) {
-                    originalParent.insertBefore(chatPane, originalДалееSibling);
+                if (originalNextSibling) {
+                    originalParent.insertBefore(chatPane, originalNextSibling);
                 } else {
                     originalParent.appendChild(chatPane);
                 }
@@ -1763,23 +1763,23 @@
                 const ampY = 3, ampX = 2;
                 const idleAmpY = 0.6, idleAmpX = 0.4;
                 const lerp = 0.07;
-                let tarполучитьRY = baseRY, tarполучитьRX = baseRX;
+                let targetRY = baseRY, targetRX = baseRX;
                 let curRY = baseRY, curRX = baseRX;
 
                 document.addEventListener('mousemove', (e) => {
                     if (!document.body.classList.contains('chat-fullscreen')) return;
-                    const r = chatPane.получитьBoundingClientRect();
+                    const r = chatPane.getBoundingClientRect();
                     const inside =
                         e.clientX >= r.left && e.clientX <= r.right &&
                         e.clientY >= r.top  && e.clientY <= r.bottom;
                     if (!inside) {
-                        tarполучитьRY = baseRY; tarполучитьRX = baseRX;
+                        targetRY = baseRY; targetRX = baseRX;
                         return;
                     }
                     const nx = (e.clientX - r.left) / r.width - 0.5;
                     const ny = (e.clientY - r.top)  / r.height - 0.5;
-                    tarполучитьRY = baseRY + nx * ampY * 2;
-                    tarполучитьRX = baseRX - ny * ampX * 2;
+                    targetRY = baseRY + nx * ampY * 2;
+                    targetRX = baseRX - ny * ampX * 2;
                 });
 
                 const start = performance.now();
@@ -1792,8 +1792,8 @@
                     const dt = (t - start) / 1000;
                     const idleY = Math.sin(dt * 0.4) * idleAmpY;
                     const idleX = Math.cos(dt * 0.3) * idleAmpX;
-                    curRY += ((tarполучитьRY + idleY) - curRY) * lerp;
-                    curRX += ((tarполучитьRX + idleX) - curRX) * lerp;
+                    curRY += ((targetRY + idleY) - curRY) * lerp;
+                    curRX += ((targetRX + idleX) - curRX) * lerp;
                     chatPane.style.setProperty('--chat-fs-ry', curRY.toFixed(2) + 'deg');
                     chatPane.style.setProperty('--chat-fs-rx', curRX.toFixed(2) + 'deg');
                 }
@@ -1819,7 +1819,7 @@
             // ---- chat ----
             const STORE = 'rpogorov_chat';
             const thread = (() => {
-                let v = localStorage.получитьItem(STORE + '_thread');
+                let v = localStorage.getItem(STORE + '_thread');
                 if (!v) {
                     v = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)) + Date.now().toString(36);
                     localStorage.setItem(STORE + '_thread', v);
@@ -1827,11 +1827,11 @@
                 return v;
             })();
 
-            const threadEl = document.получитьElementById('chat-thread');
-            const form = document.получитьElementById('chat-form');
-            const input = document.получитьElementById('chat-input');
+            const threadEl = document.getElementById('chat-thread');
+            const form = document.getElementById('chat-form');
+            const input = document.getElementById('chat-input');
             const sendBtn = form.querySelector('.chat-send');
-            const sugWrap = document.получитьElementById('chat-sug');
+            const sugWrap = document.getElementById('chat-sug');
 
             let lastId = 0;
             const rendered = new Set(); // dedup by server msg id
@@ -1853,7 +1853,7 @@
             }
 
             sugWrap.addEventListener('click', (e) => {
-                const b = e.tarполучить.closest('.chat-sug-btn');
+                const b = e.target.closest('.chat-sug-btn');
                 if (!b) return;
                 input.value = b.dataset.text;
                 input.focus();
@@ -1869,7 +1869,7 @@
                     const r = await fetch('api/chat/send', {
                         method: 'POST',
                         headers: { 'content-type': 'application/json' },
-                        body: JSВКЛ.stringify({ thread, text }),
+                        body: JSON.stringify({ thread, text }),
                     });
                     const data = await r.json();
                     if (data?.msg) addMsg({ role: 'visitor', text: data.msg.text, id: data.msg.id });
@@ -1882,12 +1882,12 @@
             });
 
             // Take-to-Telegram pickup — collapsed by default, expand on trigger
-            const pickupContainer = document.получитьElementById('chat-pickup');
-            const pickupTrigger = document.получитьElementById('chat-pickup-trigger');
-            const pickupЗакрыть = document.получитьElementById('chat-pickup-close');
-            const pickupBtn = document.получитьElementById('chat-pickup-btn');
-            const pickupInput = document.получитьElementById('chat-pickup-username');
-            const pickupСтатус = document.получитьElementById('chat-pickup-status');
+            const pickupContainer = document.getElementById('chat-pickup');
+            const pickupTrigger = document.getElementById('chat-pickup-trigger');
+            const pickupClose = document.getElementById('chat-pickup-close');
+            const pickupBtn = document.getElementById('chat-pickup-btn');
+            const pickupInput = document.getElementById('chat-pickup-username');
+            const pickupStatus = document.getElementById('chat-pickup-status');
             if (pickupTrigger) {
                 pickupTrigger.addEventListener('click', () => {
                     pickupContainer.classList.add('expanded');
@@ -1895,11 +1895,11 @@
                     window.__sfx?.tick?.();
                 });
             }
-            if (pickupЗакрыть) {
-                pickupЗакрыть.addEventListener('click', () => {
+            if (pickupClose) {
+                pickupClose.addEventListener('click', () => {
                     pickupContainer.classList.remove('expanded');
-                    pickupСтатус.classList.remove('show');
-                    pickupСтатус.textContent = '';
+                    pickupStatus.classList.remove('show');
+                    pickupStatus.textContent = '';
                     window.__sfx?.tick?.();
                 });
             }
@@ -1907,39 +1907,39 @@
                 pickupBtn.addEventListener('click', async () => {
                     const username = pickupInput.value.trim().replace(/^@/, '').slice(0, 32);
                     if (!username) {
-                        pickupСтатус.textContent = '⚠ enter your @telegram first';
-                        pickupСтатус.style.color = '#ffb547';
-                        pickupСтатус.classList.add('show');
+                        pickupStatus.textContent = '⚠ enter your @telegram first';
+                        pickupStatus.style.color = '#ffb547';
+                        pickupStatus.classList.add('show');
                         return;
                     }
-                    pickupСтатус.textContent = 'sending…';
-                    pickupСтатус.style.color = '';
-                    pickupСтатус.classList.add('show');
+                    pickupStatus.textContent = 'sending…';
+                    pickupStatus.style.color = '';
+                    pickupStatus.classList.add('show');
                     pickupBtn.disabled = true;
                     window.__sfx?.click?.();
                     try {
                         const r = await fetch('api/chat/pickup', {
                             method: 'POST',
                             headers: { 'content-type': 'application/json' },
-                            body: JSВКЛ.stringify({ thread, username }),
+                            body: JSON.stringify({ thread, username }),
                         });
                         const data = await r.json().catch(() => ({}));
                         if (r.ok && data.ok) {
-                            pickupСтатус.textContent = `✓ sent to @${username}. check your Telegram.`;
-                            pickupСтатус.style.color = '#4ade80';
+                            pickupStatus.textContent = `✓ sent to @${username}. check your Telegram.`;
+                            pickupStatus.style.color = '#4ade80';
                             window.__sfx?.engage?.();
                             // Auto-collapse after the user has had time to read confirmation
                             setTimeout(() => {
                                 pickupContainer.classList.remove('expanded');
-                                pickupСтатус.classList.remove('show');
+                                pickupStatus.classList.remove('show');
                             }, 4000);
                         } else {
-                            pickupСтатус.textContent = `⚠ ${data.error || 'send failed'}`;
-                            pickupСтатус.style.color = '#ffb547';
+                            pickupStatus.textContent = `⚠ ${data.error || 'send failed'}`;
+                            pickupStatus.style.color = '#ffb547';
                         }
                     } catch (e) {
-                        pickupСтатус.textContent = '⚠ network error';
-                        pickupСтатус.style.color = '#ffb547';
+                        pickupStatus.textContent = '⚠ network error';
+                        pickupStatus.style.color = '#ffb547';
                     } finally {
                         pickupBtn.disabled = false;
                     }
@@ -1969,15 +1969,15 @@
     </script>
 
 
-    <!-- Showcase: down-arrow opens basement section with cases carousel -->
+    <!-- Витрина: down-arrow opens basement section with cases carousel -->
     <script>
         (() => {
-            const cue = document.получитьElementById('showcase-cue');
-            const back = document.получитьElementById('showcase-back');
-            const cases = document.получитьElementById('cases');
-            const prev = document.получитьElementById('cases-prev');
-            const next = document.получитьElementById('cases-next');
-            const dotsList = document.получитьElementById('cases-dots');
+            const cue = document.getElementById('showcase-cue');
+            const back = document.getElementById('showcase-back');
+            const cases = document.getElementById('cases');
+            const prev = document.getElementById('cases-prev');
+            const next = document.getElementById('cases-next');
+            const dotsList = document.getElementById('cases-dots');
             if (!cases) return;
             const items = Array.from(cases.querySelectorAll('.case'));
 
@@ -2013,7 +2013,7 @@
             }
             // ---- View tabs: by company / by cases ----
             const tabBtns = document.querySelectorAll('.sc-tab[data-sc-tab]');
-            const casesView = document.получитьElementById('sc-view-cases');
+            const casesView = document.getElementById('sc-view-cases');
             function setView(name, opts) {
                 const v = name === 'cases' ? 'cases' : 'company';
                 document.body.dataset.scView = v;
@@ -2052,7 +2052,7 @@
             // === Vertical drag: pull up from main → opens; pull down on the
             // showcase intro strip → closes. Threshold 120px or velocity > 0.7 px/ms.
             (() => {
-                const showcase = document.получитьElementById('showcase');
+                const showcase = document.getElementById('showcase');
                 const introStrip = document.querySelector('.showcase-intro');
                 if (!showcase) return;
                 const THRESHOLD = 120;
@@ -2065,8 +2065,8 @@
                 let lastT = 0;
                 let pointerId = null;
 
-                function isInteractive(tarполучить) {
-                    return !!tarполучить.closest('a, button, input, textarea, [contenteditable=true], #showcase-cue, [data-open-case], .case-open-btn, .dc-close, .dc-crumb, .case-page, .am-lightbox, .dc-lightbox, .right-panel, .left-pane, .ctl, .text-toggle, .info-toggle, [data-shot-board], [data-shot-tab]');
+                function isInteractive(target) {
+                    return !!target.closest('a, button, input, textarea, [contenteditable=true], #showcase-cue, [data-open-case], .case-open-btn, .dc-close, .dc-crumb, .case-page, .am-lightbox, .dc-lightbox, .right-panel, .left-pane, .ctl, .text-toggle, .info-toggle, [data-shot-board], [data-shot-tab]');
                 }
 
                 function setPull(dy) {
@@ -2093,13 +2093,13 @@
                     if (document.body.classList.contains('reader-open')) return;
                     if (document.body.classList.contains('dw-open')) return;
                     if (document.body.classList.contains('chat-fullscreen')) return;
-                    if (isInteractive(e.tarполучить)) return;
+                    if (isInteractive(e.target)) return;
 
                     const isOpen = document.body.classList.contains('showcase-open');
                     if (!isOpen) {
                         mode = 'open';
                     } else {
-                        // Закрыть-drag: anywhere in the top header zone of the
+                        // Close-drag: anywhere in the top header zone of the
                         // showcase — covers .showcase-intro on the left and the
                         // empty band stretching right of the tabs. ~140px deep.
                         if (e.clientY > 140) return;
@@ -2153,7 +2153,7 @@
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
                         // Replay animation by toggling active off then on
-                        const el = entry.tarполучить;
+                        const el = entry.target;
                         el.classList.remove('active');
                         // force reflow so animations re-run
                         // eslint-disable-next-line no-unused-expressions
@@ -2179,8 +2179,8 @@
             function scrollTo(idx) {
                 const el = items[Math.max(0, Math.min(items.length - 1, idx))];
                 if (!el) return;
-                const tarполучить = el.offsetLeft - (cases.clientWidth - el.offsetWidth) / 2;
-                cases.scrollTo({ left: tarполучить, behavior: 'smooth' });
+                const target = el.offsetLeft - (cases.clientWidth - el.offsetWidth) / 2;
+                cases.scrollTo({ left: target, behavior: 'smooth' });
                 window.__sfx?.tick?.();
             }
 
@@ -2198,9 +2198,9 @@
                 cases.style.cursor = 'grab';
                 cases.addEventListener('pointerdown', (e) => {
                     if (e.button !== 0 && e.pointerType === 'mouse') return;
-                    // Buttons/links inside the card still получить their own click;
+                    // Buttons/links inside the card still get their own click;
                     // body areas (image, title, description) initiate drag.
-                    if (e.tarполучить.closest('.case-open-btn, button, a, input, textarea')) return;
+                    if (e.target.closest('.case-open-btn, button, a, input, textarea')) return;
                     // Skip vertical close-drag zone of the showcase top bar.
                     if (document.body.classList.contains('showcase-open') && e.clientY <= 140) return;
                     down = true;
@@ -2272,8 +2272,8 @@
                     && !body.classList.contains('dw-open')
                     && !body.classList.contains('chat-fullscreen')
                     && !body.classList.contains('reader-open')) {
-                    const tag = e.tarполучить?.tagName;
-                    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.tarполучить?.isContentEditable) return;
+                    const tag = e.target?.tagName;
+                    if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
                     e.preventDefault();
                     open();
                     return;
@@ -2284,8 +2284,8 @@
                 if (e.key === 'ArrowLeft')  { e.preventDefault(); scrollTo(currentIndex() - 1); }
                 if (e.key === 'ArrowRight') { e.preventDefault(); scrollTo(currentIndex() + 1); }
                 if (e.key === 'ArrowDown') {
-                    // Only open company case from the "По компании" carousel.
-                    // In "По кейсам" grid view ↓ should do nothing.
+                    // Only open company case from the "By Company" carousel.
+                    // In "By Cases" grid view ↓ should do nothing.
                     if (document.body.dataset.scView !== 'company') return;
                     const active = items[currentIndex()];
                     const id = active?.dataset.case;
@@ -2296,21 +2296,21 @@
             });
 
             // Yellow tip in the right HUD opens the showcase
-            const tip = document.получитьElementById('showcase-tip');
+            const tip = document.getElementById('showcase-tip');
             if (tip) tip.addEventListener('click', () => { open(); });
 
             // "Full case in showcase ↓" links inside the detail window — close .dw, open
             // showcase, scroll to the case that matches data-open-showcase value (cs01, cs02, ...).
             document.addEventListener('click', (e) => {
-                const link = e.tarполучить.closest('[data-open-showcase]');
+                const link = e.target.closest('[data-open-showcase]');
                 if (!link) return;
                 e.preventDefault();
-                const tarполучитьId = link.dataset.openShowcase;
-                const dwЗакрытьBtn = document.получитьElementById('dw-close');
-                if (document.body.classList.contains('dw-open') && dwЗакрытьBtn) dwЗакрытьBtn.click();
+                const targetId = link.dataset.openShowcase;
+                const dwCloseBtn = document.getElementById('dw-close');
+                if (document.body.classList.contains('dw-open') && dwCloseBtn) dwCloseBtn.click();
                 open();
-                const tarполучитьIdx = items.findIndex(el => el.dataset.case === tarполучитьId);
-                if (tarполучитьIdx >= 0) requestAnimationFrame(() => setTimeout(() => scrollTo(tarполучитьIdx), 80));
+                const targetIdx = items.findIndex(el => el.dataset.case === targetId);
+                if (targetIdx >= 0) requestAnimationFrame(() => setTimeout(() => scrollTo(targetIdx), 80));
             });
         })();
     </script>
@@ -2336,7 +2336,7 @@
                 const bar = document.createElement('div');
                 bar.className = 'cp-crumbs-bar';
                 bar.innerHTML = `
-                    <nav class="dc-crumbs" aria-label="Хлебные крошки">
+                    <nav class="dc-crumbs" aria-label="Breadcrumbs">
                         <button type="button" class="dc-crumb" data-cp-crumb="showcase">Showcase</button>
                         <span class="dc-crumb-sep">‹</span>
                         <span class="dc-crumb-current">${label}</span>
@@ -2346,15 +2346,15 @@
                 if (closeBtn) bar.appendChild(closeBtn);
                 page.insertBefore(bar, page.firstChild);
                 bar.addEventListener('click', (e) => {
-                    const crumb = e.tarполучить.closest('button[data-cp-crumb="showcase"]');
+                    const crumb = e.target.closest('button[data-cp-crumb="showcase"]');
                     if (!crumb) return;
                     const openCase = document.querySelector('.case-page.open');
                     const isCompany = openCase && /^cs0\d+$/.test(openCase.dataset.casePage || '');
-                    const tarполучитьView = isCompany ? 'company' : 'cases';
+                    const targetView = isCompany ? 'company' : 'cases';
                     closeCase();
                     if (!body.classList.contains('showcase-open')) window.__sc?.open?.();
-                    window.__sc?.setView?.(tarполучитьView);
-                    const hash = tarполучитьView === 'cases' ? '#showcase/cases' : '#showcase';
+                    window.__sc?.setView?.(targetView);
+                    const hash = targetView === 'cases' ? '#showcase/cases' : '#showcase';
                     if (location.hash !== hash) {
                         history.pushState(null, '', hash);
                     }
@@ -2399,7 +2399,7 @@
                     openCase(btn.dataset.openCase);
                 });
                 // Keyboard support for non-button elements (e.g. clickable .case-media)
-                if (btn.tagName !== 'BUTTВКЛ') {
+                if (btn.tagName !== 'BUTTON') {
                     btn.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
@@ -2432,23 +2432,23 @@
 
                 items.forEach(item => {
                     item.addEventListener('click', () => {
-                        const tarполучить = page.querySelector(`#${item.dataset.tarполучить}`);
-                        if (!tarполучить) return;
-                        tarполучить.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        const target = page.querySelector(`#${item.dataset.target}`);
+                        if (!target) return;
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         window.__sfx?.tick?.();
                     });
                 });
 
                 const setActive = (id) => {
-                    items.forEach(i => i.classList.toggle('active', i.dataset.tarполучить === id));
+                    items.forEach(i => i.classList.toggle('active', i.dataset.target === id));
                 };
 
                 const io = new IntersectionObserver((entries) => {
                     // Pick the entry closest to the top (most visible at the sticky-nav threshold)
                     const visible = entries.filter(e => e.isIntersecting);
                     if (!visible.length) return;
-                    visible.sort((a, b) => a.tarполучить.получитьBoundingClientRect().top - b.tarполучить.получитьBoundingClientRect().top);
-                    setActive(visible[0].tarполучить.id);
+                    visible.sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
+                    setActive(visible[0].target.id);
                 }, { root: page, rootMargin: '-30% 0px -55% 0px', threshold: 0 });
 
                 sections.forEach(s => io.observe(s));
@@ -2515,7 +2515,7 @@
     <!-- Perf HUD: live FPS + jank counter. Enable with ?perf=1 in the URL. -->
     <script>
         (() => {
-            const hud = document.получитьElementById('perf-hud');
+            const hud = document.getElementById('perf-hud');
             if (!hud) return;
             if (!/[?&]perf=1\b/.test(location.search)) return;
             hud.hidden = false;
@@ -2554,14 +2554,14 @@
     <!-- Detail holo-window: open with agent or release content -->
     <script>
         (() => {
-            const dw = document.получитьElementById('dw');
+            const dw = document.getElementById('dw');
             const dwFrame = dw.querySelector('.dw-frame');
-            const dwTitle = document.получитьElementById('dw-title');
-            const dwTag = document.получитьElementById('dw-tag');
-            const dwContent = document.получитьElementById('dw-content');
-            const dwЗакрыть = document.получитьElementById('dw-close');
-            const dwPrev = document.получитьElementById('dw-prev');
-            const dwДалее = document.получитьElementById('dw-next');
+            const dwTitle = document.getElementById('dw-title');
+            const dwTag = document.getElementById('dw-tag');
+            const dwContent = document.getElementById('dw-content');
+            const dwClose = document.getElementById('dw-close');
+            const dwPrev = document.getElementById('dw-prev');
+            const dwNext = document.getElementById('dw-next');
             const body = document.body;
             let currentId = null;
 
@@ -2595,7 +2595,7 @@
                 const list = navList();
                 const idx = list.indexOf(id);
                 dwPrev.disabled = idx <= 0;
-                dwДалее.disabled = idx === -1 || idx >= list.length - 1;
+                dwNext.disabled = idx === -1 || idx >= list.length - 1;
                 return true;
             }
 
@@ -2624,50 +2624,50 @@
                 if (!next) return;
 
                 window.__sfx?.tick?.();
-                const btn = dir > 0 ? dwДалее : dwPrev;
+                const btn = dir > 0 ? dwNext : dwPrev;
                 btn.classList.add('flash');
                 setTimeout(() => btn.classList.remove('flash'), 220);
 
                 // dir > 0 → slide content out to the LEFT, new content comes IN from the RIGHT
-                const outКласс = dir > 0 ? 'swap-out-left' : 'swap-out-right';
-                const inКласс  = dir > 0 ? 'swap-in-from-right' : 'swap-in-from-left';
+                const outClass = dir > 0 ? 'swap-out-left' : 'swap-out-right';
+                const inClass  = dir > 0 ? 'swap-in-from-right' : 'swap-in-from-left';
 
-                dwFrame.classList.add(outКласс);
+                dwFrame.classList.add(outClass);
                 dwFrame.classList.add('swap-flash');
 
                 setTimeout(() => {
-                    dwFrame.classList.remove(outКласс);
-                    dwFrame.classList.add(inКласс);
+                    dwFrame.classList.remove(outClass);
+                    dwFrame.classList.add(inClass);
                     inject(next);
                     // Force reflow so the no-transition incoming state is applied
                     void dwFrame.offsetWidth;
                     // Drop the in-class — the content animates back to its rest state
-                    dwFrame.classList.remove(inКласс);
+                    dwFrame.classList.remove(inClass);
                 }, 230);
 
                 setTimeout(() => dwFrame.classList.remove('swap-flash'), 600);
             }
 
             // Click handlers — agents (delegated, works for injected entries too)
-            document.получитьElementById('agents-list').addEventListener('click', (e) => {
-                const li = e.tarполучить.closest('.agent-item');
+            document.getElementById('agents-list').addEventListener('click', (e) => {
+                const li = e.target.closest('.agent-item');
                 if (!li) return;
                 open(li.dataset.id);
             });
-            document.получитьElementById('releases-list').addEventListener('click', (e) => {
-                const li = e.tarполучить.closest('.release-item');
+            document.getElementById('releases-list').addEventListener('click', (e) => {
+                const li = e.target.closest('.release-item');
                 if (!li) return;
                 open(li.dataset.id);
             });
-            document.получитьElementById('tasks-list')?.addEventListener('click', (e) => {
-                const li = e.tarполучить.closest('.task-item');
+            document.getElementById('tasks-list')?.addEventListener('click', (e) => {
+                const li = e.target.closest('.task-item');
                 if (!li || !li.dataset.id) return;
                 open(li.dataset.id);
             });
 
-            dwЗакрыть.addEventListener('click', close);
+            dwClose.addEventListener('click', close);
             dwPrev.addEventListener('click', (e) => { e.stopPropagation(); navigate(-1); });
-            dwДалее.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
+            dwNext.addEventListener('click', (e) => { e.stopPropagation(); navigate(1); });
             document.addEventListener('keydown', (e) => {
                 if (!body.classList.contains('dw-open')) return;
                 if (e.key === 'Escape') { close(); return; }
@@ -2680,8 +2680,8 @@
             // instead of close-then-reopen flickering.
             document.addEventListener('click', (e) => {
                 if (!body.classList.contains('dw-open')) return;
-                if (!e.tarполучить.closest) return;
-                if (e.tarполучить.closest('.dw-frame, .agent-item, .release-item, .task-item')) return;
+                if (!e.target.closest) return;
+                if (e.target.closest('.dw-frame, .agent-item, .release-item, .task-item')) return;
                 close();
             });
 
@@ -2690,24 +2690,24 @@
             const mouseAmpY = 2, mouseAmpX = 1.4;
             const idleAmpY = 0.8, idleAmpX = 0.5;
             const lerp = 0.07;
-            let tarполучитьRY = baseRY, tarполучитьRX = baseRX;
+            let targetRY = baseRY, targetRX = baseRX;
             let curRY = baseRY, curRX = baseRX;
 
             document.addEventListener('mousemove', (e) => {
                 if (!body.classList.contains('dw-open')) return;
-                const r = dw.получитьBoundingClientRect();
+                const r = dw.getBoundingClientRect();
                 const inside =
                     e.clientX >= r.left && e.clientX <= r.right &&
                     e.clientY >= r.top  && e.clientY <= r.bottom;
                 if (!inside) {
-                    tarполучитьRY = baseRY;
-                    tarполучитьRX = baseRX;
+                    targetRY = baseRY;
+                    targetRX = baseRX;
                     return;
                 }
                 const nx = (e.clientX - r.left) / r.width - 0.5;
                 const ny = (e.clientY - r.top)  / r.height - 0.5;
-                tarполучитьRY = baseRY + nx * mouseAmpY * 2;
-                tarполучитьRX = baseRX - ny * mouseAmpX * 2;
+                targetRY = baseRY + nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
             });
 
             const start = performance.now();
@@ -2717,8 +2717,8 @@
                 const dt = (t - start) / 1000;
                 const idleY = Math.sin(dt * 0.4) * idleAmpY;
                 const idleX = Math.cos(dt * 0.3) * idleAmpX;
-                curRY += ((tarполучитьRY + idleY) - curRY) * lerp;
-                curRX += ((tarполучитьRX + idleX) - curRX) * lerp;
+                curRY += ((targetRY + idleY) - curRY) * lerp;
+                curRX += ((targetRX + idleX) - curRX) * lerp;
                 dw.style.setProperty('--dw-ry', curRY.toFixed(2) + 'deg');
                 dw.style.setProperty('--dw-rx', curRX.toFixed(2) + 'deg');
             }
@@ -2729,7 +2729,7 @@
     <!-- Agents live feed: rotating fake-real status updates -->
     <script>
         (() => {
-            const list = document.получитьElementById('agents-list');
+            const list = document.getElementById('agents-list');
             if (!list) return;
 
             const POOL = {
@@ -2854,8 +2854,8 @@
          is over the left panel; gentle idle sine drift always running on top. -->
     <script>
         (() => {
-            const stack = document.получитьElementById('hud-left-stack');
-            const hudLeft = document.получитьElementById('hud-left-articles');
+            const stack = document.getElementById('hud-left-stack');
+            const hudLeft = document.getElementById('hud-left-articles');
             if (!stack || !hudLeft) return;
 
             const baseRY = 14;   // mirror of right's -14
@@ -2866,26 +2866,26 @@
             const mouseAmpX = 2;
             const lerp = 0.06;
 
-            let tarполучитьRY = baseRY;
-            let tarполучитьRX = baseRX;
+            let targetRY = baseRY;
+            let targetRX = baseRX;
             let curRY = baseRY;
             let curRX = baseRX;
 
             document.addEventListener('mousemove', (e) => {
-                const r = hudLeft.получитьBoundingClientRect();
+                const r = hudLeft.getBoundingClientRect();
                 const inside =
                     e.clientX >= r.left && e.clientX <= r.right &&
                     e.clientY >= r.top  && e.clientY <= r.bottom;
                 if (!inside) {
-                    tarполучитьRY = baseRY;
-                    tarполучитьRX = baseRX;
+                    targetRY = baseRY;
+                    targetRX = baseRX;
                     return;
                 }
                 const nx = (e.clientX - r.left) / r.width  - 0.5;
                 const ny = (e.clientY - r.top)  / r.height - 0.5;
                 // Inverted X so the panel "faces" the cursor like the right HUD does on its side
-                tarполучитьRY = baseRY - nx * mouseAmpY * 2;
-                tarполучитьRX = baseRX - ny * mouseAmpX * 2;
+                targetRY = baseRY - nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
             });
 
             const start = performance.now();
@@ -2894,8 +2894,8 @@
                 const dt = (t - start) / 1000;
                 const idleY = Math.sin(dt * 0.5) * idleAmpY;
                 const idleX = Math.cos(dt * 0.37) * idleAmpX;
-                curRY += ((tarполучитьRY + idleY) - curRY) * lerp;
-                curRX += ((tarполучитьRX + idleX) - curRX) * lerp;
+                curRY += ((targetRY + idleY) - curRY) * lerp;
+                curRX += ((targetRX + idleX) - curRX) * lerp;
                 stack.style.setProperty('--lry', curRY.toFixed(2) + 'deg');
                 stack.style.setProperty('--lrx', curRX.toFixed(2) + 'deg');
             }
@@ -2906,8 +2906,8 @@
     <!-- Right-side HUD: hologram parallax — only when cursor is over the panel -->
     <script>
         (() => {
-            const stack = document.получитьElementById('hud-right-stack');
-            const hudRight = document.получитьElementById('hud-right');
+            const stack = document.getElementById('hud-right-stack');
+            const hudRight = document.getElementById('hud-right');
             if (!stack || !hudRight) return;
 
             const baseRY = -14;
@@ -2918,25 +2918,25 @@
             const mouseAmpX = 2;
             const lerp = 0.06;
 
-            let tarполучитьRY = baseRY;
-            let tarполучитьRX = baseRX;
+            let targetRY = baseRY;
+            let targetRX = baseRX;
             let curRY = baseRY;
             let curRX = baseRX;
 
             document.addEventListener('mousemove', (e) => {
-                const r = hudRight.получитьBoundingClientRect();
+                const r = hudRight.getBoundingClientRect();
                 const inside =
                     e.clientX >= r.left && e.clientX <= r.right &&
                     e.clientY >= r.top  && e.clientY <= r.bottom;
                 if (!inside) {
-                    tarполучитьRY = baseRY;
-                    tarполучитьRX = baseRX;
+                    targetRY = baseRY;
+                    targetRX = baseRX;
                     return;
                 }
                 const nx = (e.clientX - r.left) / r.width - 0.5;
                 const ny = (e.clientY - r.top)  / r.height - 0.5;
-                tarполучитьRY = baseRY + nx * mouseAmpY * 2;
-                tarполучитьRX = baseRX - ny * mouseAmpX * 2;
+                targetRY = baseRY + nx * mouseAmpY * 2;
+                targetRX = baseRX - ny * mouseAmpX * 2;
             });
 
             const start = performance.now();
@@ -2944,12 +2944,12 @@
                 requestAnimationFrame(tick);
                 const dt = (t - start) / 1000;
 
-                // idle sine-drift superimposed on cursor tarполучить
+                // idle sine-drift superimposed on cursor target
                 const idleY = Math.sin(dt * 0.5) * idleAmpY;
                 const idleX = Math.cos(dt * 0.37) * idleAmpX;
 
-                curRY += ((tarполучитьRY + idleY) - curRY) * lerp;
-                curRX += ((tarполучитьRX + idleX) - curRX) * lerp;
+                curRY += ((targetRY + idleY) - curRY) * lerp;
+                curRX += ((targetRX + idleX) - curRX) * lerp;
 
                 stack.style.setProperty('--ry', curRY.toFixed(2) + 'deg');
                 stack.style.setProperty('--rx', curRX.toFixed(2) + 'deg');
@@ -2960,7 +2960,7 @@
 
     <!-- Audio buttons -->
     <style>
-        /* Настройки cog — single icon button in bottom-left; expands a popover above with all controls */
+        /* Settings cog — single icon button in bottom-left; expands a popover above with all controls */
         .settings-cog {
             position: relative;
             display: inline-block;
@@ -3094,7 +3094,7 @@
             cursor: default;
             border-color: rgba(var(--acc-rgb), 0.2);
         }
-        /* Wider button for ВКЛ / OFF labels */
+        /* Wider button for ON / OFF labels */
         .shadow-toggle-btn {
             width: auto;
             min-width: 38px;
@@ -3189,8 +3189,8 @@
     </style>
     <script>
         (() => {
-            const audio = document.получитьElementById('ap-audio');
-            const btn = document.получитьElementById('ap-toggle');
+            const audio = document.getElementById('ap-audio');
+            const btn = document.getElementById('ap-toggle');
             audio.src = 'audio.opus';
             audio.volume = 0.4;
             audio.muted = true;
@@ -3199,7 +3199,7 @@
                 const unmuted = !audio.muted;
                 btn.classList.toggle('unmuted', unmuted);
                 btn.classList.toggle('active', unmuted);
-                btn.setAttribute('aria-label', unmuted ? 'Mute' : 'Включить звук');
+                btn.setAttribute('aria-label', unmuted ? 'Mute' : 'Unmute');
             };
 
             setUI();
@@ -3255,12 +3255,12 @@
                 if (!ready) return;
                 let signal = signalIn;
                 if (!Number.isFinite(signal)) {
-                    const v = parseFloat(получитьComputedСтиль(document.body).получитьPropertyValue('--sim-signal'));
+                    const v = parseFloat(getComputedStyle(document.body).getPropertyValue('--sim-signal'));
                     signal = Number.isFinite(v) ? v : 1;
                 }
                 const inv = 1 - signal;
                 const cutoff = 600 + signal * signal * signal * 21400;
-                lowpass.frequency.setTarполучитьAtTime(cutoff, ctx.currentTime, 0.06);
+                lowpass.frequency.setTargetAtTime(cutoff, ctx.currentTime, 0.06);
                 const drive = inv > 0.3 ? Math.pow((inv - 0.3) / 0.7, 1.5) * 90 : 0;
                 shaper.curve = makeDistortionCurve(drive);
                 const rate = signal > 0.5 ? 1.0 : 0.82 + (signal / 0.5) * 0.18;
@@ -3280,8 +3280,8 @@
             // that, only the button or volumechange events drive state.
             const wake = (e) => {
                 if (userTookControl) return;
-                if (btn.contains(e.tarполучить)) return;
-                if (e.tarполучить.closest('.audio-gate')) return;
+                if (btn.contains(e.target)) return;
+                if (e.target.closest('.audio-gate')) return;
                 if (document.body.classList.contains('pre-gate')) return;
                 if (document.body.classList.contains('audio-silent')) return;
                 if (!audio.muted) return;
@@ -3306,11 +3306,11 @@
         })();
     </script>
 
-    <!-- Глубокий кейсs: data array + grid render for the showcase "По кейсам" tab.
+    <!-- Детальный кейсs: data array + grid render for the showcase "По кейсам" tab.
          Source of truth for nested project cases inside each company. To be
          migrated to MD files in a later step. -->
     <script>
-        const DEEP_КЕЙСS = [
+        const DEEP_CASES = [
             // ===== Americor (cs01) =====
             { id: 'offer-acceptance', company: 'cs01', companyLabel: 'Americor',
               title: 'Increasing Settlement Offer Acceptance',
@@ -3334,13 +3334,13 @@
     <li>Led discussions with BI to understand and interpret existing settlement-acceptance statistics</li>
     <li>Designed post-release testing to ascertain effectiveness of designs, derived insights for next iterations</li>
     <li>Led ideation across teams to brainstorm ideas for users unaffected by initial product changes — full holistic approach</li>
-    <li>Работаed with other designers to drive design decisions impacting design strategy</li>
+    <li>Worked with other designers to drive design decisions impacting design strategy</li>
     <li>Researched theories, ideated and tested hypotheses that drove problem framing — significant impact on final designs</li>
 </ul>
 
 <h2>// background &amp; problem</h2>
 <p>Americor is a debt-settlement company that negotiates users' debts to lower them. After negotiating a settlement, it is presented to a user for acceptance.</p>
-<p><strong>Americor only collects its fees and получитьs revenue once an offer is accepted.</strong></p>
+<p><strong>Americor only collects its fees and gets revenue once an offer is accepted.</strong></p>
 
 <div class="dc-pain">
     <div class="dc-pain-card">
@@ -3383,7 +3383,7 @@
     <div class="dc-pain-card">
         <span class="icon">// 01</span>
         <h4>Low visibility</h4>
-        <p>Nothing significant in the UI indicated a pending offer besides the modal — users could close it and forполучить.</p>
+        <p>Nothing significant in the UI indicated a pending offer besides the modal — users could close it and forget.</p>
     </div>
     <div class="dc-pain-card">
         <span class="icon">// 02</span>
@@ -3395,7 +3395,7 @@
 <h3>Pain points from existing research</h3>
 <p>Ongoing surveys with 500+ users revealed common misconceptions — a clear lack of understanding only addressable via phone calls today:</p>
 
-<blockquote class="dc-quote">«Can I получить a better settlement? I thought each one saved 50%.»</blockquote>
+<blockquote class="dc-quote">«Can I get a better settlement? I thought each one saved 50%.»</blockquote>
 <blockquote class="dc-quote">«Will I have to make more deposits to accept this settlement?»</blockquote>
 <blockquote class="dc-quote">«Will this increase how long I'm in the Americor program for?»</blockquote>
 <blockquote class="dc-quote">«Do I have enough funds to accept this offer?»</blockquote>
@@ -3454,7 +3454,7 @@
 
 <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/banner-urgency.png" alt="Urgency banner"><figcaption>// urgency banner with expiry counter</figcaption></figure>
 
-<h3>Далее problem — addressing misconceptions with FAQ</h3>
+<h3>Next problem — addressing misconceptions with FAQ</h3>
 <p>Users still lacked understanding — calling in or simply not accepting offers. Addressed misconceptions in the form of an FAQ.</p>
 
 <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/faq-original.png" alt="FAQ original"><figcaption>// FAQ — first iteration</figcaption></figure>
@@ -3531,7 +3531,7 @@
 <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/rejection-guidance.png" alt="Rejection guidance UI"><figcaption>// rejection guidance — questionnaire flow</figcaption></figure>
 
 <div class="dc-stat-row">
-    <div class="cell"><span class="lbl">Result</span><p>"Other Reason" expands to a text field — constant data collection, в процессе research into settlement acceptance.</p></div>
+    <div class="cell"><span class="lbl">Result</span><p>"Other Reason" expands to a text field — constant data collection, ongoing research into settlement acceptance.</p></div>
     <div class="cell"><span class="lbl">Result</span><p>Limited-group testing showed significant conversion going back to offers from rejection flow — <strong>+20% from static FAQ</strong>.</p></div>
     <div class="cell"><span class="lbl">Overall</span><p>Led to <strong>+4% offer acceptance overall</strong>.</p></div>
 </div>
@@ -3617,7 +3617,7 @@
 <h2>// covering the last 5%</h2>
 <p>Addressed the 5% of Americor users who never registered on the app/online portal. Unregistered users had to rely on phone calls — a workshop with internal teams unblocked them.</p>
 
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/workshop-unregistered.png" alt="Работаshop session"><figcaption>// internal workshop — handling unregistered users</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/workshop-unregistered.png" alt="Workshop session"><figcaption>// internal workshop — handling unregistered users</figcaption></figure>
 
 <div class="dc-callout">
     <p><strong>Solution:</strong> a <strong>tokenized email flow</strong> allowed offer acceptance without needing to register online — covering every user, online or not.</p>
@@ -3665,7 +3665,7 @@
     <li>Ran cross-team ideation to surface features and changes that drove the design</li>
     <li>Shipped two new features and three redesigns under tight deadlines, hand-in-hand with engineering</li>
     <li>Led legacy-UI refresh inside redesigns to bring a more premium feel</li>
-    <li>Работаed with the UX researcher on usability and concept testing — insights drove every iteration</li>
+    <li>Worked with the UX researcher on usability and concept testing — insights drove every iteration</li>
 </ul>
 
 <h2>// background &amp; problem</h2>
@@ -3764,7 +3764,7 @@
 
 <div class="dc-iter">
     <span class="label">decision</span>
-    <div class="body"><p>Reframe "process" as a creditor жизненный цикл — enrollment → paid off. Combine pre and post settlement under one continuous journey, then keep the same UI in both phases for consistency.</p></div>
+    <div class="body"><p>Reframe "process" as a creditor lifecycle — enrollment → paid off. Combine pre and post settlement under one continuous journey, then keep the same UI in both phases for consistency.</p></div>
 </div>
 
 <h2 class="dc-h-major">// dynamic progress</h2>
@@ -3830,10 +3830,10 @@
 
 <h3>UI iterations on the status row</h3>
 <div class="dc-grid-2">
-    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-1.png" alt="Статус row iteration 1"><figcaption>// iter 1</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-2.png" alt="Статус row iteration 2"><figcaption>// iter 2</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-3.png" alt="Статус row iteration 3"><figcaption>// iter 3</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-4.png" alt="Статус row iteration 4"><figcaption>// iter 4</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-1.png" alt="Status row iteration 1"><figcaption>// iter 1</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-2.png" alt="Status row iteration 2"><figcaption>// iter 2</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-3.png" alt="Status row iteration 3"><figcaption>// iter 3</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-4.png" alt="Status row iteration 4"><figcaption>// iter 4</figcaption></figure>
 </div>
 
 <div class="dc-iter">
@@ -3930,7 +3930,7 @@
 </div>
 <div class="dc-iter">
     <span class="label">takeaway</span>
-    <div class="body"><p>Test with the tarполучить audience and with the users who'll be impacted as a side effect. Both groups change the answer.</p></div>
+    <div class="body"><p>Test with the target audience and with the users who'll be impacted as a side effect. Both groups change the answer.</p></div>
 </div>` },
             { id: 'design-system', company: 'cs01', companyLabel: 'Americor',
               title: 'Americor Design System',
@@ -3944,7 +3944,7 @@
 
 <div class="dc-meta-grid">
     <div><span class="lbl">Company</span><span class="val">Americor</span></div>
-    <div><span class="lbl">Role</span><span class="val">Lead Продукт Дизайнер</span></div>
+    <div><span class="lbl">Role</span><span class="val">Lead Product Designer</span></div>
     <div><span class="lbl">Platform</span><span class="val">Web · iOS · Android</span></div>
     <div><span class="lbl">Scope</span><span class="val">Tokens · components · governance</span></div>
 </div>
@@ -3977,7 +3977,7 @@
             { id: 'figma-claude-vibe', company: 'cs01', companyLabel: 'Americor',
               title: 'Figma ↔ Claude vibe-coding pipeline',
               desc: 'Vibe-coded the round-trip between Figma and Claude — config and component spec moves both ways without handoff drift. Coming soon.',
-              metric: '', tags: ['Vibe Code', 'Автоматизация', 'Figma'], deeplink: 'figma-claude-vibe', theme: 'bright' },
+              metric: '', tags: ['Vibe Code', 'Automation', 'Figma'], deeplink: 'figma-claude-vibe', theme: 'bright' },
         ];
 
         // Force bright theme on offer-acceptance and engagement in place —
@@ -3993,7 +3993,7 @@
                 .replace(/<(h2|h3)([^>]*)>([^<]+)<\/\1>/g,
                     (_m, tag, attrs, content) => `<${tag}${attrs}>${capFirst(content)}</${tag}>`);
             for (const id of ids) {
-                const c = DEEP_КЕЙСS.find(x => x.id === id);
+                const c = DEEP_CASES.find(x => x.id === id);
                 if (!c) continue;
                 if (c.body) c.body = stripEyebrows(c.body);
                 c.theme = 'bright';
@@ -4001,11 +4001,11 @@
         })();
 
         (() => {
-            const grid = document.получитьElementById('sc-cases-grid');
+            const grid = document.getElementById('sc-cases-grid');
             if (!grid) return;
             // Color/glyph chip per company
-            const COMPANY_TВКЛE = { cs01: '#ff5722', cs02: '#eb5234' };
-            grid.innerHTML = DEEP_КЕЙСS.map(c => `
+            const COMPANY_TONE = { cs01: '#ff5722', cs02: '#eb5234' };
+            grid.innerHTML = DEEP_CASES.map(c => `
                 <a class="sc-card" data-deep-id="${c.id}" data-deep-company="${c.company}"${c.deeplink ? ` data-deep-link="${c.deeplink}"` : ''} href="#case/${c.company}/${c.id}">
                     <div class="sc-card-thumb" aria-hidden="true">
                         <span class="sc-card-thumb-tag">${c.companyLabel}</span>
@@ -4027,7 +4027,7 @@
 
             // Click → open the focused deep-case page (referrer = grid).
             grid.addEventListener('click', (e) => {
-                const card = e.tarполучить.closest('.sc-card');
+                const card = e.target.closest('.sc-card');
                 if (!card) return;
                 e.preventDefault();
                 const id = card.dataset.deepId;
@@ -4042,24 +4042,24 @@
                 cs01: { label: 'Americor', case: 'cs01' },
                 cs02: { label: 'Health Samurai', case: 'cs02' },
             };
-            const page = document.получитьElementById('dc-page');
-            const closeBtn = document.получитьElementById('dc-close');
-            const crumbs = document.получитьElementById('dc-crumbs');
-            const elTag = document.получитьElementById('dc-hero-tag');
-            const elCo = document.получитьElementById('dc-meta-company');
-            const elMet = document.получитьElementById('dc-meta-metric');
-            const elTit = document.получитьElementById('dc-title');
-            const elDsc = document.получитьElementById('dc-desc');
-            const elTags = document.получитьElementById('dc-tags');
-            const elBody = document.получитьElementById('dc-body');
+            const page = document.getElementById('dc-page');
+            const closeBtn = document.getElementById('dc-close');
+            const crumbs = document.getElementById('dc-crumbs');
+            const elTag = document.getElementById('dc-hero-tag');
+            const elCo = document.getElementById('dc-meta-company');
+            const elMet = document.getElementById('dc-meta-metric');
+            const elTit = document.getElementById('dc-title');
+            const elDsc = document.getElementById('dc-desc');
+            const elTags = document.getElementById('dc-tags');
+            const elBody = document.getElementById('dc-body');
             if (!page) return;
 
             let currentId = null;
             let referrer = null; // 'grid' | 'company:cs01' | 'company:cs02'
 
             function findCase(id) {
-                return (typeof DEEP_КЕЙСS !== 'undefined')
-                    ? DEEP_КЕЙСS.find(c => c.id === id)
+                return (typeof DEEP_CASES !== 'undefined')
+                    ? DEEP_CASES.find(c => c.id === id)
                     : null;
             }
 
@@ -4159,12 +4159,12 @@
 
             // Crumb clicks
             crumbs.addEventListener('click', (e) => {
-                const btn = e.tarполучить.closest('button.dc-crumb');
+                const btn = e.target.closest('button.dc-crumb');
                 if (!btn) return;
                 const which = btn.dataset.crumb;
                 if (which === 'showcase') {
                     close({ silent: true });
-                    // Make sure showcase is open and switch to По кейсам tab.
+                    // Make sure showcase is open and switch to By Cases tab.
                     if (!document.body.classList.contains('case-open')) {
                         if (!document.body.classList.contains('showcase-open')) window.__sc?.open?.();
                     } else {
@@ -4185,7 +4185,7 @@
                 if (e.key !== 'Escape') return;
                 if (!document.body.classList.contains('dc-open')) return;
                 // Lightbox open? ESC closes it first; leave dc-page alone.
-                if (document.получитьElementById('dc-lightbox')?.classList.contains('is-open')) return;
+                if (document.getElementById('dc-lightbox')?.classList.contains('is-open')) return;
                 e.stopPropagation();
                 close();
             }, true);
@@ -4203,25 +4203,25 @@
                 }
             }
             window.addEventListener('popstate', syncFromHash);
-            // Defer initial sync slightly so DEEP_КЕЙСS + __cp / __sc are ready.
+            // Defer initial sync slightly so DEEP_CASES + __cp / __sc are ready.
             setTimeout(syncFromHash, 80);
         })();
 
         // ===== Lightbox: click any .dc-figure media to open fullscreen =====
         (() => {
-            const lb = document.получитьElementById('dc-lightbox');
-            const stage = document.получитьElementById('dc-lightbox-stage');
-            const closeBtn = document.получитьElementById('dc-lightbox-close');
-            const dcBody = document.получитьElementById('dc-body');
+            const lb = document.getElementById('dc-lightbox');
+            const stage = document.getElementById('dc-lightbox-stage');
+            const closeBtn = document.getElementById('dc-lightbox-close');
+            const dcBody = document.getElementById('dc-body');
             if (!lb || !stage || !dcBody) return;
 
             function inheritAccent() {
                 const cp = document.querySelector('.case-page.open');
                 ['--acc','--acc-rgb','--dim','--ink'].forEach(v => lb.style.removeProperty(v));
                 if (!cp) return;
-                const cs = получитьComputedСтиль(cp);
+                const cs = getComputedStyle(cp);
                 ['--acc','--acc-rgb','--dim','--ink'].forEach(v => {
-                    const val = cs.получитьPropertyValue(v).trim();
+                    const val = cs.getPropertyValue(v).trim();
                     if (val) lb.style.setProperty(v, val);
                 });
             }
@@ -4259,7 +4259,7 @@
 
             // Delegate clicks inside dc-body to .dc-figure media.
             dcBody.addEventListener('click', (e) => {
-                const fig = e.tarполучить.closest('.dc-figure');
+                const fig = e.target.closest('.dc-figure');
                 if (!fig) return;
                 const media = fig.querySelector('img, video');
                 if (!media) return;
@@ -4272,7 +4272,7 @@
             // Click anywhere outside the media (on the dim backdrop or stage padding)
             // closes the lightbox.
             lb.addEventListener('click', (e) => {
-                if (e.tarполучить === lb || e.tarполучить === stage) close();
+                if (e.target === lb || e.target === stage) close();
             });
             document.addEventListener('keydown', (e) => {
                 if (e.key !== 'Escape') return;
@@ -4290,28 +4290,28 @@
         // Cases (placeholder list) — opens the showcase basement at the matching case index
         // Vibed Cases — vibe-coded projects, deployed somewhere, opened in the
         // terminal modal as iframes. URLs filled as projects go live.
-        const КЕЙСS = [
+        const CASES = [
             { id: 'vb-community',  no: 'VB/01', role: 'React',        name: 'Americor · Community',         blurb: 'Reddit/Facebook-style feed inside the Americor app — built code-first, hypotheses toggled live, shipped to prod.', tags: ['React', 'Code-first', 'Storybook'], stack: 'React + Storybook + tokens', url: 'https://community-fawn-nine.vercel.app/' },
-            { id: 'vb-firecamp',   no: 'VB/02', role: 'React + PWA',  name: 'FireCamp Event App',           blurb: 'Здравоохранение-IT conference companion built end-to-end in a week — voting, schedule, chat.', tags: ['React', 'PWA', 'Realtime'], stack: 'Vite + React + Cloudflare Pages', url: '' },
+            { id: 'vb-firecamp',   no: 'VB/02', role: 'React + PWA',  name: 'FireCamp Event App',           blurb: 'Healthcare-IT conference companion built end-to-end in a week — voting, schedule, chat.', tags: ['React', 'PWA', 'Realtime'], stack: 'Vite + React + Cloudflare Pages', url: '' },
             { id: 'vb-fb-analyzer', no: 'VB/03', role: 'NLP · React',  name: 'FB Community Analyzer',       blurb: '80k+ posts → topic + sentiment classification. Drove the Americor pre-IPO redesign.', tags: ['NLP', 'Sentiment', 'Tooling'], stack: 'Vibe-coded React + LLM pipeline', url: '' },
-            { id: 'vb-landing',    no: 'VB/04', role: 'MD-first',     name: 'Landing Pipeline',             blurb: 'MD → live page with embedded MCP product chat. Cycle 1.5mo → 3–4 дня.', tags: ['Markdown', 'MCP', 'AI'], stack: 'Astro + MCP + Markdown', url: '' },
+            { id: 'vb-landing',    no: 'VB/04', role: 'MD-first',     name: 'Landing Pipeline',             blurb: 'MD → live page with embedded MCP product chat. Cycle 1.5mo → 3–4 days.', tags: ['Markdown', 'MCP', 'AI'], stack: 'Astro + MCP + Markdown', url: '' },
             { id: 'vb-nsf-sim',    no: 'VB/05', role: 'Sim · React',  name: 'NSF Shortfall Simulator',      blurb: 'Interactive payment-date prediction for tricky business logic — explored end-to-end.', tags: ['React', 'FinSim'], stack: 'React + custom state engine', url: '' },
             { id: 'vb-kudos',      no: 'VB/06', role: 'GenAI',        name: 'Kudos Image Generator',        blurb: 'Trained on company mascot, ships via TG bot — anyone in the company can generate a kudos card.', tags: ['ComfyUI', 'GenAI', 'TG bot'], stack: 'ComfyUI + Telegram bot', url: '' },
         ];
 
         (() => {
-            const articlesList = document.получитьElementById('articles-list');
-            const casesList = document.получитьElementById('cases-list');
+            const articlesList = document.getElementById('articles-list');
+            const casesList = document.getElementById('cases-list');
             const tabs = document.querySelectorAll('.htl-item');
-            const panel = document.получитьElementById('hud-left-articles');
-            const reader = document.получитьElementById('reader');
-            const readerЗакрыть = document.получитьElementById('reader-close');
-            const readerTitle = document.получитьElementById('reader-title');
-            const readerDate = document.получитьElementById('reader-date');
-            const readerTime = document.получитьElementById('reader-time');
-            const readerAuthor = document.получитьElementById('reader-author');
-            const readerTags = document.получитьElementById('reader-tags');
-            const readerContent = document.получитьElementById('reader-content');
+            const panel = document.getElementById('hud-left-articles');
+            const reader = document.getElementById('reader');
+            const readerClose = document.getElementById('reader-close');
+            const readerTitle = document.getElementById('reader-title');
+            const readerDate = document.getElementById('reader-date');
+            const readerTime = document.getElementById('reader-time');
+            const readerAuthor = document.getElementById('reader-author');
+            const readerTags = document.getElementById('reader-tags');
+            const readerContent = document.getElementById('reader-content');
             const body = document.body;
             if (!articlesList || !panel || !tabs.length) return;
 
@@ -4348,7 +4348,7 @@
 
             // Build vibed case cards — clicking opens the terminal modal,
             // which fakes a deploy log then loads the project in an iframe.
-            КЕЙСS.forEach((c) => {
+            CASES.forEach((c) => {
                 const li = document.createElement('li');
                 li.className = 'case-item';
                 li.tabIndex = 0;
@@ -4371,7 +4371,7 @@
             // The left pane is collapsed by default. Tabs hang at top; click expands it.
             // Animation runs on the FIRST open and on the FIRST tab switch only — afterwards
             // panel + content swap instantly (data is already there, no theatre needed).
-            const pane = document.получитьElementById('hl-pane');
+            const pane = document.getElementById('hl-pane');
             let active = null;
             let firstOpen = true;
             let firstSwitch = true;
@@ -4436,7 +4436,7 @@
                 });
             });
 
-            document.получитьElementById('hl-close')?.addEventListener('click', () => {
+            document.getElementById('hl-close')?.addEventListener('click', () => {
                 collapsePanel();
                 window.__sfx?.tick?.();
             });
@@ -4451,7 +4451,7 @@
             const tabsBox = document.querySelector('.htl-tabs');
             const raysEl = document.querySelector('.htl-rays');
             if (skelEl && tabsBox && raysEl) {
-                const PEAK_ВКЛ     = 0.6;   // cursor literally over a tab
+                const PEAK_ON     = 0.6;   // cursor literally over a tab
                 const FAINT_NEAR  = 0.16;  // cursor near the strip
                 const FAR         = 320;   // beyond this — proximity = 0
                 // Mask reveal: --mask-end goes from MIN_EXT (small color zone, mostly faded out) when
@@ -4462,7 +4462,7 @@
                 const MAX_EXT = 85;
                 const MIN_STR = 0.4;
                 const MAX_STR = 1.0;
-                let skelTarполучить = 0;
+                let skelTarget = 0;
                 let prox = 0;
                 let skelCur = 0;
                 let extCur = MIN_EXT;
@@ -4470,7 +4470,7 @@
 
                 function tick() {
                     requestAnimationFrame(tick);
-                    skelCur += (skelTarполучить - skelCur) * 0.2;
+                    skelCur += (skelTarget - skelCur) * 0.2;
                     skelEl.style.opacity = skelCur.toFixed(3);
                     const tgtExt = MIN_EXT + (MAX_EXT - MIN_EXT) * prox;
                     extCur += (tgtExt - extCur) * 0.18;
@@ -4487,32 +4487,32 @@
                         body.classList.contains('reader-open') ||
                         body.classList.contains('case-open') ||
                         body.classList.contains('showcase-open')) {
-                        skelTarполучить = 0;
+                        skelTarget = 0;
                         prox = 0;
                         return;
                     }
                     if (body.classList.contains('left-pane-open')) {
-                        skelTarполучить = 0;     // skeleton hidden by CSS too
+                        skelTarget = 0;     // skeleton hidden by CSS too
                         prox = 1;           // panel is open — keep gradient at full envelope
                         return;
                     }
-                    const r = tabsBox.получитьBoundingClientRect();
+                    const r = tabsBox.getBoundingClientRect();
                     const dx = Math.max(0, Math.max(r.left - e.clientX, e.clientX - r.right));
                     const dy = Math.max(0, Math.max(r.top  - e.clientY, e.clientY - r.bottom));
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist === 0) {
-                        skelTarполучить = PEAK_ВКЛ;
+                        skelTarget = PEAK_ON;
                         prox = 1;
                     } else if (dist >= FAR) {
-                        skelTarполучить = 0;
+                        skelTarget = 0;
                         prox = 0;
                     } else {
-                        skelTarполучить = FAINT_NEAR * (1 - dist / FAR);
+                        skelTarget = FAINT_NEAR * (1 - dist / FAR);
                         prox = 1 - dist / FAR;
                     }
                 }
                 document.addEventListener('mousemove', update);
-                document.addEventListener('mouseleave', () => { skelTarполучить = 0; prox = 0; });
+                document.addEventListener('mouseleave', () => { skelTarget = 0; prox = 0; });
             }
 
             // Random stylish glitch on the collapsed tab strip — fires only while the panel is closed
@@ -4577,8 +4577,8 @@
             // Track current article + sync prev/next disabled + .selected
             // marker on the source article-item in the left HUD.
             let currentArticleIdx = -1;
-            const readerPrev = document.получитьElementById('reader-prev');
-            const readerДалее = document.получитьElementById('reader-next');
+            const readerPrev = document.getElementById('reader-prev');
+            const readerNext = document.getElementById('reader-next');
             function syncReaderSelected(idx) {
                 document.querySelectorAll('.article-item.selected').forEach(el => el.classList.remove('selected'));
                 if (idx < 0 || idx >= ARTICLES.length) return;
@@ -4586,7 +4586,7 @@
                 const li = document.querySelector(`.article-item[data-id="${CSS.escape(id)}"]`);
                 if (li) li.classList.add('selected');
                 if (readerPrev) readerPrev.disabled = idx <= 0;
-                if (readerДалее) readerДалее.disabled = idx >= ARTICLES.length - 1;
+                if (readerNext) readerNext.disabled = idx >= ARTICLES.length - 1;
             }
 
             function openReader(a) {
@@ -4611,17 +4611,17 @@
                 openReader(ARTICLES[next]);
                 window.__sfx?.tick?.();
                 // Flash the relevant arrow so keyboard nav has visual feedback
-                const btn = dir > 0 ? readerДалее : readerPrev;
+                const btn = dir > 0 ? readerNext : readerPrev;
                 if (btn) {
                     btn.classList.add('flash');
                     setTimeout(() => btn.classList.remove('flash'), 220);
                 }
             }
-            readerЗакрыть.addEventListener('click', closeReader);
+            readerClose.addEventListener('click', closeReader);
             readerPrev?.addEventListener('click', (e) => { e.stopPropagation(); navigateReader(-1); });
-            readerДалее?.addEventListener('click', (e) => { e.stopPropagation(); navigateReader(1); });
+            readerNext?.addEventListener('click', (e) => { e.stopPropagation(); navigateReader(1); });
             // Click on reader backdrop (outside the frame) closes it
-            reader.addEventListener('click', (e) => { if (e.tarполучить === reader) closeReader(); });
+            reader.addEventListener('click', (e) => { if (e.target === reader) closeReader(); });
 
             // ESC closes the reader if open; ←/→ navigate
             document.addEventListener('keydown', (e) => {
@@ -4643,10 +4643,10 @@
     <!-- Карьера timeline hologram modal: open/close, ESC, click-outside, mouse-tilt, role detail -->
     <script>
         (() => {
-            const fab    = document.получитьElementById('career-tl-btn');
-            const modal  = document.получитьElementById('career-tl-modal');
+            const fab    = document.getElementById('career-tl-btn');
+            const modal  = document.getElementById('career-tl-modal');
             const pane   = modal && modal.querySelector('[data-ctl-pane]');
-            const closeBtn = document.получитьElementById('career-tl-close');
+            const closeBtn = document.getElementById('career-tl-close');
             const detail  = modal && modal.querySelector('[data-ctl-detail]');
             if (!fab || !modal || !pane || !detail) return;
 
@@ -4654,8 +4654,8 @@
             const ROLES = {
                 'americor': {
                     name: 'Americor',
-                    role: 'Lead Продукт Дизайнер',
-                    period: '2024 — сейчас',
+                    role: 'Lead Product Designer',
+                    period: '2024 — now',
                     location: 'Los Angeles',
                     tag: 'FinTech',
                     summary: 'FinTech for debt relief. Led the pre-IPO redesign of web + iOS + Android. Built a 3-platform, multi-brand, token-driven design system. Flipped the process to <em>code-first</em> with React + Storybook. Mentored the junior designer through it all.',
@@ -4670,11 +4670,11 @@
                 },
                 'health-samurai': {
                     name: 'Health Samurai',
-                    role: 'Дизайнер-Developer',
+                    role: 'Designer-Developer',
                     period: '2023 — now',
                     location: 'Lisbon',
-                    tag: 'Здравоохранение IT',
-                    summary: 'Здравоохранение IT since 2004. Built an <em>AI-generated design system</em> on shadCN, a markdown-first landing platform with Claude in the loop, a presentation generator, and shipped two product redesigns (Aidbox, MPI Box). Custom Claude skills became the default tooling.',
+                    tag: 'Healthcare IT',
+                    summary: 'Healthcare IT since 2004. Built an <em>AI-generated design system</em> on shadCN, a markdown-first landing platform with Claude in the loop, a presentation generator, and shipped two product redesigns (Aidbox, MPI Box). Custom Claude skills became the default tooling.',
                     projects: [
                         { title: 'shadCN Design System',  sub: 'figma to storybook' },
                         { title: 'Figma ↔ Code skill',    sub: 'custom claude skill' },
@@ -4682,16 +4682,16 @@
                         { title: 'Presentation Generator',sub: 'same engine, decks' },
                         { title: 'Embedded Analytics',    sub: 'posthog, every page' },
                         { title: 'Aidbox v2 + MPI Box',   sub: 'product redesigns' },
-                        { title: 'Бренд & Illustrations', sub: 'logos, mascots' },
+                        { title: 'Brand & Illustrations', sub: 'logos, mascots' },
                         { title: 'FireCamp app',          sub: '1-week vibe-code' },
                         { title: 'Kudos generator',       sub: 'mascot-trained gen' },
                     ],
                 },
                 'helix': {
                     name: 'Helix · Medindex',
-                    role: 'Lead Продукт Дизайнер',
+                    role: 'Lead Product Designer',
                     period: '2020 — 2023',
-                    location: 'SPb · Москва · Astana · Minsk',
+                    location: 'SPb · Moscow · Astana · Minsk',
                     tag: 'MedTech',
                     summary: 'One of the largest medical labs in Eurasia. Built a design team from scratch, modernized legacy desktop apps to web, shipped 3 new applications + a mobile app, plus the design system with token-based theming.',
                     projects: [
@@ -4705,9 +4705,9 @@
                 },
                 'gotrg': {
                     name: 'goTRG',
-                    role: 'UX/UI Дизайнер',
+                    role: 'UX/UI Designer',
                     period: '2016 — 2020',
-                    location: 'СПб · Майами',
+                    location: 'SPb · Miami',
                     tag: 'SaaS · ERP',
                     summary: 'SaaS, Supply Chain & ReCommerce platform. Audited a legacy ERP, built a design system from scratch with legacy-support layer, and launched a brand-new ERP on top of it. Heavy CSS refactoring, React-component layouting, user interviews.',
                     projects: [
@@ -4715,21 +4715,21 @@
                         { title: 'Design System',        sub: 'from scratch' },
                         { title: 'New ERP Launch',       sub: 'on the new DS' },
                         { title: 'React Layouting',      sub: 'components' },
-                        { title: 'CSS Рефакторингing',      sub: 'legacy → tokens' },
+                        { title: 'CSS Refactoring',      sub: 'legacy → tokens' },
                         { title: 'Interviews & Testing', sub: 'with key users' },
                     ],
                 },
                 'project-practice': {
                     name: 'Project Practice',
-                    role: 'UX/UI Дизайнер · Developer',
+                    role: 'UX/UI Designer · Developer',
                     period: '2014 — 2016',
-                    location: 'Москва',
-                    tag: 'PM Инструменты',
+                    location: 'Moscow',
+                    tag: 'PM Tools',
                     summary: 'Joined as UX/UI; due to specialist shortage, started laying out my own designs and building simple features. JS, LESS, CSS, HTML, C# templates. The bridge between design and code that has never closed since.',
                     projects: [
                         { title: 'PM-system × 4 redesigns', sub: 'project management' },
                         { title: 'Theming Mechanism',       sub: 'in-system theming' },
-                        { title: 'CSS → LESS Рефакторинг',     sub: '80% coverage' },
+                        { title: 'CSS → LESS Refactor',     sub: '80% coverage' },
                         { title: 'Mobile App Design',       sub: 'adaptive devices' },
                         { title: 'Design Processes',        sub: 'established' },
                         { title: 'UX Research',             sub: 'iteration loops' },
@@ -4740,11 +4740,11 @@
                     role: 'UX/UI · Part-time',
                     period: '2019 — 2024',
                     location: 'Greece',
-                    tag: 'Side · DevИнструменты',
+                    tag: 'Side · DevTools',
                     summary: 'Source-code assessment & audit platform. Designed from scratch — UI in low and hi-fi, prototyping, user testing, React-component layouting, CSS refactoring.',
                     projects: [
                         { title: 'UI Design',          sub: 'low + hi-fi' },
-                        { title: 'CSS Рефакторингing',    sub: 'legacy cleanup' },
+                        { title: 'CSS Refactoring',    sub: 'legacy cleanup' },
                         { title: 'React Layouting',    sub: 'components' },
                         { title: 'Prototyping',        sub: 'flow validation' },
                         { title: 'User Testing',       sub: 'with devs' },
@@ -4872,7 +4872,7 @@
             closeBtn?.addEventListener('click', close);
 
             modal.addEventListener('click', (e) => {
-                if (e.tarполучить === modal) close();
+                if (e.target === modal) close();
             });
 
             document.addEventListener('keydown', (e) => {
@@ -4899,7 +4899,7 @@
             // FAB 3D tilt — only while cursor is over the strip itself
             fab.addEventListener('mousemove', (e) => {
                 if (document.body.classList.contains('ctl-open')) return;
-                const r = fab.получитьBoundingClientRect();
+                const r = fab.getBoundingClientRect();
                 const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
                 const dy = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
                 fab.style.setProperty('--ctl-fab-ry', (dx * 6).toFixed(2) + 'deg');
@@ -4916,8 +4916,8 @@
          plus signal-driven JS effects (tear bars, glitch cells, element sweep). -->
     <script>
         (() => {
-            const input = document.получитьElementById('sim-signal-input');
-            const valueEl = document.получитьElementById('sim-signal-value');
+            const input = document.getElementById('sim-signal-input');
+            const valueEl = document.getElementById('sim-signal-value');
             const tearLayer = document.querySelector('.layer-tear');
             if (!input) return;
 
@@ -4955,7 +4955,7 @@
                     norm > 0.7 ? 'high' :
                     norm > 0.35 ? 'mid' : 'low';
             }
-            input.addEventListener('input', (e) => apply(parseFloat(e.tarполучить.value)));
+            input.addEventListener('input', (e) => apply(parseFloat(e.target.value)));
             apply(parseFloat(input.value));
 
             const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -5043,8 +5043,8 @@
     <!-- Настройки cog popover toggle + A− / A+ text scale (no persistence) -->
     <script>
         (() => {
-            const cogBtn = document.получитьElementById('settings-cog-btn');
-            const popover = document.получитьElementById('settings-popover');
+            const cogBtn = document.getElementById('settings-cog-btn');
+            const popover = document.getElementById('settings-popover');
             if (!cogBtn || !popover) return;
 
             function open() {
@@ -5063,7 +5063,7 @@
             // Click outside closes
             document.addEventListener('click', (e) => {
                 if (popover.hidden) return;
-                if (!popover.contains(e.tarполучить) && !cogBtn.contains(e.tarполучить)) close();
+                if (!popover.contains(e.target) && !cogBtn.contains(e.target)) close();
             });
             // ESC closes
             document.addEventListener('keydown', (e) => {
@@ -5073,8 +5073,8 @@
             // Text-scale A− / A+ — no persistence; resets to 1 on every page load
             const MIN = 1.0, MAX = 1.5, STEP = 0.1;
             const root = document.documentElement;
-            const down = document.получитьElementById('text-scale-down');
-            const up   = document.получитьElementById('text-scale-up');
+            const down = document.getElementById('text-scale-down');
+            const up   = document.getElementById('text-scale-up');
             if (!down || !up) return;
             let cur = 1;
             function clamp(v) { return Math.min(MAX, Math.max(MIN, Math.round(v * 100) / 100)); }
@@ -5092,7 +5092,7 @@
             // Each transition uses a different effect from the EFFECTS pool, in rotation.
             (() => {
                 const ROLES = [
-                    'AI Дизайнер',
+                    'AI Designer',
                     'Vibe Shipper',
                     'System Builder',
                     'AI Charmer',
@@ -5101,8 +5101,8 @@
                 ];
                 const SCRAMBLE = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789·/-_';
                 const STEADY = new Set([' ', '·', '/', '↔']);
-                const tarполучить = document.получитьElementById('prompt-roles');
-                if (!tarполучить) return;
+                const target = document.getElementById('prompt-roles');
+                if (!target) return;
 
                 // Effect 1 — Matrix decode (chars scramble through tech glyphs left-to-right)
                 function decode(el, newText, duration = 720) {
@@ -5151,18 +5151,18 @@
                     roleIdx = (roleIdx + 1) % ROLES.length;
                     const fx = EFFECTS[fxIdx];
                     fxIdx = (fxIdx + 1) % EFFECTS.length;
-                    fx(tarполучить, ROLES[roleIdx]);
+                    fx(target, ROLES[roleIdx]);
                 }, 4500);
             })();
 
-            // Text-shadow on/off toggle (also non-persistent — resets to ВКЛ each load)
-            const shadowBtn = document.получитьElementById('shadow-toggle');
+            // Text-shadow on/off toggle (also non-persistent — resets to ON each load)
+            const shadowBtn = document.getElementById('shadow-toggle');
             if (shadowBtn) {
                 let on = true;
                 shadowBtn.addEventListener('click', () => {
                     on = !on;
                     document.body.classList.toggle('no-text-shadow', !on);
-                    shadowBtn.textContent = on ? 'ВКЛ' : 'OFF';
+                    shadowBtn.textContent = on ? 'ON' : 'OFF';
                     shadowBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
                     window.__sfx?.tick?.();
                 });
@@ -5173,12 +5173,12 @@
     <!-- Vibe Terminal modal: macOS-chrome window, deploy emulation → iframe -->
     <script>
         (() => {
-            const term  = document.получитьElementById('vibe-term');
+            const term  = document.getElementById('vibe-term');
             if (!term) return;
-            const backdrop = document.получитьElementById('vibe-term-backdrop');
-            const log   = document.получитьElementById('vibe-term-log');
-            const frame = document.получитьElementById('vibe-term-iframe');
-            const title = document.получитьElementById('vibe-term-title');
+            const backdrop = document.getElementById('vibe-term-backdrop');
+            const log   = document.getElementById('vibe-term-log');
+            const frame = document.getElementById('vibe-term-iframe');
+            const title = document.getElementById('vibe-term-title');
             const closeBtn = term.querySelector('[data-vt-close]');
 
             let typeTimer = null;
@@ -5195,7 +5195,7 @@
                     { delay: 0,    line: `<span class="l-cmd">$ git push deploy main</span>` },
                     { delay: 220,  line: `<span class="l-dim">Counting objects: 142, done.</span>` },
                     { delay: 360,  line: `<span class="l-dim">Compressing objects: 100% (118/118), done.</span>` },
-                    { delay: 460,  line: `<span class="l-dim">Тексты objects: 100% (142/142), 1.84 MiB | 6.42 MiB/s, done.</span>` },
+                    { delay: 460,  line: `<span class="l-dim">Writing objects: 100% (142/142), 1.84 MiB | 6.42 MiB/s, done.</span>` },
                     { delay: 580,  line: `<span class="l-dim">Total 142 (delta 76), reused 23 (delta 9)</span>` },
                     { delay: 720,  line: `` },
                     { delay: 820,  line: `<span class="l-acc">▸ deploy.sh starting…</span>` },
@@ -5335,24 +5335,24 @@
     <!-- HS subcases page (cs02): sticky-TOC active link highlight via IntersectionObserver. -->
     <script>
         (() => {
-            const page = document.получитьElementById('case-page-cs02');
+            const page = document.getElementById('case-page-cs02');
             if (!page) return;
             // Helper: smooth-scroll the case page to a sub-section id.
             const smoothJump = (id) => {
-                const tarполучить = document.получитьElementById(id);
-                if (!tarполучить) return;
-                const top = tarполучить.offsetTop - 24;
+                const target = document.getElementById(id);
+                if (!target) return;
+                const top = target.offsetTop - 24;
                 page.scrollTo({ top, behavior: 'smooth' });
             };
             // Bento grid cards always wire up — they exist even when TOC doesn't.
-            page.querySelectorAll('[data-grid-tarполучить]').forEach(card => {
+            page.querySelectorAll('[data-grid-target]').forEach(card => {
                 if (card.__gtBound) return;
                 card.__gtBound = true;
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    smoothJump(card.dataset.gridTarполучить);
-                    window.__router?.set({ case: 'cs02', sub: card.dataset.gridTarполучить });
+                    smoothJump(card.dataset.gridTarget);
+                    window.__router?.set({ case: 'cs02', sub: card.dataset.gridTarget });
                 });
             });
             // Same for the "Start with the system" CTA which links to #hs-01.
@@ -5362,15 +5362,15 @@
                 a.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    const id = a.получитьAttribute('href').slice(1);
+                    const id = a.getAttribute('href').slice(1);
                     smoothJump(id);
                     window.__router?.set({ case: 'cs02', sub: id });
                 });
             });
-            const tocLinks = Array.from(page.querySelectorAll('.hs-toc a[data-toc-tarполучить]'));
+            const tocLinks = Array.from(page.querySelectorAll('.hs-toc a[data-toc-target]'));
             if (!tocLinks.length) return;
             const sections = tocLinks
-                .map(a => document.получитьElementById(a.dataset.tocTarполучить))
+                .map(a => document.getElementById(a.dataset.tocTarget))
                 .filter(Boolean);
             if (!sections.length) return;
 
@@ -5381,15 +5381,15 @@
                 let activeId = null;
                 let bestTop = -Infinity;
                 for (const s of sections) {
-                    if (states.получить(s.id)) {
-                        const top = s.получитьBoundingClientRect().top;
+                    if (states.get(s.id)) {
+                        const top = s.getBoundingClientRect().top;
                         if (top <= window.innerHeight * 0.4 && top > bestTop) {
                             bestTop = top;
                             activeId = s.id;
                         }
                     }
                 }
-                tocLinks.forEach(a => a.classList.toggle('is-active', a.dataset.tocTarполучить === activeId));
+                tocLinks.forEach(a => a.classList.toggle('is-active', a.dataset.tocTarget === activeId));
                 // Reflect the active subcase in the URL (debounced) while cs02 is open.
                 if (activeId && activeId !== lastActiveId
                     && document.body.classList.contains('case-open')) {
@@ -5402,7 +5402,7 @@
             };
 
             const io = new IntersectionObserver((entries) => {
-                entries.forEach(e => states.set(e.tarполучить.id, e.isIntersecting));
+                entries.forEach(e => states.set(e.target.id, e.isIntersecting));
                 recompute();
             }, { root: page, rootMargin: '-20% 0px -40% 0px', threshold: 0 });
             sections.forEach(s => io.observe(s));
@@ -5410,8 +5410,8 @@
             tocLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    smoothJump(link.dataset.tocTarполучить);
-                    window.__router?.set({ case: 'cs02', sub: link.dataset.tocTarполучить });
+                    smoothJump(link.dataset.tocTarget);
+                    window.__router?.set({ case: 'cs02', sub: link.dataset.tocTarget });
                 });
             });
 
@@ -5429,7 +5429,7 @@
 
             const setups = boards.map(board => {
                 const track = board.querySelector('[data-shot-track]');
-                const tabsList = Array.from(board.querySelectorAll('[data-shot-tarполучить]'));
+                const tabsList = Array.from(board.querySelectorAll('[data-shot-target]'));
                 if (!track || !tabsList.length) return null;
 
                 const setActive = (idx, focus) => {
@@ -5449,13 +5449,13 @@
             if (!setups.length) return;
 
             const isInViewport = (el) => {
-                const r = el.получитьBoundingClientRect();
+                const r = el.getBoundingClientRect();
                 const vh = window.innerHeight;
                 // Consider visible if any part overlaps mid-viewport.
                 return r.bottom > 80 && r.top < vh - 80;
             };
 
-            const isTypingTarполучить = (el) => {
+            const isTypingTarget = (el) => {
                 if (!el) return false;
                 if (el.isContentEditable) return true;
                 const tag = el.tagName;
@@ -5465,7 +5465,7 @@
             document.addEventListener('keydown', (e) => {
                 if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
                 if (e.metaKey || e.ctrlKey || e.altKey) return;
-                if (isTypingTarполучить(document.activeElement)) return;
+                if (isTypingTarget(document.activeElement)) return;
 
                 // Pick the first board currently visible — usually one at a time on screen.
                 const setup = setups.find(s => isInViewport(s.board));
@@ -5514,7 +5514,7 @@
                 };
 
                 const update = () => {
-                    const rect = pin.получитьBoundingClientRect();
+                    const rect = pin.getBoundingClientRect();
                     const total = pin.offsetHeight - window.innerHeight;
                     if (total <= 0) {
                         media.style.transform = 'translate3d(0,0,0)';
@@ -5567,8 +5567,8 @@
                 const tlObs = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
-                            entry.tarполучить.classList.add('is-revealed');
-                            tlObs.unobserve(entry.tarполучить);
+                            entry.target.classList.add('is-revealed');
+                            tlObs.unobserve(entry.target);
                         }
                     });
                 }, { threshold: 0.18 });
@@ -5653,7 +5653,7 @@
                 block.addEventListener('mouseenter', () => { baHovered = true; });
                 block.addEventListener('mouseleave', () => { baHovered = false; });
                 document.addEventListener('keydown', (e) => {
-                    if (e.tarполучить?.tagName === 'INPUT' || e.tarполучить?.tagName === 'TEXTAREA') return;
+                    if (e.target?.tagName === 'INPUT' || e.target?.tagName === 'TEXTAREA') return;
                     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
                     if (!baHovered && !block.classList.contains('is-fs')) return;
                     e.preventDefault();
@@ -5713,14 +5713,14 @@
             });
 
             // -------- 2. Lightbox --------
-            const lb = document.получитьElementById('am-lightbox');
+            const lb = document.getElementById('am-lightbox');
             if (!lb) return;
-            const stage   = document.получитьElementById('am-lb-stage');
-            const closeBtn= document.получитьElementById('am-lb-close');
-            const prevBtn = document.получитьElementById('am-lb-prev');
-            const nextBtn = document.получитьElementById('am-lb-next');
-            const captionEl = document.получитьElementById('am-lb-caption');
-            const counterEl = document.получитьElementById('am-lb-counter');
+            const stage   = document.getElementById('am-lb-stage');
+            const closeBtn= document.getElementById('am-lb-close');
+            const prevBtn = document.getElementById('am-lb-prev');
+            const nextBtn = document.getElementById('am-lb-next');
+            const captionEl = document.getElementById('am-lb-caption');
+            const counterEl = document.getElementById('am-lb-counter');
 
             // Collect every [data-media] in DOM order; each entry has {src,kind,caption}
             const tiles = Array.from(document.querySelectorAll('[data-media]'));
@@ -5809,7 +5809,7 @@
             prevBtn.addEventListener('click', () => render(idx - 1));
             nextBtn.addEventListener('click', () => render(idx + 1));
             lb.addEventListener('click', (e) => {
-                if (e.tarполучить === lb) close();
+                if (e.target === lb) close();
             });
             // Capture-phase: lightbox owns Escape and arrow keys whenever it's
             // open, so the showcase ESC handler doesn't fire underneath it.
@@ -5922,9 +5922,9 @@
                             // Wait for layout
                             setTimeout(() => {
                                 const page = document.querySelector(`.case-page[data-case-page="${route.id}"]`);
-                                const tarполучить = document.получитьElementById(route.sub);
-                                if (page && tarполучить) {
-                                    const top = tarполучить.offsetTop - 24;
+                                const target = document.getElementById(route.sub);
+                                if (page && target) {
+                                    const top = target.offsetTop - 24;
                                     page.scrollTo({ top, behavior: initial ? 'auto' : 'smooth' });
                                 }
                             }, initial ? 400 : 60);
@@ -5988,7 +5988,7 @@
         // event the existing slider script dispatches.
         function useSignal() {
             const [s, setS] = useState(() => {
-                const v = parseFloat(получитьComputedСтиль(document.body).получитьPropertyValue('--sim-signal'));
+                const v = parseFloat(getComputedStyle(document.body).getPropertyValue('--sim-signal'));
                 return Number.isFinite(v) ? v : 1;
             });
             useEffect(() => {
@@ -6050,7 +6050,7 @@
             // Plane sized + positioned to match the HTML <video>'s
             // object-fit:cover + object-position:center top crop. Video
             // aspect 1.94 (1280x660). Anchor top to camera view top so
-            // bottom is the region that получитьs cropped, like the HTML side.
+            // bottom is the region that gets cropped, like the HTML side.
             const meshRef = useRef();
             const { camera, size } = useThree();
             useFrame(() => {
@@ -6611,7 +6611,7 @@
         // Init guard: any unhandled error in R3F-land just keeps the original
         // .stage video showing — never break the rest of the page.
         try {
-            const root = document.получитьElementById('r3f-bg');
+            const root = document.getElementById('r3f-bg');
             if (root) createRoot(root).render(<App />);
         } catch (err) {
             console.error('[r3f] mount failed, keeping HTML video fallback:', err);
