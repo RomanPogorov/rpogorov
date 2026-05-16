@@ -12290,3 +12290,49 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* cs02 achievements block — 2x2 grid right after TL;DR. */
+        .hs-achievements {
+            margin: 40px 0 56px;
+        }
+        .hs-achievements .hs-eyebrow {
+            color: var(--hs-red);
+            margin-bottom: 18px;
+        }
+        .hs-achievements-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .hs-achievement {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 2px solid var(--hs-red);
+            padding: 22px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .hs-achievement-value {
+            font-family: 'Inter', sans-serif;
+            font-size: clamp(1.25rem, 1.8vw, 1.625rem);
+            font-weight: 700;
+            line-height: 1.15;
+            color: var(--hs-text);
+            letter-spacing: -0.01em;
+        }
+        .hs-achievement-value em {
+            color: var(--hs-red);
+            font-style: normal;
+            font-weight: 700;
+        }
+        .hs-achievement-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.45;
+        }
+        @media (max-width: 768px) {
+            .hs-achievements-grid { grid-template-columns: 1fr; }
+        }
