@@ -1,4 +1,26 @@
 
+    <!-- Fluid scale: uniform-zoom the body to a fixed 1440px design baseline.
+         Enable with ?fluid=1 in URL or localStorage('fluid'='1').
+         Disable: remove the param / set localStorage('fluid'='0'). -->
+    <script>
+        (function () {
+            var qp = new URLSearchParams(location.search).get('fluid');
+            if (qp === '1') { try { localStorage.setItem('fluid', '1'); } catch (e) {} }
+            if (qp === '0') { try { localStorage.removeItem('fluid'); } catch (e) {} document.body.classList.remove('fluid-scale'); return; }
+            var saved = null;
+            try { saved = localStorage.getItem('fluid'); } catch (e) {}
+            if (qp !== '1' && saved !== '1') return;
+            document.body.classList.add('fluid-scale');
+            var design = 1440;
+            var apply = function () {
+                var ratio = window.innerWidth / design;
+                document.body.style.setProperty('--fluid-zoom', String(ratio));
+            };
+            apply();
+            window.addEventListener('resize', apply);
+        })();
+    </script>
+
     <!-- Perf HUD: hidden by default, enable with ?perf=1 in URL (e.g. clauderunner.com/rpogorov/?perf=1). -->
     <div class="perf-hud" id="perf-hud" hidden>
         <span class="perf-fps">— fps</span>

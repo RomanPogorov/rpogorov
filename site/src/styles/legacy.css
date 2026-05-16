@@ -12240,3 +12240,13 @@
         /* cs02 timeline: match cs01 t2-bleed padding for breathing room. */
         .hs-tl-bleed { padding: 32px clamp(20px, 4vw, 56px); }
         @media (max-width: 768px) { .hs-tl-bleed { padding: 16px 0; } }
+
+        /* ============ FLUID SCALE (enable with ?fluid=1) =============
+           Uniform-scale the entire body so the design renders at a fixed
+           1440px baseline, scaled up on larger viewports and down on
+           smaller. CSS zoom changes layout (no overflow), works in Chrome
+           and Firefox 126+. Reversible — drop body.fluid-scale class to
+           restore native sizing. */
+        body.fluid-scale {
+            zoom: var(--fluid-zoom, 1);
+        }
