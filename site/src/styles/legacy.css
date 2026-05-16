@@ -12250,3 +12250,43 @@
         body.fluid-scale {
             zoom: var(--fluid-zoom, 1);
         }
+
+        /* cs02 — 2-column subcases grid (replaces bento layout per user request). */
+        .hs-grid-cards.hs-grid-cards--2col {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: none;
+            gap: 14px;
+        }
+        .hs-grid-cards.hs-grid-cards--2col .hs-grid-card {
+            grid-column: auto !important;
+            grid-row: auto !important;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .hs-grid-cards.hs-grid-cards--2col .hs-grid-card.is-feature,
+        .hs-grid-cards.hs-grid-cards--2col .hs-grid-card.is-wide,
+        .hs-grid-cards.hs-grid-cards--2col .hs-grid-card.is-tall {
+            grid-column: auto !important;
+            grid-row: auto !important;
+        }
+        /* Subtle result line — one row, dim accent. */
+        .hs-grid-card-result {
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6875rem;
+            letter-spacing: 0.08em;
+            color: var(--hs-red);
+            opacity: 0.85;
+        }
+        .hs-grid-card:hover .hs-grid-card-result {
+            opacity: 1;
+        }
+        @media (max-width: 768px) {
+            .hs-grid-cards.hs-grid-cards--2col {
+                grid-template-columns: 1fr;
+            }
+        }
