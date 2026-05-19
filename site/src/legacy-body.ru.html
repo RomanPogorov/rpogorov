@@ -416,6 +416,7 @@
                         <button type="button" class="chat-sug-btn" data-text="Какой у тебя стек?">Какой у тебя стек?</button>
                         <button type="button" class="chat-sug-btn" data-text="Расскажи о Prism">Расскажи о Prism</button>
                         <button type="button" class="chat-sug-btn" data-text="Открыт для проектов?">Открыт для проектов?</button>
+                        <button type="button" class="chat-ai-btn" id="chat-ai-btn" aria-label="Разбудить Клода Романа"><span class="chat-ai-dot"></span><span class="chat-ai-label">спросить <em>клода</em> романа →</span></button>
                     </div>
                     <form class="chat-input-row" id="chat-form" autocomplete="off">
                         <input type="text" id="chat-input" placeholder="введите сообщение…" maxlength="2000">
@@ -1880,6 +1881,50 @@
                 input.value = b.dataset.text;
                 input.focus();
             });
+
+            // ---- "спросить Клода" — будит AI когда Романа нет онлайн ----
+            const aiBtn = document.getElementById('chat-ai-btn');
+            if (aiBtn) {
+                aiBtn.addEventListener('click', async () => {
+                    if (aiBtn.disabled) return;
+                    const turns = [];
+                    threadEl.querySelectorAll('.chat-msg').forEach((m) => {
+                        const txt = m.querySelector('.chat-msg-text')?.textContent?.trim();
+                        if (!txt) return;
+                        if (m.classList.contains('from-visitor')) turns.push({ role: 'user', content: txt });
+                        else if (m.classList.contains('from-roman') || m.classList.contains('from-ai')) turns.push({ role: 'assistant', content: txt });
+                    });
+                    if (!turns.length || turns[turns.length - 1].role !== 'user') {
+                        addMsg({ role: 'error', text: '⚠ сначала напиши сообщение, потом разбуди Клода' });
+                        return;
+                    }
+                    aiBtn.disabled = true;
+                    aiBtn.classList.add('thinking');
+                    const labelEl = aiBtn.querySelector('.chat-ai-label');
+                    const prevLabel = labelEl.innerHTML;
+                    labelEl.textContent = 'думаю…';
+                    window.__sfx?.click?.();
+                    try {
+                        const r = await fetch('api/chat/claude', {
+                            method: 'POST',
+                            headers: { 'content-type': 'application/json' },
+                            body: JSON.stringify({ messages: turns.slice(-12) }),
+                        });
+                        const data = await r.json().catch(() => ({}));
+                        if (r.ok && data?.reply) {
+                            addMsg({ role: 'ai', text: data.reply });
+                        } else {
+                            addMsg({ role: 'error', text: '⚠ Клод не отвечает' });
+                        }
+                    } catch (err) {
+                        addMsg({ role: 'error', text: '⚠ Клод не отвечает' });
+                    } finally {
+                        aiBtn.disabled = false;
+                        aiBtn.classList.remove('thinking');
+                        labelEl.innerHTML = prevLabel;
+                    }
+                });
+            }
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();

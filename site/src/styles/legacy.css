@@ -7505,6 +7505,70 @@
             background: rgba(var(--acc-rgb), 0.14);
         }
 
+        /* "ask Roman's Claude" — distinct AI button next to suggestions.
+           Uses a fixed violet/magenta accent so it reads as a different
+           class of action than the accent-themed sug pills. */
+        .chat-ai-btn {
+            appearance: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.04em;
+            text-transform: lowercase;
+            color: #f0d4ff;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(217, 70, 239, 0.14));
+            border: 1px solid rgba(217, 70, 239, 0.55);
+            padding: 5px 10px 5px 8px;
+            cursor: pointer;
+            transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.15s;
+            position: relative;
+        }
+        .chat-ai-btn em { font-style: normal; color: #ffffff; font-weight: 600; }
+        .chat-ai-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #e879f9;
+            box-shadow: 0 0 8px rgba(232, 121, 249, 0.9);
+            animation: chat-ai-pulse 1.8s ease-in-out infinite;
+        }
+        .chat-ai-btn:hover {
+            color: #ffffff;
+            border-color: #e879f9;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.32), rgba(217, 70, 239, 0.26));
+        }
+        .chat-ai-btn:disabled, .chat-ai-btn.thinking {
+            cursor: wait;
+            opacity: 0.85;
+        }
+        .chat-ai-btn.thinking .chat-ai-dot {
+            animation: chat-ai-pulse 0.6s ease-in-out infinite;
+        }
+        @keyframes chat-ai-pulse {
+            0%, 100% { opacity: 0.55; transform: scale(0.85); }
+            50%      { opacity: 1;    transform: scale(1.15); }
+        }
+        /* AI replies — themed like Roman's bubbles but with a violet tint
+           and a small "AI" tag, so the user knows it isn't Roman. */
+        .chat-msg.from-ai .chat-msg-text {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 2px solid rgba(217, 70, 239, 0.7);
+            padding: 6px 8px;
+        }
+        .chat-msg.from-ai .chat-msg-text::before {
+            content: "claude ·";
+            display: inline;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #e879f9;
+            margin-right: 6px;
+            opacity: 0.85;
+        }
+
         .chat-input-row {
             display: flex;
             gap: 6px;

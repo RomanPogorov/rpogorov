@@ -416,6 +416,7 @@
                         <button type="button" class="chat-sug-btn" data-text="What's your stack?">What's your stack?</button>
                         <button type="button" class="chat-sug-btn" data-text="Tell me about Prism">Tell me about Prism</button>
                         <button type="button" class="chat-sug-btn" data-text="Open for projects?">Open for projects?</button>
+                        <button type="button" class="chat-ai-btn" id="chat-ai-btn" aria-label="Wake Roman's Claude to reply"><span class="chat-ai-dot"></span><span class="chat-ai-label">ask <em>roman</em>'s claude →</span></button>
                     </div>
                     <form class="chat-input-row" id="chat-form" autocomplete="off">
                         <input type="text" id="chat-input" placeholder="type a message…" maxlength="2000">
@@ -1880,6 +1881,50 @@
                 input.value = b.dataset.text;
                 input.focus();
             });
+
+            // ---- "ask Roman's Claude" — wakes the AI when Roman is offline ----
+            const aiBtn = document.getElementById('chat-ai-btn');
+            if (aiBtn) {
+                aiBtn.addEventListener('click', async () => {
+                    if (aiBtn.disabled) return;
+                    // Collect last user/assistant turns from the visible thread.
+                    const turns = [];
+                    threadEl.querySelectorAll('.chat-msg').forEach((m) => {
+                        const txt = m.querySelector('.chat-msg-text')?.textContent?.trim();
+                        if (!txt) return;
+                        if (m.classList.contains('from-visitor')) turns.push({ role: 'user', content: txt });
+                        else if (m.classList.contains('from-roman') || m.classList.contains('from-ai')) turns.push({ role: 'assistant', content: txt });
+                    });
+                    if (!turns.length || turns[turns.length - 1].role !== 'user') {
+                        addMsg({ role: 'error', text: '⚠ напиши сообщение, и потом разбуди Клода' });
+                        return;
+                    }
+                    aiBtn.disabled = true;
+                    aiBtn.classList.add('thinking');
+                    const prevLabel = aiBtn.querySelector('.chat-ai-label').innerHTML;
+                    aiBtn.querySelector('.chat-ai-label').textContent = 'thinking…';
+                    window.__sfx?.click?.();
+                    try {
+                        const r = await fetch('api/chat/claude', {
+                            method: 'POST',
+                            headers: { 'content-type': 'application/json' },
+                            body: JSON.stringify({ messages: turns.slice(-12) }),
+                        });
+                        const data = await r.json().catch(() => ({}));
+                        if (r.ok && data?.reply) {
+                            addMsg({ role: 'ai', text: data.reply });
+                        } else {
+                            addMsg({ role: 'error', text: '⚠ Claude не отвечает' });
+                        }
+                    } catch (err) {
+                        addMsg({ role: 'error', text: '⚠ Claude не отвечает' });
+                    } finally {
+                        aiBtn.disabled = false;
+                        aiBtn.classList.remove('thinking');
+                        aiBtn.querySelector('.chat-ai-label').innerHTML = prevLabel;
+                    }
+                });
+            }
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
