@@ -532,8 +532,6 @@
             padding: 7px 12px;
             background: rgba(0, 0, 0, 0.45);
             border: 1px solid rgba(var(--acc-rgb), 0.28);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             font-family: 'JetBrains Mono', monospace;
         }
         .sim-signal-label {
@@ -693,8 +691,6 @@
             gap: 3px;
             border: 1px solid rgba(var(--acc-rgb), 0.25);
             background: rgba(2, 8, 14, 0.6);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
             transition: border-color 0.3s ease;
         }
 
@@ -1055,8 +1051,6 @@
             letter-spacing: 0.22em;
             text-transform: uppercase;
             cursor: pointer;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
             transition: color 0.2s, background 0.2s, border-color 0.2s;
             display: inline-flex;
@@ -1632,8 +1626,6 @@
             padding: 18px 36px;
             background: linear-gradient(180deg, rgba(6, 7, 8, 0.95), rgba(6, 7, 8, 0.85));
             border-bottom: 1px solid rgba(var(--ui-acc-rgb), 0.18);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
         }
         .dc-crumbs {
             display: inline-flex;
@@ -2112,8 +2104,6 @@
             inset: 0;
             z-index: 60;
             background: rgba(2, 4, 6, 0.94);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2629,8 +2619,6 @@
             padding: 18px 36px;
             background: linear-gradient(180deg, rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.85));
             border-bottom: 1px solid rgba(var(--acc-rgb), 0.18);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.6875rem;
             letter-spacing: 0.18em;
@@ -2826,8 +2814,6 @@
             height: 60px;
             background: rgba(0,0,0,0.55);
             border: 1px solid rgba(var(--acc-rgb), 0.35);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
             z-index: 3;
             pointer-events: none;
             overflow: hidden;
@@ -2865,8 +2851,6 @@
             text-transform: uppercase;
             padding: 9px 16px;
             cursor: pointer;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             transition: border-color 0.18s, background 0.18s, color 0.18s;
             display: none;
         }
@@ -3108,8 +3092,6 @@
             top: 0;
             z-index: 5;
             background: rgba(5,5,5,0.92);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
             margin-left: calc(-50vw + 50%);
             margin-right: calc(-50vw + 50%);
             width: 100vw;
@@ -3346,8 +3328,6 @@
             position: fixed;
             inset: 0;
             background: rgba(2, 4, 6, 0.78);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             z-index: 79;
             opacity: 0;
             pointer-events: none;
@@ -5020,7 +5000,6 @@
             color: var(--hs-text);
             background: rgba(31, 37, 51, 0.85);
             border: 1px solid var(--hs-border-strong);
-            backdrop-filter: blur(10px);
         }
         .cp-hs .cp-close:hover { color: var(--hs-red); border-color: var(--hs-red); }
 
@@ -5865,8 +5844,6 @@
             width: 46px; height: 46px;
             border: 1px solid rgba(0,0,0,0.16);
             background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             color: #0a0a0a;
             font-size: 1.375rem;
             font-family: 'Inter', sans-serif;
@@ -6353,8 +6330,6 @@
             inset: 0;
             background:
                 radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.85) 100%);
-            backdrop-filter: blur(4px) saturate(0.7);
-            -webkit-backdrop-filter: blur(4px) saturate(0.7);
         }
         .audio-gate-frame {
             position: relative;
@@ -7733,8 +7708,6 @@
                 linear-gradient(180deg,
                     rgba(2, 8, 14, 0.55) 0%,
                     rgba(2, 8, 14, 0.62) 100%);
-            backdrop-filter: blur(14px) saturate(1.15);
-            -webkit-backdrop-filter: blur(14px) saturate(1.15);
             border: 1px solid rgba(var(--acc-rgb), 0.30);
             box-shadow:
                 0 0 80px rgba(var(--acc-rgb), 0.28),
@@ -7860,8 +7833,6 @@
                 rgba(var(--acc-rgb), 0.05) 0%,
                 rgba(2, 12, 22, 0.88) 30%,
                 rgba(2, 12, 22, 0.94) 100%);
-            backdrop-filter: blur(18px) saturate(1.4);
-            -webkit-backdrop-filter: blur(18px) saturate(1.4);
             box-shadow:
                 0 0 60px rgba(var(--acc-rgb), 0.25),
                 0 0 200px rgba(var(--acc-rgb), 0.10),
@@ -8507,8 +8478,6 @@
             color: rgba(255, 255, 255, 0.85);
             cursor: pointer;
             text-align: left;
-            backdrop-filter: blur(10px) saturate(1.1);
-            -webkit-backdrop-filter: blur(10px) saturate(1.1);
             transform: translateX(-50%) perspective(1100px) rotateX(var(--ctl-fab-rx, 0deg)) rotateY(var(--ctl-fab-ry, 0deg));
             transform-origin: 50% 50%;
             transform-style: preserve-3d;
@@ -8733,8 +8702,6 @@
                 radial-gradient(ellipse at top right, rgba(var(--acc-rgb), 0.10), transparent 50%),
                 radial-gradient(ellipse at bottom left, rgba(var(--acc-rgb), 0.08), transparent 55%),
                 linear-gradient(180deg, rgba(2, 8, 14, 0.62) 0%, rgba(2, 8, 14, 0.74) 100%);
-            backdrop-filter: blur(14px) saturate(1.15);
-            -webkit-backdrop-filter: blur(14px) saturate(1.15);
             border: 1px solid rgba(var(--acc-rgb), 0.32);
             box-shadow:
                 0 0 80px rgba(var(--acc-rgb), 0.28),
@@ -9236,7 +9203,6 @@
         }
 
         /* ============ BACKDROP — pushed back when panel opens ============ */
-        /* perf: was `backdrop-filter: blur(8px) brightness(0.5)` over a full-viewport overlay —
            every frame the compositor reblurred everything beneath while video kept playing.
            Replaced with a solid dark layer (rgba 0, 0.55) — same dimming effect, zero per-frame work.
            Subtle scanline pattern kept on top. */
