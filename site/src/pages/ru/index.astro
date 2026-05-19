@@ -34,7 +34,9 @@ const legacyBodyRaw = legacyBodyRawSource
   // Same reason: chat API calls use relative `api/chat/...` which from /ru/
   // resolves to /rpogorov-dev/app/ru/api/chat/... (404). Make them absolute.
   .replace(/(fetch\(\s*[`'"])api\/chat\//g, '$1/rpogorov-dev/app/api/chat/')
-  .replace(/(fetch\(\s*`)api\/chat\//g, '$1/rpogorov-dev/app/api/chat/');
+  .replace(/(fetch\(\s*`)api\/chat\//g, '$1/rpogorov-dev/app/api/chat/')
+  // Ambient audio src set in JS — relative 'audio.opus' broke on /ru/.
+  .replace(/(audio\.src\s*=\s*['"])audio\./g, '$1/rpogorov-dev/app/audio.');
 import { getCollection, render } from 'astro:content';
 
 const companies = (await getCollection('companies')).sort(
