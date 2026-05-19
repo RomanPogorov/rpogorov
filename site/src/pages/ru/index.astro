@@ -30,7 +30,11 @@ import legacyBodyRawSource from '../../legacy-body.ru.html?raw';
 // paths like "showcase/..." or "cases/..." resolve to /rpogorov-dev/app/ru/...
 // (broken). Rewrite them to absolute /rpogorov-dev/app/-prefixed paths.
 const legacyBodyRaw = legacyBodyRawSource
-  .replace(/(\b(?:src|href|poster)=")(showcase\/|cases\/|articles\/|bg\.|audio\.|favicon\.)/g, '$1/rpogorov-dev/app/$2');
+  .replace(/(\b(?:src|href|poster)=")(showcase\/|cases\/|articles\/|bg\.|audio\.|favicon\.)/g, '$1/rpogorov-dev/app/$2')
+  // Same reason: chat API calls use relative `api/chat/...` which from /ru/
+  // resolves to /rpogorov-dev/app/ru/api/chat/... (404). Make them absolute.
+  .replace(/(fetch\(\s*[`'"])api\/chat\//g, '$1/rpogorov-dev/app/api/chat/')
+  .replace(/(fetch\(\s*`)api\/chat\//g, '$1/rpogorov-dev/app/api/chat/');
 import { getCollection, render } from 'astro:content';
 
 const companies = (await getCollection('companies')).sort(
