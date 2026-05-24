@@ -36,7 +36,11 @@ const legacyBodyRaw = legacyBodyRawSource
   .replace(/(fetch\(\s*[`'"])api\/chat\//g, '$1/rpogorov-dev/app/api/chat/')
   .replace(/(fetch\(\s*`)api\/chat\//g, '$1/rpogorov-dev/app/api/chat/')
   // Ambient audio src set in JS — relative 'audio.opus' broke on /ru/.
-  .replace(/(audio\.src\s*=\s*['"])audio\./g, '$1/rpogorov-dev/app/audio.');
+  .replace(/(audio\.src\s*=\s*['"])audio\./g, '$1/rpogorov-dev/app/audio.')
+  // R3F texture + video src set in JS — relative 'bg-wireframe.jpg' / 'bg.mp4'
+  // also break on /ru/. Without these, signal=0 reveals no wireframe scene.
+  .replace(/(['"])bg-wireframe\.jpg(['"])/g, '$1/rpogorov-dev/app/bg-wireframe.jpg$2')
+  .replace(/(v\.src\s*=\s*['"])bg\.mp4/g, '$1/rpogorov-dev/app/bg.mp4');
 import { getCollection, render } from 'astro:content';
 
 const companies = (await getCollection('companies')).sort(
