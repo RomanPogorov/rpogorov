@@ -6449,172 +6449,41 @@
             );
         }
 
-        // Procedural low-poly scene — meshes with green wireframe material
-        // staged to roughly mirror the bg.mp4 frame: covered lounge in the
-        // foreground (sofas + table + lamps), gazebo + greenery in the mid
-        // ground, tower silhouettes (mushroom-cap + plain) on the far back.
-        // Fades in only at the very bottom of the signal slider.
-        function WireMesh({ children, position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, color = '#00ff88', opacity = 1, layer = 0 }) {
-            // Two-pass mesh: solid black backing kills bleedthrough, line
-            // segments overlay draws the wireframe edges.
-            return (
-                <group position={position} rotation={rotation} scale={scale} renderOrder={layer}>
-                    {children}
-                </group>
-            );
-        }
-
-        function makeWireMesh(geometry, key, position, color = '#00ff88', baseOpacity = 1, fillColor = '#000000') {
-            return (
-                <group key={key} position={position}>
-                    <mesh>
-                        {geometry}
-                        <meshBasicMaterial color={fillColor} toneMapped={false} transparent opacity={baseOpacity * 0.85} depthWrite={false} />
-                    </mesh>
-                    <lineSegments>
-                        <wireframeGeometry attach="geometry" args={[(geometry.props && geometry.props.args) ? new THREE.BufferGeometry() : undefined]} />
-                    </lineSegments>
-                </group>
-            );
-        }
-
-        // Roughly the foreground lounge — sofas, table, candles, lamps.
-        function ForegroundLounge({ opacity }) {
-            const items = [
-                // Floor deck plate
-                { kind: 'box',     pos: [0, -2.4, 4],     size: [22, 0.18, 12], color: '#3affc6' },
-                // Left big sofa: seat + backrest + armrest
-                { kind: 'box',     pos: [-5.5, -1.55, 3.5],  size: [5.5, 0.7, 2.4], color: '#5bff9f' },   // seat
-                { kind: 'box',     pos: [-5.5, -0.55, 2.6],  size: [5.5, 1.2, 0.5], color: '#5bff9f' },   // back
-                { kind: 'box',     pos: [-8.0, -1.05, 3.5],  size: [0.5, 1.6, 2.4], color: '#5bff9f' },   // arm L
-                { kind: 'box',     pos: [-3.0, -1.05, 3.5],  size: [0.5, 1.6, 2.4], color: '#5bff9f' },   // arm R
-                // Right corner sofa
-                { kind: 'box',     pos: [5.5, -1.55, 3.5],   size: [5.5, 0.7, 2.4], color: '#5bff9f' },
-                { kind: 'box',     pos: [5.5, -0.55, 2.6],   size: [5.5, 1.2, 0.5], color: '#5bff9f' },
-                { kind: 'box',     pos: [8.0, -1.05, 3.5],   size: [0.5, 1.6, 2.4], color: '#5bff9f' },
-                { kind: 'box',     pos: [3.0, -1.05, 3.5],   size: [0.5, 1.6, 2.4], color: '#5bff9f' },
-                // Coffee table center
-                { kind: 'box',     pos: [0, -1.85, 4.4],     size: [3.6, 0.18, 2.0], color: '#a8ffd9' },
-                { kind: 'box',     pos: [0, -2.18, 4.4],     size: [3.0, 0.45, 1.6], color: '#a8ffd9' },  // base
-                // Candles on table
-                { kind: 'cyl',     pos: [-0.9, -1.55, 4.4],  size: [0.08, 0.08, 0.3, 8], color: '#ffcc66' },
-                { kind: 'cyl',     pos: [0.0,  -1.55, 4.4],  size: [0.10, 0.10, 0.4, 8], color: '#ffcc66' },
-                { kind: 'cyl',     pos: [0.9,  -1.55, 4.4],  size: [0.07, 0.07, 0.25, 8], color: '#ffcc66' },
-                // Lamps on side stands (left & right)
-                { kind: 'cyl',     pos: [-9.5, -0.5, 3.5],   size: [0.05, 0.05, 1.2, 8], color: '#ffcc66' },
-                { kind: 'cone',    pos: [-9.5,  0.45, 3.5],  size: [0.55, 0.7, 12], color: '#ffe28a' },
-                { kind: 'cyl',     pos: [9.5,  -0.5, 3.5],   size: [0.05, 0.05, 1.2, 8], color: '#ffcc66' },
-                { kind: 'cone',    pos: [9.5,   0.45, 3.5],  size: [0.55, 0.7, 12], color: '#ffe28a' },
-                // Roof/canopy beams overhead
-                { kind: 'box',     pos: [0, 3.6, 2.0],       size: [22, 0.4, 1.0], color: '#3affc6' },
-                { kind: 'box',     pos: [0, 3.6, 6.0],       size: [22, 0.4, 1.0], color: '#3affc6' },
-                { kind: 'box',     pos: [-9, 3.6, 4.0],      size: [0.4, 0.4, 5.0], color: '#3affc6' },
-                { kind: 'box',     pos: [0,  3.6, 4.0],      size: [0.4, 0.4, 5.0], color: '#3affc6' },
-                { kind: 'box',     pos: [9, 3.6, 4.0],       size: [0.4, 0.4, 5.0], color: '#3affc6' },
-                // Pillars supporting roof
-                { kind: 'cyl',     pos: [-10.5, 0.5, 1.5],   size: [0.18, 0.18, 6.0, 8], color: '#3affc6' },
-                { kind: 'cyl',     pos: [10.5, 0.5, 1.5],    size: [0.18, 0.18, 6.0, 8], color: '#3affc6' },
-                { kind: 'cyl',     pos: [-10.5, 0.5, 6.5],   size: [0.18, 0.18, 6.0, 8], color: '#3affc6' },
-                { kind: 'cyl',     pos: [10.5, 0.5, 6.5],    size: [0.18, 0.18, 6.0, 8], color: '#3affc6' },
-                // Garden box on the floor (left near sofa) with shrub
-                { kind: 'box',     pos: [-1.0, -2.05, 5.6],  size: [1.6, 0.5, 1.2], color: '#a8ffd9' },
-                { kind: 'icos',    pos: [-1.0, -1.55, 5.6],  size: [0.55, 0], color: '#7affc8' },
-            ];
-            return items.map((it, i) => renderItem(it, `fg-${i}`, opacity));
-        }
-
-        function MidGazebo({ opacity }) {
-            // Open dome gazebo — ring of columns + cone roof, stage left of center
-            const items = [
-                // Dome roof
-                { kind: 'cone',    pos: [-3.5, 1.6, -7],     size: [2.4, 1.6, 12], color: '#3affc6' },
-                // Ring of 8 columns
-                ...Array.from({ length: 8 }, (_, i) => {
-                    const a = (i / 8) * Math.PI * 2;
-                    return { kind: 'cyl',
-                             pos: [-3.5 + Math.cos(a) * 2.0, -0.4, -7 + Math.sin(a) * 2.0],
-                             size: [0.08, 0.08, 2.4, 6],
-                             color: '#3affc6',
-                             key: `col-${i}` };
-                }),
-                // Floor disk
-                { kind: 'cyl',     pos: [-3.5, -1.7, -7],    size: [2.3, 2.3, 0.2, 16], color: '#3affc6' },
-                // Surrounding low-poly trees
-                ...[
-                    [-7.5, -1, -10], [-9, -0.6, -7], [-1, -1, -11],
-                    [4, -0.8, -10], [6.5, -1, -8.5], [9, -0.6, -10.5],
-                ].map((p, i) => [
-                    { kind: 'cyl',  pos: [p[0], p[1] - 1.0, p[2]], size: [0.18, 0.22, 1.6, 6], color: '#5bff9f', key: `tree-trunk-${i}` },
-                    { kind: 'icos', pos: [p[0], p[1] + 0.5, p[2]], size: [1.2, 1], color: '#5bff9f', key: `tree-canopy-${i}` },
-                ]).flat(),
-            ];
-            return items.map((it, i) => renderItem(it, it.key ?? `mid-${i}`, opacity));
-        }
-
-        function FarTowers({ opacity }) {
-            // Distant skyline — tall extruded boxes + a couple of mushroom-cap
-            // towers (cylinder body + sphere crown).
-            const skylineCols = [
-                { x: -16, h: 14 }, { x: -13, h: 9 },  { x: -10, h: 18 }, { x: -7, h: 11 },
-                { x: -3,  h: 22 }, { x: 0,   h: 16 }, { x: 3,   h: 26 }, { x: 6,  h: 13 },
-                { x: 9,   h: 19 }, { x: 12,  h: 10 }, { x: 15,  h: 24 }, { x: 18, h: 12 },
-            ];
-            const items = [
-                ...skylineCols.flatMap((c, i) => ([
-                    { kind: 'box', pos: [c.x, c.h / 2 - 2, -22], size: [1.6, c.h, 1.6], color: '#3affc6', key: `tower-${i}` },
-                    // Random spotted lit windows simulated by small inner box
-                    { kind: 'box', pos: [c.x, c.h / 2 - 2, -21.4], size: [0.6, c.h * 0.7, 0.05], color: '#ffcc66', key: `tower-light-${i}` },
-                ])),
-                // Mushroom-cap towers — 3 of them
-                ...[[-6, 18, -25], [4, 22, -26], [14, 16, -25]].flatMap(([x, h, z], i) => ([
-                    { kind: 'cyl',    pos: [x, h / 2 - 2, z],         size: [0.45, 0.55, h, 10], color: '#3affc6', key: `mush-stem-${i}` },
-                    { kind: 'sphere', pos: [x, h - 1.5, z],           size: [2.2, 12, 8], color: '#3affc6', key: `mush-cap-${i}` },
-                    // Light dot at the cap tip
-                    { kind: 'sphere', pos: [x, h + 0.8, z],           size: [0.18, 6, 6], color: '#ffe28a', key: `mush-light-${i}` },
-                ])),
-            ];
-            return items.map((it, i) => renderItem(it, it.key ?? `far-${i}`, opacity));
-        }
-
-        // Render helper: each item becomes a black-fill mesh + green wireframe overlay
-        function renderItem(it, key, opacity) {
-            let geom = null;
-            if (it.kind === 'box')    geom = <boxGeometry args={it.size} />;
-            else if (it.kind === 'cyl') geom = <cylinderGeometry args={it.size} />;
-            else if (it.kind === 'cone') geom = <coneGeometry args={it.size} />;
-            else if (it.kind === 'icos') geom = <icosahedronGeometry args={it.size} />;
-            else if (it.kind === 'sphere') geom = <sphereGeometry args={it.size} />;
-            else return null;
-            const rot = it.rot || [0, 0, 0];
-            return (
-                <group key={key} position={it.pos} rotation={rot}>
-                    <mesh>
-                        {geom}
-                        <meshBasicMaterial color="#000000" toneMapped={false} transparent opacity={opacity * 0.92} depthWrite={false} />
-                    </mesh>
-                    <mesh>
-                        {geom}
-                        <meshBasicMaterial color={it.color || '#00ff88'} wireframe toneMapped={false} transparent opacity={opacity} fog={false} />
-                    </mesh>
-                </group>
-            );
-        }
-
+        // Wireframe scene as a textured plane — uses bg-wireframe.jpg, the
+        // hand-crafted reference from Roman. Way better than my procedural
+        // mesh for this aesthetic and a fraction of the geometry. Fades in
+        // only at the very bottom of the slider.
         function LowPolyScene() {
             const signal = useSignal();
-            const groupRef = useRef();
-            const [opacity, setOpacity] = useState(0);
+            const matRef = useRef();
+            const texture = useMemo(() => {
+                const tex = new TextureLoader().load('bg-wireframe.jpg');
+                tex.minFilter = LinearFilter;
+                tex.magFilter = LinearFilter;
+                tex.colorSpace = SRGBColorSpace;
+                return tex;
+            }, []);
             useFrame(() => {
+                if (!matRef.current) return;
+                // op=0 above signal=0.10, op=1 at signal=0.
                 const op = Math.max(0, Math.min(1, (0.10 - signal) / 0.10));
-                if (Math.abs(op - opacity) > 0.01) setOpacity(op);
-                if (groupRef.current) groupRef.current.visible = op > 0.001;
+                matRef.current.opacity = op;
             });
-            // Subtle camera drift via signal-based rotation feels alive
             return (
-                <group ref={groupRef} renderOrder={-2}>
-                    <FarTowers opacity={opacity} />
-                    <MidGazebo opacity={opacity} />
-                    <ForegroundLounge opacity={opacity} />
+                <group>
+                    <mesh position={[0, 0, -10]} renderOrder={-2}>
+                        <planeGeometry args={[40, 22.5]} />
+                        <meshBasicMaterial
+                            ref={matRef}
+                            map={texture}
+                            toneMapped={false}
+                            transparent
+                            depthWrite={false}
+                            fog={false}
+                        />
+                    </mesh>
+                    {/* Diagonal rain strokes across the wireframe scene —
+                        only spawned when the wireframe is mostly visible. */}
                     <RainGate />
                 </group>
             );
