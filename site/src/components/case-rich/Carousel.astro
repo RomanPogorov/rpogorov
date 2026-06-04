@@ -1,0 +1,229 @@
+---
+/**
+ * Carousel — horizontal swipeable gallery. Each slide reuses the MediaStub /
+ * `.am-media` markup so the global lightbox + accent chrome apply unchanged.
+ * One slide per view with a peek of the next; swipe / drag on touch, circular
+ * arrows + pagination dots on desktop. Stubs (no `src`) render the framed
+ * "image · filename" placeholder, real images render full-bleed inside the
+ * frame.
+ *
+ * Usage in MDX:
+ *   <Carousel items={[
+ *     { stub: 'phase-1-ui.png', caption: 'Фаза 1 — Онбординг' },
+ *     { src: '/.../phase-2.png', caption: 'Фаза 2 — Накопление' },
+ *     { kind: 'video', src: '/.../p3.mp4', caption: 'Фаза 3' },
+ *   ]} aspect="16-9" />
+ */
+type Item = {
+  kind?: 'image' | 'video';
+  src?: string;
+  stub?: string;
+  alt?: string;
+  caption?: string;
+  poster?: string;
+  aspect?: '16-9' | '16-10' | '4-3' | '9-16' | '1-1';
+};
+interface Props {
+  items: Item[];
+  aspect?: '16-9' | '16-10' | '4-3' | '9-16' | '1-1';
+  label?: string;
+}
+const { items, aspect = '16-9', label } = Astro.props;
+const cleanCap = (c?: string) => c?.replace(/^\s*\/\/\s*/, '');
+---
+
+<div class="am-carousel" data-carousel>
+  {label && <div class="am-carousel-label">{label}</div>}
+  <div class="am-carousel-track" role="list">
+    {items.map((it) => {
+      const kind = it.kind ?? 'image';
+      const cap = cleanCap(it.caption);
+      const asp = it.aspect ?? aspect;
+      return (
+        <figure
+          class="am-media am-carousel-slide"
+          role="listitem"
+          data-media
+          data-kind={kind}
+          data-src={it.src ?? ''}
+          data-stub={it.stub ?? ''}
+          data-caption={cap ?? ''}
+        >
+          <div class="am-media-frame" data-aspect={asp}>
+            {it.src ? (
+              kind === 'video' ? (
+                <video src={it.src} poster={it.poster} autoplay muted loop playsinline preload="metadata"></video>
+              ) : (
+                <img src={it.src} alt={it.alt ?? cap ?? ''} />
+              )
+            ) : (
+              <div class="am-media-stub">{kind} · {it.stub}</div>
+            )}
+            {kind === 'video' && <div class="am-media-play"></div>}
+          </div>
+          {cap && <figcaption class="am-media-caption">{cap}</figcaption>}
+        </figure>
+      );
+    })}
+  </div>
+
+  <div class="am-carousel-controls">
+    <div class="am-carousel-dots">
+      {items.map((_, i) => (
+        <button class:list={['am-carousel-dot', { active: i === 0 }]} type="button" data-dot={i} aria-label={`Слайд ${i + 1}`}></button>
+      ))}
+    </div>
+    <div class="am-carousel-arrows">
+      <button class="am-carousel-arrow prev" type="button" aria-label="Назад" disabled>‹</button>
+      <button class="am-carousel-arrow next" type="button" aria-label="Вперёд">›</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .am-carousel {
+    margin: 22px 0 8px;
+    position: relative;
+  }
+  .am-carousel-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.5625rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: 12px;
+  }
+  .am-carousel-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .am-carousel-track::-webkit-scrollbar { display: none; }
+  .am-carousel-slide {
+    flex: 0 0 82%;
+    scroll-snap-align: center;
+    margin: 0 !important;
+  }
+  @media (min-width: 720px) {
+    .am-carousel-slide { flex-basis: 72%; }
+  }
+  /* Controls row: dots left, circular arrows right — mirrors the reference. */
+  .am-carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+  }
+  .am-carousel-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .am-carousel-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid rgba(var(--acc-rgb), 0.45);
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+  }
+  .am-carousel-dot.active {
+    background: var(--acc);
+    box-shadow: 0 0 8px rgba(var(--acc-rgb), 0.7);
+    transform: scale(1.15);
+  }
+  .am-carousel-arrows {
+    display: flex;
+    gap: 10px;
+  }
+  .am-carousel-arrow {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(var(--acc-rgb), 0.45);
+    background: transparent;
+    color: var(--acc);
+    font-size: 1.1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s, opacity 0.18s;
+  }
+  .am-carousel-arrow:hover:not(:disabled) {
+    border-color: var(--acc);
+    box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.4);
+    background: rgba(var(--acc-rgb), 0.08);
+  }
+  .am-carousel-arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+</style>
+
+<script is:inline>
+  function initCarousels() {
+    document.querySelectorAll('[data-carousel]:not([data-carousel-init])').forEach((c) => {
+      c.setAttribute('data-carousel-init', '1');
+      const track = c.querySelector('.am-carousel-track');
+      if (!track) return;
+      const slides = Array.from(track.children);
+      const dots = Array.from(c.querySelectorAll('.am-carousel-dot'));
+      const prev = c.querySelector('.am-carousel-arrow.prev');
+      const next = c.querySelector('.am-carousel-arrow.next');
+      let idx = 0;
+
+      function setActive(i) {
+        idx = Math.max(0, Math.min(slides.length - 1, i));
+        dots.forEach((d, j) => d.classList.toggle('active', j === idx));
+        if (prev) prev.disabled = idx === 0;
+        if (next) next.disabled = idx === slides.length - 1;
+      }
+      function go(i) {
+        const s = slides[i];
+        if (!s) return;
+        const left = s.offsetLeft - (track.clientWidth - s.clientWidth) / 2;
+        track.scrollTo({ left, behavior: 'smooth' });
+      }
+      if (prev) prev.addEventListener('click', () => go(idx - 1));
+      if (next) next.addEventListener('click', () => go(idx + 1));
+      dots.forEach((d, j) => d.addEventListener('click', () => go(j)));
+
+      let t;
+      track.addEventListener(
+        'scroll',
+        () => {
+          clearTimeout(t);
+          t = setTimeout(() => {
+            const center = track.scrollLeft + track.clientWidth / 2;
+            let best = 0;
+            let bd = Infinity;
+            slides.forEach((s, j) => {
+              const sc = s.offsetLeft + s.clientWidth / 2;
+              const dd = Math.abs(sc - center);
+              if (dd < bd) {
+                bd = dd;
+                best = j;
+              }
+            });
+            setActive(best);
+          }, 80);
+        },
+        { passive: true }
+      );
+      setActive(0);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCarousels, { once: true });
+  } else {
+    initCarousels();
+  }
+</script>
