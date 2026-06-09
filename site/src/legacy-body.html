@@ -1851,9 +1851,12 @@
                     if (document.body.classList.contains('chat-fullscreen')) exitFullscreen();
                     else enterFullscreen();
                 });
-                // ESC exits fullscreen first (before any panel-close handlers below)
+                // ESC exits fullscreen — BUT if a case overlay is open on top of
+                // the fullscreen chat, let ESC close the case first (keep the chat
+                // fullscreen underneath, so it's intact when you return).
                 document.addEventListener('keydown', (e) => {
                     if (e.key !== 'Escape') return;
+                    if (document.body.classList.contains('case-open')) return;
                     if (document.body.classList.contains('chat-fullscreen')) {
                         exitFullscreen();
                         e.stopPropagation();
@@ -1943,10 +1946,6 @@
                 const btn = e.target.closest('.chat-link-btn');
                 if (!btn) return;
                 const path = btn.dataset.path || '';
-                // Opening a case from the fullscreen chat: collapse the chat back
-                // to the panel FIRST (scroll preserved) so the case doesn't slam
-                // over the fullscreen view and the chat is intact when you return.
-                if (document.body.classList.contains('chat-fullscreen')) exitFullscreen();
                 let m = path.match(/^\/case\/(cs0\d+)(?:\/([^/?#]+))?/);
                 if (m && window.__cp) {
                     const id = m[2] || m[1];
