@@ -406,11 +406,8 @@
                                     <polyline points="12,9 12,12 9,12"/>
                                     <polyline points="5,12 2,12 2,9"/>
                                 </svg>
-                                <svg class="icon-collapse" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="5,2 5,5 2,5"/>
-                                    <polyline points="9,5 12,5 12,2"/>
-                                    <polyline points="12,9 9,9 9,12"/>
-                                    <polyline points="5,12 5,9 2,9"/>
+                                <svg class="icon-collapse" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3,5.5 7,9.5 11,5.5"/>
                                 </svg>
                             </button>
                             <button id="chat-collapse-toggle" class="chat-fs-btn" type="button" aria-label="Collapse chat">
@@ -1767,6 +1764,10 @@
             }
             function exitFullscreen() {
                 if (!document.body.classList.contains('chat-fullscreen')) return;
+                // Preserve the thread scroll across the move back to the panel.
+                const th = document.getElementById('chat-thread');
+                const st = th ? th.scrollTop : 0;
+                const atBottom = th ? (th.scrollHeight - th.scrollTop - th.clientHeight < 8) : false;
                 document.body.classList.remove('chat-fullscreen');
                 if (originalNextSibling) {
                     originalParent.insertBefore(chatPane, originalNextSibling);
@@ -1776,6 +1777,7 @@
                 // Reset parallax vars so the next entry starts clean
                 chatPane.style.removeProperty('--chat-fs-ry');
                 chatPane.style.removeProperty('--chat-fs-rx');
+                if (th) requestAnimationFrame(() => { th.scrollTop = atBottom ? th.scrollHeight : st; });
                 window.__sfx?.disengage?.();
             }
 
@@ -1941,6 +1943,10 @@
                 const btn = e.target.closest('.chat-link-btn');
                 if (!btn) return;
                 const path = btn.dataset.path || '';
+                // Opening a case from the fullscreen chat: collapse the chat back
+                // to the panel FIRST (scroll preserved) so the case doesn't slam
+                // over the fullscreen view and the chat is intact when you return.
+                if (document.body.classList.contains('chat-fullscreen')) exitFullscreen();
                 let m = path.match(/^\/case\/(cs0\d+)(?:\/([^/?#]+))?/);
                 if (m && window.__cp) {
                     const id = m[2] || m[1];
