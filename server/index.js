@@ -23,6 +23,9 @@ const { spawn } = require('child_process');
 const PORT = parseInt(process.env.PORT || '3055', 10);
 const TG_TOKEN = process.env.TG_BOT_TOKEN;
 const ROMAN_CHAT_ID = process.env.ROMAN_CHAT_ID || '126145988';
+// Forum supergroup ("Portfolio viewers") — each visitor gets a Topic in here.
+// Bot must be admin with "Manage Topics". Empty → fall back to Roman's DM.
+const GROUP_CHAT_ID = process.env.GROUP_CHAT_ID || '-1004299399598';
 const TG_API = (m) => `https://api.telegram.org/bot${TG_TOKEN}/${m}`;
 const STATE_PATH = path.join(__dirname, 'state.json');
 
@@ -36,6 +39,8 @@ let state = {
   lastUpdateId: 0,
   threads: {},
   sentMap: {},
+  // forum topic message_thread_id → our thread id (route Roman's topic replies)
+  topicMap: {},
   lastActiveThread: null,
   // thread → visitor's TG chat_id (set when visitor presses /start <thread> in the bot)
   threadFwd: {},
@@ -95,16 +100,84 @@ function appendMsg(threadId, role, text) {
   return msg;
 }
 
-async function sendTelegramMessage(chatId, text) {
+async function sendTelegramMessage(chatId, text, messageThreadId) {
+  const body = { chat_id: chatId, text, disable_web_page_preview: true };
+  if (messageThreadId) body.message_thread_id = messageThreadId;
   const r = await fetch(TG_API('sendMessage'), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId, text, disable_web_page_preview: true }),
+    body: JSON.stringify(body),
   });
   return r.json();
 }
 
+// ----- Forum topics: one Telegram Topic per visitor thread -----
+async function ensureTopic(threadId, name) {
+  if (!GROUP_CHAT_ID) return null;
+  const t = getThread(threadId);
+  if (t.topicId) return t.topicId;
+  try {
+    const r = await fetch(TG_API('createForumTopic'), {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: GROUP_CHAT_ID,
+        name: String(name || ('Гость #' + threadId.slice(0, 6))).slice(0, 128),
+      }),
+    });
+    const data = await r.json();
+    if (data.ok) {
+      t.topicId = data.result.message_thread_id;
+      state.topicMap[t.topicId] = threadId;
+      saveLater();
+      return t.topicId;
+    }
+    console.error('createForumTopic failed:', JSON.stringify(data).slice(0, 200));
+  } catch (e) {
+    console.error('createForumTopic error:', e.message);
+  }
+  return null;
+}
+// Send a message into the visitor's topic (creating it if needed). Falls back
+// to Roman's DM if the group/topics aren't available.
+async function sendToTopic(threadId, text, nameForCreation) {
+  const topicId = await ensureTopic(threadId, nameForCreation);
+  if (topicId) {
+    return sendTelegramMessage(GROUP_CHAT_ID, text, topicId).catch((e) => {
+      console.error('sendToTopic error:', e.message);
+    });
+  }
+  return sendTelegramMessage(ROMAN_CHAT_ID, `[#${threadId.slice(0, 8)}]\n${text}`).catch(() => {});
+}
+
 const waiters = {};
+
+// Wake the agent on Roman's turn (it decides whether to step back or reply,
+// per the system prompt). Used for Roman's DM replies AND his topic replies.
+function wakeClaudeForRoman(threadId) {
+  claudeQueue.run(() => {
+    const history = (state.threads[threadId]?.msgs || []).slice(-12);
+    const messages = history.map((m) => {
+      if (m.role === 'roman') return { role: 'user', content: `[ROMAN — owner of this portfolio, in the chat]: ${m.text}` };
+      if (m.role === 'visitor') return { role: 'user', content: m.text };
+      return { role: 'assistant', content: m.text };
+    });
+    return callClaude(messages);
+  }).then((reply) => {
+    if (!reply) return;
+    let r = reply.trim();
+    if (!r || /^\[silent\]$/i.test(r)) return;
+    const handoffMatch = r.match(/HANDOFF:\s*(.+?)(?:\n|$)/);
+    if (handoffMatch) {
+      const task = handoffMatch[1].trim();
+      r = r.replace(/HANDOFF:.*$/m, '').trim();
+      enqueueBuild(threadId, task);
+    }
+    if (!r) return;
+    appendMsg(threadId, 'claude', r);
+    sendToTopic(threadId, `🤖 claude:\n${r}`);
+  }).catch((err) => console.error('claude (roman-trigger) error:', err));
+}
 
 // ---------- Telegram polling ----------
 async function tgGetUpdates() {
@@ -124,6 +197,30 @@ async function tgGetUpdates() {
       if (!msg) continue;
       const fromChatId = String(msg.chat.id);
       const text = msg.text || msg.caption || '[media]';
+
+      // ---------- Group topics: Roman replying inside a visitor's Topic ----------
+      if (GROUP_CHAT_ID && fromChatId === String(GROUP_CHAT_ID)) {
+        if (msg.from && msg.from.is_bot) continue;        // ignore the bot's own posts
+        const topicId = msg.message_thread_id;
+        const tThread = topicId && state.topicMap[topicId];
+        if (!tThread) continue;                           // not a mapped visitor topic (e.g. General)
+        if (text.startsWith('/')) {
+          const bm = text.match(/^\/build\s+(.+)/i);
+          if (bm) {
+            appendMsg(tThread, 'roman', `/build ${bm[1]}`);
+            runOwnerBuild(tThread, bm[1]).catch((e) => {
+              appendMsg(tThread, 'claude', `// build failed: ${String(e.message || e).slice(0, 200)}`);
+            });
+          }
+          continue;
+        }
+        state.lastActiveThread = tThread;
+        console.log(`roman (topic ${topicId}) → thread ${tThread.slice(0, 8)}: ${text.slice(0, 80)}`);
+        appendMsg(tThread, 'roman', text);
+        wakeClaudeForRoman(tThread);
+        saveLater();
+        continue;
+      }
 
       // ---------- Visitor side (anyone who isn't Roman) ----------
       if (fromChatId !== ROMAN_CHAT_ID) {
@@ -221,40 +318,9 @@ async function tgGetUpdates() {
       state.lastActiveThread = threadId;
       console.log(`roman → thread ${threadId.slice(0,8)}: ${text.slice(0, 80)}`);
       appendMsg(threadId, 'roman', text);
-      // Roman's messages also wake Claude so it can react if Roman is
-      // addressing it. The system prompt tells Claude to emit [silent]
-      // when the message is between Roman and the visitor — server then
-      // suppresses that turn.
-      claudeQueue.run(() => {
-        const history = (state.threads[threadId]?.msgs || []).slice(-12);
-        const messages = history.map((m) => {
-          if (m.role === 'roman') {
-            return { role: 'user', content: `[ROMAN — owner of this portfolio, in the chat]: ${m.text}` };
-          }
-          if (m.role === 'visitor') {
-            return { role: 'user', content: m.text };
-          }
-          return { role: 'assistant', content: m.text };
-        });
-        return callClaude(messages);
-      }).then((reply) => {
-        if (!reply) return;
-        let r = reply.trim();
-        if (!r || /^\[silent\]$/i.test(r)) return;
-        // Strip HANDOFF marker if present and queue a build request for
-        // the main agent (Roman's terminal Claude session).
-        const handoffMatch = r.match(/HANDOFF:\s*(.+?)(?:\n|$)/);
-        if (handoffMatch) {
-          const task = handoffMatch[1].trim();
-          r = r.replace(/HANDOFF:.*$/m, '').trim();
-          enqueueBuild(threadId, task);
-        }
-        if (!r) return;
-        appendMsg(threadId, 'claude', r);
-        sendTelegramMessage(ROMAN_CHAT_ID, `🤖 [#${threadId.slice(0, 8)}] claude:\n${r}`).catch(() => {});
-      }).catch((err) => {
-        console.error('claude (roman-trigger) error:', err);
-      });
+      // Roman's messages also wake the agent so it can react (or step back)
+      // per the system prompt. Same path as topic replies.
+      wakeClaudeForRoman(threadId);
     }
     saveLater();
   } catch (e) {
@@ -299,25 +365,10 @@ const server = http.createServer(async (req, res) => {
     const visitorMsg = appendMsg(thread, 'visitor', text);
     state.lastActiveThread = thread;
 
-    const tgText = `💬 [#${thread.slice(0, 8)}]\n${text}\n\n— reply to this message to respond`;
-    let tgMsgId = null;
-    try {
-      const r = await fetch(TG_API('sendMessage'), {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ chat_id: ROMAN_CHAT_ID, text: tgText, disable_web_page_preview: true }),
-      });
-      const data = await r.json();
-      if (data.ok) {
-        tgMsgId = data.result.message_id;
-        state.sentMap[tgMsgId] = thread;
-        saveLater();
-      } else {
-        console.error('sendMessage failed:', data);
-      }
-    } catch (e) {
-      console.error('sendMessage error:', e.message);
-    }
+    // Forward the visitor's message into their Telegram Topic (created on the
+    // first message and named after it). Roman replies inside the topic →
+    // routed back to this visitor. Falls back to Roman's DM if topics are off.
+    sendToTopic(thread, `💬 ${text}`, text);
 
     // Kick off Claude in the background so the HTTP response returns fast
     // and the visitor sees Claude's reply via long-poll a few seconds later.
@@ -351,14 +402,14 @@ const server = http.createServer(async (req, res) => {
         }
         if (!r) return;
         appendMsg(thread, 'claude', r);
-        sendTelegramMessage(ROMAN_CHAT_ID, `🤖 [#${thread.slice(0, 8)}] claude:\n${r}`).catch(() => {});
+        sendToTopic(thread, `🤖 claude:\n${r}`);
       }).catch((err) => {
         console.error('claude bg error:', err);
         appendMsg(thread, 'claude', '// internal: claude error — try again in a moment');
       });
     }
 
-    return send(res, 200, { ok: true, msg: visitorMsg, tg: tgMsgId });
+    return send(res, 200, { ok: true, msg: visitorMsg });
   }
 
   if (req.method === 'GET' && url.pathname === '/api/chat/poll') {
