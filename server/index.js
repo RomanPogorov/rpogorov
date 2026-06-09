@@ -88,8 +88,7 @@ function appendMsg(threadId, role, text) {
   if (t.msgs.length > 200) t.msgs.splice(0, t.msgs.length - 200);
   saveLater();
   // wake long-polls
-  for (const fn of (waiters[threadId] || [])) fn(msg);
-  delete waiters[threadId];
+  wakeWaiters(threadId);
 
   // Forward Roman's replies to the visitor's TG chat if they took the
   // conversation to Telegram (visitor pressed /start <thread> in the bot).
@@ -151,11 +150,25 @@ async function sendToTopic(threadId, text, nameForCreation) {
 }
 
 const waiters = {};
+function wakeWaiters(threadId) {
+  for (const fn of (waiters[threadId] || [])) fn();
+  delete waiters[threadId];
+}
+// Threads where the agent is actively preparing a reply — surfaced in the
+// poll so the visitor sees a "typing" indicator (incl. replies triggered by
+// Roman, e.g. "поприветствуй гостя"). Cleared on reply OR on [silent].
+const typingThreads = new Set();
+function setTyping(threadId, on) {
+  const had = typingThreads.has(threadId);
+  if (on) typingThreads.add(threadId); else typingThreads.delete(threadId);
+  if (had !== !!on) wakeWaiters(threadId);
+}
 
 // Wake the agent on Roman's turn (it decides whether to step back or reply,
 // per the system prompt). Used for Roman's DM replies AND his topic replies.
 function wakeClaudeForRoman(threadId) {
   claudeQueue.run(() => {
+    setTyping(threadId, true);
     const history = (state.threads[threadId]?.msgs || []).slice(-12);
     const messages = history.map((m) => {
       if (m.role === 'roman') return { role: 'user', content: `[ROMAN — owner of this portfolio, in the chat]: ${m.text}` };
@@ -164,6 +177,7 @@ function wakeClaudeForRoman(threadId) {
     });
     return callClaude(messages);
   }).then((reply) => {
+    setTyping(threadId, false);
     if (!reply) return;
     let r = reply.trim();
     if (!r || /^\[silent\]$/i.test(r)) return;
@@ -176,7 +190,7 @@ function wakeClaudeForRoman(threadId) {
     if (!r) return;
     appendMsg(threadId, 'claude', r);
     sendToTopic(threadId, `🤖 claude:\n${r}`);
-  }).catch((err) => console.error('claude (roman-trigger) error:', err));
+  }).catch((err) => { setTyping(threadId, false); console.error('claude (roman-trigger) error:', err); });
 }
 
 // ---------- Telegram polling ----------
@@ -374,6 +388,7 @@ const server = http.createServer(async (req, res) => {
     // and the visitor sees Claude's reply via long-poll a few seconds later.
     if (useClaude) {
       claudeQueue.run(() => {
+        setTyping(thread, true);
         const history = (state.threads[thread]?.msgs || []).map((m) => ({
           role: m.role === 'visitor' ? 'user' : (m.role === 'roman' ? 'user' : 'assistant'),
           name: m.role,
@@ -392,6 +407,7 @@ const server = http.createServer(async (req, res) => {
         });
         return callClaude(messages.slice(-12));
       }).then((reply) => {
+        setTyping(thread, false);
         let r = (reply || '').trim();
         if (/^\[silent\]$/i.test(r)) return;
         const handoffMatch = r.match(/HANDOFF:\s*(.+?)(?:\n|$)/);
@@ -404,6 +420,7 @@ const server = http.createServer(async (req, res) => {
         appendMsg(thread, 'claude', r);
         sendToTopic(thread, `🤖 claude:\n${r}`);
       }).catch((err) => {
+        setTyping(thread, false);
         console.error('claude bg error:', err);
         appendMsg(thread, 'claude', '// internal: claude error — try again in a moment');
       });
@@ -418,17 +435,17 @@ const server = http.createServer(async (req, res) => {
     if (!thread) return send(res, 400, { error: 'thread required' });
     const t = getThread(thread);
     const fresh = t.msgs.filter((m) => m.id > after);
-    if (fresh.length) return send(res, 200, { msgs: fresh });
+    if (fresh.length) return send(res, 200, { msgs: fresh, typing: typingThreads.has(thread) });
     // long-poll up to 25s
     const timer = setTimeout(() => {
       delete waiters[thread];
-      send(res, 200, { msgs: [] });
+      send(res, 200, { msgs: [], typing: typingThreads.has(thread) });
     }, 25000);
     waiters[thread] = waiters[thread] || [];
     waiters[thread].push(() => {
       clearTimeout(timer);
       const t2 = getThread(thread);
-      send(res, 200, { msgs: t2.msgs.filter((m) => m.id > after) });
+      send(res, 200, { msgs: t2.msgs.filter((m) => m.id > after), typing: typingThreads.has(thread) });
     });
     req.on('close', () => {
       clearTimeout(timer);
