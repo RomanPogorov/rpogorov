@@ -1879,9 +1879,28 @@
             let lastId = 0;
             const rendered = new Set(); // dedup by server msg id
 
+            // "Agent is thinking" typing indicator while a reply is being prepared.
+            function showThinking() {
+                if (document.getElementById('chat-thinking')) return;
+                const t = document.createElement('div');
+                t.className = 'chat-msg from-claude chat-thinking';
+                t.id = 'chat-thinking';
+                t.innerHTML = '<div class="chat-typing" aria-label="Агент думает"><span></span><span></span><span></span></div>';
+                threadEl.appendChild(t);
+                threadEl.scrollTop = threadEl.scrollHeight;
+                clearTimeout(showThinking._t);
+                showThinking._t = setTimeout(hideThinking, 90000);
+            }
+            function hideThinking() {
+                clearTimeout(showThinking._t);
+                document.getElementById('chat-thinking')?.remove();
+            }
+
             function addMsg({ role, text, id, silent }) {
                 if (id != null && rendered.has(id)) return;
                 if (id != null) rendered.add(id);
+                // A reply from the agent/Roman arrived → drop the thinking dots.
+                if (role === 'ai' || role === 'roman' || role === 'claude') hideThinking();
                 const div = document.createElement('div');
                 div.className = 'chat-msg from-' + role;
                 if (id != null) div.dataset.msgId = id;
@@ -1999,7 +2018,9 @@
                     const data = await r.json();
                     if (data?.msg) addMsg({ role: 'visitor', text: data.msg.text, id: data.msg.id });
                     if (!data.ok) throw new Error('send failed');
+                    showThinking();
                 } catch (err) {
+                    hideThinking();
                     addMsg({ role: 'error', text: '⚠ message could not be sent' });
                 } finally {
                     sendBtn.disabled = false;
