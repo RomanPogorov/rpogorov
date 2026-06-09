@@ -1854,13 +1854,46 @@
                 if (id != null) div.dataset.msgId = id;
                 const txt = document.createElement('div');
                 txt.className = 'chat-msg-text';
-                txt.textContent = text;
+                // Agent / Roman replies get rich rendering: **bold** and
+                // [label](/path) become clickable case/article buttons.
+                if (role === 'ai' || role === 'roman') txt.innerHTML = renderChatRich(text);
+                else txt.textContent = text;
                 div.appendChild(txt);
                 threadEl.appendChild(div);
                 threadEl.scrollTop = threadEl.scrollHeight;
                 if (id != null && id > lastId) lastId = id;
                 if (role === 'roman' && !silent) window.__sfx?.tick?.();
             }
+
+            // Rich render for agent/Roman replies: escape, then turn **bold** and
+            // [label](/path) markdown into <strong> and clickable link-buttons.
+            function escapeChatHtml(s) {
+                return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+            function renderChatRich(text) {
+                let s = escapeChatHtml(text);
+                s = s.replace(/\[([^\]]+)\]\((\/[^)\s]+)\)/g, (_, label, path) =>
+                    `<button type="button" class="chat-link-btn" data-path="${escapeChatHtml(path)}">${escapeChatHtml(label)}<span class="chat-link-arrow">↗</span></button>`);
+                s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                s = s.replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
+                return s;
+            }
+            // Clicking a link-button opens the case overlay / article reader.
+            threadEl.addEventListener('click', (e) => {
+                const btn = e.target.closest('.chat-link-btn');
+                if (!btn) return;
+                const path = btn.dataset.path || '';
+                let m = path.match(/^\/case\/(cs0\d+)(?:\/([^/?#]+))?/);
+                if (m && window.__cp) {
+                    const id = m[2] || m[1];
+                    history.pushState(null, '', m[2] ? `#case/${m[1]}/${m[2]}` : `#case/${m[1]}`);
+                    window.__cp.open(id);
+                    return;
+                }
+                m = path.match(/^\/article\/([^/?#]+)/);
+                if (m && window.__openArticleById) window.__openArticleById(m[1]);
+            });
 
             sugWrap.addEventListener('click', (e) => {
                 const b = e.target.closest('.chat-sug-btn');
@@ -4722,6 +4755,11 @@
                 syncReaderSelected(currentArticleIdx);
                 window.__sfx?.engage?.();
             }
+            // Let the chat (and anything else) open an article by its slug.
+            window.__openArticleById = (id) => {
+                const a = ARTICLES.find((x) => x.id === id);
+                if (a) openReader(a);
+            };
             function closeReader() {
                 body.classList.remove('reader-open');
                 reader.setAttribute('aria-hidden', 'true');

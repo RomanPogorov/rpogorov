@@ -7564,6 +7564,33 @@
             border-color: var(--acc);
             background: rgba(var(--acc-rgb), 0.14);
         }
+        /* Inline link-button inside an agent reply — opens the case/article. */
+        .chat-link-btn {
+            appearance: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6562rem;
+            line-height: 1.2;
+            color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.08);
+            border: 1px solid rgba(var(--acc-rgb), 0.45);
+            border-radius: 4px;
+            padding: 3px 8px;
+            margin: 2px 1px;
+            cursor: pointer;
+            text-align: left;
+            vertical-align: baseline;
+            transition: color 0.15s, border-color 0.15s, background 0.15s;
+        }
+        .chat-link-btn:hover {
+            color: #fff;
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.2);
+            box-shadow: 0 0 12px rgba(var(--acc-rgb), 0.35);
+        }
+        .chat-link-arrow { opacity: 0.7; font-size: 0.9em; }
 
         /* "ask Roman's Claude" — distinct AI button next to suggestions.
            Uses a fixed violet/magenta accent so it reads as a different
@@ -7774,6 +7801,19 @@
         .chat-pickup-status.show { opacity: 0.95; }
 
         /* ============ CHAT FULLSCREEN — HOLOGRAM IN AIR ============ */
+        /* Backdrop while the chat is fullscreen: sits below the chat (z-30) but
+           above the HUD, eating clicks so the left/right HUD elements behind
+           aren't interactive. */
+        body.chat-fullscreen::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 29;
+            background: rgba(2, 6, 10, 0.45);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            pointer-events: auto;
+        }
         body.chat-fullscreen .chat-pane {
             position: fixed;
             top: 5vh;
