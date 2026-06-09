@@ -7487,9 +7487,22 @@
         #chat-collapse-toggle .icon-chevron { transition: transform 0.2s ease; }
         /* Collapsed → only the status header shows; the pane shrinks to a small
            widget at the top of the left panel. Click the header to expand. */
-        .chat-pane.collapsed { flex: 0 0 auto; }
+        .chat-pane.collapsed { flex: 0 0 auto; align-self: flex-start; }
         .chat-pane.collapsed > :not(.chat-head) { display: none; }
-        .chat-pane.collapsed .chat-head { cursor: pointer; }
+        .chat-pane.collapsed .chat-head {
+            cursor: pointer;
+            gap: 12px;
+            padding: 8px 12px;
+            background: rgba(74, 222, 128, 0.08);
+            border: 1px solid rgba(74, 222, 128, 0.45);
+            border-radius: 6px;
+            box-shadow: 0 0 14px rgba(74, 222, 128, 0.15);
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .chat-pane.collapsed .chat-head:hover {
+            background: rgba(74, 222, 128, 0.14);
+            border-color: rgba(74, 222, 128, 0.7);
+        }
         .chat-pane.collapsed #chat-fs-toggle { display: none; }
         .chat-pane.collapsed #chat-collapse-toggle .icon-chevron { transform: rotate(180deg); }
         body.chat-fullscreen #chat-collapse-toggle { display: none; }
