@@ -1899,8 +1899,9 @@
             function addMsg({ role, text, id, silent }) {
                 if (id != null && rendered.has(id)) return;
                 if (id != null) rendered.add(id);
-                // A reply from the agent/Roman arrived → drop the thinking dots.
-                if (role === 'ai' || role === 'roman' || role === 'claude') hideThinking();
+                // An agent reply arrived → drop the thinking dots immediately
+                // (the server's typing flag also clears via the poll).
+                if (role === 'ai' || role === 'claude') hideThinking();
                 const div = document.createElement('div');
                 div.className = 'chat-msg from-' + role;
                 if (id != null) div.dataset.msgId = id;
@@ -2105,6 +2106,9 @@
                         for (const m of (data.msgs || [])) {
                             addMsg({ role: m.role, text: m.text, id: m.id, silent: initialLoad });
                         }
+                        // Server-driven "agent is typing" — also covers replies
+                        // triggered by Roman (the visitor didn't submit anything).
+                        if (data.typing) showThinking(); else hideThinking();
                         initialLoad = false;
                     } catch (e) {
                         await new Promise((res) => setTimeout(res, 2500));
