@@ -388,24 +388,37 @@
                 <!-- Chat pane (hidden by default, swaps with dashboard via tabs) -->
                 <div class="chat-pane" id="chat-pane" hidden>
                     <div class="chat-head">
-                        <span class="chat-online">
-                            <span class="online-dot"></span>
-                            <span class="chat-online-text">Roman online</span>
-                        </span>
-                        <button id="chat-fs-toggle" class="chat-fs-btn" type="button" aria-label="Fullscreen chat">
-                            <svg class="icon-expand" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="2,5 2,2 5,2"/>
-                                <polyline points="9,2 12,2 12,5"/>
-                                <polyline points="12,9 12,12 9,12"/>
-                                <polyline points="5,12 2,12 2,9"/>
-                            </svg>
-                            <svg class="icon-collapse" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="5,2 5,5 2,5"/>
-                                <polyline points="9,5 12,5 12,2"/>
-                                <polyline points="12,9 9,9 9,12"/>
-                                <polyline points="5,12 5,9 2,9"/>
-                            </svg>
-                        </button>
+                        <div class="chat-status">
+                            <span class="chat-online">
+                                <span class="online-dot"></span>
+                                <span class="chat-online-text">Roman online</span>
+                            </span>
+                            <span class="chat-online chat-online--agent">
+                                <span class="online-dot"></span>
+                                <span class="chat-online-text">Agent online</span>
+                            </span>
+                        </div>
+                        <div class="chat-head-btns">
+                            <button id="chat-collapse-toggle" class="chat-fs-btn" type="button" aria-label="Collapse chat">
+                                <svg class="icon-chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3,5 7,9 11,5"/>
+                                </svg>
+                            </button>
+                            <button id="chat-fs-toggle" class="chat-fs-btn" type="button" aria-label="Fullscreen chat">
+                                <svg class="icon-expand" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="2,5 2,2 5,2"/>
+                                    <polyline points="9,2 12,2 12,5"/>
+                                    <polyline points="12,9 12,12 9,12"/>
+                                    <polyline points="5,12 2,12 2,9"/>
+                                </svg>
+                                <svg class="icon-collapse" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="5,2 5,5 2,5"/>
+                                    <polyline points="9,5 12,5 12,2"/>
+                                    <polyline points="12,9 9,9 9,12"/>
+                                    <polyline points="5,12 5,9 2,9"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="chat-thread" id="chat-thread">
                         <div class="chat-msg from-system">
@@ -1809,6 +1822,26 @@
                 }
                 requestAnimationFrame(tick);
             })();
+
+            // Collapse the chat to a small status widget (Roman online / Agent
+            // online) at the top; click the chevron or the header to expand.
+            const collapseBtn = document.getElementById('chat-collapse-toggle');
+            const chatHead = chatPane.querySelector('.chat-head');
+            if (collapseBtn) {
+                collapseBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    chatPane.classList.toggle('collapsed');
+                    window.__sfx?.tick?.();
+                });
+            }
+            if (chatHead) {
+                chatHead.addEventListener('click', (e) => {
+                    if (chatPane.classList.contains('collapsed') && !e.target.closest('button')) {
+                        chatPane.classList.remove('collapsed');
+                        window.__sfx?.tick?.();
+                    }
+                });
+            }
 
             if (fsBtn) {
                 fsBtn.addEventListener('click', (e) => {

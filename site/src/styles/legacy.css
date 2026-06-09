@@ -7466,6 +7466,33 @@
             font-size: 0.5938rem;
             letter-spacing: 0.06em;
         }
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+        .chat-head-btns {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chat-head-btns .chat-fs-btn { margin-left: 0; }
+        /* Agent status — violet, distinct from Roman's green. */
+        .chat-online--agent .online-dot {
+            background: #a78bfa;
+            box-shadow: 0 0 7px rgba(167, 139, 250, 0.85);
+        }
+        .chat-online--agent .chat-online-text { color: #d8ccff; }
+        #chat-collapse-toggle .icon-chevron { transition: transform 0.2s ease; }
+        /* Collapsed → only the status header shows; the pane shrinks to a small
+           widget at the top of the left panel. Click the header to expand. */
+        .chat-pane.collapsed { flex: 0 0 auto; }
+        .chat-pane.collapsed > :not(.chat-head) { display: none; }
+        .chat-pane.collapsed .chat-head { cursor: pointer; }
+        .chat-pane.collapsed #chat-fs-toggle { display: none; }
+        .chat-pane.collapsed #chat-collapse-toggle .icon-chevron { transform: rotate(180deg); }
+        body.chat-fullscreen #chat-collapse-toggle { display: none; }
 
         .chat-fs-btn {
             appearance: none;
