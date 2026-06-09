@@ -7642,7 +7642,9 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: var(--acc);
+            /* Violet — it's the AGENT preparing the reply (matches "Агент онлайн"). */
+            background: #a78bfa;
+            box-shadow: 0 0 6px rgba(167, 139, 250, 0.6);
             opacity: 0.4;
             animation: chat-typing-bounce 1.2s ease-in-out infinite;
         }
