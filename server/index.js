@@ -167,8 +167,8 @@ function setTyping(threadId, on) {
 // Wake the agent on Roman's turn (it decides whether to step back or reply,
 // per the system prompt). Used for Roman's DM replies AND his topic replies.
 function wakeClaudeForRoman(threadId) {
+  setTyping(threadId, true);   // set synchronously so the next poll shows it immediately
   claudeQueue.run(() => {
-    setTyping(threadId, true);
     const history = (state.threads[threadId]?.msgs || []).slice(-12);
     const messages = history.map((m) => {
       if (m.role === 'roman') return { role: 'user', content: `[ROMAN — owner of this portfolio, in the chat]: ${m.text}` };
@@ -376,6 +376,9 @@ const server = http.createServer(async (req, res) => {
     const useClaude = body.useClaude !== false;
     if (!thread || !text) return send(res, 400, { error: 'thread and text required' });
 
+    // Flag "typing" BEFORE appending the visitor msg, so the poll that delivers
+    // the visitor message already carries typing:true (no flicker on the dots).
+    if (useClaude) setTyping(thread, true);
     const visitorMsg = appendMsg(thread, 'visitor', text);
     state.lastActiveThread = thread;
 
@@ -388,7 +391,6 @@ const server = http.createServer(async (req, res) => {
     // and the visitor sees Claude's reply via long-poll a few seconds later.
     if (useClaude) {
       claudeQueue.run(() => {
-        setTyping(thread, true);
         const history = (state.threads[thread]?.msgs || []).map((m) => ({
           role: m.role === 'visitor' ? 'user' : (m.role === 'roman' ? 'user' : 'assistant'),
           name: m.role,
