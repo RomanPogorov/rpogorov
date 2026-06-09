@@ -7696,7 +7696,9 @@
             flex-direction: column;
             gap: 5px;
             position: relative;
-            padding-top: 4px;
+            /* Room at the top so the close × sits in its own strip and doesn't
+               overlap the "go to TG" submit button below. */
+            padding-top: 22px;
         }
         .chat-pickup.expanded .chat-pickup-trigger { display: none; }
         .chat-pickup.expanded .chat-pickup-form {
@@ -7729,7 +7731,7 @@
             align-items: stretch;
         }
         .chat-pickup-row input {
-            flex: 1;
+            flex: 0 1 200px;
             min-width: 0;
             appearance: none;
             background: rgba(var(--acc-rgb), 0.04);
@@ -7811,11 +7813,12 @@
             animation: chat-fs-in 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
         @keyframes chat-fs-in {
-            /* Detach from the right HUD column → stretch out, soft settle */
+            /* Detach from the LEFT HUD column (chat lives there now) → stretch
+               out to center, soft settle. */
             0% {
                 opacity: 0;
-                transform-origin: 100% 50%;
-                transform: translate(34vw, -1vh) perspective(1500px) rotateY(16deg) scale(0.5, 0.66);
+                transform-origin: 0% 50%;
+                transform: translate(-34vw, -1vh) perspective(1500px) rotateY(-16deg) scale(0.5, 0.66);
                 filter: blur(4px);
             }
             45% { opacity: 1; filter: blur(0); }

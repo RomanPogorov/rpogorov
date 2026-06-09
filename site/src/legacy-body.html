@@ -1865,8 +1865,11 @@
             sugWrap.addEventListener('click', (e) => {
                 const b = e.target.closest('.chat-sug-btn');
                 if (!b) return;
-                input.value = b.dataset.text;
-                input.focus();
+                // Suggestions are FAQ prompts — submit immediately and let the
+                // agent answer, instead of just filling the input.
+                input.value = '';
+                addMsg({ role: 'visitor', text: b.dataset.text });
+                document.getElementById('chat-ai-btn')?.click();
             });
 
             // ---- "ask Roman's Claude" — wakes the AI when Roman is offline ----
