@@ -4138,10 +4138,19 @@
         (() => {
             const grid = document.getElementById('sc-cases-grid');
             if (!grid) return;
-            // Color/glyph chip per company
-            const COMPANY_TONE = { cs01: '#ff5722', cs02: '#eb5234', cs06: '#eb5234' };
+            // Per-company accent so By-Cases cards differ by colour:
+            // Health Samurai red, Americor blue, Databricks orange.
+            const COMPANY_ACCENT = {
+                cs01: { hex: '#93C1FF', rgb: '147, 193, 255' },
+                cs04: { hex: '#93C1FF', rgb: '147, 193, 255' },
+                cs02: { hex: '#EA4A35', rgb: '234, 74, 53' },
+                cs03: { hex: '#EA4A35', rgb: '234, 74, 53' },
+                cs06: { hex: '#EA4A35', rgb: '234, 74, 53' },
+                cs05: { hex: '#F97316', rgb: '249, 115, 22' },
+            };
+            const accStyle = (co) => { const a = COMPANY_ACCENT[co]; return a ? ` style="--acc:${a.hex};--acc-rgb:${a.rgb};--dim:${a.hex};"` : ''; };
             grid.innerHTML = DEEP_CASES.map(c => `
-                <a class="sc-card" data-deep-id="${c.id}" data-deep-company="${c.company}"${c.deeplink ? ` data-deep-link="${c.deeplink}"` : ''} href="#case/${c.company}/${c.id}">
+                <a class="sc-card"${accStyle(c.company)} data-deep-id="${c.id}" data-deep-company="${c.company}"${c.deeplink ? ` data-deep-link="${c.deeplink}"` : ''} href="#case/${c.company}/${c.id}">
                     <div class="sc-card-thumb" aria-hidden="true">
                         <span class="sc-card-thumb-tag">${c.companyLabel}</span>
                         <span class="sc-card-thumb-glyph">◆</span>
