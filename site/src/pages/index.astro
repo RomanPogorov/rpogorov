@@ -603,11 +603,14 @@ const cs06AccentStyle = companyAccentStyle(cs06Data);
       document.addEventListener('click', (e) => {
         const a = e.target.closest('a[href^="#case/"]');
         if (!a) return;
-        const m = a.getAttribute('href').match(/^#case\/cs0\d+\/(.+)$/);
+        const m = a.getAttribute('href').match(/^#case\/(cs0\d+)\/(.+)$/);
         if (!m || !window.__cp) return;
         e.preventDefault();
+        e.stopPropagation();
         history.pushState(null, '', a.getAttribute('href'));
-        window.__cp.open(m[1]);
+        // Pass the parent company (m[1]) so the sub stacks over it reliably,
+        // not depending on DOM-detecting which case is currently open.
+        window.__cp.open(m[2], { over: m[1] });
       });
       // Wire crumb-company button — reveal the parent company case. If it's the
       // company sitting open under a stacked sub-case, just drop the sub (keeps

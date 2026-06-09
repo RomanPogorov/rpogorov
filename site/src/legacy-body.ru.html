@@ -2436,7 +2436,17 @@
                 // A sub-case opened from a company case STACKS on top of it: the
                 // company stays open underneath (keeps its scroll), the sub slides
                 // up over it. Closing the sub just reveals the company — no collapse.
-                const company = document.querySelector('.case-page.open:not(.case-page--stacked)');
+                // Prefer the explicit parent from a #case/<company>/<sub> link
+                // (opts.over); fall back to whatever company case is open.
+                let company = null;
+                if (isSub && opts && opts.over) {
+                    company = document.querySelector(`.case-page[data-case-page="${opts.over}"]`);
+                    if (company && !company.classList.contains('open')) {
+                        pages.forEach(p => p.classList.remove('open', 'case-page--stacked'));
+                        company.classList.add('open');
+                    }
+                }
+                if (!company) company = document.querySelector('.case-page.open:not(.case-page--stacked)');
                 const stackOnCompany = isSub && company && company !== page && /^cs0\d+$/.test(company.dataset.casePage || '');
                 if (stackOnCompany) {
                     // Drop any previously stacked sub, keep the company open.
