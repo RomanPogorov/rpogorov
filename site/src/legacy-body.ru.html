@@ -438,7 +438,6 @@
                 <div class="hud-bottom">
                 <nav class="hud-tabs" role="tablist">
                     <button type="button" class="hud-tab active" data-pane="dashboard">МОИ АКТИВНОСТИ</button>
-                    <button type="button" class="hud-tab" data-pane="chat">CHAT</button>
                 </nav>
                 </div>
             </div>
@@ -1718,36 +1717,22 @@
     <!-- HUD tabs (Dashboard / Chat) + chat backend wiring -->
     <script>
         (() => {
-            const tabs = document.querySelectorAll('.hud-tab');
             const dashboard = document.querySelector('.corner.tr.agents-feed');
             const chatPane = document.getElementById('chat-pane');
             if (!dashboard || !chatPane) return;
 
-            tabs.forEach((tab) => {
-                tab.addEventListener('click', () => {
-                    const target = tab.dataset.pane;
-                    tabs.forEach((t) => t.classList.toggle('active', t === tab));
-                    window.__sfx?.tick?.();
-                    if (target === 'chat') {
-                        dashboard.hidden = true;
-                        chatPane.hidden = false;
-                        document.getElementById('chat-input')?.focus();
-                    } else {
-                        // Switching back to dashboard always exits fullscreen
-                        if (document.body.classList.contains('chat-fullscreen')) {
-                            exitFullscreen();
-                        }
-                        dashboard.hidden = false;
-                        chatPane.hidden = true;
-                        // Re-stagger children so blocks (incl. the yellow showcase-tip) cascade in
-                        // instead of popping back. Reflow forces the CSS animation to restart.
-                        dashboard.classList.remove('fade-fresh');
-                        void dashboard.offsetWidth;
-                        dashboard.classList.add('fade-fresh');
-                        setTimeout(() => dashboard.classList.remove('fade-fresh'), 1200);
-                    }
-                });
-            });
+            // Chat now lives in the LEFT panel (replacing articles/cases, which is
+            // set aside — hidden, not deleted). Relocate the node into the left
+            // stack and keep it always visible. It's found by id everywhere, so
+            // backend, suggestions and fullscreen keep working after the move.
+            const leftStack = document.getElementById('hud-left-stack');
+            const articlesFeed = document.querySelector('#hud-left-stack .articles-feed');
+            if (leftStack) {
+                if (articlesFeed) articlesFeed.hidden = true;
+                chatPane.hidden = false;
+                leftStack.appendChild(chatPane);
+            }
+            // Dashboard stays on the right and is always shown; the CHAT tab is gone.
 
             // Fullscreen toggle for the chat pane.
             // The right HUD is wrapped in a 3D-transformed parent (.hud-right-stack),
