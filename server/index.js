@@ -677,9 +677,12 @@ function loadVaultContext() {
     //                          PRIMARY source for grounding answers.
     //   /portfolio/articles  → published markdown articles on the site.
     //   /portfolio/cases     → published .mdx case pages with frontmatter.
-    { dir: '/root/vault/portfolio/rag', label: 'RAW EXPERIENCE — Roman\'s knowledge dump (primary grounding source)' },
-    { dir: '/root/vault/portfolio/articles', label: 'PUBLISHED ARTICLES' },
-    { dir: '/root/vault/portfolio/cases', label: 'PUBLISHED CASE PAGES' },
+    // cap: truncate each file's body to keep the prompt small enough to stay
+    // fast (rag stays full — it's the grounding source; published pages are
+    // capped since their full text lives on the site and the agent only links).
+    { dir: '/root/vault/portfolio/rag', label: 'RAW EXPERIENCE — Roman\'s knowledge dump (primary grounding source)', cap: 0 },
+    { dir: '/root/vault/portfolio/articles', label: 'PUBLISHED ARTICLES (summaries — full text on the page)', cap: 1200 },
+    { dir: '/root/vault/portfolio/cases', label: 'PUBLISHED CASE PAGES (summaries — full text on the page)', cap: 1400 },
   ];
   function walk(dir) {
     let out = [];
@@ -702,7 +705,11 @@ function loadVaultContext() {
         // Strip frontmatter to keep the prompt lean
         body = body.replace(/^---\n[\s\S]*?\n---\n/, '');
         const rel = f.replace('/root/vault/', '');
-        blocks.push(`\n--- ${rel} ---\n${body.trim()}`);
+        let trimmed = body.trim();
+        if (r.cap && trimmed.length > r.cap) {
+          trimmed = trimmed.slice(0, r.cap).trimEnd() + '\n…[truncated — full text lives on the page]';
+        }
+        blocks.push(`\n--- ${rel} ---\n${trimmed}`);
       } catch (_) {}
     }
   }
@@ -1106,7 +1113,7 @@ function callClaude(messages) {
     let out = '', err = '';
     const killer = setTimeout(() => {
       try { child.kill('SIGTERM'); } catch (_) {}
-    }, 45_000);
+    }, 75_000);
     child.stdout.on('data', (d) => out += d);
     child.stderr.on('data', (d) => err += d);
     child.on('close', (code) => {
