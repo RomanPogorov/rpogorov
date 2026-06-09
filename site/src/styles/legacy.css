@@ -2698,6 +2698,10 @@
             overflow-y: auto;
             overflow-x: hidden;
         }
+        /* A sub-case opened from a company case stacks ON TOP of it: the company
+           stays open underneath (no collapse, scroll preserved), the sub slides
+           up over it and slides back down on close. */
+        .case-page.case-page--stacked { z-index: 36; }
         /* "Main" crumb fast-close: shorter slide-out so jumping to home
            feels snappy instead of leisurely. */
         .case-page.is-fast-close {

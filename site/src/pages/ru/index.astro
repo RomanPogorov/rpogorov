@@ -543,7 +543,7 @@ const cs06AccentStyle = companyAccentStyle(cs06Data);
       if (!btn) return;
 
       function activeCase() {
-        return document.querySelector('.case-page.open');
+        return window.__activeCase ? window.__activeCase() : document.querySelector('.case-page.open');
       }
       function syncBtn() {
         const cp = activeCase();
@@ -602,14 +602,22 @@ const cs06AccentStyle = companyAccentStyle(cs06Data);
           }
         });
       });
-      // Wire crumb-company button — closes sub-case and opens parent company case.
+      // Wire crumb-company button — reveal the parent company case. If it's the
+      // company sitting open under a stacked sub-case, just drop the sub (keeps
+      // the company's scroll); otherwise open the company fresh.
       document.addEventListener('click', (e) => {
         const btn = e.target.closest('button[data-cp-crumb-company]');
         if (!btn) return;
         const company = btn.dataset.cpCrumbCompany;
         if (!company || !window.__cp) return;
-        history.pushState(null, '', `#case/${company}`);
-        window.__cp.open(company);
+        const stacked = document.querySelector('.case-page.open.case-page--stacked');
+        const under = document.querySelector('.case-page.open:not(.case-page--stacked)');
+        if (stacked && under && under.dataset.casePage === company && window.__caseBack) {
+          window.__caseBack();
+        } else {
+          history.pushState(null, '', `#case/${company}`);
+          window.__cp.open(company);
+        }
       });
 
       // Wire "Showcase" crumb — pre-rendered bar bypasses legacy ensureCrumbsBar
@@ -618,7 +626,7 @@ const cs06AccentStyle = companyAccentStyle(cs06Data);
       document.addEventListener('click', (e) => {
         const btn = e.target.closest('button[data-cp-crumb="showcase"]');
         if (!btn) return;
-        const openCase = document.querySelector('.case-page.open');
+        const openCase = window.__activeCase ? window.__activeCase() : document.querySelector('.case-page.open');
         const isCompany = openCase && /^cs0\d+$/.test(openCase.dataset.casePage || '');
         const targetView = isCompany ? 'company' : 'cases';
         window.__cp?.close?.();
@@ -684,7 +692,7 @@ const cs06AccentStyle = companyAccentStyle(cs06Data);
         if (document.querySelector('.am-lightbox.open, .dc-lightbox.is-open')) return;
         const tag = e.target?.tagName;
         if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) return;
-        const cp = document.querySelector('.case-page.open');
+        const cp = window.__activeCase ? window.__activeCase() : document.querySelector('.case-page.open');
         if (!cp) return;
         const PAGE = Math.max(cp.clientHeight - 80, 200);
 

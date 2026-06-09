@@ -2415,7 +2415,7 @@
                 bar.addEventListener('click', (e) => {
                     const crumb = e.target.closest('button[data-cp-crumb="showcase"]');
                     if (!crumb) return;
-                    const openCase = document.querySelector('.case-page.open');
+                    const openCase = window.__activeCase ? window.__activeCase() : document.querySelector('.case-page.open');
                     const isCompany = openCase && /^cs0\d+$/.test(openCase.dataset.casePage || '');
                     const targetView = isCompany ? 'company' : 'cases';
                     closeCase();
@@ -2431,19 +2431,21 @@
             function openCase(id, opts) {
                 const page = document.querySelector(`.case-page[data-case-page="${id}"]`);
                 if (!page) return;
-                // Remember the parent company case + its scroll, so ESC / back
-                // returns one level (to the company case at the same scroll)
-                // instead of closing all the way to home. Captured BEFORE the
-                // toggle below strips .open (which clamps scrollTop to 0).
-                const isSub = !/^cs0\d+$/.test(id);
-                const prevOpen = document.querySelector('.case-page.open');
-                if (isSub && prevOpen && /^cs0\d+$/.test(prevOpen.dataset.casePage || '')) {
-                    window.__caseParent = { company: prevOpen.dataset.casePage, scrollTop: prevOpen.scrollTop };
-                } else if (!isSub) {
-                    window.__caseParent = null;
-                }
                 ensureCrumbsBar(page);
-                pages.forEach(p => p.classList.toggle('open', p === page));
+                const isSub = !/^cs0\d+$/.test(id);
+                // A sub-case opened from a company case STACKS on top of it: the
+                // company stays open underneath (keeps its scroll), the sub slides
+                // up over it. Closing the sub just reveals the company — no collapse.
+                const company = document.querySelector('.case-page.open:not(.case-page--stacked)');
+                const stackOnCompany = isSub && company && company !== page && /^cs0\d+$/.test(company.dataset.casePage || '');
+                if (stackOnCompany) {
+                    // Drop any previously stacked sub, keep the company open.
+                    pages.forEach(p => { if (p !== page && p.classList.contains('case-page--stacked')) p.classList.remove('open', 'case-page--stacked'); });
+                    page.classList.add('open', 'case-page--stacked');
+                } else {
+                    // Company case, or sub opened standalone: single open, clear stack.
+                    pages.forEach(p => { p.classList.toggle('open', p === page); p.classList.remove('case-page--stacked'); });
+                }
                 page.scrollTop = 0;
                 body.classList.add('case-open');
                 window.__sfx?.engage?.();
@@ -2456,7 +2458,7 @@
 
             function closeCase(opts) {
                 body.classList.remove('case-open');
-                pages.forEach(p => p.classList.remove('open'));
+                pages.forEach(p => p.classList.remove('open', 'case-page--stacked'));
                 window.__sfx?.disengage?.();
                 // Drop case + sub from hash; if showcase was the entry, fall back to it.
                 if (!opts?.silent) {
@@ -2471,20 +2473,22 @@
             // Expose for the URL router.
             window.__cp = { open: openCase, close: closeCase };
 
-            // Back one level: sub-case → parent company case (restoring scroll);
-            // company case → full close. Used by ESC and the company crumb.
+            // Topmost active case = a stacked sub if present, else the open case.
+            window.__activeCase = () =>
+                document.querySelector('.case-page.open.case-page--stacked')
+                || document.querySelector('.case-page.open');
+
+            // Back one level: a stacked sub-case → reveal the company underneath
+            // (no animation, scroll intact); otherwise full close.
             window.__caseBack = function () {
-                const open = document.querySelector('.case-page.open');
-                const isSub = open && !/^cs0\d+$/.test(open.dataset.casePage || '');
-                const parent = window.__caseParent;
-                if (isSub && parent && parent.company) {
-                    window.__caseParent = null;
-                    history.pushState(null, '', '#case/' + parent.company);
-                    openCase(parent.company, { silent: true });
-                    const pPage = document.querySelector('.case-page[data-case-page="' + parent.company + '"]');
-                    if (pPage) {
-                        pPage.scrollTop = parent.scrollTop || 0;
-                        requestAnimationFrame(() => { pPage.scrollTop = parent.scrollTop || 0; });
+                const stacked = document.querySelector('.case-page.open.case-page--stacked');
+                if (stacked) {
+                    stacked.classList.remove('open', 'case-page--stacked');
+                    const under = document.querySelector('.case-page.open');
+                    if (under) {
+                        history.pushState(null, '', '#case/' + under.dataset.casePage);
+                    } else {
+                        closeCase();
                     }
                     return true;
                 }
@@ -2509,7 +2513,7 @@
             });
 
             document.querySelectorAll('[data-cp-close]').forEach(btn => {
-                btn.addEventListener('click', closeCase);
+                btn.addEventListener('click', () => window.__caseBack());
             });
 
             // ESC closes case-page first; capture-phase so it runs before the showcase handler.
@@ -4338,7 +4342,7 @@
             if (!lb || !stage || !dcBody) return;
 
             function inheritAccent() {
-                const cp = document.querySelector('.case-page.open');
+                const cp = window.__activeCase ? window.__activeCase() : document.querySelector('.case-page.open');
                 ['--acc','--acc-rgb','--dim','--ink'].forEach(v => lb.style.removeProperty(v));
                 if (!cp) return;
                 const cs = getComputedStyle(cp);
