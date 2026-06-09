@@ -2039,6 +2039,54 @@
             background: #0a0c0e;
             padding: 6px;
         }
+        /* Unshipped media (empty src) in Row2/Row3/Wide/Mobile/Video renders a
+           proper framed placeholder — hatched box + IMAGE/VIDEO label — instead
+           of a blank gap. Hides the empty <img>/<video>; the figcaption (if any)
+           stays below. Accent-aware via --acc-rgb, so it themes per case. */
+        .dc-figure[data-src=""] {
+            position: relative;
+            border: 0;
+            background: transparent;
+            padding: 0;
+        }
+        .dc-figure[data-src=""] > img,
+        .dc-figure[data-src=""] > video {
+            display: none;
+        }
+        .dc-figure[data-src=""]::before {
+            content: "";
+            display: block;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 1px solid rgba(var(--acc-rgb), 0.22);
+            background:
+                linear-gradient(135deg, rgba(var(--acc-rgb), 0.06) 0%, rgba(var(--acc-rgb), 0) 100%),
+                repeating-linear-gradient(45deg, transparent 0, transparent 14px,
+                    rgba(var(--acc-rgb), 0.045) 14px, rgba(var(--acc-rgb), 0.045) 15px);
+        }
+        .dc-figure-portrait[data-src=""]::before {
+            aspect-ratio: 3 / 4;
+        }
+        .dc-figure[data-src=""]::after {
+            content: attr(data-kind);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.5);
+            pointer-events: none;
+        }
+        .dc-figure-portrait[data-src=""]::after {
+            aspect-ratio: 3 / 4;
+        }
         .dc-figure img,
         .dc-figure video {
             display: block;
