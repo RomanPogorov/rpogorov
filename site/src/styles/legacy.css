@@ -10642,7 +10642,10 @@
         }
         .hud-left-stack {
             position: absolute;
-            inset: 28px 32px;
+            /* Bottom raised so the chat ends just above the bottom-left
+               // signal + cog cluster (.corner.bl, bottom:28px) instead of
+               overlapping it. */
+            inset: 28px 32px 84px 32px;
             display: flex;
             flex-direction: column;
             gap: 12px;
