@@ -26,6 +26,10 @@ const ROMAN_CHAT_ID = process.env.ROMAN_CHAT_ID || '126145988';
 // Forum supergroup ("Portfolio viewers") — each visitor gets a Topic in here.
 // Bot must be admin with "Manage Topics". Empty → fall back to Roman's DM.
 const GROUP_CHAT_ID = process.env.GROUP_CHAT_ID || '-1004299399598';
+// While Roman has spoken within this window, the agent stays out of the way and
+// doesn't auto-reply to visitor messages (Roman is handling it). After it, the
+// agent resumes auto-replies (assume Roman left).
+const ROMAN_ACTIVE_WINDOW_MS = 20 * 60 * 1000;
 const TG_API = (m) => `https://api.telegram.org/bot${TG_TOKEN}/${m}`;
 const STATE_PATH = path.join(__dirname, 'state.json');
 
@@ -230,6 +234,7 @@ async function tgGetUpdates() {
         }
         state.lastActiveThread = tThread;
         console.log(`roman (topic ${topicId}) → thread ${tThread.slice(0, 8)}: ${text.slice(0, 80)}`);
+        getThread(tThread).romanActiveTs = Date.now();
         appendMsg(tThread, 'roman', text);
         wakeClaudeForRoman(tThread);
         saveLater();
@@ -331,6 +336,7 @@ async function tgGetUpdates() {
       }
       state.lastActiveThread = threadId;
       console.log(`roman → thread ${threadId.slice(0,8)}: ${text.slice(0, 80)}`);
+      getThread(threadId).romanActiveTs = Date.now();
       appendMsg(threadId, 'roman', text);
       // Roman's messages also wake the agent so it can react (or step back)
       // per the system prompt. Same path as topic replies.
@@ -376,9 +382,16 @@ const server = http.createServer(async (req, res) => {
     const useClaude = body.useClaude !== false;
     if (!thread || !text) return send(res, 400, { error: 'thread and text required' });
 
+    // If Roman is actively handling this thread (spoke within the window, or
+    // told the agent to stay quiet), the agent steps aside: no auto-reply AND no
+    // "typing" preloader. The visitor's message still goes to Roman in the topic;
+    // the agent only speaks again when summoned with the "ask the agent" button.
+    const romanActive = (Date.now() - (state.threads[thread]?.romanActiveTs || 0)) < ROMAN_ACTIVE_WINDOW_MS;
+    const runAgent = useClaude && !romanActive;
+
     // Flag "typing" BEFORE appending the visitor msg, so the poll that delivers
     // the visitor message already carries typing:true (no flicker on the dots).
-    if (useClaude) setTyping(thread, true);
+    if (runAgent) setTyping(thread, true);
     const visitorMsg = appendMsg(thread, 'visitor', text);
     state.lastActiveThread = thread;
 
@@ -389,7 +402,7 @@ const server = http.createServer(async (req, res) => {
 
     // Kick off Claude in the background so the HTTP response returns fast
     // and the visitor sees Claude's reply via long-poll a few seconds later.
-    if (useClaude) {
+    if (runAgent) {
       claudeQueue.run(() => {
         const history = (state.threads[thread]?.msgs || []).map((m) => ({
           role: m.role === 'visitor' ? 'user' : (m.role === 'roman' ? 'user' : 'assistant'),
