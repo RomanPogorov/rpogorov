@@ -2219,13 +2219,11 @@
             const io = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-                        // Replay animation by toggling active off then on
-                        const el = entry.target;
-                        el.classList.remove('active');
-                        // force reflow so animations re-run
-                        // eslint-disable-next-line no-unused-expressions
-                        el.offsetWidth;
-                        el.classList.add('active');
+                        // Animate in ONCE on first reveal, then leave it shown.
+                        // Just add (idempotent — no hide+reanimate replay when
+                        // scrolling back and forth). Keep observing so a fresh
+                        // showcase-open can re-trigger the entrance.
+                        entry.target.classList.add('active');
                     }
                 });
             }, { root: cases, threshold: [0.5, 0.75] });
