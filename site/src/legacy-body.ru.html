@@ -1912,7 +1912,11 @@
                 if (role === 'ai' || role === 'roman' || role === 'claude') txt.innerHTML = renderChatRich(text);
                 else txt.textContent = text;
                 div.appendChild(txt);
-                threadEl.appendChild(div);
+                // Keep the "agent is typing" dots last: insert real messages
+                // before the indicator if it's showing, else append normally.
+                const thinkingEl = document.getElementById('chat-thinking');
+                if (thinkingEl) threadEl.insertBefore(div, thinkingEl);
+                else threadEl.appendChild(div);
                 threadEl.scrollTop = threadEl.scrollHeight;
                 if (id != null && id > lastId) lastId = id;
                 if (role === 'roman' && !silent) window.__sfx?.tick?.();
