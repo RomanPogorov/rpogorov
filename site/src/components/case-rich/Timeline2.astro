@@ -104,8 +104,8 @@ const cols = quarters.length;
                   data-default-active={bi === 0 && stream === streams[0] ? '1' : null}
                 >
                   <span class="t2-bar-text">
-                    <span class="t2-bar-label">{b.label}</span>
-                    {b.duration && <span class="t2-bar-duration">{b.duration}</span>}
+                    <span class="t2-bar-name">{stream.name}</span>
+                    <span class="t2-bar-phase">({b.label}{b.duration ? `, ${b.duration}` : ''})</span>
                   </span>
                 </button>
               );

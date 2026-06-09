@@ -2431,6 +2431,17 @@
             function openCase(id, opts) {
                 const page = document.querySelector(`.case-page[data-case-page="${id}"]`);
                 if (!page) return;
+                // Remember the parent company case + its scroll, so ESC / back
+                // returns one level (to the company case at the same scroll)
+                // instead of closing all the way to home. Captured BEFORE the
+                // toggle below strips .open (which clamps scrollTop to 0).
+                const isSub = !/^cs0\d+$/.test(id);
+                const prevOpen = document.querySelector('.case-page.open');
+                if (isSub && prevOpen && /^cs0\d+$/.test(prevOpen.dataset.casePage || '')) {
+                    window.__caseParent = { company: prevOpen.dataset.casePage, scrollTop: prevOpen.scrollTop };
+                } else if (!isSub) {
+                    window.__caseParent = null;
+                }
                 ensureCrumbsBar(page);
                 pages.forEach(p => p.classList.toggle('open', p === page));
                 page.scrollTop = 0;
@@ -2460,6 +2471,27 @@
             // Expose for the URL router.
             window.__cp = { open: openCase, close: closeCase };
 
+            // Back one level: sub-case → parent company case (restoring scroll);
+            // company case → full close. Used by ESC and the company crumb.
+            window.__caseBack = function () {
+                const open = document.querySelector('.case-page.open');
+                const isSub = open && !/^cs0\d+$/.test(open.dataset.casePage || '');
+                const parent = window.__caseParent;
+                if (isSub && parent && parent.company) {
+                    window.__caseParent = null;
+                    history.pushState(null, '', '#case/' + parent.company);
+                    openCase(parent.company, { silent: true });
+                    const pPage = document.querySelector('.case-page[data-case-page="' + parent.company + '"]');
+                    if (pPage) {
+                        pPage.scrollTop = parent.scrollTop || 0;
+                        requestAnimationFrame(() => { pPage.scrollTop = parent.scrollTop || 0; });
+                    }
+                    return true;
+                }
+                closeCase();
+                return false;
+            };
+
             openButtons.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -2486,8 +2518,8 @@
                 if (!body.classList.contains('case-open')) return;
                 if (e.key !== 'Escape') return;
                 if (document.querySelector('.am-lightbox.open, .dc-lightbox.is-open')) return;
-                e.stopPropagation();
-                closeCase();
+                e.stopImmediatePropagation();
+                window.__caseBack();
             }, true);
 
             function initTimeline(page) {
@@ -4045,6 +4077,28 @@
               title: 'Figma ↔ Claude vibe-coding pipeline',
               desc: 'Vibe-coded the round-trip between Figma and Claude — config and component spec moves both ways without handoff drift. Coming soon.',
               metric: '', tags: ['Vibe Code', 'Automation', 'Figma'], deeplink: 'figma-claude-vibe', theme: 'bright' },
+
+            // ===== Health Samurai (cs06) — bodies render from MDX overlays =====
+            { id: 'landing-platform', company: 'cs06', companyLabel: 'Health Samurai',
+              title: 'Платформа генерации лендингов и AI-пайплайн',
+              desc: 'Markdown-вход и Claude-скилл превратили трёхмесячный цикл сборки лендинга в 2–3 дня. Весь сайт компании теперь живёт на этой платформе, а правки прямо в браузере делает DOM-aware чат Fixik.',
+              metric: '3 мес → 2–3 дня', tags: ['AI-пайплайн', 'HTMX', 'Storybook', 'Claude Code'], deeplink: 'landing-platform' },
+            { id: 'presentation-generator', company: 'cs06', companyLabel: 'Health Samurai',
+              title: 'Генератор питчей и презентаций',
+              desc: 'Превратил зоопарк разрозненных презентаций в единый генератор на движке лендингов — три режима, две точки входа, интерактивные слайды-приложения и шаринг с трекингом.',
+              metric: '50+ презентаций', tags: ['AI-пайплайн', 'Генератор', 'Презентации', 'Claude Code'], deeplink: 'presentation-generator' },
+            { id: 'hs-design-system', company: 'cs06', companyLabel: 'Health Samurai',
+              title: 'Дизайн-система shadCN и мост Figma ↔ код',
+              desc: 'Семантический слой поверх shadCN для Aidbox и продуктовых команд. Код — источник истины, Figma собрана из кода, а перенос интерфейсов идёт через маппинг-матрицы Claude.',
+              metric: 'Figma ↔ код', tags: ['Дизайн-система', 'shadCN', 'Figma ↔ Code', 'Claude Code'], deeplink: 'hs-design-system' },
+            { id: 'brand-identity', company: 'cs06', companyLabel: 'Health Samurai',
+              title: 'Бренд, иллюстрации и генератор кудосов',
+              desc: 'Редизайн фирстиля компании и линейки продуктов, система иллюстраций, маскот, стиль диаграмм и управляемый пайплайн нейрогенерации графики — вплоть до генератора кудосов, обученного на бренд-маскоте.',
+              metric: 'маскот → продукт', tags: ['айдентика', 'иллюстрации', 'нейрогенерация', 'бренд'], deeplink: 'brand-identity' },
+            { id: 'replit-healthtech', company: 'cs06', companyLabel: 'Health Samurai',
+              title: 'Replit для healthtech — приложения для врачей по запросу',
+              desc: 'Платформа, где врач описывает недостающее приложение словами, а под капотом Claude SDK и Codex SDK собирают FHIR-native приложение, которое встраивается прямо в его чарт.',
+              metric: 'текущий проект', tags: ['FHIR', 'AI-агент', 'healthcare', 'workflow'], deeplink: 'replit-healthtech' },
         ];
 
         // Force bright theme on offer-acceptance and engagement in place —

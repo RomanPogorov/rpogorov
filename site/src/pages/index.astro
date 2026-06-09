@@ -662,7 +662,11 @@ const cs06AccentStyle = companyAccentStyle(cs06Data);
         // If a lightbox is open, let it eat ESC first — don't close the case.
         const lb = document.querySelector('.am-lightbox.open, .dc-lightbox.is-open');
         if (lb) return;
-        window.__cp?.close?.();
+        // Back one level: sub-case → parent company (keeping scroll), company → close.
+        // stopImmediatePropagation so only one ESC handler acts per keypress.
+        e.stopImmediatePropagation();
+        if (window.__caseBack) window.__caseBack();
+        else window.__cp?.close?.();
       }, true);
 
       // Arrow / Page keys scroll the open case-page (capture-phase so this
