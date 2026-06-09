@@ -1222,6 +1222,20 @@
       bannerText: reducedMotion ? "Reduced motion / static preview" : waves[0].label
     };
 
+    // Snapshot the pristine state so the demo can loop: when the run ends,
+    // restartGame() restores these values and the always-running rAF loop
+    // picks the game back up from wave 1.
+    const INITIAL_STATE = JSON.parse(JSON.stringify(state));
+    function restartGame() {
+      const w = state.width, h = state.height;
+      Object.assign(state, JSON.parse(JSON.stringify(INITIAL_STATE)));
+      state.width = w; state.height = h;
+      state.playerX = w * 0.5;
+      state.status = "playing";
+      state.nextSpawnAt = getNow() + 900;
+      spawnWaveBanner(waves[0].label);
+    }
+
     function clamp(v, mn, mx) { return Math.min(mx, Math.max(mn, v)); }
     function escapeHtml(v) {
       return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
@@ -1311,7 +1325,11 @@
       state.prompt = "clean payload routed downstream";
       terminalStatus.textContent = "hero complete";
       finishCta.classList.add("is-visible");
-      spawnWaveBanner("Hero complete / continue ↓");
+      spawnWaveBanner("Hero complete / restarting ↻");
+      if (!reducedMotion) {
+        clearTimeout(state.loopTimeout);
+        state.loopTimeout = setTimeout(restartGame, 2800);
+      }
     }
 
     function createBeam() {
