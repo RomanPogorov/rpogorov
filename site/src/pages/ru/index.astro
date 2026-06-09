@@ -83,6 +83,14 @@ const cs02 = companies.find((c) => c.id === 'cs02');
 const cs02Render = cs02 ? await render(cs02) : null;
 const Cs02Content = cs02Render?.Content ?? null;
 
+// cs06 — new Health Samurai company case (built from Roman's spoken story,
+// red accent, interactive Timeline2 map). Rendered as its own overlay but
+// kept OUT of the showcase grid (filtered from cardsHtml below) so it
+// doesn't duplicate the cs02 card. Reachable directly at #case/cs06.
+const cs06 = companies.find((c) => c.id === 'cs06');
+const cs06Render = cs06 ? await render(cs06) : null;
+const Cs06Content = cs06Render?.Content ?? null;
+
 const subRendered = await Promise.all(
   subCases.map(async (entry) => {
     const r = await render(entry);
@@ -132,6 +140,7 @@ const OVERLAY_ID: Record<string, string> = {
 };
 
 const cardsHtml = companies
+  .filter((c) => c.id !== 'cs06')
   .map((c, i) => {
     const d = c.data;
     const title = d.showcaseTitle ?? d.title;
@@ -290,8 +299,11 @@ const [legacyMid, legacyAfter] = afterAmericor.split('<!-- HS_OVERLAY_MARKER -->
 const cs01Data = cs01?.data;
 const cs02Data = cs02?.data;
 
+const cs06Data = cs06?.data;
+
 const cs01AccentStyle = companyAccentStyle(cs01Data);
 const cs02AccentStyle = companyAccentStyle(cs02Data);
+const cs06AccentStyle = companyAccentStyle(cs06Data);
 ---
 
 <Layout title="ROMAN POGOROV / GRID" bodyTheme="green" bodyClass="pre-gate" lang="ru">
@@ -334,6 +346,28 @@ const cs02AccentStyle = companyAccentStyle(cs02Data);
       >
         <article class="cnt-body">
           <Cs02Content />
+        </article>
+      </CaseHeader>
+    </section>
+  )}
+
+  {Cs06Content && cs06Data && (
+    <section class="case-page cp-hs" id="case-page-cs06" data-case-page="cs06" data-accent={typeof cs06Data.accent === 'string' ? cs06Data.accent : (cs06AccentStyle ? 'custom' : undefined)} style={cs06AccentStyle} aria-label={`${cs06Data.name} case study`}>
+      <CaseHeader
+        currentLabel={cs06Data.name}
+        metaItems={[
+          cs06Data.name,
+          `Роль · ${cs06Data.role}`,
+          cs06Data.year,
+          'FHIR-нативная инфраструктура',
+          'Плоская команда · без QA · без PM',
+        ]}
+        title={cs06Data.title}
+        titleHtml={cs06Data.title}
+        desc={cs06Data.desc}
+      >
+        <article class="cnt-body">
+          <Cs06Content />
         </article>
       </CaseHeader>
     </section>

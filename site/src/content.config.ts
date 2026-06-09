@@ -11,7 +11,7 @@ const cases = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/cases' }),
   schema: z.object({
     id: z.string(),
-    company: z.enum(['cs01', 'cs02']),
+    company: z.enum(['cs01', 'cs02', 'cs06']),
     companyLabel: z.string(),
     title: z.string(),
     desc: z.string(),
