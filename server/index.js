@@ -643,8 +643,14 @@ const server = http.createServer(async (req, res) => {
       .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
       .slice(-12)
       .map((m) => ({ role: m.role, content: String(m.content).slice(0, 4000) }));
-    if (!cleanMsgs.length || cleanMsgs[cleanMsgs.length - 1].role !== 'user') {
-      return send(res, 400, { error: 'last message must be from user' });
+    if (!cleanMsgs.length) {
+      return send(res, 400, { error: 'no messages' });
+    }
+    // "Ask the agent" button: the visitor explicitly summoned the agent. If the
+    // last turn is already an agent reply (e.g. it auto-answered), append a nudge
+    // so there's a user turn to respond to — the button never dead-ends.
+    if (cleanMsgs[cleanMsgs.length - 1].role !== 'user') {
+      cleanMsgs.push({ role: 'user', content: '(The visitor tapped "ask the agent" to summon you. Continue helpfully — answer their last question directly, or add something useful about Roman and invite their next question. Keep it short.)' });
     }
     return claudeQueue.run(() => callClaude(cleanMsgs)).then(
       (reply) => send(res, 200, { reply }),
@@ -716,6 +722,138 @@ function loadVaultContext() {
   vaultCacheText = blocks.join('\n');
   vaultCacheTs = now;
   return vaultCacheText;
+}
+
+// ============ BM25 retrieval over vault chunks ============
+// Instead of dumping the whole vault (~300KB) into every prompt, we chunk the
+// files once and, per query, retrieve only the most relevant excerpts (~14KB).
+const VAULT_DIRS = [
+  '/root/vault/portfolio/rag',
+  '/root/vault/portfolio/articles',
+  '/root/vault/portfolio/cases',
+];
+function walkVault(dir) {
+  let out = [];
+  try {
+    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, ent.name);
+      if (ent.isDirectory()) out = out.concat(walkVault(p));
+      else if (/\.(md|mdx)$/i.test(ent.name) && ent.name !== 'CLAUDE.md') out.push(p);
+    }
+  } catch (_) {}
+  return out;
+}
+const STOPWORDS = new Set(
+  ('the a an and or of to in on for with is are was were be been by at as it its this that these those ' +
+   'и в во не на с со что а то как он она они мы вы ты я его её их это эта этот так вот же бы ли уже или ' +
+   'для по от из про у о об над под при за до без есть был была быть да нет ну вообще там тут чтобы')
+  .split(/\s+/),
+);
+function tokenize(s) {
+  const out = [];
+  const re = /[\p{L}\p{N}][\p{L}\p{N}_-]*/gu;
+  let m;
+  const lower = String(s).toLowerCase();
+  while ((m = re.exec(lower))) {
+    const t = m[0];
+    if (t.length < 2 || STOPWORDS.has(t)) continue;
+    out.push(t);
+  }
+  return out;
+}
+function splitSections(body) {
+  const lines = body.split('\n');
+  const sections = [];
+  let cur = { heading: '', text: '' };
+  for (const line of lines) {
+    const h = line.match(/^#{1,4}\s+(.+)/);
+    if (h) {
+      if (cur.text.trim()) sections.push(cur);
+      cur = { heading: h[1].trim().replace(/[#*`]/g, ''), text: '' };
+    } else {
+      cur.text += line + '\n';
+    }
+  }
+  if (cur.text.trim()) sections.push(cur);
+  return sections.length ? sections : [{ heading: '', text: body }];
+}
+function packParagraphs(text, maxChars) {
+  const paras = text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  const out = [];
+  let buf = '';
+  for (const p of paras) {
+    if (buf && (buf.length + p.length + 2) > maxChars) { out.push(buf); buf = ''; }
+    buf = buf ? buf + '\n\n' + p : p;
+    while (buf.length > maxChars) { out.push(buf.slice(0, maxChars)); buf = buf.slice(maxChars); }
+  }
+  if (buf.trim()) out.push(buf);
+  return out.length ? out : [text];
+}
+let chunkIndex = null;
+let chunkIndexTs = 0;
+function buildChunkIndex() {
+  const now = Date.now();
+  if (chunkIndex && now - chunkIndexTs < 300_000) return chunkIndex;
+  const chunks = [];
+  for (const dir of VAULT_DIRS) {
+    for (const f of walkVault(dir).sort()) {
+      let body;
+      try { body = fs.readFileSync(f, 'utf-8'); } catch (_) { continue; }
+      body = body.replace(/^---\n[\s\S]*?\n---\n/, '');
+      const rel = f.replace('/root/vault/', '');
+      for (const sec of splitSections(body)) {
+        for (const piece of packParagraphs(sec.text.trim(), 1100)) {
+          const text = piece.trim();
+          if (text.length < 40) continue;
+          const header = `[${rel}${sec.heading ? ' › ' + sec.heading : ''}]`;
+          chunks.push({ file: rel, heading: sec.heading || '', text, header });
+        }
+      }
+    }
+  }
+  const df = new Map();
+  let totalLen = 0;
+  for (const c of chunks) {
+    c.tokens = tokenize(`${c.text} ${c.heading} ${c.file.replace(/[\/_.-]/g, ' ')}`);
+    c.len = c.tokens.length || 1;
+    c.tf = new Map();
+    for (const t of c.tokens) c.tf.set(t, (c.tf.get(t) || 0) + 1);
+    for (const t of new Set(c.tokens)) df.set(t, (df.get(t) || 0) + 1);
+    totalLen += c.len;
+  }
+  chunkIndex = { chunks, df, N: chunks.length, avgdl: chunks.length ? totalLen / chunks.length : 1 };
+  chunkIndexTs = now;
+  console.log(`[rag] chunk index built: ${chunks.length} chunks from ${VAULT_DIRS.length} dirs`);
+  return chunkIndex;
+}
+function bm25Search(query, { topK = 12, budget = 14000, k1 = 1.5, b = 0.75 } = {}) {
+  const idx = buildChunkIndex();
+  if (!idx.N) return [];
+  const qTerms = [...new Set(tokenize(query))];
+  if (!qTerms.length) return [];
+  const scored = [];
+  for (const c of idx.chunks) {
+    let s = 0;
+    for (const t of qTerms) {
+      const tf = c.tf.get(t);
+      if (!tf) continue;
+      const dfp = idx.df.get(t) || 0.5;
+      const idf = Math.log(1 + (idx.N - dfp + 0.5) / (dfp + 0.5));
+      s += idf * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * c.len / idx.avgdl));
+    }
+    if (s > 0) scored.push({ c, s });
+  }
+  scored.sort((x, y) => y.s - x.s);
+  const picked = [];
+  let used = 0;
+  for (const { c } of scored) {
+    if (picked.length >= topK) break;
+    const block = `${c.header}\n${c.text}`;
+    if (picked.length && used + block.length > budget) break;
+    picked.push(block);
+    used += block.length;
+  }
+  return picked;
 }
 
 const CLAUDE_STATIC_PROMPT = `You are Claude, answering questions about ROMAN POGOROV on his portfolio site (clauderunner.com/rpogorov-dev/). You are NOT Roman — you speak ABOUT him.
@@ -849,8 +987,7 @@ function loadPublishedRoutes() {
   return routesCacheText;
 }
 
-function buildClaudeSystemPrompt() {
-  const vault = loadVaultContext();
+function buildClaudeSystemPrompt(query) {
   const routes = loadPublishedRoutes();
   const routesBlock = '\n\n=========================================\n' +
     'PUBLISHED ROUTES — these are the ONLY URLs that exist on the site.\n' +
@@ -859,12 +996,17 @@ function buildClaudeSystemPrompt() {
     'reference has no route here, name it in plain prose without a link.\n' +
     '=========================================\n' + routes;
   const base = CLAUDE_STATIC_PROMPT + routesBlock;
-  if (!vault) return base;
+  // Retrieve only the most relevant vault excerpts for THIS question (BM25)
+  // instead of dumping the whole vault into every prompt.
+  const picked = query ? bm25Search(query) : [];
+  if (!picked.length) return base;
   return base + '\n\n=========================================\n' +
-    'DEEP CONTEXT — Roman\'s vault (cases, articles, raw experience texts).\n' +
-    'Use this to answer questions with detail. Quote a specific case file or article when grounding a claim. Don\'t fabricate beyond what\'s in here.\n' +
+    'RETRIEVED CONTEXT — the most relevant excerpts from Roman\'s vault for THIS\n' +
+    'question (cases, articles, raw experience). Each block is tagged with its\n' +
+    'source file. Ground your answer in these and quote the source when it helps.\n' +
+    'Don\'t fabricate beyond them; if they don\'t cover the question, say so briefly.\n' +
     '=========================================\n' +
-    vault;
+    picked.join('\n\n---\n\n');
 }
 
 // ---------- Vault rebuild ----------
@@ -1099,8 +1241,10 @@ function callClaude(messages) {
     // Write the system prompt to a temp file — the dynamic vault context
     // is too large (~85KB+) to fit in argv (E2BIG). claude reads it via
     // --append-system-prompt-file.
+    // Build the retrieval query from the last couple of user turns.
+    const query = messages.filter((m) => m.role === 'user').slice(-2).map((m) => m.content).join('\n');
     const promptFile = `/tmp/portfolio-claude-prompt-${process.pid}-${Date.now()}.txt`;
-    try { fs.writeFileSync(promptFile, buildClaudeSystemPrompt()); } catch (e) {
+    try { fs.writeFileSync(promptFile, buildClaudeSystemPrompt(query)); } catch (e) {
       return reject(new Error('failed to write prompt file: ' + e.message));
     }
     const child = spawn('/root/bin/claude-headless', [
