@@ -1981,7 +1981,7 @@
                         if (m.classList.contains('from-visitor')) turns.push({ role: 'user', content: txt });
                         else if (m.classList.contains('from-roman') || m.classList.contains('from-ai')) turns.push({ role: 'assistant', content: txt });
                     });
-                    if (!turns.length || turns[turns.length - 1].role !== 'user') {
+                    if (!turns.length) {
                         addMsg({ role: 'error', text: '⚠ сначала напиши сообщение, потом разбуди Клода' });
                         return;
                     }
