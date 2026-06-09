@@ -588,19 +588,19 @@ const cs06AccentStyle = companyAccentStyle(cs06Data);
       const dcOpen = (id, opts) => window.__cp.open(id, opts);
       const dcClose = (opts) => window.__cp.close(opts);
       window.__dc = { open: dcOpen, close: dcClose, current: () => null };
-      // Wire am-deeplinks (in cs01 MDX) — anchor href="#case/cs01/{slug}"
-      // doesn't trigger __dc.open by itself; the legacy hash router
-      // listens to popstate and on load. Pushing the hash on click
-      // triggers it.
-      document.querySelectorAll('a.am-deeplink[href^="#case/"]').forEach((a) => {
-        a.addEventListener('click', (e) => {
-          e.preventDefault();
-          const m = a.getAttribute('href').match(/^#case\/cs0\d+\/(.+)$/);
-          if (m && window.__cp) {
-            history.pushState(null, '', a.getAttribute('href'));
-            window.__cp.open(m[1]);
-          }
-        });
+      // Wire ANY in-case link to a sub-case — both the `am-deeplink` cards and
+      // plain inline markdown links like `[…](#case/cs06/landing-platform)`.
+      // Delegated so it covers links rendered anywhere in the MDX. Opens the
+      // sub-case via __cp.open (which stacks it over the company), matching a
+      // card click — instead of letting the bare hash drive the legacy router.
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#case/"]');
+        if (!a) return;
+        const m = a.getAttribute('href').match(/^#case\/cs0\d+\/(.+)$/);
+        if (!m || !window.__cp) return;
+        e.preventDefault();
+        history.pushState(null, '', a.getAttribute('href'));
+        window.__cp.open(m[1]);
       });
       // Wire crumb-company button — reveal the parent company case. If it's the
       // company sitting open under a stacked sub-case, just drop the sub (keeps
