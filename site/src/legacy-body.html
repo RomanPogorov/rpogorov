@@ -2023,7 +2023,9 @@
                     const data = await r.json();
                     if (data?.msg) addMsg({ role: 'visitor', text: data.msg.text, id: data.msg.id });
                     if (!data.ok) throw new Error('send failed');
-                    showThinking();
+                    // Don't show the preloader locally — the server's typing flag
+                    // (via the poll) drives it, so it only appears when the agent
+                    // actually replies (not while Roman is handling the thread).
                 } catch (err) {
                     hideThinking();
                     addMsg({ role: 'error', text: '⚠ message could not be sent' });
