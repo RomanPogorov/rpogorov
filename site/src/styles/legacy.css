@@ -2700,8 +2700,16 @@
         }
         /* A sub-case opened from a company case stacks ON TOP of it: the company
            stays open underneath (no collapse, scroll preserved), the sub slides
-           up over it and slides back down on close. */
+           up over it and slides back down on close. The stacked sheet stops
+           short of the very top so a sliver of the level beneath stays visible,
+           with rounded top corners — like a card sheet. */
         .case-page.case-page--stacked { z-index: 36; }
+        body.case-open .case-page.case-page--stacked.open {
+            top: 36px;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            box-shadow: 0 -10px 44px rgba(0, 0, 0, 0.55);
+        }
         /* "Main" crumb fast-close: shorter slide-out so jumping to home
            feels snappy instead of leisurely. */
         .case-page.is-fast-close {
