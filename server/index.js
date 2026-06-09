@@ -638,6 +638,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && url.pathname === '/api/chat/claude') {
     let body;
     try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
+    const thread = String(body.thread || '').slice(0, 64);
     const messages = Array.isArray(body.messages) ? body.messages : [];
     const cleanMsgs = messages
       .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
@@ -650,7 +651,24 @@ const server = http.createServer(async (req, res) => {
     // last turn is already an agent reply (e.g. it auto-answered), append a nudge
     // so there's a user turn to respond to — the button never dead-ends.
     if (cleanMsgs[cleanMsgs.length - 1].role !== 'user') {
-      cleanMsgs.push({ role: 'user', content: '(The visitor tapped "ask the agent" to summon you. Continue helpfully — answer their last question directly, or add something useful about Roman and invite their next question. Keep it short.)' });
+      cleanMsgs.push({ role: 'user', content: '(The visitor tapped "ask the agent" to summon you. Answer their actual last message directly and concretely — do NOT invent a different question. If the last message is too short to be sure what they mean, give your best concrete answer AND offer one short clarifying option. Keep it tight.)' });
+    }
+    // With a thread: route the summoned reply into the thread + the visitor's
+    // Telegram topic (so Roman sees it too), delivered to the visitor via poll —
+    // just like an auto-reply. Respond fast; the reply arrives over the long-poll.
+    if (thread) {
+      setTyping(thread, true);
+      claudeQueue.run(() => callClaude(cleanMsgs)).then((reply) => {
+        setTyping(thread, false);
+        let r = (reply || '').trim();
+        if (/^\[silent\]$/i.test(r)) return;
+        const hm = r.match(/HANDOFF:\s*(.+?)(?:\n|$)/);
+        if (hm) { const task = hm[1].trim(); r = r.replace(/HANDOFF:.*$/m, '').trim(); enqueueBuild(thread, task); }
+        if (!r) return;
+        appendMsg(thread, 'claude', r);
+        sendToTopic(thread, `🤖 claude (по кнопке):\n${r}`);
+      }).catch((err) => { setTyping(thread, false); console.error('claude (summon) error:', err); });
+      return send(res, 200, { ok: true, viaPoll: true });
     }
     return claudeQueue.run(() => callClaude(cleanMsgs)).then(
       (reply) => send(res, 200, { reply }),
@@ -826,7 +844,7 @@ function buildChunkIndex() {
   console.log(`[rag] chunk index built: ${chunks.length} chunks from ${VAULT_DIRS.length} dirs`);
   return chunkIndex;
 }
-function bm25Search(query, { topK = 12, budget = 14000, k1 = 1.5, b = 0.75 } = {}) {
+function bm25Search(query, { topK = 14, budget = 18000, k1 = 1.5, b = 0.75 } = {}) {
   const idx = buildChunkIndex();
   if (!idx.N) return [];
   const qTerms = [...new Set(tokenize(query))];
@@ -1249,7 +1267,7 @@ function callClaude(messages) {
     }
     const child = spawn('/root/bin/claude-headless', [
       '--print',
-      '--model', 'claude-sonnet-4-6',
+      '--model', 'claude-opus-4-8',
       '--append-system-prompt-file', promptFile,
       prompt,
     ], { stdio: ['ignore', 'pipe', 'pipe'] });
