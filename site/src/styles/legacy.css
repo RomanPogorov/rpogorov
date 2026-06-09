@@ -1864,7 +1864,7 @@
         .dc-body figure { margin: 0; }
         .dc-impact {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr;
             gap: 12px;
             margin: 0 0 28px;
         }
@@ -1886,11 +1886,11 @@
         }
         .dc-impact-cell .lbl {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.625rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
+            font-size: 0.6875rem;
+            letter-spacing: 0.01em;
+            text-transform: none;
             color: rgba(255, 255, 255, 0.55);
-            line-height: 1.4;
+            line-height: 1.45;
         }
         .dc-meta-grid {
             display: grid;
