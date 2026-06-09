@@ -83,10 +83,9 @@ const cs02 = companies.find((c) => c.id === 'cs02');
 const cs02Render = cs02 ? await render(cs02) : null;
 const Cs02Content = cs02Render?.Content ?? null;
 
-// cs06 — new Health Samurai company case (built from Roman's spoken story,
-// red accent, interactive Timeline2 map). Rendered as its own overlay but
-// kept OUT of the showcase grid (filtered from cardsHtml below) so it
-// doesn't duplicate the cs02 card. Reachable directly at #case/cs06.
+// cs06 — canonical Health Samurai company case (built from Roman's spoken
+// story, red accent, interactive Timeline2 map). Shown in the showcase grid
+// in cs02's old slot (order 2); the legacy cs02 card is filtered out below.
 const cs06 = companies.find((c) => c.id === 'cs06');
 const cs06Render = cs06 ? await render(cs06) : null;
 const Cs06Content = cs06Render?.Content ?? null;
@@ -133,14 +132,17 @@ function companyAccentStyle(d: any): string | undefined {
 }
 
 // cs0X cards with a deep overlay wired up. cs01 → MDX overlay below;
-// cs02 → legacy inline overlay still in legacy-body.html.
+// cs06 → MDX inline overlay below (replaced legacy cs02 HS case).
 const OVERLAY_ID: Record<string, string> = {
   cs01: 'cs01',
-  cs02: 'cs02',
+  cs06: 'cs06',
 };
 
+// cs02 (old detailed HS case) is archived — kept in the collection for
+// slug lookups and as a reachable overlay, but hidden from the carousel.
+// cs06 is the canonical HS company case and takes its slot (order 2).
 const cardsHtml = companies
-  .filter((c) => c.id !== 'cs06')
+  .filter((c) => c.id !== 'cs02')
   .map((c, i) => {
     const d = c.data;
     const title = d.showcaseTitle ?? d.title;

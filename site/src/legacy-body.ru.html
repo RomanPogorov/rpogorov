@@ -2394,7 +2394,7 @@
             // Inject a sticky breadcrumb bar at the top of each case-page on
             // first open. Bar shows "Showcase ‹ <Company>", first crumb
             // returns to showcase by-cases tab.
-            const COMPANY_LABELS = { cs01: 'Americor', cs02: 'Health Samurai' };
+            const COMPANY_LABELS = { cs01: 'Americor', cs02: 'Health Samurai', cs06: 'Health Samurai' };
             function ensureCrumbsBar(page) {
                 if (page.querySelector('.cp-crumbs-bar')) return;
                 const id = page.dataset.casePage;
@@ -4071,7 +4071,7 @@
             const grid = document.getElementById('sc-cases-grid');
             if (!grid) return;
             // Color/glyph chip per company
-            const COMPANY_TONE = { cs01: '#ff5722', cs02: '#eb5234' };
+            const COMPANY_TONE = { cs01: '#ff5722', cs02: '#eb5234', cs06: '#eb5234' };
             grid.innerHTML = DEEP_CASES.map(c => `
                 <a class="sc-card" data-deep-id="${c.id}" data-deep-company="${c.company}"${c.deeplink ? ` data-deep-link="${c.deeplink}"` : ''} href="#case/${c.company}/${c.id}">
                     <div class="sc-card-thumb" aria-hidden="true">
@@ -4108,6 +4108,7 @@
             const COMPANY = {
                 cs01: { label: 'Americor', case: 'cs01' },
                 cs02: { label: 'Health Samurai', case: 'cs02' },
+                cs06: { label: 'Health Samurai', case: 'cs06' },
             };
             const page = document.getElementById('dc-page');
             const closeBtn = document.getElementById('dc-close');
