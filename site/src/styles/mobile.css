@@ -105,31 +105,89 @@
   /* десктопные подсказки/карусельные стрелки — убрать */
   .showcase-sub, .cases-nav { display: none !important; }
 
-  /* шапка/табы — в строку, без наложений */
+  /* Шапка витрины — каждый элемент на своём ряду, без наложений:
+     [↑ назад] (свой ряд, справа) → [// архив …] → [табы по центру] */
+  .showcase-back {
+    position: static !important;
+    order: -1 !important;            /* свой ряд сверху, отдельно от крошек */
+    align-self: flex-end !important;
+    width: auto !important;
+    margin: 0 0 12px !important;
+  }
   .showcase-intro {
     position: static !important; inset: auto !important; transform: none !important;
+    order: 0 !important;
     width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;
-    margin: 0 0 10px !important; padding-right: 76px !important; /* место под кнопку «назад» */
+    margin: 0 0 12px !important; padding-right: 0 !important;
   }
   .sc-tabs {
     position: static !important; inset: auto !important; transform: none !important;
+    order: 0 !important;
     display: flex !important; flex-wrap: wrap !important; gap: 8px !important;
+    justify-content: center !important;   /* табы по центру */
     width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;
     margin: 0 0 16px !important;
   }
-  .showcase-back {
-    position: absolute !important;
-    top: 12px !important; right: 14px !important;
-    margin: 0 !important;
-  }
 
-  /* Контейнеры видов (карусель) — position:absolute top:0 в базе, поэтому
-     карточки наезжают на статичную шапку. НЕ меняем их размер/раскладку
-     (существующий респонсив сам стакает карточки) и НЕ трогаем display
-     (JS-тоггл «по компании/по кейсам»). Просто смещаем НИЖЕ шапки. */
+  /* Вид «по компании» (.cases) — в базе это ГОРИЗОНТАЛЬНАЯ карусель
+     (flex-row, overflow-x:auto, карточки 100vw×100vh). На мобиле ломаем в
+     ВЕРТИКАЛЬ: колонка в потоке, карточки авто-высоты, вертикальный скролл,
+     тап по карточке открывает кейс. display НЕ трогаем (JS-тоггл). */
   .cases, .sc-view-cases {
-    top: 152px !important;
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    grid-auto-flow: row !important;
+    grid-template-columns: 1fr !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    transform: none !important;
+    scroll-snap-type: none !important;
+    /* карусель вешает pointermove+preventDefault на .cases и блокирует
+       нативный вертикальный скролл. pan-y отдаёт вертикаль браузеру, а
+       горизонтальное перетаскивание JS становится безвредным. */
+    touch-action: pan-y !important;
   }
+  .cases > .case, .sc-view-cases > .case, .showcase .case {
+    touch-action: pan-y !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    flex: 0 0 auto !important;
+    margin: 0 0 18px !important;
+    transform: none !important;
+    scroll-snap-align: none !important;
+  }
+  /* шапка карточки: номер (CS/01) и роль (ведущий продуктовый дизайнер · …)
+     — на РАЗНЫЕ строки, а не в одну с кривым переносом */
+  .showcase .case .case-head {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+  .showcase .case .case-no,
+  .showcase .case .case-role { white-space: normal !important; }
+
+  /* медиа карточки — фикс-высоту убираем, держим пропорцию */
+  .showcase .case .case-media {
+    height: auto !important;
+    aspect-ratio: 16 / 10 !important;
+    min-height: 0 !important;
+  }
+  .showcase .case .case-media img,
+  .showcase .case .case-media video,
+  .showcase .case .case-media iframe,
+  .showcase .case .case-fallback { width: 100% !important; height: 100% !important; object-fit: cover !important; }
 
   /* --- 4. Модалки — НЕ трогаем blanket'ом (они скрыты через transform/opacity;
      перебивать опасно — раскроет их поверх главной). Они и так заполняют экран

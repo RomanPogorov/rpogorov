@@ -2353,6 +2353,9 @@
             // work. Ignores drags that started on a case-open trigger so the
             // card "open case" click still fires.
             (() => {
+                // Mobile: no horizontal drag-carousel — cards stack vertically
+                // and scroll natively; the drag handlers would block that.
+                if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) return;
                 let down = false;
                 let dragged = false;
                 let startX = 0;
