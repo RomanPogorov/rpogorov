@@ -59,6 +59,48 @@ const importMapJson = `{
   </head>
   <body class:list={[bodyClass]} data-theme={bodyTheme}>
     <slot />
+    <script is:inline>
+      /* Mobile-only: turn the chat into a launchable fullscreen modal.
+         Only wires up on the homepage (where #chat-pane exists) and on
+         narrow viewports. Additive — does not touch existing chat handlers. */
+      (function () {
+        var pane = document.getElementById('chat-pane');
+        if (!pane) return;
+        var mq = window.matchMedia('(max-width: 768px)');
+        var fab = null, closeBtn = null;
+        var ru = (document.documentElement.lang || '').toLowerCase().indexOf('ru') === 0;
+        var origParent = pane.parentNode, origNext = pane.nextSibling, moved = false;
+        function openChat() {
+          /* Reparent to <body> so position:fixed resolves against the viewport
+             (ancestors have transform/filter → they'd otherwise contain it). */
+          if (!moved) { document.body.appendChild(pane); moved = true; }
+          pane.removeAttribute('hidden');
+          document.body.classList.add('mobile-chat-open');
+        }
+        function closeChat() {
+          document.body.classList.remove('mobile-chat-open');
+          if (moved && origParent) { origParent.insertBefore(pane, origNext); moved = false; }
+        }
+        function ensure() {
+          if (fab || !mq.matches) return;
+          fab = document.createElement('button');
+          fab.className = 'm-chat-fab';
+          fab.type = 'button';
+          fab.textContent = ru ? 'Чат с агентом' : 'Chat with agent';
+          fab.addEventListener('click', openChat);
+          document.body.appendChild(fab);
+          closeBtn = document.createElement('button');
+          closeBtn.className = 'm-chat-close';
+          closeBtn.type = 'button';
+          closeBtn.setAttribute('aria-label', ru ? 'Закрыть чат' : 'Close chat');
+          closeBtn.textContent = '×';
+          closeBtn.addEventListener('click', closeChat);
+          document.body.appendChild(closeBtn);
+        }
+        ensure();
+        mq.addEventListener('change', function () { ensure(); if (!mq.matches) closeChat(); });
+      })();
+    </script>
   </body>
 </html>
 
@@ -66,6 +108,7 @@ const importMapJson = `{
   @import '../styles/legacy.css';
   @import '../styles/tokens.css';
   @import '../styles/content.css';
+  @import '../styles/mobile.css';
 
   /* Inside the cs0X overlay we mount the MDX body in a `.cnt-body` wrapper
      so content.css typography (h2/h3/p/ul/blockquote/code/pre/table)
