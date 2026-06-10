@@ -31,13 +31,28 @@
   .hud-left-articles{ order: 2 !important; }  /* articles console */
   .showcase         { order: 3 !important; }
 
-  /* Background FX layers stay as a fixed backdrop, never block content/scroll */
-  .stage, #r3f-bg, .grid, .horizon, .noise, .scanlines, .vignette,
+  /* HEAVY GPU/FX layers OFF on mobile — the bg video + WebGL (r3f) + animated
+     CSS layers over a long scroll crash mobile browser tabs ("Aw snap"). Mobile
+     gets a flat dark background instead. */
+  #bg, .stage video, #r3f-bg, .r3f-bg,
+  .grid, .noise, .scanlines, .horizon,
   .layer-holo-flicker, .layer-grid-burn, .layer-grid-interference,
-  .layer-interlace, .layer-scanlines-amp, .layer-tear, .backdrop {
+  .layer-interlace, .layer-scanlines-amp, .layer-tear {
+    display: none !important;
+  }
+  .stage {
+    position: fixed !important;
+    inset: 0 !important;
+    background: #060a10 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+  }
+  .vignette, .backdrop {
     position: fixed !important;
     pointer-events: none !important;
   }
+  /* solid page background so nothing flashes white behind the stack */
+  html, body { background: #060a10 !important; }
 
   /* --- 2. Center cockpit (.hud) → normal flow, full width --- */
   .hud {
