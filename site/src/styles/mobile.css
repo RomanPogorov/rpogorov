@@ -1,0 +1,206 @@
+/* ============================================================
+   MOBILE LAYER v2 — surgical, не разворачивает cockpit в один
+   длинный скролл (тот крашил айфон). Главная = чистый экран-герой;
+   витрина = отдельный экран (как в десктопе), чистим только шапку.
+   Тяжёлый фон (видео+WebGL) выключен — это и есть фикс краша.
+   Всё под @media; десктоп не тронут. Откат: удалить файл + @import.
+   ============================================================ */
+
+/* Mobile chat launcher/close — hidden on desktop, shown in @media below */
+.m-chat-fab, .m-chat-close { display: none; }
+
+@media (max-width: 768px) {
+
+  /* --- 1. HEAVY GPU/FX OFF (фикс краша вкладки на скролле) --- */
+  #bg, .stage video, #r3f-bg, .r3f-bg,
+  .grid, .noise, .scanlines, .horizon,
+  .layer-holo-flicker, .layer-grid-burn, .layer-grid-interference,
+  .layer-interlace, .layer-scanlines-amp, .layer-tear {
+    display: none !important;
+  }
+  .stage {
+    position: fixed !important; inset: 0 !important;
+    background: #060a10 !important; z-index: -1 !important; pointer-events: none !important;
+  }
+  html, body { background: #060a10 !important; cursor: auto !important; }
+  .cur-dot, .cur-ring { display: none !important; }
+  .vignette { position: fixed !important; pointer-events: none !important; }
+
+  /* --- 2. ГЛАВНАЯ = чистый экран-герой --- */
+  /* Правая панель (история/опыт/агенты/дашборд/табы) — убрать */
+  .hud-right { display: none !important; }
+  /* Левая консоль-статьи (внутри неё чат) — убрать; чат выносится во FAB */
+  .hud-left-articles { display: none !important; }
+  /* Чат инлайн скрыт, показывается только модалкой через FAB */
+  .chat-pane { display: none !important; }
+
+  .hud {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100svh !important;
+    inset: auto !important;
+    padding: 0 !important;
+    transform: none !important;
+    perspective: none !important;
+  }
+  .hud > .corner,
+  .hud .corner.tl, .hud .corner.tr, .hud .corner.bl, .hud .corner.br { display: none !important; }
+
+  .prompt {
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 100px 22px 48px !important;
+    min-height: 100svh !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 14px !important;
+  }
+  .prompt .v-bar, .prompt .tick, .prompt .runner { display: none !important; }
+  .prompt .role-hero {
+    font-size: clamp(2.4rem, 13vw, 4rem) !important;
+    line-height: 1.02 !important;
+    margin: 4px 0 !important;
+  }
+  .prompt .name { font-size: 0.78rem !important; }
+  .prompt .slogan {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    max-width: 34ch !important;
+  }
+  .prompt .cta { margin-top: 8px !important; }
+
+  /* career-path fab — компактно сверху слева, не наезжает на герой */
+  .ctl-fab {
+    top: 10px !important;
+    left: 10px !important;
+    right: auto !important;
+    max-width: calc(100vw - 80px) !important;
+    transform: scale(0.9) !important;
+    transform-origin: left top !important;
+  }
+
+  /* кнопка «↓ Витрина» на главной — на десктопе она fade-in по скроллу (JS),
+     на мобиле принудительно видима, иначе витрину не открыть. Поднята над чат-FAB. */
+  .showcase-cue {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    bottom: 86px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
+
+  /* --- 3. ВИТРИНА (отдельный экран) — чистая шапка + вертикальные карточки --- */
+  /* десктопные подсказки/карусельные стрелки — убрать */
+  .showcase-sub, .cases-nav { display: none !important; }
+
+  /* шапка/табы — в строку, без наложений */
+  .showcase-intro {
+    position: static !important; inset: auto !important; transform: none !important;
+    width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;
+    margin: 0 0 10px !important; padding-right: 76px !important; /* место под кнопку «назад» */
+  }
+  .sc-tabs {
+    position: static !important; inset: auto !important; transform: none !important;
+    display: flex !important; flex-wrap: wrap !important; gap: 8px !important;
+    width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;
+    margin: 0 0 16px !important;
+  }
+  .showcase-back {
+    position: absolute !important;
+    top: 12px !important; right: 14px !important;
+    margin: 0 !important;
+  }
+
+  /* активный вид раскладываем ВЕРТИКАЛЬНО — НЕ трогаем display
+     (display оставляем JS-тогглу «по компании / по кейсам»), только
+     направление/трансформ/сетку, иначе оба вида налезут (каша). */
+  .showcase-inner, .cases, .sc-view-cases, .sc-row, .cases-track {
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    grid-auto-flow: row !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+  .showcase .case {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 auto !important;
+    margin: 0 0 18px !important;
+    transform: none !important;
+  }
+  .showcase .case-media { width: 100% !important; height: auto !important; aspect-ratio: 16 / 10 !important; }
+  .showcase .case-media img,
+  .showcase .case-media video,
+  .showcase .case-media iframe,
+  .showcase .case-fallback { width: 100% !important; height: 100% !important; object-fit: cover !important; }
+
+  /* showcase scroll container itself */
+  .showcase { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; padding: 0 14px 56px !important; box-sizing: border-box !important; }
+  .showcase-inner { padding-top: 64px !important; }
+
+  /* --- 4. Модалки — НЕ трогаем blanket'ом (они скрыты через transform/opacity;
+     перебивать опасно — раскроет их поверх главной). Они и так заполняют экран
+     при открытии (inset:0). Подгоняем только ОТКРЫТУЮ work-detail dw и только
+     когда правую панель кто-то откроет — фуллскрин под маленький экран. --- */
+  body.dw-open .dw {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* --- 5. Аудио-гейт под маленький экран --- */
+  .audio-gate-frame { width: calc(100vw - 32px) !important; max-width: 400px !important; padding: 28px 20px !important; }
+  .audio-gate-actions { flex-wrap: wrap !important; }
+
+  /* --- 6. ЧАТ как фуллскрин-модалка (FAB + перенос pane в body на открытии) --- */
+  .m-chat-fab {
+    position: fixed !important; right: 16px; bottom: 16px; z-index: 90000;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 18px; border-radius: 999px;
+    border: 1px solid rgba(var(--acc-rgb, 0, 229, 255), 0.6);
+    background: rgba(10, 14, 20, 0.94); color: var(--acc, #00e5ff);
+    font: 600 0.85rem/1 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  }
+  .m-chat-fab::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 10px #4ade80; }
+  body.mobile-chat-open .m-chat-fab,
+  body.case-open .m-chat-fab,
+  body.dc-open .m-chat-fab,
+  body.reader-open .m-chat-fab,
+  body.dw-open .m-chat-fab,
+  body.showcase-open .m-chat-fab { display: none !important; }
+
+  body.mobile-chat-open { overflow: hidden !important; }
+  body.mobile-chat-open .chat-pane {
+    display: flex !important;
+    position: fixed !important; inset: 0 !important; z-index: 95000 !important;
+    width: 100vw !important; max-width: 100vw !important; height: 100dvh !important;
+    margin: 0 !important; border-radius: 0 !important; background: #0b0f15 !important;
+    flex-direction: column !important; transform: none !important; opacity: 1 !important;
+  }
+  body.mobile-chat-open .chat-thread { flex: 1 1 auto !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+  .m-chat-close {
+    position: fixed; top: 12px; right: 12px; z-index: 96000;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2); background: rgba(10,14,20,0.92);
+    color: #fff; font-size: 20px; line-height: 1; display: none;
+  }
+  body.mobile-chat-open .m-chat-close { display: block; }
+}
