@@ -79,15 +79,8 @@
   }
   .prompt .cta { margin-top: 8px !important; }
 
-  /* career-path fab — компактно сверху слева, не наезжает на герой */
-  .ctl-fab {
-    top: 10px !important;
-    left: 10px !important;
-    right: auto !important;
-    max-width: calc(100vw - 80px) !important;
-    transform: scale(0.9) !important;
-    transform-origin: left top !important;
-  }
+  /* career-path timeline — убрать с главной на мобиле (по просьбе) */
+  .ctl-fab, .ctl-modal { display: none !important; }
 
   /* кнопка «↓ Витрина» на главной — на десктопе она fade-in по скроллу (JS),
      на мобиле принудительно видима, иначе витрину не открыть. Поднята над чат-FAB. */
