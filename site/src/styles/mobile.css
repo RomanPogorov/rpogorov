@@ -123,34 +123,13 @@
     margin: 0 !important;
   }
 
-  /* активный вид раскладываем ВЕРТИКАЛЬНО — НЕ трогаем display
-     (display оставляем JS-тогглу «по компании / по кейсам»), только
-     направление/трансформ/сетку, иначе оба вида налезут (каша). */
-  .showcase-inner, .cases, .sc-view-cases, .sc-row, .cases-track {
-    flex-direction: column !important;
-    grid-template-columns: 1fr !important;
-    grid-auto-flow: row !important;
-    transform: none !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: visible !important;
+  /* Контейнеры видов (карусель) — position:absolute top:0 в базе, поэтому
+     карточки наезжают на статичную шапку. НЕ меняем их размер/раскладку
+     (существующий респонсив сам стакает карточки) и НЕ трогаем display
+     (JS-тоггл «по компании/по кейсам»). Просто смещаем НИЖЕ шапки. */
+  .cases, .sc-view-cases {
+    top: 152px !important;
   }
-  .showcase .case {
-    width: 100% !important;
-    max-width: 100% !important;
-    flex: 0 0 auto !important;
-    margin: 0 0 18px !important;
-    transform: none !important;
-  }
-  .showcase .case-media { width: 100% !important; height: auto !important; aspect-ratio: 16 / 10 !important; }
-  .showcase .case-media img,
-  .showcase .case-media video,
-  .showcase .case-media iframe,
-  .showcase .case-fallback { width: 100% !important; height: 100% !important; object-fit: cover !important; }
-
-  /* showcase scroll container itself */
-  .showcase { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; padding: 0 14px 56px !important; box-sizing: border-box !important; }
-  .showcase-inner { padding-top: 64px !important; }
 
   /* --- 4. Модалки — НЕ трогаем blanket'ом (они скрыты через transform/opacity;
      перебивать опасно — раскроет их поверх главной). Они и так заполняют экран
