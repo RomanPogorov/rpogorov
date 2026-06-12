@@ -9270,7 +9270,7 @@
         }
         .ctl-detail-grid {
             display: grid;
-            grid-template-columns: minmax(260px, 320px) 1fr;
+            grid-template-columns: minmax(360px, 440px) 1fr;
             gap: 36px;
             align-items: start;
         }
@@ -12570,3 +12570,14 @@
         @media (max-width: 768px) {
             .hs-achievements-grid { grid-template-columns: 1fr; }
         }
+
+        /* career timeline: Americor butts directly against Health Samurai */
+        .ctl-axis-row[data-ctl-row="main"] .ctl-co[data-role="americor"] { margin-right: -4px; }
+        /* clickable project cards open the case overlay */
+        .ctl-project--link { cursor: pointer; text-decoration: none; transition: border-color .18s, background .18s, transform .18s; }
+        .ctl-project--link:hover { border-color: rgba(var(--acc-rgb), 0.55); background: rgba(var(--acc-rgb), 0.06); transform: translateY(-1px); }
+        .ctl-project--link .ctl-project-title::after { content: " ↗"; opacity: .55; font-size: .85em; }
+
+        /* a case opened FROM the career timeline must sit ABOVE it (ctl-modal z:38) */
+        body.ctl-open .case-page.open,
+        body.ctl-open .dc-page { z-index: 60 !important; }

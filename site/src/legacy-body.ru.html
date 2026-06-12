@@ -195,7 +195,7 @@
                     <button type="button" class="ctl-co" data-role="project-practice" style="--s: 1; --e: 2;" aria-label="Project Practice">Project Practice</button>
                     <button type="button" class="ctl-co" data-role="gotrg" style="--s: 3; --e: 6;" aria-label="goTRG">goTRG</button>
                     <button type="button" class="ctl-co" data-role="helix" style="--s: 7; --e: 9;" aria-label="Helix Medindex">Helix (Medindex)</button>
-                    <button type="button" class="ctl-co" data-role="americor" style="--s: 10; --e: 12;" aria-label="Americor">Americor</button>
+                    <button type="button" class="ctl-co" data-role="americor" style="--s: 10; --e: 11;" aria-label="Americor">Americor</button>
                     <button type="button" class="ctl-co is-active" data-role="health-samurai" style="--s: 12; --e: 13;" aria-label="Health Samurai">Health Samurai</button>
                 </div>
 
@@ -4900,14 +4900,14 @@
                     tag: 'Healthcare IT',
                     summary: 'Healthcare IT с 2004 года, FHIR-инфраструктура (Aidbox). С первого дня собираю не макеты, а работающее в коде. Сделал генератор лендингов (<em>3 месяца → 2–3 дня</em>, на нём весь сайт компании), генератор презентаций, дизайн-систему на shadCN с мостом Figma ↔ код через Claude-скилл, бренд с нуля и генератор кудосов. Сейчас — «Replit для healthtech».',
                     projects: [
-                        { title: 'Генератор лендингов',     sub: 'любой вход → лендинг' },
-                        { title: 'Генератор презентаций',   sub: 'тот же движок' },
-                        { title: 'Дизайн-система shadCN',    sub: 'Figma ↔ Storybook' },
-                        { title: 'Скилл Figma ↔ код',        sub: 'кастомный Claude-скилл' },
-                        { title: 'Бренд и иллюстрации',      sub: 'лого, маскот' },
-                        { title: 'Генератор кудосов',        sub: 'обучен на маскоте' },
-                        { title: 'FireCamp BOF',             sub: 'за неделю, с тестами' },
-                        { title: 'Replit для healthtech',    sub: 'агент для врачей' },
+                        { title: 'Генератор лендингов',     sub: 'любой вход → лендинг', url: '#case/cs06/landing-platform' },
+                        { title: 'Генератор презентаций',   sub: 'тот же движок', url: '#case/cs06/presentation-generator' },
+                        { title: 'Дизайн-система shadCN',    sub: 'Figma ↔ Storybook', url: '#case/cs06/hs-design-system' },
+                        { title: 'Скилл Figma ↔ код',        sub: 'кастомный Claude-скилл', url: '#case/cs06/hs-design-system' },
+                        { title: 'Бренд и иллюстрации',      sub: 'лого, маскот', url: '#case/cs06/brand-identity' },
+                        { title: 'Генератор кудосов',        sub: 'обучен на маскоте', url: '#case/cs06/brand-identity' },
+                        { title: 'FireCamp BOF',             sub: 'за неделю, с тестами', url: '#case/cs06/firecamp-bof' },
+                        { title: 'Replit для healthtech',    sub: 'агент для врачей', url: '#case/cs06/replit-healthtech' },
                     ],
                 },
                 'americor': {
@@ -4918,9 +4918,9 @@
                     tag: 'FinTech',
                     summary: 'FinTech для списания долгов. Вёл pre-IPO редизайн web + iOS + Android. Собрал мультибрендовую дизайн-систему на токенах для 3 платформ. Перевёл процесс на <em>code-first</em>: гипотезы проверяю прототипами на компонентах, оттуда — в Figma. Менторил джуниор-дизайнера.',
                     projects: [
-                        { title: 'Редизайн 3 платформ',      sub: 'web · iOS · Android' },
-                        { title: 'Дизайн-система ×3',         sub: 'мультибренд, токены' },
-                        { title: 'Code-first процесс',        sub: 'React · Storybook' },
+                        { title: 'Редизайн 3 платформ',      sub: 'web · iOS · Android', url: '#case/cs01/offer-acceptance' },
+                        { title: 'Дизайн-система ×3',         sub: 'мультибренд, токены', url: '#case/cs01/design-system' },
+                        { title: 'Code-first процесс',        sub: 'React · Storybook', url: '#case/cs01/figma-claude-vibe' },
                         { title: 'FB Insights Parser',        sub: 'AI-тул для ресёрча' },
                         { title: 'NSF Shortfall Simulator',   sub: 'внутренний тул' },
                         { title: 'Менторинг джуниора',        sub: 'команда' },
@@ -5027,12 +5027,15 @@
             function renderDetail(roleId) {
                 const r = ROLES[roleId];
                 if (!r) return;
-                const projects = r.projects.map(p => `
-                    <div class="ctl-project">
+                const projects = r.projects.map(p => {
+                    const tag = p.url ? 'a' : 'div';
+                    const attr = p.url ? ` href="${p.url}"` : '';
+                    const cls = p.url ? 'ctl-project ctl-project--link' : 'ctl-project';
+                    return `<${tag} class="${cls}"${attr}>
                         <div class="ctl-project-title">${p.title}</div>
                         <div class="ctl-project-sub">${p.sub}</div>
-                    </div>
-                `).join('');
+                    </${tag}>`;
+                }).join('');
                 detail.innerHTML = `
                     <div class="ctl-detail-grid">
                         <div class="ctl-detail-side">
