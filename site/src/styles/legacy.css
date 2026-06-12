@@ -9270,7 +9270,7 @@
         }
         .ctl-detail-grid {
             display: grid;
-            grid-template-columns: minmax(360px, 440px) 1fr;
+            grid-template-columns: minmax(440px, 1.35fr) 1fr;
             gap: 36px;
             align-items: start;
         }
