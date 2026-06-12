@@ -195,8 +195,8 @@
                     <button type="button" class="ctl-co" data-role="project-practice" style="--s: 1; --e: 2;" aria-label="Project Practice">Project Practice</button>
                     <button type="button" class="ctl-co" data-role="gotrg" style="--s: 3; --e: 6;" aria-label="goTRG">goTRG</button>
                     <button type="button" class="ctl-co" data-role="helix" style="--s: 7; --e: 9;" aria-label="Helix Medindex">Helix (Medindex)</button>
-                    <button type="button" class="ctl-co" data-role="health-samurai" style="--s: 10; --e: 11;" aria-label="Health Samurai">Samurai</button>
-                    <button type="button" class="ctl-co is-active" data-role="americor" style="--s: 12; --e: 13;" aria-label="Americor">Americor</button>
+                    <button type="button" class="ctl-co" data-role="americor" style="--s: 10; --e: 12;" aria-label="Americor">Americor</button>
+                    <button type="button" class="ctl-co is-active" data-role="health-samurai" style="--s: 12; --e: 13;" aria-label="Health Samurai">Health Samurai</button>
                 </div>
 
                 <span class="ctl-axis-tag">// сайд-проекты · part-time</span>
@@ -4892,135 +4892,134 @@
 
             // Role data — keys match data-role on each .ctl-co button
             const ROLES = {
-                'americor': {
-                    name: 'Americor',
-                    role: 'Lead Product Designer',
-                    period: '2024 — now',
-                    location: 'Los Angeles',
-                    tag: 'FinTech',
-                    summary: 'FinTech for debt relief. Led the pre-IPO redesign of web + iOS + Android. Built a 3-platform, multi-brand, token-driven design system. Flipped the process to <em>code-first</em> with React + Storybook. Mentored the junior designer through it all.',
-                    projects: [
-                        { title: 'Multi-platform Redesign',  sub: 'web · iOS · Android' },
-                        { title: '3-platform Design System', sub: 'multi-brand tokens' },
-                        { title: 'Code-first Process',       sub: 'React · Storybook' },
-                        { title: 'FB Insights Parser',       sub: 'AI research tool' },
-                        { title: 'NSF Shortfall Simulator',  sub: 'internal tool' },
-                        { title: 'Junior Mentoring',         sub: 'people' },
-                    ],
-                },
                 'health-samurai': {
                     name: 'Health Samurai',
-                    role: 'Designer-Developer',
-                    period: '2023 — now',
-                    location: 'Lisbon',
+                    role: 'Дизайнер-разработчик',
+                    period: '2025 — сейчас',
+                    location: 'Лиссабон',
                     tag: 'Healthcare IT',
-                    summary: 'Healthcare IT since 2004. Built an <em>AI-generated design system</em> on shadCN, a markdown-first landing platform with Claude in the loop, a presentation generator, and shipped two product redesigns (Aidbox, MPI Box). Custom Claude skills became the default tooling.',
+                    summary: 'Healthcare IT с 2004 года, FHIR-инфраструктура (Aidbox). С первого дня собираю не макеты, а работающее в коде. Сделал генератор лендингов (<em>3 месяца → 2–3 дня</em>, на нём весь сайт компании), генератор презентаций, дизайн-систему на shadCN с мостом Figma ↔ код через Claude-скилл, бренд с нуля и генератор кудосов. Сейчас — «Replit для healthtech».',
                     projects: [
-                        { title: 'shadCN Design System',  sub: 'figma to storybook' },
-                        { title: 'Figma ↔ Code skill',    sub: 'custom claude skill' },
-                        { title: 'Landing Platform',      sub: 'md → claude → page' },
-                        { title: 'Presentation Generator',sub: 'same engine, decks' },
-                        { title: 'Embedded Analytics',    sub: 'posthog, every page' },
-                        { title: 'Aidbox v2 + MPI Box',   sub: 'product redesigns' },
-                        { title: 'Brand & Illustrations', sub: 'logos, mascots' },
-                        { title: 'FireCamp app',          sub: '1-week vibe-code' },
-                        { title: 'Kudos generator',       sub: 'mascot-trained gen' },
+                        { title: 'Генератор лендингов',     sub: 'любой вход → лендинг' },
+                        { title: 'Генератор презентаций',   sub: 'тот же движок' },
+                        { title: 'Дизайн-система shadCN',    sub: 'Figma ↔ Storybook' },
+                        { title: 'Скилл Figma ↔ код',        sub: 'кастомный Claude-скилл' },
+                        { title: 'Бренд и иллюстрации',      sub: 'лого, маскот' },
+                        { title: 'Генератор кудосов',        sub: 'обучен на маскоте' },
+                        { title: 'FireCamp BOF',             sub: 'за неделю, с тестами' },
+                        { title: 'Replit для healthtech',    sub: 'агент для врачей' },
+                    ],
+                },
+                'americor': {
+                    name: 'Americor',
+                    role: 'Ведущий продуктовый дизайнер',
+                    period: '2023 — 2025',
+                    location: 'Лос-Анджелес',
+                    tag: 'FinTech',
+                    summary: 'FinTech для списания долгов. Вёл pre-IPO редизайн web + iOS + Android. Собрал мультибрендовую дизайн-систему на токенах для 3 платформ. Перевёл процесс на <em>code-first</em>: гипотезы проверяю прототипами на компонентах, оттуда — в Figma. Менторил джуниор-дизайнера.',
+                    projects: [
+                        { title: 'Редизайн 3 платформ',      sub: 'web · iOS · Android' },
+                        { title: 'Дизайн-система ×3',         sub: 'мультибренд, токены' },
+                        { title: 'Code-first процесс',        sub: 'React · Storybook' },
+                        { title: 'FB Insights Parser',        sub: 'AI-тул для ресёрча' },
+                        { title: 'NSF Shortfall Simulator',   sub: 'внутренний тул' },
+                        { title: 'Менторинг джуниора',        sub: 'команда' },
                     ],
                 },
                 'helix': {
                     name: 'Helix · Medindex',
-                    role: 'Lead Product Designer',
+                    role: 'Ведущий продуктовый дизайнер',
                     period: '2020 — 2023',
-                    location: 'SPb · Moscow · Astana · Minsk',
+                    location: 'СПб · Москва · Астана · Минск',
                     tag: 'MedTech',
-                    summary: 'One of the largest medical labs in Eurasia. Built a design team from scratch, modernized legacy desktop apps to web, shipped 3 new applications + a mobile app, plus the design system with token-based theming.',
+                    summary: 'Одна из крупнейших медицинских лабораторий Евразии. Собрал дизайн-команду с нуля, перевёл легаси десктоп-приложения в веб, выпустил 3 новых приложения + мобильное, плюс дизайн-систему с темизацией на токенах.',
                     projects: [
-                        { title: '3 new applications',   sub: 'released to prod' },
-                        { title: 'Mobile application',   sub: 'launch' },
-                        { title: 'Website redesign',     sub: 'corp site' },
-                        { title: 'Design system + tokens',sub: 'theming engine' },
-                        { title: 'Built design team',    sub: 'from scratch' },
-                        { title: 'Multi-platform ecosystem', sub: 'desktop → web' },
+                        { title: '3 новых приложения',       sub: 'в проде' },
+                        { title: 'Мобильное приложение',     sub: 'запуск' },
+                        { title: 'Редизайн сайта',           sub: 'корп-сайт' },
+                        { title: 'Дизайн-система + токены',   sub: 'темизация' },
+                        { title: 'Дизайн-команда',           sub: 'с нуля' },
+                        { title: 'Экосистема',               sub: 'десктоп → веб' },
                     ],
                 },
                 'gotrg': {
                     name: 'goTRG',
-                    role: 'UX/UI Designer',
+                    role: 'UX/UI дизайнер',
                     period: '2016 — 2020',
-                    location: 'SPb · Miami',
+                    location: 'СПб · Майами',
                     tag: 'SaaS · ERP',
-                    summary: 'SaaS, Supply Chain & ReCommerce platform. Audited a legacy ERP, built a design system from scratch with legacy-support layer, and launched a brand-new ERP on top of it. Heavy CSS refactoring, React-component layouting, user interviews.',
+                    summary: 'Платформа SaaS, Supply Chain и ReCommerce. Провёл аудит легаси-ERP, собрал дизайн-систему с нуля со слоем поддержки легаси и запустил новый ERP на ней. Рефакторинг CSS, вёрстка React-компонентов, интервью с ключевыми пользователями.',
                     projects: [
-                        { title: 'ERP Audit',            sub: 'legacy SaaS' },
-                        { title: 'Design System',        sub: 'from scratch' },
-                        { title: 'New ERP Launch',       sub: 'on the new DS' },
-                        { title: 'React Layouting',      sub: 'components' },
-                        { title: 'CSS Refactoring',      sub: 'legacy → tokens' },
-                        { title: 'Interviews & Testing', sub: 'with key users' },
+                        { title: 'Аудит ERP',                sub: 'легаси SaaS' },
+                        { title: 'Дизайн-система',           sub: 'с нуля' },
+                        { title: 'Запуск нового ERP',        sub: 'на новой ДС' },
+                        { title: 'Вёрстка React',            sub: 'компоненты' },
+                        { title: 'Рефакторинг CSS',          sub: 'легаси → токены' },
+                        { title: 'Интервью и тесты',         sub: 'ключевые юзеры' },
                     ],
                 },
                 'project-practice': {
                     name: 'Project Practice',
-                    role: 'UX/UI Designer · Developer',
+                    role: 'UX/UI дизайнер · разработчик',
                     period: '2014 — 2016',
-                    location: 'Moscow',
+                    location: 'Москва',
                     tag: 'PM Tools',
-                    summary: 'Joined as UX/UI; due to specialist shortage, started laying out my own designs and building simple features. JS, LESS, CSS, HTML, C# templates. The bridge between design and code that has never closed since.',
+                    summary: 'Пришёл как UX/UI; из-за нехватки специалистов начал сам верстать свои макеты и собирать простые фичи. JS, LESS, CSS, HTML, C#-шаблоны. Мост между дизайном и кодом, который с тех пор не закрывался.',
                     projects: [
-                        { title: 'PM-system × 4 redesigns', sub: 'project management' },
-                        { title: 'Theming Mechanism',       sub: 'in-system theming' },
-                        { title: 'CSS → LESS Refactor',     sub: '80% coverage' },
-                        { title: 'Mobile App Design',       sub: 'adaptive devices' },
-                        { title: 'Design Processes',        sub: 'established' },
-                        { title: 'UX Research',             sub: 'iteration loops' },
+                        { title: 'PM-система · 4 редизайна', sub: 'управление проектами' },
+                        { title: 'Механизм темизации',       sub: 'темы в системе' },
+                        { title: 'Рефактор CSS → LESS',      sub: '80% покрытия' },
+                        { title: 'Дизайн моб-приложения',    sub: 'адаптив' },
+                        { title: 'Дизайн-процессы',          sub: 'выстроены' },
+                        { title: 'UX-ресёрч',                sub: 'итерации' },
                     ],
                 },
                 'code-we-trust': {
                     name: 'Code We Trust',
-                    role: 'UX/UI · Part-time',
+                    role: 'UX/UI · part-time',
                     period: '2019 — 2024',
-                    location: 'Greece',
-                    tag: 'Side · DevTools',
-                    summary: 'Source-code assessment & audit platform. Designed from scratch — UI in low and hi-fi, prototyping, user testing, React-component layouting, CSS refactoring.',
+                    location: 'Греция',
+                    tag: 'Сайд · DevTools',
+                    summary: 'Платформа оценки и аудита исходного кода. Дизайн с нуля — UI в low и hi-fi, прототипирование, юзер-тесты, вёрстка React-компонентов, рефакторинг CSS.',
                     projects: [
-                        { title: 'UI Design',          sub: 'low + hi-fi' },
-                        { title: 'CSS Refactoring',    sub: 'legacy cleanup' },
-                        { title: 'React Layouting',    sub: 'components' },
-                        { title: 'Prototyping',        sub: 'flow validation' },
-                        { title: 'User Testing',       sub: 'with devs' },
-                        { title: 'Code Audit UX',      sub: 'core flow' },
+                        { title: 'UI-дизайн',                sub: 'low + hi-fi' },
+                        { title: 'Рефакторинг CSS',          sub: 'чистка легаси' },
+                        { title: 'Вёрстка React',            sub: 'компоненты' },
+                        { title: 'Прототипирование',         sub: 'проверка флоу' },
+                        { title: 'Юзер-тесты',               sub: 'с разработчиками' },
+                        { title: 'UX аудита кода',           sub: 'ключевой флоу' },
                     ],
                 },
                 'oort-digital': {
                     name: 'Oort Digital',
-                    role: 'UX/UI · Part-time',
+                    role: 'UX/UI · part-time',
                     period: '2021 — 2023',
-                    location: 'Hong Kong',
-                    tag: 'Side · Web3',
-                    summary: 'Layer-0 NFT solution — adding utility to NFTs, in-game worlds, community rewards. Researched Web3 patterns, designed the main app UX/UI, built and expanded the design system, ran rapid prototyping cycles and user interviews.',
+                    location: 'Гонконг',
+                    tag: 'Сайд · Web3',
+                    summary: 'Layer-0 решение для NFT — полезность для NFT, игровые миры, награды сообществу. Изучил Web3-паттерны, спроектировал UX/UI основного приложения, собрал и расширил дизайн-систему, гонял быстрые прототипы и интервью.',
                     projects: [
-                        { title: 'Web3 Pattern Research', sub: 'NFT mechanics' },
-                        { title: 'Main App UX/UI',        sub: 'core product' },
-                        { title: 'Design System',         sub: 'created + expanded' },
-                        { title: 'Rapid Prototyping',     sub: 'hypothesis loops' },
-                        { title: 'User Interviews',       sub: 'community' },
-                        { title: 'NFT World Dive',        sub: 'domain learning' },
+                        { title: 'Ресёрч Web3-паттернов',    sub: 'механики NFT' },
+                        { title: 'UX/UI приложения',         sub: 'основной продукт' },
+                        { title: 'Дизайн-система',           sub: 'создал + расширил' },
+                        { title: 'Быстрое прототипирование', sub: 'проверка гипотез' },
+                        { title: 'Интервью',                 sub: 'сообщество' },
+                        { title: 'Погружение в NFT',         sub: 'предметка' },
                     ],
                 },
                 'pavilion': {
                     name: 'Pavilion',
-                    role: 'UX/UI · Part-time',
+                    role: 'UX/UI · part-time',
                     period: '2023 — 2024',
-                    location: 'Lisbon · Texas',
-                    tag: 'Side · ERP',
-                    summary: 'ERP solution for the jewelry industry, built on Salesforce. Deep market research, detailed prototyping, user interviews and testing, extending Salesforce Lightning components.',
+                    location: 'Лиссабон · Техас',
+                    tag: 'Сайд · ERP',
+                    summary: 'ERP для ювелирной индустрии на Salesforce. Глубокий ресёрч рынка, детальное прототипирование, интервью и тесты, расширение компонентов Salesforce Lightning.',
                     projects: [
-                        { title: 'Market Research',         sub: 'deep dive' },
-                        { title: 'Detailed Prototyping',    sub: 'flow precision' },
-                        { title: 'User Interviews',         sub: 'jewelry biz' },
-                        { title: 'Salesforce Lightning',    sub: 'components extending' },
-                        { title: 'Design Review',           sub: 'cross-team' },
-                        { title: 'Usability Testing',       sub: 'iteration' },
+                        { title: 'Ресёрч рынка',             sub: 'глубокое погружение' },
+                        { title: 'Детальное прототипир.',    sub: 'точность флоу' },
+                        { title: 'Интервью',                 sub: 'ювелирный бизнес' },
+                        { title: 'Salesforce Lightning',     sub: 'расширение компонентов' },
+                        { title: 'Дизайн-ревью',             sub: 'кросс-командно' },
+                        { title: 'Юзабилити-тесты',          sub: 'итерации' },
                     ],
                 },
             };
@@ -5050,7 +5049,7 @@
                         </div>
                         <div class="ctl-detail-projects">
                             <div class="ctl-detail-projects-head">
-                                <b>${r.projects.length}</b> notable projects
+                                <b>${r.projects.length}</b> ключевых проектов
                             </div>
                             <div class="ctl-detail-projects-grid">${projects}</div>
                         </div>
@@ -5080,7 +5079,7 @@
             });
 
             // Initial render — Americor (most recent) is the default active
-            renderDetail('americor');
+            renderDetail('health-samurai');
 
             let lastFocus = null;
             let mouseRaf = 0;
