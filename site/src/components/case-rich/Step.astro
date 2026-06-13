@@ -1,30 +1,21 @@
 ---
 /**
- * Protocol step — one compact row inside a <Protocol>: a bold title, a body
- * line, and an optional badge pill (e.g. "экономия контекста: …" or a
- * checkpoint note). The badge splits on the first ":" so the label reads
- * muted and the value reads in accent. No numbering, no left rail — dense by
- * design. Reusable across any step-by-step narrative.
+ * Protocol step — one compact row inside a <Protocol>: a bold title and a
+ * body line, with an optional badge rendered inline at the end of the body
+ * as a <code> chip (styled identically to inline code like
+ * `references/catalog.md` via content.css). No numbering, no left rail, no
+ * extra badge line — dense by design. Reusable across step-by-step narratives.
  */
 interface Props {
   title: string;
   badge?: string;
 }
 const { title, badge } = Astro.props;
-const colon = badge ? badge.indexOf(':') : -1;
-const badgeLabel = colon > -1 ? badge!.slice(0, colon + 1) : null;
-const badgeVal = colon > -1 ? badge!.slice(colon + 1).trim() : badge ?? null;
 ---
 
 <div class="step">
   <h4 class="step-title">{title}</h4>
-  <p class="step-body"><slot /></p>
-  {badge && (
-    <span class="step-badge">
-      {badgeLabel && <span class="b-label">{badgeLabel}</span>}
-      <span class="b-val">{badgeVal}</span>
-    </span>
-  )}
+  <p class="step-body"><slot />{badge && <code class="step-badge">{badge}</code>}</p>
 </div>
 
 <style>
@@ -49,26 +40,8 @@ const badgeVal = colon > -1 ? badge!.slice(colon + 1).trim() : badge ?? null;
     line-height: 1.5;
     color: var(--text-muted);
   }
+  /* visual style inherited from content.css `.cnt-body code`; just spacing */
   .step-badge {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.35em;
-    margin-top: var(--space-2);
-    padding: 3px 9px;
-    border-radius: var(--radius-sm);
-    background: rgba(var(--acc-rgb), 0.08);
-    border: 1px solid rgba(var(--acc-rgb), 0.18);
-    font-family: var(--font-mono);
-    font-size: var(--type-2xs);
-    line-height: 1.4;
-  }
-  .b-label {
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .b-val {
-    color: var(--acc);
-    font-weight: 600;
+    margin-left: 0.4em;
   }
 </style>
