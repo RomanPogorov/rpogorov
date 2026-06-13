@@ -15,12 +15,15 @@ type Item = { src: string; alt?: string; caption?: string; kind?: 'image' | 'vid
 interface Props {
   items: Item[];
   portrait?: boolean;
+  /** Opt-in faint grey border + 8px radius on each image (for flat,
+   *  edge-to-edge UI screenshots that otherwise read as borderless). */
+  framed?: boolean;
 }
-const { items, portrait = false } = Astro.props;
+const { items, portrait = false, framed = false } = Astro.props;
 const figClass = portrait ? 'dc-figure dc-figure-portrait' : 'dc-figure';
 const cleanCap = (c?: string) => c?.replace(/^\s*\/\/\s*/, '');
 ---
-<div class="dc-grid-2">
+<div class:list={['dc-grid-2', { 'is-framed': framed }]}>
   {items.map((it) => {
     const cap = cleanCap(it.caption);
     return (
@@ -35,3 +38,11 @@ const cleanCap = (c?: string) => c?.replace(/^\s*\/\/\s*/, '');
     );
   })}
 </div>
+
+<style>
+  .dc-grid-2.is-framed :global(img),
+  .dc-grid-2.is-framed :global(video) {
+    border: 1px solid rgba(15, 20, 25, 0.08);
+    border-radius: 8px;
+  }
+</style>
