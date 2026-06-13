@@ -1,18 +1,17 @@
 ---
 /**
- * Principle — a single card inside <Principles>: a dark rounded-square icon
- * holding a short glyph (e.g. "[ ]", "↓", "✓"), a bold title, and a slotted
- * body paragraph. Reusable for any "ideas the thing rests on" grid.
+ * Principle — a single card inside <Principles>: a short accent rule, a bold
+ * title, and a slotted body paragraph. Clean, icon-free. Reusable for any
+ * "ideas the thing rests on" grid.
  */
 interface Props {
-  icon: string;
   title: string;
 }
-const { icon, title } = Astro.props;
+const { title } = Astro.props;
 ---
 
 <article class="principle">
-  <span class="principle-icon" aria-hidden="true">{icon}</span>
+  <span class="principle-bar" aria-hidden="true"></span>
   <h4 class="principle-title">{title}</h4>
   <p class="principle-body"><slot /></p>
 </article>
@@ -23,28 +22,19 @@ const { icon, title } = Astro.props;
     border: 1px solid var(--border-card);
     border-radius: var(--radius-lg);
     padding: var(--space-6);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
   }
-  .principle-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-    background: #16191e;
-    color: var(--acc);
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1;
+  .principle-bar {
+    display: block;
+    width: 28px;
+    height: 3px;
+    border-radius: var(--radius-pill);
+    background: var(--acc);
+    margin-bottom: var(--space-4);
   }
   .principle-title {
-    margin: 0;
+    margin: 0 0 var(--space-3);
     font-family: var(--font-body);
-    font-size: 1.1875rem;
+    font-size: 1.125rem;
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.01em;
@@ -53,7 +43,7 @@ const { icon, title } = Astro.props;
   .principle-body {
     margin: 0;
     font-size: 0.9375rem;
-    line-height: 1.6;
+    line-height: 1.55;
     color: var(--text-muted);
   }
   .principle-body :global(strong) {

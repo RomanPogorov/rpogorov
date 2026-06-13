@@ -30,7 +30,7 @@ const { eyebrow, title, intro } = Astro.props;
     margin: var(--space-10) 0;
   }
   .protocol-head {
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-4);
   }
   .eyebrow {
     display: block;
@@ -59,16 +59,6 @@ const { eyebrow, title, intro } = Astro.props;
     max-width: 56ch;
   }
   .steps {
-    position: relative;
-    padding-left: var(--space-5);
-  }
-  .steps::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: var(--border-soft);
+    border-top: 1px solid var(--border-soft);
   }
 </style>
