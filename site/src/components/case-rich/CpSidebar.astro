@@ -16,7 +16,11 @@
  *            Falls back to var(--hs-red) then var(--acc) if omitted.
  */
 interface Item {
-  target: string;
+  /** In-page section anchor id — scroll-spy button. */
+  target?: string;
+  /** Hash route (e.g. '#case/cs06/landing-platform') — renders an anchor
+   *  that opens the linked overlay instead of scrolling. */
+  href?: string;
   num: string;
   name: string;
 }
@@ -39,10 +43,17 @@ const styleAttr = accent ? `--cp-sb-accent: ${accent}` : undefined;
       <div class="cp-sb-list" role="list">
         {g.items.map((it) => (
           <div role="listitem">
-            <button class="cp-sb-item" data-target={it.target} type="button">
-              <span class="cp-sb-num">{it.num}</span>
-              <span class="cp-sb-name">{it.name}</span>
-            </button>
+            {it.href ? (
+              <a class="cp-sb-item cp-sb-link" href={it.href}>
+                <span class="cp-sb-num">{it.num}</span>
+                <span class="cp-sb-name">{it.name}</span>
+              </a>
+            ) : (
+              <button class="cp-sb-item" data-target={it.target} type="button">
+                <span class="cp-sb-num">{it.num}</span>
+                <span class="cp-sb-name">{it.name}</span>
+              </button>
+            )}
           </div>
         ))}
       </div>

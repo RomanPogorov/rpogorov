@@ -12206,6 +12206,14 @@
             font-family: inherit;
             border-left: 2px solid transparent;
             transition: color 0.15s, border-color 0.15s;
+            text-decoration: none;
+        }
+        /* Deep-case links (href items) — same chrome, plus an arrow so they
+           read as "opens another case" vs in-page scroll items. */
+        .cp-sb-link .cp-sb-name::after {
+            content: " ↗";
+            color: var(--cp-sb-accent, var(--hs-red, var(--acc)));
+            opacity: 0.65;
         }
         .cp-sb-num {
             font-family: 'JetBrains Mono', ui-monospace, monospace;
