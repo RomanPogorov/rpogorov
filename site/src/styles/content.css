@@ -108,6 +108,13 @@ video {
 .cnt-body :where(p:last-child) {
   margin-bottom: 0;
 }
+/* Paragraphs inside Protocol step cards must not inherit the prose bottom
+   margin — it stacks with the card padding into a hole under the text.
+   Higher specificity than `.cnt-body :where(p)` so it wins in the overlay
+   too (where the component-scoped reset can lose). */
+.cnt-body .step p {
+  margin: 0;
+}
 .cnt-body :where(strong, b) {
   color: var(--ink-strong);
   font-weight: 600;
