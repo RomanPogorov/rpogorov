@@ -5,11 +5,17 @@
  * title + optional meta + arrow. Reusable cross-case CTA.
  */
 interface Props {
-  href: string;
+  company: string;
+  deeplink: string;
   title: string;
   meta?: string;
 }
-const { href, title, meta } = Astro.props;
+const { company, deeplink, title, meta } = Astro.props;
+// Hash route — the ru SPA's delegated `a[href^="#case/"]` handler intercepts
+// this and opens the sub-case as a STACKED overlay (ESC-closable), same as the
+// inline markdown sub-case links. Don't use a real /case/ URL — that does a
+// full navigation out of the SPA.
+const href = `#case/${company}/${deeplink}`;
 ---
 
 <a class="case-link" href={href}>
