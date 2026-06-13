@@ -1,0 +1,63 @@
+---
+/**
+ * Principle — a single card inside <Principles>: a dark rounded-square icon
+ * holding a short glyph (e.g. "[ ]", "↓", "✓"), a bold title, and a slotted
+ * body paragraph. Reusable for any "ideas the thing rests on" grid.
+ */
+interface Props {
+  icon: string;
+  title: string;
+}
+const { icon, title } = Astro.props;
+---
+
+<article class="principle">
+  <span class="principle-icon" aria-hidden="true">{icon}</span>
+  <h4 class="principle-title">{title}</h4>
+  <p class="principle-body"><slot /></p>
+</article>
+
+<style>
+  .principle {
+    background: var(--surface-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .principle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: #16191e;
+    color: var(--acc);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .principle-title {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 1.1875rem;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--text-strong);
+  }
+  .principle-body {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .principle-body :global(strong) {
+    color: var(--text-strong);
+    font-weight: 600;
+  }
+</style>

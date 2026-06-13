@@ -1,0 +1,74 @@
+---
+/**
+ * Protocol — a vertical, numbered, deterministic step list with an optional
+ * eyebrow / title / intro header and a left rail line. Slot in <Step> items.
+ * Self-contained "how it works" section, reusable across cases.
+ */
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+}
+const { eyebrow, title, intro } = Astro.props;
+---
+
+<section class="protocol">
+  {(eyebrow || title || intro) && (
+    <header class="protocol-head">
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      {title && <h3 class="protocol-title">{title}</h3>}
+      {intro && <p class="protocol-intro">{intro}</p>}
+    </header>
+  )}
+  <div class="steps">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .protocol {
+    margin: var(--space-10) 0;
+  }
+  .protocol-head {
+    margin-bottom: var(--space-6);
+  }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 700;
+    letter-spacing: var(--track-eyebrow);
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: var(--space-3);
+  }
+  .protocol-title {
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-body);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+  }
+  .protocol-intro {
+    margin: 0;
+    font-size: var(--type-base);
+    line-height: 1.55;
+    color: var(--text-muted);
+    max-width: 56ch;
+  }
+  .steps {
+    position: relative;
+    padding-left: var(--space-5);
+  }
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-soft);
+  }
+</style>

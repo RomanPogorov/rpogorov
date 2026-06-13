@@ -1,0 +1,97 @@
+---
+/**
+ * Protocol step — one numbered row inside a <Protocol>. A mono number in the
+ * left rail, a bold title, a body paragraph, and an optional badge pill
+ * (e.g. "экономия контекста: ~4.5-9k vs ~15k токенов" or a checkpoint note).
+ * The badge splits on the first ":" so the label reads muted and the value
+ * reads in accent. Reusable across any "deterministic pipeline" narrative.
+ */
+interface Props {
+  num: string;
+  title: string;
+  badge?: string;
+}
+const { num, title, badge } = Astro.props;
+const colon = badge ? badge.indexOf(':') : -1;
+const badgeLabel = colon > -1 ? badge!.slice(0, colon + 1) : null;
+const badgeVal = colon > -1 ? badge!.slice(colon + 1).trim() : badge ?? null;
+---
+
+<div class="step">
+  <div class="step-num">{num}</div>
+  <div class="step-main">
+    <h4 class="step-title">{title}</h4>
+    <p class="step-body"><slot /></p>
+    {badge && (
+      <span class="step-badge">
+        {badgeLabel && <span class="b-label">{badgeLabel}</span>}
+        <span class="b-val">{badgeVal}</span>
+      </span>
+    )}
+  </div>
+</div>
+
+<style>
+  .step {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--space-5);
+    align-items: start;
+    padding-block: var(--space-5);
+  }
+  .step:not(:first-child) {
+    border-top: 1px solid var(--border-soft);
+  }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--acc);
+    line-height: 1.4;
+  }
+  .step-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .step-title {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--text-strong);
+  }
+  .step-body {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .step-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35em;
+    margin-top: var(--space-1);
+    align-self: flex-start;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: rgba(var(--acc-rgb), 0.08);
+    border: 1px solid rgba(var(--acc-rgb), 0.18);
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    line-height: 1.4;
+  }
+  .b-label {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .b-val {
+    color: var(--acc);
+    font-weight: 600;
+  }
+</style>

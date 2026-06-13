@@ -1,0 +1,62 @@
+---
+/**
+ * Principles — a "few ideas this rests on" section: optional eyebrow / title
+ * header above a responsive grid of <Principle> cards (3 across on desktop,
+ * stacks on mobile). Reusable across cases.
+ */
+interface Props {
+  eyebrow?: string;
+  title?: string;
+}
+const { eyebrow, title } = Astro.props;
+---
+
+<section class="principles">
+  {(eyebrow || title) && (
+    <header class="principles-head">
+      {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+      {title && <h3 class="principles-title">{title}</h3>}
+    </header>
+  )}
+  <div class="principles-grid">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .principles {
+    margin: var(--space-10) 0;
+  }
+  .principles-head {
+    margin-bottom: var(--space-8);
+  }
+  .eyebrow {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--type-xs);
+    font-weight: 700;
+    letter-spacing: var(--track-eyebrow);
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: var(--space-3);
+  }
+  .principles-title {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: clamp(1.75rem, 3.4vw, 2.25rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--text-strong);
+  }
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+  @media (max-width: 720px) {
+    .principles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
