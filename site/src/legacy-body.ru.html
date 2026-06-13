@@ -4460,7 +4460,7 @@
 
             // URL routing on initial load + popstate.
             function syncFromHash() {
-                const m = location.hash.match(/^#case\/(cs0[12])\/([\w-]+)/);
+                const m = location.hash.match(/^#case\/(cs\d+)\/([\w-]+)/);
                 if (m) {
                     open(m[2], { silent: true, referrer: 'grid' });
                 } else if (document.body.classList.contains('dc-open')) {
