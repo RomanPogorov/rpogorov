@@ -22,7 +22,7 @@ const { title, badge } = Astro.props;
   .step {
     background: #f6f7fa;
     border-radius: var(--radius-md);
-    padding: var(--space-5);
+    padding: var(--space-4);
   }
   .step-title {
     margin: 0 0 var(--space-1);
@@ -39,8 +39,11 @@ const { title, badge } = Astro.props;
     line-height: 1.5;
     color: var(--text-muted);
   }
-  /* visual style inherited from content.css `.cnt-body code`; just spacing */
+  /* visual style inherited from content.css `.cnt-body code`; flush-left on
+     its own wrapped line, small breath above. */
   .step-badge {
-    margin-left: 0.4em;
+    display: inline-block;
+    margin-top: var(--space-2);
+    margin-left: 0;
   }
 </style>
