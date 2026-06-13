@@ -1,18 +1,18 @@
 ---
 /**
- * Pain card — a callout for "biz problem", "user pain", a numbered insight,
- * etc. Renders as a card with a left accent bar, an Inter eyebrow tag,
- * a title, and a body paragraph.
+ * Pain card — a soft callout for "biz problem", "user pain", a numbered
+ * insight, etc. Borderless, sits on a barely-there grey fill, title + body.
+ * The `tag` prop is accepted for back-compat but no longer rendered (eyebrows
+ * removed globally).
  */
 interface Props {
   tag?: string;
   title: string;
 }
-const { tag, title } = Astro.props;
+const { title } = Astro.props;
 ---
 
 <article class="pain">
-  {tag && <span class="tag">{tag}</span>}
   <h4 class="title">{title}</h4>
   <p class="body">
     <slot />
@@ -21,22 +21,13 @@ const { tag, title } = Astro.props;
 
 <style>
   .pain {
-    background: var(--surface-card);
-    border: 1px solid var(--border-card);
-    border-left: 3px solid var(--acc);
+    background: var(--surface-frame);
+    border: none;
     border-radius: var(--radius-md);
-    padding: var(--space-6);
+    padding: var(--space-5);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
-  }
-  .tag {
-    font-family: var(--font-body);
-    font-size: var(--type-xs);
-    font-weight: 700;
-    letter-spacing: var(--track-eyebrow);
-    text-transform: uppercase;
-    color: var(--acc);
   }
   .title {
     font-family: var(--font-body);

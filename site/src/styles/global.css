@@ -56,8 +56,8 @@ a:hover {
 .row-2,
 .row-3 {
   display: grid;
-  gap: var(--space-4);
-  margin: var(--space-4) 0 var(--space-8);
+  gap: var(--space-5);
+  margin: var(--space-5) 0 var(--space-10);
 }
 .row-2 { grid-template-columns: repeat(2, 1fr); }
 .row-3 { grid-template-columns: repeat(3, 1fr); }
