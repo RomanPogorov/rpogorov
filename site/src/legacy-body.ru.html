@@ -4186,37 +4186,7 @@
             { id: 'landing-platform', company: 'cs06', companyLabel: 'Health Samurai',
               title: 'Платформа генерации лендингов и AI-пайплайн',
               desc: 'Markdown-вход и Claude-скилл превратили трёхмесячный цикл сборки лендинга в 2–3 дня. Весь сайт компании теперь живёт на этой платформе, а правки прямо в браузере делает DOM-aware чат Fixik.',
-              metric: '3 мес → 2–3 дня', tags: ['AI-пайплайн', 'HTMX', 'Storybook', 'Claude Code'], deeplink: 'landing-platform',
-              body: `<h2>// три идеи, на которых держится скилл</h2>
-<div class="dc-pillars">
-    <div class="dc-pillar">
-        <span class="dc-pillar-num">// словарь</span>
-        <h4>Ограниченный словарь</h4>
-        <p>Агент может использовать только ~25 блоков из каталога и семантические токены темы. Свобода ограничена намеренно — это и есть гарантия консистентности.</p>
-    </div>
-    <div class="dc-pillar">
-        <span class="dc-pillar-num">// disclosure</span>
-        <h4>Progressive disclosure</h4>
-        <p>При активации грузится только SKILL.md (~1.7k токенов). Детали блоков читаются лишь по требованию из reference-файлов, что реально нужны.</p>
-    </div>
-    <div class="dc-pillar">
-        <span class="dc-pillar-num">// human-in-loop</span>
-        <h4>Human-in-the-loop</h4>
-        <p>Структуру страницы агент предлагает и ждёт подтверждения прежде чем писать код. Никакой генерации вслепую — пользователь утверждает каркас.</p>
-    </div>
-</div>
-
-<h2 class="dc-h-major">// пайплайн: от запроса до страницы</h2>
-<p>Детерминированный 7-шаговый протокол. Каждый шаг загружает ровно столько контекста, сколько нужно — и не больше.</p>
-<div class="dc-steps">
-    <div class="dc-step"><span class="dc-step-num">01</span><div class="dc-step-main"><div class="dc-step-title">Понять интент</div><p class="dc-step-desc">Что за запрос, для какой аудитории, какая цель конверсии. Если запрос размытый — уточняющие вопросы.</p></div></div>
-    <div class="dc-step"><span class="dc-step-num">02</span><div class="dc-step-main"><div class="dc-step-title">Прочитать каталог блоков</div><p class="dc-step-desc">Загружает references/catalog.md — таблицу всех блоков. Это весь доступный словарь.</p></div></div>
-    <div class="dc-step"><span class="dc-step-num">03</span><div class="dc-step-main"><div class="dc-step-title">Выбрать блоки</div><p class="dc-step-desc">Маппит требования на 4–8 блоков через intent-таблицу (RU/EN). Проверяет анти-паттерны порядка.</p></div></div>
-    <div class="dc-step"><span class="dc-step-num">04</span><div class="dc-step-main"><div class="dc-step-title">Прочитать детали — только нужные</div><p class="dc-step-desc">Открывает reference-файлы лишь для выбранных категорий. Остальное не грузит.</p><span class="dc-step-note">экономия контекста: ~4.5–9k vs ~15k токенов</span></div></div>
-    <div class="dc-step"><span class="dc-step-num">05</span><div class="dc-step-main"><div class="dc-step-title">Предложить структуру</div><p class="dc-step-desc">Показывает нумерованный каркас страницы и ждёт подтверждения. Код пока не пишет.</p><span class="dc-step-note">checkpoint: нужно одобрение пользователя</span></div></div>
-    <div class="dc-step"><span class="dc-step-num">06</span><div class="dc-step-main"><div class="dc-step-title">Собрать страницу</div><p class="dc-step-desc">Создаёт src/pages/&lt;name&gt;.tsx: вызовы блоков с реальным контентом, импорты из blocks/.</p></div></div>
-    <div class="dc-step"><span class="dc-step-num">07</span><div class="dc-step-main"><div class="dc-step-title">Итерировать точечно</div><p class="dc-step-desc">Правки меняют только затронутый блок — переставить, добавить, убрать. Страницу целиком не переписывает.</p></div></div>
-</div>` },
+              metric: '3 мес → 2–3 дня', tags: ['AI-пайплайн', 'HTMX', 'Storybook', 'Claude Code'], deeplink: 'landing-platform' },
             { id: 'presentation-generator', company: 'cs06', companyLabel: 'Health Samurai',
               title: 'Генератор питчей и презентаций',
               desc: 'Превратил зоопарк разрозненных презентаций в единый генератор на движке лендингов — три режима, две точки входа, интерактивные слайды-приложения и шаринг с трекингом.',
