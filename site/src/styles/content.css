@@ -281,6 +281,20 @@ video {
   );
 }
 
+/* ---- MDX row wrappers (.row-2 / .row-3) ----
+   PainCards / Pillars / IterCards stacked with a clear gap between them and
+   a generous gap to the prose that follows. (These rules previously lived in
+   global.css, which is never imported — so on case pages the wrappers had no
+   layout at all and the cards touched. Defined here because content.css is
+   what case pages actually load.) */
+.cnt-body .row-2,
+.cnt-body .row-3 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin: var(--space-6) 0 var(--space-12);
+}
+
 /* ---- Images / figures ---- */
 .cnt-body :where(figure) {
   /* margin-block only — leaving margin-left/right alone so legacy
