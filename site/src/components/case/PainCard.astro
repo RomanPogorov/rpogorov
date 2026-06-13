@@ -14,9 +14,9 @@ const { title } = Astro.props;
 
 <article class="pain">
   <h4 class="title">{title}</h4>
-  <p class="body">
+  <div class="body">
     <slot />
-  </p>
+  </div>
 </article>
 
 <style>
@@ -44,4 +44,9 @@ const { title } = Astro.props;
     color: var(--text-muted);
     margin: 0;
   }
+  /* Slotted MDX wraps body text in its own <p>, which otherwise inherits the
+     global `.dc-body p { margin: 0 0 16px }` rule and leaves dead air at the
+     bottom of the card. Zero it; space stacked paragraphs instead. */
+  .body :global(p) { margin: 0; }
+  .body :global(p + p) { margin-top: var(--space-3); }
 </style>
