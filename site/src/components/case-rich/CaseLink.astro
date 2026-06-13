@@ -1,0 +1,71 @@
+---
+/**
+ * CaseLink — a clickable callout linking to another case. A grey плашка
+ * (matches the session card style): a muted note (slot) above an accent
+ * title + optional meta + arrow. Reusable cross-case CTA.
+ */
+interface Props {
+  href: string;
+  title: string;
+  meta?: string;
+}
+const { href, title, meta } = Astro.props;
+---
+
+<a class="case-link" href={href}>
+  <span class="cl-note"><slot /></span>
+  <span class="cl-cta">
+    <span class="cl-title">{title}</span>
+    {meta && <span class="cl-meta">{meta}</span>}
+    <span class="cl-arrow" aria-hidden="true">→</span>
+  </span>
+</a>
+
+<style>
+  .case-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: var(--space-8) 0 var(--space-5);
+    background: #f6f7fa;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: var(--space-5) var(--space-6);
+    text-decoration: none;
+    transition: border-color 0.16s ease, background 0.16s ease;
+  }
+  .case-link:hover {
+    border: 1px solid rgba(var(--acc-rgb), 0.35);
+    background: rgba(var(--acc-rgb), 0.05);
+  }
+  .cl-note {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .cl-cta {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+  .cl-title {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+    color: var(--acc);
+  }
+  .cl-meta {
+    font-family: var(--font-mono);
+    font-size: var(--type-2xs);
+    letter-spacing: var(--track-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .cl-arrow {
+    margin-left: auto;
+    color: var(--acc);
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+</style>
