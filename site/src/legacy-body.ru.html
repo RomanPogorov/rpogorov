@@ -1259,6 +1259,34 @@
         } else {
             revealVideo();
         }
+
+        // Pause the background video whenever it isn't actually visible — the tab
+        // is hidden, or an overlay (case / panel / showcase / etc.) covers it. A
+        // looping video updates its texture every frame, keeping the compositor
+        // busy, which makes the browser re-rasterize every backdrop-filter on the
+        // page (the frosted case header) continuously — that burned the GPU even
+        // in the background and behind opaque overlays. Invisible video = nothing
+        // to decode. Respects the intro reveal (only resumes once revealed).
+        (function () {
+            var COVERS = ['showcase-open', 'case-open', 'dw-open', 'reader-open',
+                          'left-pane-open', 'vibe-term-open', 'chat-fullscreen', 'ctl-open', 'engaged'];
+            function coveredOrHidden() {
+                if (document.hidden) return true;
+                var cl = document.body.classList;
+                for (var i = 0; i < COVERS.length; i++) if (cl.contains(COVERS[i])) return true;
+                return false;
+            }
+            function syncBg() {
+                if (coveredOrHidden()) {
+                    if (!video.paused) video.pause();
+                } else if (document.body.classList.contains('video-revealed') && video.paused) {
+                    video.play().catch(function () {});
+                }
+            }
+            document.addEventListener('visibilitychange', syncBg);
+            new MutationObserver(syncBg).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+            syncBg();
+        })();
     </script>
 
 
