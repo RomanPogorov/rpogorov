@@ -6808,7 +6808,8 @@
         // pause the WebGL frame loop when nothing visible is using it.
         function useFrameloopState() {
             const overlays = ['showcase-open', 'case-open', 'dw-open', 'reader-open',
-                              'left-pane-open', 'vibe-term-open', 'chat-fullscreen', 'ctl-open'];
+                              'left-pane-open', 'vibe-term-open', 'chat-fullscreen', 'ctl-open',
+                              'engaged'];
             const compute = () => {
                 const cls = document.body.classList;
                 const overlayOpen = overlays.some(c => cls.contains(c));
