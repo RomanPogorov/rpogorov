@@ -137,13 +137,26 @@
             height: 100%;
             object-fit: cover;
             object-position: center top;
-            filter:
-                contrast(calc(1.15 - (1 - var(--sim-signal, 1)) * 0.4))
-                saturate(calc(0.18 + var(--sim-signal, 1) * 0.82))
-                brightness(calc(0.8 - (1 - var(--sim-signal, 1)) * 0.18))
-                hue-rotate(calc((1 - var(--sim-signal, 1)) * -55deg));
+            /* No CSS filter at the default signal. The default colour grade
+               (contrast 1.15, brightness x0.8) is BAKED into bg.mp4, so the
+               video can ride the GPU hardware-overlay plane — no per-pixel
+               filter shader, like a native player. This was the main GPU hog:
+               a filter on a fullscreen video disables the overlay and forces
+               decode -> texture upload -> shader -> composite every frame.
+               The signal-driven grade is re-applied as a delta only while the
+               sim is engaged (below). */
             opacity: 0;
             transition: opacity 1.2s ease, filter 0.4s ease;
+        }
+        /* Slider engaged (signal < 0.95): bring the live grade back, expressed
+           relative to the baked default so it folds to identity at signal=1.
+           The overlay is only given up during the deliberate effect. */
+        body.sim-engaged .stage video {
+            filter:
+                contrast(calc((1.15 - (1 - var(--sim-signal, 1)) * 0.4) / 1.15))
+                saturate(calc(0.18 + var(--sim-signal, 1) * 0.82))
+                brightness(calc((0.8 - (1 - var(--sim-signal, 1)) * 0.18) / 0.8))
+                hue-rotate(calc((1 - var(--sim-signal, 1)) * -55deg));
         }
         body.video-revealed .stage video {
             opacity: 1;
