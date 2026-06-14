@@ -1360,10 +1360,8 @@
                     targetScale = SCALE_BASE;
                 } else {
                     const dt = (t - start) / 1000;
-                    const idleY = Math.sin(dt * 0.42) * idleAmpY;
-                    const idleX = Math.cos(dt * 0.31) * idleAmpX;
-                    curRY += ((targetRY + idleY) - curRY) * lerp;
-                    curRX += ((targetRX + idleX) - curRX) * lerp;
+                    curRY += (targetRY - curRY) * lerp;
+                    curRX += (targetRX - curRX) * lerp;
                 }
                 curScale += (targetScale - curScale) * scaleLerp;
                 prompt.style.setProperty('--prompt-ry', curRY.toFixed(2) + 'deg');
@@ -1854,10 +1852,8 @@
                         return;
                     }
                     const dt = (t - start) / 1000;
-                    const idleY = Math.sin(dt * 0.4) * idleAmpY;
-                    const idleX = Math.cos(dt * 0.3) * idleAmpX;
-                    curRY += ((targetRY + idleY) - curRY) * lerp;
-                    curRX += ((targetRX + idleX) - curRX) * lerp;
+                    curRY += (targetRY - curRY) * lerp;
+                    curRX += (targetRX - curRX) * lerp;
                     chatPane.style.setProperty('--chat-fs-ry', curRY.toFixed(2) + 'deg');
                     chatPane.style.setProperty('--chat-fs-rx', curRX.toFixed(2) + 'deg');
                 }
@@ -2966,10 +2962,8 @@
                 requestAnimationFrame(tick);
                 if (!body.classList.contains('dw-open')) return;
                 const dt = (t - start) / 1000;
-                const idleY = Math.sin(dt * 0.4) * idleAmpY;
-                const idleX = Math.cos(dt * 0.3) * idleAmpX;
-                curRY += ((targetRY + idleY) - curRY) * lerp;
-                curRX += ((targetRX + idleX) - curRX) * lerp;
+                curRY += (targetRY - curRY) * lerp;
+                curRX += (targetRX - curRX) * lerp;
                 dw.style.setProperty('--dw-ry', curRY.toFixed(2) + 'deg');
                 dw.style.setProperty('--dw-rx', curRX.toFixed(2) + 'deg');
             }
@@ -3143,10 +3137,8 @@
             function tick(t) {
                 requestAnimationFrame(tick);
                 const dt = (t - start) / 1000;
-                const idleY = Math.sin(dt * 0.5) * idleAmpY;
-                const idleX = Math.cos(dt * 0.37) * idleAmpX;
-                curRY += ((targetRY + idleY) - curRY) * lerp;
-                curRX += ((targetRX + idleX) - curRX) * lerp;
+                curRY += (targetRY - curRY) * lerp;
+                curRX += (targetRX - curRX) * lerp;
                 stack.style.setProperty('--lry', curRY.toFixed(2) + 'deg');
                 stack.style.setProperty('--lrx', curRX.toFixed(2) + 'deg');
             }
@@ -3196,11 +3188,9 @@
                 const dt = (t - start) / 1000;
 
                 // idle sine-drift superimposed on cursor target
-                const idleY = Math.sin(dt * 0.5) * idleAmpY;
-                const idleX = Math.cos(dt * 0.37) * idleAmpX;
 
-                curRY += ((targetRY + idleY) - curRY) * lerp;
-                curRX += ((targetRX + idleX) - curRX) * lerp;
+                curRY += (targetRY - curRY) * lerp;
+                curRX += (targetRX - curRX) * lerp;
 
                 stack.style.setProperty('--ry', curRY.toFixed(2) + 'deg');
                 stack.style.setProperty('--rx', curRX.toFixed(2) + 'deg');
