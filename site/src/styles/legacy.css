@@ -10037,6 +10037,36 @@
             }
         }
 
+        .about-row {
+            display: flex;
+            gap: 28px;
+            align-items: stretch;
+            margin-bottom: 28px;
+        }
+        .about-row .about-grid {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .about-row .about-avatar {
+            width: 46%;
+            max-width: 300px;
+            align-self: stretch;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            box-shadow: 0 0 30px rgba(var(--acc-rgb), 0.14);
+        }
+        @media (max-width: 700px) {
+            .about-row {
+                flex-direction: column;
+            }
+            .about-row .about-avatar {
+                width: 100%;
+                max-width: none;
+                height: 240px;
+            }
+        }
+
         .stat-card {
             border: 1px solid rgba(var(--acc-rgb), 0.2);
             padding: 18px 20px;
