@@ -34,6 +34,7 @@
                 src="bg.mp4"
                 type="video/mp4">
         </video>
+        <img class="bg-still" src="/rpogorov-dev/app/bg-still.jpg" alt="" aria-hidden="true">
     </div>
     <div id="r3f-bg" class="r3f-bg" aria-hidden="true"></div>
     <div class="layer-holo-flicker" aria-hidden="true"></div>
@@ -278,6 +279,13 @@
                     <div class="settings-row">
                         <span class="settings-row-label">// тень текста</span>
                         <button type="button" class="text-scale-btn shadow-toggle-btn" id="shadow-toggle" aria-pressed="true">ON</button>
+                    </div>
+                    <div class="settings-row">
+                        <span class="settings-row-label">// фон</span>
+                        <div class="bg-mode-switch" id="bg-mode-switch" role="group" aria-label="Фон">
+                            <button type="button" class="text-scale-btn bg-mode-btn" data-bg="video">Видео</button>
+                            <button type="button" class="text-scale-btn bg-mode-btn" data-bg="static">Статичный</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1279,7 +1287,8 @@
             }
             function syncBg() {
                 var f = frozen();
-                if (f) {
+                var pauseVideo = f || document.body.classList.contains('bg-static');
+                if (pauseVideo) {
                     if (!video.paused) video.pause();
                 } else if (document.body.classList.contains('video-revealed') && video.paused) {
                     video.play().catch(function () {});
@@ -1296,6 +1305,36 @@
             window.addEventListener('focus', function () { blurred = false; syncBg(); });
             new MutationObserver(syncBg).observe(document.body, { attributes: true, attributeFilter: ['class'] });
             syncBg();
+        })();
+
+        // Background mode (settings -> // фон): looping video vs a static still.
+        // Persisted in localStorage. Toggling body.bg-static is picked up by the
+        // bg controller above (pauses the video) and the CSS (swaps the layers).
+        (function () {
+            var KEY = 'rp-bg-mode';
+            var sw = document.getElementById('bg-mode-switch');
+            function paint(mode) {
+                if (!sw) return;
+                sw.querySelectorAll('.bg-mode-btn').forEach(function (btn) {
+                    var on = btn.dataset.bg === mode;
+                    btn.classList.toggle('active', on);
+                    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+            }
+            function apply(mode) {
+                document.body.classList.toggle('bg-static', mode === 'static');
+                paint(mode);
+            }
+            var saved = null;
+            try { saved = localStorage.getItem(KEY); } catch (e) {}
+            apply(saved === 'static' ? 'static' : 'video');
+            if (sw) sw.addEventListener('click', function (e) {
+                var btn = e.target.closest('.bg-mode-btn');
+                if (!btn) return;
+                var mode = btn.dataset.bg;
+                try { localStorage.setItem(KEY, mode); } catch (e2) {}
+                apply(mode);
+            });
         })();
     </script>
 

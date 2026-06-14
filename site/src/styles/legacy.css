@@ -162,6 +162,31 @@
             opacity: 1;
         }
 
+        /* Static background option (settings -> // фон -> Статичный): swap the
+           looping video for a still image. Zero video decode — a low-power mode.
+           The choice is saved in localStorage; the bg controller pauses the
+           video while static is active. */
+        .bg-still {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            opacity: 0;
+            display: none;
+            transition: opacity 1.2s ease;
+        }
+        body.bg-static #bg { display: none; }
+        body.bg-static .bg-still { display: block; }
+        body.video-revealed.bg-static .bg-still { opacity: 1; }
+        .bg-mode-switch { display: inline-flex; gap: 6px; }
+        .bg-mode-btn.active {
+            border-color: var(--acc);
+            color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.12);
+        }
+
         /* perf: freeze the home background effect layers whenever they aren't
            visible — an overlay (case/panel/showcase) is covering them, the tab
            is hidden, or the window is blurred. CSS animations keep running (and
