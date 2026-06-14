@@ -10069,29 +10069,6 @@
             }
         }
 
-        .stack-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .stack-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.03em;
-            padding: 6px 12px;
-            border: 1px solid rgba(var(--acc-rgb), 0.28);
-            border-radius: 6px;
-            background: rgba(var(--acc-rgb), 0.05);
-            color: rgba(255, 255, 255, 0.82);
-            white-space: nowrap;
-            transition: border-color 0.15s, background 0.15s;
-        }
-        .stack-tag:hover {
-            border-color: rgba(var(--acc-rgb), 0.55);
-            background: rgba(var(--acc-rgb), 0.1);
-        }
-
         .stat-card {
             border: 1px solid rgba(var(--acc-rgb), 0.2);
             padding: 18px 20px;
