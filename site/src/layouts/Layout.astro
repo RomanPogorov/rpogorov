@@ -60,11 +60,11 @@ const importMapJson = `{
   <body class:list={[bodyClass]} data-theme={bodyTheme}>
     <slot />
     <script is:inline>
-      /* Always-silent entry: skip the audio gate (no sound choice), reveal the
-         site immediately in silent mode. Runs after the gate's own script. */
+      /* Pages WITH the audio gate (home) let the visitor pick sound/silent —
+         do not auto-dismiss. Pages without a gate (case/article routes that may
+         still carry pre-gate) reveal themselves silently. */
       (function () {
-        var mute = document.getElementById('audio-gate-mute');
-        if (mute) { try { mute.click(); } catch (e) {} }
+        if (document.getElementById('audio-gate')) return;
         setTimeout(function () {
           if (document.body.classList.contains('pre-gate')) {
             document.body.classList.remove('pre-gate');
@@ -121,10 +121,6 @@ const importMapJson = `{
   @import '../styles/content.css';
   @import '../styles/mobile.css';
 
-  /* Always-silent: убрать блок выбора звука (аудио-гейт) — авто-тихий режим.
-     Убрать все настройки (шестерёнка). Глобально, на всех ширинах. */
-  #audio-gate { display: none !important; }
-  .settings-cog { display: none !important; }
 
   /* Inside the cs0X overlay we mount the MDX body in a `.cnt-body` wrapper
      so content.css typography (h2/h3/p/ul/blockquote/code/pre/table)
