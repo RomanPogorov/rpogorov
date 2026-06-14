@@ -10046,6 +10046,8 @@
         .about-row .about-grid {
             flex: 1;
             margin-bottom: 0;
+            grid-template-columns: 1fr;
+            gap: 18px;
         }
         .about-row .about-avatar {
             width: 46%;
