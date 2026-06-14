@@ -2146,6 +2146,11 @@
 
             function open(opts) {
                 document.body.classList.add('showcase-open');
+                // Hero-embed iframes are deferred (data-src) so they don't load
+                // on first paint; pull them in now that the panel is opening.
+                document.querySelectorAll('.case-embed[data-src]').forEach(function (f) {
+                    f.src = f.dataset.src; f.removeAttribute('data-src');
+                });
                 cases.scrollLeft = 0;
                 window.__sfx?.engage?.();
                 // Activate the first case immediately so its entry animations fire

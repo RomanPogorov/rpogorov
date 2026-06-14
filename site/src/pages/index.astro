@@ -175,7 +175,7 @@ const cardsHtml = _companiesRu
     // image (mobile fallback). CSS media query toggles which one shows so
     // narrow viewports get a fast PNG instead of a tiny squished iframe.
     const mediaInner = embed
-      ? `<iframe class="case-embed" src="${escapeHtml(embed)}" title="${escapeHtml(d.name)} — hero animation" loading="lazy" tabindex="-1" aria-hidden="true"></iframe><img class="case-fallback" src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`
+      ? `<iframe class="case-embed" data-src="${escapeHtml(embed)}" title="${escapeHtml(d.name)} — hero animation" loading="lazy" tabindex="-1" aria-hidden="true"></iframe><img class="case-fallback" src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`
       : `<img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`;
     const cardAccent = companyAccentStyle(d);
     const cardStyle = cardAccent ? ` style="${cardAccent}"` : '';
