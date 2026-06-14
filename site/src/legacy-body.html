@@ -1383,17 +1383,22 @@
                 targetRX = baseRX - ny * mouseAmpX * 2;
             });
 
-            const start = performance.now();
-            function tick(t) {
+            // No perpetual idle sway. The previous version rewrote the panel's
+            // 3D transform every single frame (sin/cos float), which re-composited
+            // the whole 88vw x 88vh 3D layer at 60fps forever — that was the fan
+            // spin on opening the panel. Now the tilt only follows the mouse and
+            // settles to rest; once the rounded value stops changing we stop
+            // writing it, so an idle panel does zero compositing.
+            let lastRY = '', lastRX = '';
+            function tick() {
                 requestAnimationFrame(tick);
                 if (!body.classList.contains('engaged')) return;
-                const dt = (t - start) / 1000;
-                const idleY = Math.sin(dt * 0.35) * idleAmpY;
-                const idleX = Math.cos(dt * 0.27) * idleAmpX;
-                curRY += ((targetRY + idleY) - curRY) * lerp;
-                curRX += ((targetRX + idleX) - curRX) * lerp;
-                panel.style.setProperty('--p-ry', curRY.toFixed(2) + 'deg');
-                panel.style.setProperty('--p-rx', curRX.toFixed(2) + 'deg');
+                curRY += (targetRY - curRY) * lerp;
+                curRX += (targetRX - curRX) * lerp;
+                const ry = curRY.toFixed(2) + 'deg';
+                const rx = curRX.toFixed(2) + 'deg';
+                if (ry !== lastRY) { panel.style.setProperty('--p-ry', ry); lastRY = ry; }
+                if (rx !== lastRX) { panel.style.setProperty('--p-rx', rx); lastRX = rx; }
             }
             requestAnimationFrame(tick);
         })();
