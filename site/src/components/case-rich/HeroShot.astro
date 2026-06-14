@@ -42,7 +42,7 @@ const id = `shot-${Math.random().toString(36).slice(2, 8)}`;
           slides.map((s, i) => (
             <div class="cp-hero-shot-slide" data-shot-slide={i}>
               {s.kind === 'img' ? (
-                <img src={s.src} alt={s.alt} />
+                <img loading="lazy" decoding="async" src={s.src} alt={s.alt} />
               ) : (
                 <div class="cp-hero-shot-stub">// {s.text}</div>
               )}

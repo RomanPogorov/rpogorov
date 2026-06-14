@@ -80,9 +80,9 @@ const sceneMap = JSON.stringify(
         style={p === 'desktop' && initialScene.aspect ? `aspect-ratio: ${initialScene.aspect};` : undefined}
         {...(i === 0 ? {} : { hidden: true })}
       >
-        <img class="am-ba-img am-ba-before-img" src={pair.before} alt={`${platformLabel[p]} до редизайна`} />
+        <img loading="lazy" decoding="async" class="am-ba-img am-ba-before-img" src={pair.before} alt={`${platformLabel[p]} до редизайна`} />
         <div class="am-ba-after-wrap">
-          <img class="am-ba-img" src={pair.after} alt={`${platformLabel[p]} после редизайна`} />
+          <img loading="lazy" decoding="async" class="am-ba-img" src={pair.after} alt={`${platformLabel[p]} после редизайна`} />
         </div>
         <span class="am-ba-label before">Before</span>
         <span class="am-ba-label after">After</span>
@@ -101,7 +101,7 @@ const sceneMap = JSON.stringify(
           class:list={['am-ba-scene', i === 0 ? 'active' : '']}
           data-scene={s.id}
         >
-          <img src={s.thumb} alt="" />
+          <img loading="lazy" decoding="async" src={s.thumb} alt="" />
           <span class="am-ba-scene-label">{s.label}</span>
         </button>
       ))}

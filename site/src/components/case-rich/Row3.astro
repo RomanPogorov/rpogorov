@@ -27,9 +27,9 @@ const cleanCap = (c?: string) => c?.replace(/^\s*\/\/\s*/, '');
     return (
       <figure class={figClass} data-media data-kind={it.kind ?? 'image'} data-src={it.src} data-caption={cap ?? ''}>
         {it.kind === 'video' ? (
-          <video src={it.src} poster={it.poster} autoplay muted loop playsinline preload="metadata"></video>
+          <video src={it.src} poster={it.poster} autoplay muted loop playsinline preload="none"></video>
         ) : (
-          <img src={it.src} alt={it.alt ?? ''} />
+          <img loading="lazy" decoding="async" src={it.src} alt={it.alt ?? ''} />
         )}
         {cap && <figcaption>{cap}</figcaption>}
       </figure>

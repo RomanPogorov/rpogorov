@@ -18,6 +18,6 @@ const { src, alt = '', caption } = Astro.props;
 const cleanCaption = caption?.replace(/^\s*\/\/\s*/, '');
 ---
 <figure class="dc-figure dc-figure-portrait" data-media data-kind="image" data-src={src} data-caption={cleanCaption ?? ''}>
-  <img src={src} alt={alt} />
+  <img loading="lazy" decoding="async" src={src} alt={alt} />
   {cleanCaption && <figcaption>{cleanCaption}</figcaption>}
 </figure>

@@ -52,9 +52,9 @@ const cleanCap = (c?: string) => c?.replace(/^\s*\/\/\s*/, '');
           <div class="am-media-frame" data-aspect={asp}>
             {it.src ? (
               kind === 'video' ? (
-                <video src={it.src} poster={it.poster} autoplay muted loop playsinline preload="metadata"></video>
+                <video src={it.src} poster={it.poster} autoplay muted loop playsinline preload="none"></video>
               ) : (
-                <img src={it.src} alt={it.alt ?? cap ?? ''} />
+                <img loading="lazy" decoding="async" src={it.src} alt={it.alt ?? cap ?? ''} />
               )
             ) : (
               <div class="am-media-stub">{kind} · {it.stub}</div>
