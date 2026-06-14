@@ -2739,6 +2739,16 @@
             pointer-events: none;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            /* Every case body lives in the initial DOM inside these off-screen
+               overlays. content-visibility:auto lets the browser skip rendering
+               (layout/paint) the closed ones, cutting initial render cost and
+               the reflow jank when the showcase slides in. The open one is
+               forced visible below so it renders fully. */
+            content-visibility: auto;
+            contain-intrinsic-size: 100vw 100vh;
+        }
+        body.case-open .case-page.open {
+            content-visibility: visible;
         }
         body.case-open .case-page.open {
             transform: translateY(0);
