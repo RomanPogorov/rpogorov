@@ -1445,10 +1445,14 @@
             dot.style.opacity = '0';
             ring.style.opacity = '0';
 
+            let running = false;
+            function kick() { if (!running) { running = true; requestAnimationFrame(tick); } }
+
             document.addEventListener('mousemove', (e) => {
                 mx = e.clientX;
                 my = e.clientY;
                 show();
+                kick();
                 // hover detection
                 const t = e.target;
                 if (!t || !t.closest) return;
@@ -1458,10 +1462,10 @@
                 document.body.classList.toggle('cur-text', !!overText);
             }, { passive: true });
 
-            document.addEventListener('mousedown', () => document.body.classList.add('cur-down'));
-            document.addEventListener('mouseup',   () => document.body.classList.remove('cur-down'));
+            document.addEventListener('mousedown', () => { document.body.classList.add('cur-down'); kick(); });
+            document.addEventListener('mouseup',   () => { document.body.classList.remove('cur-down'); kick(); });
             document.addEventListener('mouseleave', hide);
-            document.addEventListener('mouseenter', show);
+            document.addEventListener('mouseenter', () => { show(); kick(); });
 
             const lerp = 0.22;
             // Spring-physics state for the dot (separate from raw mouse) — light magnetic anchoring.
@@ -1479,7 +1483,6 @@
             let pinAnchor = null;   // {x, y}
 
             function tick() {
-                requestAnimationFrame(tick);
                 rx += (mx - rx) * lerp;
                 ry += (my - ry) * lerp;
 
@@ -1564,11 +1567,26 @@
                     dy += vy;
                 }
 
+                // Snap to rest when nearly settled so the spring's residual
+                // micro-oscillation doesn't keep the loop (and backdrop-filter
+                // re-blur) alive forever.
+                const settled = Math.abs(mx - rx) < 0.5 && Math.abs(my - ry) < 0.5
+                    && Math.abs(tx - dx) < 0.5 && Math.abs(ty - dy) < 0.5
+                    && Math.abs(vx) < 0.5 && Math.abs(vy) < 0.5;
+                if (settled) { rx = mx; ry = my; dx = tx; dy = ty; vx = 0; vy = 0; }
+
                 // Plain translate — stays a regular round dot, no 3D geometry distortion
                 dot.style.transform  = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
                 ring.style.transform = `translate(${rx.toFixed(1)}px, ${ry.toFixed(1)}px)`;
+
+                // Self-stop once converged so an idle cursor does zero per-frame
+                // compositing. A perpetual rAF here forced every on-screen
+                // backdrop-filter (case header / timeline) to re-blur 60x/sec —
+                // the GPU fan inside cases. kick() restarts it on pointer events.
+                if (settled) running = false;
+                else requestAnimationFrame(tick);
             }
-            requestAnimationFrame(tick);
+            kick();
         })();
     </script>
 
