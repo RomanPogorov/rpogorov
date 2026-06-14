@@ -162,6 +162,29 @@
             opacity: 1;
         }
 
+        /* perf: freeze the home background effect layers whenever they aren't
+           visible — an overlay (case/panel/showcase) is covering them, the tab
+           is hidden, or the window is blurred. CSS animations keep running (and
+           driving 60fps compositing, which re-blurs everything) even when fully
+           covered; pausing them when nobody can see them is free. body.bg-frozen
+           is toggled by the bg-video controller in legacy-body. */
+        body.bg-frozen .r3f-bg,
+        body.bg-frozen .layer-holo-flicker,
+        body.bg-frozen .layer-grid-burn,
+        body.bg-frozen .layer-grid-interference,
+        body.bg-frozen .layer-interlace,
+        body.bg-frozen .layer-scanlines-amp,
+        body.bg-frozen .layer-tear,
+        body.bg-frozen .grid,
+        body.bg-frozen .noise,
+        body.bg-frozen .scanlines,
+        body.bg-frozen .horizon,
+        body.bg-frozen .vignette,
+        body.bg-frozen .prompt,
+        body.bg-frozen .prompt * {
+            animation-play-state: paused !important;
+        }
+
         /* ============ NOISE / GRAIN ============ */
         .noise {
             position: fixed;
@@ -2688,10 +2711,12 @@
             align-items: center;
             gap: 16px;
             padding: 18px 36px;
-            background: linear-gradient(180deg, rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.85));
+            /* perf: dropped backdrop-filter: blur(8px). A sticky frosted bar
+               re-blurs the scrolling content behind it on every compositor frame
+               (cursor move / scroll) — expensive. The bg is already 93-98%
+               opaque, so the blur was barely visible; bumped opacity instead. */
+            background: linear-gradient(180deg, rgba(5, 5, 5, 0.98), rgba(5, 5, 5, 0.93));
             border-bottom: 1px solid rgba(var(--acc-rgb), 0.18);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.6875rem;
             letter-spacing: 0.18em;
@@ -3190,9 +3215,10 @@
             position: sticky;
             top: 0;
             z-index: 5;
-            background: rgba(5,5,5,0.92);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            /* perf: dropped backdrop-filter: blur(14px) — heaviest blur on the
+               site, on a full-width sticky bar. Re-blurred on every frame during
+               scroll/cursor-move. bg already 92% opaque; bumped to 0.97. */
+            background: rgba(5,5,5,0.97);
             margin-left: calc(-50vw + 50%);
             margin-right: calc(-50vw + 50%);
             width: 100vw;
@@ -8575,7 +8601,10 @@
             /* Stroke grows from 0 (no outline) at signal=1 to ~1.6px at
                signal=0, leaving the title as a wireframe glyph. */
             -webkit-text-stroke: calc(var(--ui-outline, 0) * 1.6px) var(--acc);
-            animation: fadeUp 1s 1.5s ease-out forwards, sweep 7s 2.5s ease-in-out infinite;
+            /* perf: dropped the `sweep` shine. It animated background-position,
+               which is NOT GPU-composited — the browser repainted the whole
+               title every frame, forever. The gradient fill + glow stay static. */
+            animation: fadeUp 1s 1.5s ease-out forwards;
         }
 
         @keyframes sweep {

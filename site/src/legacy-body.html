@@ -1270,20 +1270,30 @@
         (function () {
             var COVERS = ['showcase-open', 'case-open', 'dw-open', 'reader-open',
                           'left-pane-open', 'vibe-term-open', 'chat-fullscreen', 'ctl-open', 'engaged'];
-            function coveredOrHidden() {
-                if (document.hidden) return true;
+            var blurred = false;
+            function frozen() {
+                if (document.hidden || blurred) return true;
                 var cl = document.body.classList;
                 for (var i = 0; i < COVERS.length; i++) if (cl.contains(COVERS[i])) return true;
                 return false;
             }
             function syncBg() {
-                if (coveredOrHidden()) {
+                var f = frozen();
+                if (f) {
                     if (!video.paused) video.pause();
                 } else if (document.body.classList.contains('video-revealed') && video.paused) {
                     video.play().catch(function () {});
                 }
+                // Freeze the home background animation layers (CSS keeps them
+                // running behind an opaque overlay / hidden tab / blurred window,
+                // driving 60fps compositing). body.bg-frozen pauses them via CSS.
+                if (document.body.classList.contains('bg-frozen') !== f) {
+                    document.body.classList.toggle('bg-frozen', f);
+                }
             }
             document.addEventListener('visibilitychange', syncBg);
+            window.addEventListener('blur', function () { blurred = true; syncBg(); });
+            window.addEventListener('focus', function () { blurred = false; syncBg(); });
             new MutationObserver(syncBg).observe(document.body, { attributes: true, attributeFilter: ['class'] });
             syncBg();
         })();
