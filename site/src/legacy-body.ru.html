@@ -6196,8 +6196,13 @@
 
             // Initial apply once the IIFEs above have registered their callbacks.
             const runInitial = () => setTimeout(() => apply(true), 80);
-            if (document.readyState === 'complete') runInitial();
-            else window.addEventListener('load', runInitial, { once: true });
+            // Open deep-linked cases as soon as the DOM is parsed, not on the
+            // `load` event — `load` waits for every image/video/font, so a
+            // /#case/... URL used to sit blank for seconds. __cp/__sc are
+            // registered synchronously by the inline IIFEs above, so they exist
+            // by DOMContentLoaded.
+            if (document.readyState !== 'loading') runInitial();
+            else document.addEventListener('DOMContentLoaded', runInitial, { once: true });
         })();
     </script>
 
