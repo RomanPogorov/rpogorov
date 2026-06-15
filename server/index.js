@@ -23,6 +23,9 @@ const { spawn } = require('child_process');
 const PORT = parseInt(process.env.PORT || '3055', 10);
 const TG_TOKEN = process.env.TG_BOT_TOKEN;
 const ROMAN_CHAT_ID = process.env.ROMAN_CHAT_ID || '126145988';
+// Portfolio password gate. Visitors enter this single password (no login) to
+// unlock the site. Change it in server/.env (GATE_PASSWORD=...) + restart.
+const GATE_PASSWORD = process.env.GATE_PASSWORD || 'change-me-in-env';
 // Forum supergroup ("Portfolio viewers") — each visitor gets a Topic in here.
 // Bot must be admin with "Manage Topics". Empty → fall back to Roman's DM.
 const GROUP_CHAT_ID = process.env.GROUP_CHAT_ID || '-1004299399598';
@@ -370,6 +373,29 @@ function send(res, code, obj) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   // CORS not needed (same-origin via Caddy proxy)
+
+  // ---------- Password gate ----------
+  // Single password, no login. Verified server-side so the password never ships
+  // in the client bundle. On success the frontend stores a local flag.
+  if (req.method === 'POST' && url.pathname === '/api/gate/verify') {
+    let body;
+    try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
+    const pw = String(body.password || '');
+    const ok = pw.length > 0 && pw === GATE_PASSWORD;
+    return send(res, 200, { ok });
+  }
+  // "Request password" — visitor says who they are and why; it lands in Roman's TG.
+  if (req.method === 'POST' && url.pathname === '/api/gate/request') {
+    let body;
+    try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
+    const name = String(body.name || '').trim().slice(0, 200);
+    const reason = String(body.reason || '').trim().slice(0, 1000);
+    const contact = String(body.contact || '').trim().slice(0, 200);
+    if (!name || !reason) return send(res, 400, { error: 'name and reason required' });
+    const msg = `🔑 ЗАПРОС ПАРОЛЯ к портфолио\n\nКто: ${name}${contact ? `\nКонтакт: ${contact}` : ''}\n\nЗачем нужен доступ:\n${reason}`;
+    sendTelegramMessage(ROMAN_CHAT_ID, msg).catch(() => {});
+    return send(res, 200, { ok: true });
+  }
 
   if (req.method === 'POST' && url.pathname === '/api/chat/send') {
     let body;
