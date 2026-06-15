@@ -247,7 +247,6 @@ const articleCardsHtml = FEATURED_ARTICLES
   .filter(Boolean)
   .map((a) => `<li class="release-item" data-article-id="${escapeHtml(a.id)}" tabindex="0">
         <div class="release-meta-row">
-          <span class="release-version">Article</span>
           <span class="release-date">${escapeHtml(a.readingTime ?? '')}</span>
         </div>
         <div class="release-name">${escapeHtml(a.title)}</div>
@@ -266,7 +265,6 @@ const pastHtml = PAST_WORKS
         <div class="agent-body">
           <div class="agent-name">${escapeHtml(p.name)} <span class="agent-tag">${escapeHtml(p.tag)}</span></div>
           <div class="agent-task" data-task>${escapeHtml(p.task)}</div>
-          <div class="agent-meta" data-meta>${escapeHtml(p.meta)}</div>
         </div>
       </li>`)
   .join('');
