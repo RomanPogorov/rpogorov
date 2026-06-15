@@ -233,6 +233,8 @@
             opacity: 0 !important;
             animation-play-state: paused !important;
         }
+        /* At 0 the green WebGL frame sits at 70% over the black page. */
+        body.sim-still .r3f-bg { opacity: 0.70 !important; }
 
         /* ============ NOISE / GRAIN ============ */
         .noise {
@@ -7565,12 +7567,12 @@
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: #4ade80;
-            box-shadow: 0 0 7px rgba(74, 222, 128, 0.85);
+            background: var(--acc);
+            box-shadow: 0 0 7px rgba(var(--acc-rgb), 0.85);
             animation: agent-pulse 1.4s ease-in-out infinite;
         }
         .chat-online-text {
-            color: #b6f5cb;
+            color: var(--acc);
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.5938rem;
             letter-spacing: 0.06em;
@@ -7602,15 +7604,15 @@
             cursor: pointer;
             gap: 12px;
             padding: 8px 12px;
-            background: rgba(74, 222, 128, 0.08);
-            border: 1px solid rgba(74, 222, 128, 0.45);
+            background: rgba(var(--acc-rgb), 0.08);
+            border: 1px solid rgba(var(--acc-rgb), 0.45);
             border-radius: 6px;
-            box-shadow: 0 0 14px rgba(74, 222, 128, 0.15);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.15);
             transition: background 0.15s, border-color 0.15s;
         }
         .chat-pane.collapsed .chat-head:hover {
-            background: rgba(74, 222, 128, 0.14);
-            border-color: rgba(74, 222, 128, 0.7);
+            background: rgba(var(--acc-rgb), 0.14);
+            border-color: rgba(var(--acc-rgb), 0.7);
         }
         .chat-pane.collapsed #chat-fs-toggle { display: none; }
         .chat-pane.collapsed #chat-collapse-toggle .icon-chevron { transform: rotate(180deg); }
