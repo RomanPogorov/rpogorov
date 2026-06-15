@@ -6991,7 +6991,7 @@
         }
     </script>
 
-    <!-- ===== 3D spherical works gallery (Three.js + GSAP). Lazy-loaded on first open. ===== -->
+    <!-- ===== 3D works gallery: dense curved grid (Three.js + GSAP). Lazy-loaded on first open. ===== -->
     <script type="module">
         (() => {
             const openBtn   = document.getElementById('gallery-open-btn');
@@ -7006,39 +7006,47 @@
             if (!openBtn || !overlay || !canvas) return;
 
             const BASE = '/rpogorov-dev/app/showcase/';
-            // Placeholder content — swap / extend freely. { src, title }.
+            // { src, title, tags } — swap / extend freely.
             const ITEMS = [
-                { src: 'cases/cs01-americor.png',        title: 'Americor — мультибрендовая система' },
-                { src: 'cases/cs02-aidbox.jpg',          title: 'Aidbox — дизайн-система' },
-                { src: 'cases/cs03-landings.jpg',        title: 'Платформа лендингов' },
-                { src: 'cases/cs04-creditor.png',        title: 'Карточка кредитора' },
-                { src: 'cases/cs05-databricks.png',      title: 'Databricks — UX' },
-                { src: 'cases/deep-offer-acceptance.jpg',title: 'Принятие settlement-офера' },
-                { src: 'cases/deep-engagement.jpg',      title: 'Вовлечение на ранней стадии' },
-                { src: 'cases/deep-design-system.jpg',   title: 'Дизайн-система Americor' },
-                { src: 'cases/deep-hs-design-system.jpg',title: 'Дизайн-система shadCN' },
-                { src: 'cases/deep-landing-platform.jpg',title: 'FHIR-native лендинги' },
-                { src: 'cases/deep-presentation-generator.jpg', title: 'Генератор презентаций' },
-                { src: 'cases/deep-brand-identity.jpg',  title: 'Бренд и иллюстрации' },
-                { src: 'cs01/desktop-after.png',         title: 'Dashboard — после' },
-                { src: 'cs01/creditor-after.png',        title: 'Creditors — после' },
-                { src: 'cs01/offer-after.png',           title: 'Offer flow — после' },
-                { src: 'cs01/login-after.jpg',           title: 'Login — после' },
-                { src: 'cs01/interface-achievements.png',title: 'Achievements' },
-                { src: 'cs01/community-avatars.jpg',     title: 'Community — аватары' },
-                { src: 'cs01/illustration-site-1.jpg',   title: 'Иллюстрации сайта' },
-                { src: 'cs01/illustration-site-3.jpg',   title: 'Иллюстрации — портрет' },
-                { src: 'cs01/image-flow.jpg',            title: 'Пайплайн генерации' },
-                { src: 'cs01/ds.png',                    title: 'Токены и компоненты' },
-                { src: 'cs01/high-level.png',            title: 'Архитектура системы' },
-                { src: 'cs01/main.png',                  title: 'Главный экран' },
-                { src: 'cs01/product-flow-diagram.png',  title: 'Карта продуктовых флоу' },
-                { src: 'cs01/old-design.jpg',            title: 'Старый дизайн' },
+                { src: 'cases/cs01-americor.png',        title: 'Americor — мультибрендовая система', tags: ['Fintech', 'Design System'] },
+                { src: 'cases/cs02-aidbox.jpg',          title: 'Aidbox — дизайн-система',            tags: ['Healthcare', 'Design System'] },
+                { src: 'cases/cs03-landings.jpg',        title: 'Платформа лендингов',                tags: ['Platform', 'Markdown'] },
+                { src: 'cases/cs04-creditor.png',        title: 'Карточка кредитора',                 tags: ['UX', 'State Design'] },
+                { src: 'cases/cs05-databricks.png',      title: 'Databricks — UX',                    tags: ['Data', 'UX'] },
+                { src: 'cases/deep-offer-acceptance.jpg',title: 'Принятие settlement-офера',          tags: ['Fintech', '+175%'] },
+                { src: 'cases/deep-engagement.jpg',      title: 'Вовлечение на ранней стадии',        tags: ['UX', '+72% NPS'] },
+                { src: 'cases/deep-design-system.jpg',   title: 'Дизайн-система Americor',            tags: ['Tokens', '3 платформы'] },
+                { src: 'cases/deep-hs-design-system.jpg',title: 'Дизайн-система shadCN',              tags: ['shadCN', 'Figma↔Code'] },
+                { src: 'cases/deep-landing-platform.jpg',title: 'FHIR-native лендинги',               tags: ['FHIR', 'Landing'] },
+                { src: 'cases/deep-presentation-generator.jpg', title: 'Генератор презентаций',       tags: ['AI', 'Generator'] },
+                { src: 'cases/deep-brand-identity.jpg',  title: 'Бренд и иллюстрации',                tags: ['Brand', 'Illustration'] },
+                { src: 'cs01/desktop-after.png',         title: 'Dashboard — после',                  tags: ['Dashboard', 'Redesign'] },
+                { src: 'cs01/creditor-after.png',        title: 'Creditors — после',                  tags: ['Creditors', 'Redesign'] },
+                { src: 'cs01/offer-after.png',           title: 'Offer flow — после',                 tags: ['Offer', 'Flow'] },
+                { src: 'cs01/login-after.jpg',           title: 'Login — после',                      tags: ['Login', 'Mobile'] },
+                { src: 'cs01/interface-achievements.png',title: 'Achievements',                       tags: ['Mobile', 'Motion'] },
+                { src: 'cs01/community-avatars.jpg',     title: 'Community — аватары',                tags: ['Community', 'Avatars'] },
+                { src: 'cs01/illustration-site-1.jpg',   title: 'Иллюстрации сайта',                  tags: ['Illustration', 'Brand'] },
+                { src: 'cs01/illustration-site-3.jpg',   title: 'Иллюстрации — портрет',             tags: ['Illustration', 'Portrait'] },
+                { src: 'cs01/image-flow.jpg',            title: 'Пайплайн генерации',                 tags: ['Pipeline', 'ComfyUI'] },
+                { src: 'cs01/ds.png',                    title: 'Токены и компоненты',                tags: ['Tokens', 'Components'] },
+                { src: 'cs01/high-level.png',            title: 'Архитектура системы',                tags: ['Architecture', 'System'] },
+                { src: 'cs01/main.png',                  title: 'Главный экран',                      tags: ['App', 'Screen'] },
+                { src: 'cs01/product-flow-diagram.png',  title: 'Карта продуктовых флоу',            tags: ['Flow', 'Map'] },
+                { src: 'cs01/old-design.jpg',            title: 'Старый дизайн',                      tags: ['Before', 'Legacy'] },
             ];
+
+            // --- curved grid geometry ---
+            const R = 11;                       // cylinder radius (camera sits at centre)
+            const COLS = 6;                     // columns across the grid
+            const CELL_W = 3.0, CELL_H = 2.0;   // uniform cell footprint
+            const H_GAP = 0.30, V_GAP = 0.40;   // gaps between cells
+            const PAD = 0.84;                   // sharp image fills 84% of the cell → padding
 
             let THREE = null, gsap = null;
             let renderer, scene, camera, raycaster, tmpDir;
-            let cards = [], ready = false, running = false, raf = 0;
+            let cells = [], pickables = [], ready = false, running = false, raf = 0;
+            let yawLimit = 1, pitchLimit = 0.6;
             const pointer = { x: 0, y: 0 };
             let dragging = false, lastX = 0, lastY = 0, moved = 0;
             let targetYaw = 0, curYaw = 0, targetPitch = 0, curPitch = 0, velYaw = 0, velPitch = 0;
@@ -7052,57 +7060,104 @@
                 tmpDir = new THREE.Vector3();
             }
 
+            // Cover-fit a texture into a target aspect (crop, no distortion).
+            function coverFit(tex, imgW, imgH, planeAspect) {
+                const a = imgW / imgH;
+                if (a > planeAspect) { const s = planeAspect / a; tex.repeat.set(s, 1); tex.offset.set((1 - s) / 2, 0); }
+                else { const s = a / planeAspect; tex.repeat.set(1, s); tex.offset.set(0, (1 - s) / 2); }
+                tex.needsUpdate = true;
+            }
+            // Heavily downsampled copy of the image → soft same-colour blur backdrop.
+            function blurTexture(img) {
+                const w = 26, h = Math.max(8, Math.round(26 / (img.width / img.height)));
+                const c = document.createElement('canvas'); c.width = w; c.height = h;
+                c.getContext('2d').drawImage(img, 0, 0, w, h);
+                const t = new THREE.CanvasTexture(c);
+                t.colorSpace = THREE.SRGBColorSpace; t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter;
+                return t;
+            }
+            // Title + tags rendered to a canvas texture, placed under each cell.
+            function labelTexture(title, tags) {
+                const W = 512, H = 132, c = document.createElement('canvas'); c.width = W; c.height = H;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '600 30px "Space Grotesk", system-ui, sans-serif';
+                ctx.textBaseline = 'top';
+                let t = title; while (ctx.measureText(t).width > W - 8 && t.length > 4) t = t.slice(0, -2);
+                ctx.fillText(t, 2, 2);
+                ctx.font = '600 20px "JetBrains Mono", monospace';
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.fillText((tags || []).join('   ·   ').toUpperCase(), 2, 46);
+                const tex = new THREE.CanvasTexture(c);
+                tex.colorSpace = THREE.SRGBColorSpace; tex.minFilter = THREE.LinearFilter;
+                return tex;
+            }
+
             function buildScene() {
                 scene = new THREE.Scene();
-                camera = new THREE.PerspectiveCamera(64, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 200);
                 camera.position.set(0, 0, 0);
                 renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-                renderer.setClearColor(0x000000, 1);
+                renderer.setClearColor(0x050607, 1);
                 renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 const loader = new THREE.TextureLoader();
-                const R = 9, N = ITEMS.length, golden = Math.PI * (3 - Math.sqrt(5)), baseH = 2.5;
+                const N = ITEMS.length, ROWS = Math.ceil(N / COLS);
+                const angStep = (CELL_W + H_GAP) / R, rowStep = CELL_H + V_GAP;
+                yawLimit = ((COLS - 1) / 2) * angStep + 0.18;
+                pitchLimit = (((ROWS - 1) / 2) * rowStep) / R + 0.12;
+                const innerAsp = (CELL_W * PAD) / (CELL_H * PAD);
                 ITEMS.forEach((it, i) => {
-                    const y = 1 - (i / (N - 1)) * 2;
-                    const rad = Math.sqrt(Math.max(0, 1 - y * y));
-                    const theta = golden * i;
-                    const pos = new THREE.Vector3(Math.cos(theta) * rad, y, Math.sin(theta) * rad).multiplyScalar(R);
-                    const geo = new THREE.PlaneGeometry(baseH * 1.5, baseH);
-                    const mat = new THREE.MeshBasicMaterial({ color: 0x0e0e0e, side: THREE.DoubleSide, transparent: true });
-                    const mesh = new THREE.Mesh(geo, mat);
-                    mesh.position.copy(pos);
-                    mesh.lookAt(0, 0, 0);
-                    mesh.userData = { item: it, baseSx: 1, hov: 1 };
-                    scene.add(mesh);
-                    cards.push(mesh);
+                    const col = i % COLS, row = Math.floor(i / COLS);
+                    const ang = (col - (COLS - 1) / 2) * angStep;
+                    const y = ((ROWS - 1) / 2 - row) * rowStep;
+                    const pos = new THREE.Vector3(Math.sin(ang) * R, y, Math.cos(ang) * R);
+                    const group = new THREE.Group();
+                    group.position.copy(pos);
+                    group.lookAt(0, 0, 0);   // front faces the camera at the centre (no mirroring)
+                    group.userData = { item: it, hov: 1 };
+
+                    const bgMat = new THREE.MeshBasicMaterial({ color: 0x0b0c0d, transparent: true, depthWrite: false, side: THREE.DoubleSide });
+                    const bg = new THREE.Mesh(new THREE.PlaneGeometry(CELL_W, CELL_H), bgMat);
+                    bg.position.z = 0; group.add(bg);
+
+                    const imMat = new THREE.MeshBasicMaterial({ color: 0x131313, transparent: true, side: THREE.DoubleSide });
+                    const im = new THREE.Mesh(new THREE.PlaneGeometry(CELL_W * PAD, CELL_H * PAD), imMat);
+                    im.position.z = 0.07; im.userData = { item: it, group }; group.add(im); pickables.push(im);
+
+                    const lblMat = new THREE.MeshBasicMaterial({ map: labelTexture(it.title, it.tags), transparent: true, depthWrite: false, side: THREE.DoubleSide });
+                    const lbl = new THREE.Mesh(new THREE.PlaneGeometry(CELL_W, CELL_W * 132 / 512), lblMat);
+                    lbl.position.set(-CELL_W * 0.02, -CELL_H * 0.5 - 0.26, 0.07); group.add(lbl);
+
+                    scene.add(group); cells.push(group);
                     loader.load(BASE + it.src, (tex) => {
                         tex.colorSpace = THREE.SRGBColorSpace;
-                        mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true;
-                        const w = (tex.image && tex.image.width) || 3, h = (tex.image && tex.image.height) || 2;
-                        mesh.userData.baseSx = (w / h) / 1.5;
+                        coverFit(tex, tex.image.width, tex.image.height, innerAsp);
+                        imMat.map = tex; imMat.color.set(0xffffff); imMat.needsUpdate = true;
+                        const bt = blurTexture(tex.image);
+                        bgMat.map = bt; bgMat.color.set(0xffffff); bgMat.opacity = 0.6; bgMat.needsUpdate = true;
+                        bg.scale.set(1.14, 1.22, 1);   // backdrop a touch larger → glow bleeds into the padding
                     });
                 });
             }
 
             function updateHover() {
                 raycaster.setFromCamera(pointer, camera);
-                const hit = raycaster.intersectObjects(cards)[0];
-                const top = hit ? hit.object : null;
-                for (const c of cards) {
-                    const want = (c === top && !dragging) ? 1.14 : 1.0;
-                    c.userData.hov += (want - c.userData.hov) * 0.15;
-                    c.scale.set(c.userData.baseSx * c.userData.hov, c.userData.hov, 1);
+                const hit = raycaster.intersectObjects(pickables)[0];
+                const top = hit ? hit.object.userData.group : null;
+                for (const g of cells) {
+                    const want = (g === top && !dragging) ? 1.06 : 1.0;
+                    g.userData.hov += (want - g.userData.hov) * 0.15;
+                    g.scale.setScalar(g.userData.hov);
                 }
             }
 
             function tick() {
-                if (!dragging) {
-                    targetYaw += velYaw; targetPitch += velPitch;
-                    velYaw *= 0.93; velPitch *= 0.93;
-                }
-                targetPitch = clamp(targetPitch, -1.0, 1.0);
-                curYaw += (targetYaw - curYaw) * 0.075;
-                curPitch += (targetPitch - curPitch) * 0.075;
+                if (!dragging) { targetYaw += velYaw; targetPitch += velPitch; velYaw *= 0.9; velPitch *= 0.9; }
+                targetYaw = clamp(targetYaw, -yawLimit, yawLimit);
+                targetPitch = clamp(targetPitch, -pitchLimit, pitchLimit);
+                curYaw += (targetYaw - curYaw) * 0.08;
+                curPitch += (targetPitch - curPitch) * 0.08;
                 const cp = Math.cos(curPitch);
                 tmpDir.set(cp * Math.sin(curYaw), Math.sin(curPitch), cp * Math.cos(curYaw));
                 camera.lookAt(tmpDir);
@@ -7122,7 +7177,7 @@
                 const dx = e.clientX - lastX, dy = e.clientY - lastY;
                 lastX = e.clientX; lastY = e.clientY;
                 moved += Math.abs(dx) + Math.abs(dy);
-                const sens = 0.0024;
+                const sens = 0.0021;
                 targetYaw -= dx * sens; targetPitch -= dy * sens;
                 velYaw = -dx * sens; velPitch = -dy * sens;
             }
@@ -7132,7 +7187,7 @@
             }
             function tryPick() {
                 raycaster.setFromCamera(pointer, camera);
-                const hit = raycaster.intersectObjects(cards)[0];
+                const hit = raycaster.intersectObjects(pickables)[0];
                 if (hit) openDetail(hit.object.userData.item);
             }
 
@@ -7156,7 +7211,6 @@
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             }
-
             function addListeners() {
                 canvas.addEventListener('pointerdown', onDown);
                 window.addEventListener('pointermove', onMove);
