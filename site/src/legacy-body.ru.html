@@ -1300,9 +1300,10 @@
                 document.body.classList.toggle('bg-static', mode === 'static');
                 paint(mode);
             }
-            var saved = null;
-            try { saved = localStorage.getItem(KEY); } catch (e) {}
-            apply(saved === 'static' ? 'static' : 'video');
+            // Always boot with the video background. Static is a per-session
+            // toggle and is intentionally NOT restored on load.
+            try { localStorage.removeItem(KEY); } catch (e) {}
+            apply('video');
             if (sw) sw.addEventListener('click', function (e) {
                 var btn = e.target.closest('.bg-mode-btn');
                 if (!btn) return;
