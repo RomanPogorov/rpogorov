@@ -25,7 +25,16 @@
 import Layout from '@layouts/Layout.astro';
 import Lightbox from '@components/case-rich/Lightbox.astro';
 import CaseHeader from '@components/case/CaseHeader.astro';
-import legacyBodyRaw from '../legacy-body.html?raw';
+import legacyBodyRawSource from '../legacy-body.html?raw';
+// Absolutize asset paths to /rpogorov-dev/app/ so the page works both under
+// /rpogorov-dev/app/ AND when served at the domain root (clauderunner.com/).
+const legacyBodyRaw = legacyBodyRawSource
+  .replace(/(\b(?:src|href|poster)=")(showcase\/|cases\/|articles\/|bg\.|audio\.|favicon\.)/g, '$1/rpogorov-dev/app/$2')
+  .replace(/(fetch\(\s*[`'"])api\/chat\//g, '$1/rpogorov-dev/app/api/chat/')
+  .replace(/(fetch\(\s*`)api\/chat\//g, '$1/rpogorov-dev/app/api/chat/')
+  .replace(/(audio\.src\s*=\s*['"])audio\./g, '$1/rpogorov-dev/app/audio.')
+  .replace(/(['"])bg-wireframe\.jpg(['"])/g, '$1/rpogorov-dev/app/bg-wireframe.jpg$2')
+  .replace(/(v\.src\s*=\s*['"])bg\.mp4/g, '$1/rpogorov-dev/app/bg.mp4');
 import { getCollection, render } from 'astro:content';
 
 // EN site — keep RU companies for slug-based lookups (cs01, cs02 ids),
