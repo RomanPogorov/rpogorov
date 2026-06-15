@@ -327,7 +327,7 @@
                     </div>
 
                     <div class="projects-block">
-                        <span class="label">// я силён в</span>
+                        <span class="label">Прошлый опыт</span>
                         <ul class="agents-list" id="agents-list">
                             <li class="agent-item" data-id="hypotheses">
                                 <span class="agent-dot"></span>
@@ -357,7 +357,7 @@
                     </div>
 
                     <div class="releases-block">
-                        <span class="label">// последние работы</span>
+                        <span class="label">Статьи</span>
                         <ul class="releases-list" id="releases-list">
                             <li class="release-item" data-id="americor" tabindex="0">
                                 <div class="release-meta-row">
@@ -6986,6 +6986,17 @@
         } catch (err) {
             console.error('[r3f] mount failed, keeping HTML video fallback:', err);
         }
+    </script>
+
+    <!-- Dashboard article cards: click opens the reader instead of a detail panel. -->
+    <script>
+      document.addEventListener('click', function (e) {
+        var li = e.target.closest('.release-item[data-article-id]');
+        if (!li) return;
+        e.stopPropagation(); e.preventDefault();
+        var id = li.getAttribute('data-article-id');
+        if (window.__openArticleById) window.__openArticleById(id);
+      }, true);
     </script>
 
     <!-- ===== 3D works gallery: 360° tiled grid + lens distortion (Three.js + GSAP). Lazy-loaded. ===== -->

@@ -119,7 +119,7 @@
       trigger.style.cursor = 'zoom-in';
       trigger.addEventListener('click', () => open(tile));
     }
-    tiles.forEach((tile, i) => bindTile(tile, i));
+    document.querySelectorAll('[data-media]').forEach((tile, i) => bindTile(tile, i));
 
     // Also wire .cp-fullbleed images (legacy hero shots embedded in case
     // body) — they are big media, deserve lightbox too.

@@ -239,6 +239,38 @@ const releasesHtml = releases
   })
   .join('');
 
+// Featured written (live) articles → the "Articles" dashboard block.
+// Clicking opens the reader via __openArticleById.
+const FEATURED_ARTICLES = ['holographic-portfolio-agent', 'landing-three-days', 'aidbox-scaling'];
+const articleCardsHtml = FEATURED_ARTICLES
+  .map((id) => articlesData.find((a) => a.id === id))
+  .filter(Boolean)
+  .map((a) => `<li class="release-item" data-article-id="${escapeHtml(a.id)}" tabindex="0">
+        <div class="release-meta-row">
+          <span class="release-version">Article</span>
+          <span class="release-date">${escapeHtml(a.readingTime ?? '')}</span>
+        </div>
+        <div class="release-name">${escapeHtml(a.title)}</div>
+        <div class="release-summary">${escapeHtml(a.description)}</div>
+      </li>`)
+  .join('');
+
+const PAST_WORKS = [
+  { name: 'ERP & CRM systems', tag: 'product', task: 'Years of deep product design for complex systems.', meta: 'before going code-first' },
+  { name: 'Design systems', tag: 'system', task: 'Built design systems and complex products from scratch.', meta: 'web + platforms' },
+  { name: 'Research', tag: 'research', task: 'Audience study, interviews and maps — figuring out how things actually work.', meta: 'product design' },
+];
+const pastHtml = PAST_WORKS
+  .map((p) => `<li class="agent-item">
+        <span class="agent-dot"></span>
+        <div class="agent-body">
+          <div class="agent-name">${escapeHtml(p.name)} <span class="agent-tag">${escapeHtml(p.tag)}</span></div>
+          <div class="agent-task" data-task>${escapeHtml(p.task)}</div>
+          <div class="agent-meta" data-meta>${escapeHtml(p.meta)}</div>
+        </div>
+      </li>`)
+  .join('');
+
 // Build DETAIL dictionary keyed by id — same shape legacy JS expects.
 function renderDetailHtml(d: any): string {
   const stats = (d.stats ?? [])
@@ -280,11 +312,11 @@ legacyBody = legacyBody
   )
   .replace(
     /<ul class="agents-list" id="agents-list">[\s\S]*?<\/ul>/,
-    `<ul class="agents-list" id="agents-list">${agentsHtml}</ul>`
+    `<ul class="agents-list" id="agents-list">${pastHtml}</ul>`
   )
   .replace(
     /<ul class="releases-list" id="releases-list">[\s\S]*?<\/ul>/,
-    `<ul class="releases-list" id="releases-list">${releasesHtml}</ul>`
+    `<ul class="releases-list" id="releases-list">${articleCardsHtml}</ul>`
   );
 
 // Replace inline DETAIL = {...} dictionary with a window-injected lookup
