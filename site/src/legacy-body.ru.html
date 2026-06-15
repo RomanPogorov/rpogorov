@@ -302,6 +302,10 @@
                 </div>
                 <span class="sim-signal-value" id="sim-signal-value">100%</span>
             </div>
+            <button type="button" class="gallery-open-btn" id="gallery-open-btn" aria-label="Открыть 3D-галерею работ">
+                <span class="gallery-open-glyph" aria-hidden="true">◳</span>
+                <span class="gallery-open-label">works</span>
+            </button>
         </div>
 
         <!-- Right-side panel: 3D perspective, tilts on mouse -->
@@ -664,6 +668,27 @@
         <div class="am-lightbox-stage" id="am-lb-stage" aria-live="polite"></div>
         <div class="am-lb-caption" id="am-lb-caption"></div>
         <div class="am-lb-counter" id="am-lb-counter"></div>
+    </div>
+
+    <!-- 3D spherical works gallery (Three.js + GSAP) — opened from the Signal cluster -->
+    <div class="gallery-overlay" id="gallery-overlay" aria-hidden="true">
+        <canvas class="gallery-canvas" id="gallery-canvas"></canvas>
+        <div class="gallery-hud">
+            <span class="gallery-hud-title">works — тащи, чтобы осмотреться · клик по карточке</span>
+            <button type="button" class="gallery-close-btn" id="gallery-close-btn" aria-label="Закрыть галерею">esc · закрыть</button>
+        </div>
+        <div class="gallery-loading" id="gallery-loading">сборка пространства…</div>
+        <div class="gallery-detail" id="gallery-detail" aria-hidden="true">
+            <button type="button" class="gallery-detail-back" id="gallery-detail-back">← назад к галерее</button>
+            <div class="gallery-detail-inner">
+                <div class="gallery-detail-imgwrap"><img class="gallery-detail-img" id="gallery-detail-img" alt=""></div>
+                <div class="gallery-detail-meta">
+                    <span class="gallery-detail-eyebrow">works / fragment</span>
+                    <h2 class="gallery-detail-title" id="gallery-detail-title"></h2>
+                    <p class="gallery-detail-desc">Фрагмент одной из работ. Полные кейсы — в разделе «По кейсам» на главной.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- HS_OVERLAY_MARKER -->
@@ -6913,7 +6938,7 @@
         function useFrameloopState() {
             const overlays = ['showcase-open', 'case-open', 'dw-open', 'reader-open',
                               'left-pane-open', 'vibe-term-open', 'chat-fullscreen', 'ctl-open',
-                              'engaged'];
+                              'gallery-open', 'engaged'];
             const compute = () => {
                 const cls = document.body.classList;
                 const overlayOpen = overlays.some(c => cls.contains(c));
@@ -6964,5 +6989,209 @@
         } catch (err) {
             console.error('[r3f] mount failed, keeping HTML video fallback:', err);
         }
+    </script>
+
+    <!-- ===== 3D spherical works gallery (Three.js + GSAP). Lazy-loaded on first open. ===== -->
+    <script type="module">
+        (() => {
+            const openBtn   = document.getElementById('gallery-open-btn');
+            const overlay   = document.getElementById('gallery-overlay');
+            const canvas    = document.getElementById('gallery-canvas');
+            const closeBtn  = document.getElementById('gallery-close-btn');
+            const loadingEl = document.getElementById('gallery-loading');
+            const detailEl  = document.getElementById('gallery-detail');
+            const detailBack= document.getElementById('gallery-detail-back');
+            const detailImg = document.getElementById('gallery-detail-img');
+            const detailTtl = document.getElementById('gallery-detail-title');
+            if (!openBtn || !overlay || !canvas) return;
+
+            const BASE = '/rpogorov-dev/app/showcase/';
+            // Placeholder content — swap / extend freely. { src, title }.
+            const ITEMS = [
+                { src: 'cases/cs01-americor.png',        title: 'Americor — мультибрендовая система' },
+                { src: 'cases/cs02-aidbox.jpg',          title: 'Aidbox — дизайн-система' },
+                { src: 'cases/cs03-landings.jpg',        title: 'Платформа лендингов' },
+                { src: 'cases/cs04-creditor.png',        title: 'Карточка кредитора' },
+                { src: 'cases/cs05-databricks.png',      title: 'Databricks — UX' },
+                { src: 'cases/deep-offer-acceptance.jpg',title: 'Принятие settlement-офера' },
+                { src: 'cases/deep-engagement.jpg',      title: 'Вовлечение на ранней стадии' },
+                { src: 'cases/deep-design-system.jpg',   title: 'Дизайн-система Americor' },
+                { src: 'cases/deep-hs-design-system.jpg',title: 'Дизайн-система shadCN' },
+                { src: 'cases/deep-landing-platform.jpg',title: 'FHIR-native лендинги' },
+                { src: 'cases/deep-presentation-generator.jpg', title: 'Генератор презентаций' },
+                { src: 'cases/deep-brand-identity.jpg',  title: 'Бренд и иллюстрации' },
+                { src: 'cs01/desktop-after.png',         title: 'Dashboard — после' },
+                { src: 'cs01/creditor-after.png',        title: 'Creditors — после' },
+                { src: 'cs01/offer-after.png',           title: 'Offer flow — после' },
+                { src: 'cs01/login-after.jpg',           title: 'Login — после' },
+                { src: 'cs01/interface-achievements.png',title: 'Achievements' },
+                { src: 'cs01/community-avatars.jpg',     title: 'Community — аватары' },
+                { src: 'cs01/illustration-site-1.jpg',   title: 'Иллюстрации сайта' },
+                { src: 'cs01/illustration-site-3.jpg',   title: 'Иллюстрации — портрет' },
+                { src: 'cs01/image-flow.jpg',            title: 'Пайплайн генерации' },
+                { src: 'cs01/ds.png',                    title: 'Токены и компоненты' },
+                { src: 'cs01/high-level.png',            title: 'Архитектура системы' },
+                { src: 'cs01/main.png',                  title: 'Главный экран' },
+                { src: 'cs01/product-flow-diagram.png',  title: 'Карта продуктовых флоу' },
+                { src: 'cs01/old-design.jpg',            title: 'Старый дизайн' },
+            ];
+
+            let THREE = null, gsap = null;
+            let renderer, scene, camera, raycaster, tmpDir;
+            let cards = [], ready = false, running = false, raf = 0;
+            const pointer = { x: 0, y: 0 };
+            let dragging = false, lastX = 0, lastY = 0, moved = 0;
+            let targetYaw = 0, curYaw = 0, targetPitch = 0, curPitch = 0, velYaw = 0, velPitch = 0;
+            const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+            async function ensureLibs() {
+                if (THREE && gsap) return;
+                const [t, g] = await Promise.all([import('three'), import('gsap')]);
+                THREE = t; gsap = g.gsap || g.default || g;
+                raycaster = new THREE.Raycaster();
+                tmpDir = new THREE.Vector3();
+            }
+
+            function buildScene() {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(64, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera.position.set(0, 0, 0);
+                renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+                renderer.setClearColor(0x000000, 1);
+                renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                const loader = new THREE.TextureLoader();
+                const R = 9, N = ITEMS.length, golden = Math.PI * (3 - Math.sqrt(5)), baseH = 2.5;
+                ITEMS.forEach((it, i) => {
+                    const y = 1 - (i / (N - 1)) * 2;
+                    const rad = Math.sqrt(Math.max(0, 1 - y * y));
+                    const theta = golden * i;
+                    const pos = new THREE.Vector3(Math.cos(theta) * rad, y, Math.sin(theta) * rad).multiplyScalar(R);
+                    const geo = new THREE.PlaneGeometry(baseH * 1.5, baseH);
+                    const mat = new THREE.MeshBasicMaterial({ color: 0x0e0e0e, side: THREE.DoubleSide, transparent: true });
+                    const mesh = new THREE.Mesh(geo, mat);
+                    mesh.position.copy(pos);
+                    mesh.lookAt(0, 0, 0);
+                    mesh.userData = { item: it, baseSx: 1, hov: 1 };
+                    scene.add(mesh);
+                    cards.push(mesh);
+                    loader.load(BASE + it.src, (tex) => {
+                        tex.colorSpace = THREE.SRGBColorSpace;
+                        mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true;
+                        const w = (tex.image && tex.image.width) || 3, h = (tex.image && tex.image.height) || 2;
+                        mesh.userData.baseSx = (w / h) / 1.5;
+                    });
+                });
+            }
+
+            function updateHover() {
+                raycaster.setFromCamera(pointer, camera);
+                const hit = raycaster.intersectObjects(cards)[0];
+                const top = hit ? hit.object : null;
+                for (const c of cards) {
+                    const want = (c === top && !dragging) ? 1.14 : 1.0;
+                    c.userData.hov += (want - c.userData.hov) * 0.15;
+                    c.scale.set(c.userData.baseSx * c.userData.hov, c.userData.hov, 1);
+                }
+            }
+
+            function tick() {
+                if (!dragging) {
+                    targetYaw += velYaw; targetPitch += velPitch;
+                    velYaw *= 0.93; velPitch *= 0.93;
+                }
+                targetPitch = clamp(targetPitch, -1.0, 1.0);
+                curYaw += (targetYaw - curYaw) * 0.075;
+                curPitch += (targetPitch - curPitch) * 0.075;
+                const cp = Math.cos(curPitch);
+                tmpDir.set(cp * Math.sin(curYaw), Math.sin(curPitch), cp * Math.cos(curYaw));
+                camera.lookAt(tmpDir);
+                updateHover();
+                renderer.render(scene, camera);
+                raf = requestAnimationFrame(tick);
+            }
+
+            function setPointer(e) {
+                pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+                pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            }
+            function onDown(e) { dragging = true; canvas.classList.add('dragging'); lastX = e.clientX; lastY = e.clientY; moved = 0; velYaw = velPitch = 0; setPointer(e); }
+            function onMove(e) {
+                setPointer(e);
+                if (!dragging) return;
+                const dx = e.clientX - lastX, dy = e.clientY - lastY;
+                lastX = e.clientX; lastY = e.clientY;
+                moved += Math.abs(dx) + Math.abs(dy);
+                const sens = 0.0024;
+                targetYaw -= dx * sens; targetPitch -= dy * sens;
+                velYaw = -dx * sens; velPitch = -dy * sens;
+            }
+            function onUp(e) {
+                if (dragging) { setPointer(e); if (moved < 7) tryPick(); }
+                dragging = false; canvas.classList.remove('dragging');
+            }
+            function tryPick() {
+                raycaster.setFromCamera(pointer, camera);
+                const hit = raycaster.intersectObjects(cards)[0];
+                if (hit) openDetail(hit.object.userData.item);
+            }
+
+            function openDetail(item) {
+                detailImg.src = BASE + item.src;
+                detailTtl.textContent = item.title;
+                detailEl.classList.add('open');
+                detailEl.setAttribute('aria-hidden', 'false');
+                running = false; cancelAnimationFrame(raf);
+                if (gsap) gsap.fromTo('.gallery-detail-inner', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' });
+            }
+            function closeDetail() {
+                detailEl.classList.remove('open');
+                detailEl.setAttribute('aria-hidden', 'true');
+                if (overlay.classList.contains('open') && !running) { running = true; raf = requestAnimationFrame(tick); }
+            }
+
+            function resize() {
+                if (!renderer) return;
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            function addListeners() {
+                canvas.addEventListener('pointerdown', onDown);
+                window.addEventListener('pointermove', onMove);
+                window.addEventListener('pointerup', onUp);
+                window.addEventListener('resize', resize);
+            }
+
+            async function open() {
+                overlay.classList.add('open');
+                overlay.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('gallery-open');
+                if (!ready) {
+                    loadingEl.classList.remove('hidden');
+                    try { await ensureLibs(); buildScene(); addListeners(); ready = true; }
+                    catch (err) { console.error('[gallery] failed to load', err); loadingEl.textContent = 'не удалось загрузить 3D'; return; }
+                    loadingEl.classList.add('hidden');
+                }
+                resize();
+                if (!running) { running = true; raf = requestAnimationFrame(tick); }
+            }
+            function close() {
+                overlay.classList.remove('open');
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('gallery-open');
+                running = false; cancelAnimationFrame(raf);
+                closeDetail();
+            }
+
+            openBtn.addEventListener('click', open);
+            closeBtn.addEventListener('click', close);
+            detailBack.addEventListener('click', closeDetail);
+            document.addEventListener('keydown', (e) => {
+                if (e.key !== 'Escape' || !overlay.classList.contains('open')) return;
+                if (detailEl.classList.contains('open')) closeDetail(); else close();
+            });
+        })();
     </script>
 

@@ -626,6 +626,189 @@
         /* Signal slider only makes sense over the live video bg — hide it when
            the static image background is selected. */
         body.bg-static .sim-signal { display: none; }
+
+        /* ===== 3D works gallery: open button (sits next to the Signal slider) ===== */
+        .gallery-open-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 12px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(var(--acc-rgb), 0.28);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5938rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+        }
+        .gallery-open-btn:hover {
+            border-color: var(--acc);
+            background: rgba(var(--acc-rgb), 0.1);
+            box-shadow: 0 0 14px rgba(var(--acc-rgb), 0.25);
+        }
+        .gallery-open-glyph { font-size: 0.8rem; line-height: 1; }
+
+        /* ===== 3D works gallery: fullscreen overlay ===== */
+        .gallery-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9000;
+            background: #000;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+        }
+        .gallery-overlay.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition: opacity 0.5s ease;
+        }
+        .gallery-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            cursor: grab;
+            touch-action: none;
+        }
+        .gallery-canvas.dragging { cursor: grabbing; }
+        .gallery-hud {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .gallery-hud-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.75);
+        }
+        .gallery-close-btn {
+            pointer-events: auto;
+            appearance: none;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5938rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 7px 12px;
+            cursor: pointer;
+            transition: border-color 0.18s, background 0.18s;
+        }
+        .gallery-close-btn:hover { border-color: var(--acc); background: rgba(var(--acc-rgb), 0.12); }
+        .gallery-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.6);
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 3;
+        }
+        .gallery-loading.hidden { opacity: 0; }
+
+        /* ===== 3D works gallery: tapped-card detail page ===== */
+        .gallery-detail {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            background: #060809;
+            display: flex;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.45s ease, visibility 0s linear 0.45s;
+        }
+        .gallery-detail.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition: opacity 0.45s ease;
+        }
+        .gallery-detail-back {
+            position: absolute;
+            top: 18px; left: 22px;
+            appearance: none;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(var(--acc-rgb), 0.4);
+            color: var(--acc);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5938rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 7px 12px;
+            cursor: pointer;
+            z-index: 2;
+            transition: border-color 0.18s, background 0.18s;
+        }
+        .gallery-detail-back:hover { border-color: var(--acc); background: rgba(var(--acc-rgb), 0.12); }
+        .gallery-detail-inner {
+            margin: auto;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            max-width: 1100px;
+            width: 100%;
+            padding: 80px 48px;
+            box-sizing: border-box;
+        }
+        .gallery-detail-imgwrap {
+            flex: 1 1 60%;
+            min-width: 0;
+            border: 1px solid rgba(var(--acc-rgb), 0.25);
+            background: #000;
+        }
+        .gallery-detail-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 72vh;
+            object-fit: contain;
+        }
+        .gallery-detail-meta { flex: 1 1 40%; }
+        .gallery-detail-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.625rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(var(--acc-rgb), 0.7);
+        }
+        .gallery-detail-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            margin: 10px 0 14px;
+            color: var(--ink);
+        }
+        .gallery-detail-desc {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: rgba(var(--ink-rgb, 230, 240, 235), 0.7);
+        }
+        @media (max-width: 768px) {
+            .gallery-detail-inner { flex-direction: column; gap: 24px; padding: 80px 24px 40px; }
+            .gallery-detail-title { font-size: 1.4rem; }
+        }
         .sim-signal-label {
             font-size: 0.5625rem;
             font-weight: 600;
