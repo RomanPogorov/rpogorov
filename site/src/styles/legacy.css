@@ -233,8 +233,8 @@
             opacity: 0 !important;
             animation-play-state: paused !important;
         }
-        /* At 0 the green WebGL frame sits at 70% over the black page. */
-        body.sim-still .r3f-bg { opacity: 0.70 !important; }
+        /* At 0 the green WebGL frame sits at 10% over the black page. */
+        body.sim-still .r3f-bg { opacity: 0.10 !important; }
 
         /* ============ NOISE / GRAIN ============ */
         .noise {
