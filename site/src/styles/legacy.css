@@ -1220,6 +1220,14 @@
             font-size: 2rem;
             color: rgba(var(--acc-rgb), 0.35);
         }
+        .sc-card-thumb-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
         .sc-card-thumb-tag {
             position: absolute;
             top: 8px;

@@ -3607,7 +3607,7 @@
     <script>
         const DEEP_CASES = [
             // ===== Americor (cs01) =====
-            { id: 'offer-acceptance', company: 'cs01', companyLabel: 'Americor',
+            { id: 'offer-acceptance', company: 'cs01', companyLabel: 'Americor', image: '/rpogorov-dev/app/showcase/cases/deep-offer-acceptance.jpg',
               title: 'Increasing Settlement Offer Acceptance',
               desc: 'Addressing concerns and boosting understanding of debt-settlement offers — empower informed decisions and increase online offer acceptance.',
               metric: '+175%', tags: ['UX Research', 'Conversion', 'Multi-platform'], deeplink: 'offer-acceptance',
@@ -3937,7 +3937,7 @@
     <span class="label">takeaway</span>
     <div class="body"><p>When testing isn't providing constructive results, it becomes apparent to <em>test out ideas</em> — throw things at the wall and see what sticks, as long as the things you throw are based in expertise or knowledge.</p></div>
 </div>` },
-            { id: 'engagement', company: 'cs01', companyLabel: 'Americor',
+            { id: 'engagement', company: 'cs01', companyLabel: 'Americor', image: '/rpogorov-dev/app/showcase/cases/deep-engagement.jpg',
               title: 'Engaging Early-Stage Users in Americor',
               desc: 'Improving progress visibility, clarity, and predictability of the debt-settlement process to boost user confidence and engagement.',
               metric: '+72% NPS', tags: ['UX Research', 'Retention', 'Multi-platform'], deeplink: 'engagement',
@@ -4227,7 +4227,7 @@
     <span class="label">takeaway</span>
     <div class="body"><p>Test with the target audience and with the users who'll be impacted as a side effect. Both groups change the answer.</p></div>
 </div>` },
-            { id: 'design-system', company: 'cs01', companyLabel: 'Americor',
+            { id: 'design-system', company: 'cs01', companyLabel: 'Americor', image: '/rpogorov-dev/app/showcase/cases/deep-design-system.jpg',
               title: 'Americor Design System',
               desc: 'Three-tier token architecture and a shared component spec across web, iOS and Android — instant theming via Figma modes, Code Connect to React.',
               metric: '3 platforms', tags: ['Design System', 'Tokens', 'Multi-platform'], deeplink: 'design-system', theme: 'bright',
@@ -4270,19 +4270,19 @@
 <h2 class="dc-h-major">Design ↔ code connectivity</h2>
 <figure class="dc-figure"><img src="cases/cs01/design-system/06-code-connect-storybook.png" alt="Code Connect and Storybook"><figcaption>Figma Code Connect → React in Storybook — engineers inspect real props in Figma</figcaption></figure>` },
             // ===== Health Samurai (cs06) — bodies render from MDX overlays =====
-            { id: 'landing-platform', company: 'cs06', companyLabel: 'Health Samurai',
+            { id: 'landing-platform', company: 'cs06', companyLabel: 'Health Samurai', image: '/rpogorov-dev/app/showcase/cases/deep-landing-platform.jpg',
               title: 'Платформа генерации лендингов и AI-пайплайн',
               desc: 'Markdown-вход и Claude-скилл превратили трёхмесячный цикл сборки лендинга в 2–3 дня. Весь сайт компании теперь живёт на этой платформе, а правки прямо в браузере делает DOM-aware чат Fixik.',
               metric: '3 мес → 2–3 дня', tags: ['AI-пайплайн', 'HTMX', 'Storybook', 'Claude Code'], deeplink: 'landing-platform' },
-            { id: 'presentation-generator', company: 'cs06', companyLabel: 'Health Samurai',
+            { id: 'presentation-generator', company: 'cs06', companyLabel: 'Health Samurai', image: '/rpogorov-dev/app/showcase/cases/deep-presentation-generator.jpg',
               title: 'Генератор питчей и презентаций',
               desc: 'Превратил зоопарк разрозненных презентаций в единый генератор на движке лендингов — три режима, две точки входа, интерактивные слайды-приложения и шаринг с трекингом.',
               metric: '50+ презентаций', tags: ['AI-пайплайн', 'Генератор', 'Презентации', 'Claude Code'], deeplink: 'presentation-generator' },
-            { id: 'hs-design-system', company: 'cs06', companyLabel: 'Health Samurai',
+            { id: 'hs-design-system', company: 'cs06', companyLabel: 'Health Samurai', image: '/rpogorov-dev/app/showcase/cases/deep-hs-design-system.jpg',
               title: 'Дизайн-система shadCN и мост Figma ↔ код',
               desc: 'Семантический слой поверх shadCN для Aidbox и продуктовых команд. Код — источник истины, Figma собрана из кода, а перенос интерфейсов идёт через маппинг-матрицы Claude.',
               metric: 'Figma ↔ код', tags: ['Дизайн-система', 'shadCN', 'Figma ↔ Code', 'Claude Code'], deeplink: 'hs-design-system' },
-            { id: 'brand-identity', company: 'cs06', companyLabel: 'Health Samurai',
+            { id: 'brand-identity', company: 'cs06', companyLabel: 'Health Samurai', image: '/rpogorov-dev/app/showcase/cases/deep-brand-identity.jpg',
               title: 'Бренд, иллюстрации и генератор кудосов',
               desc: 'Редизайн фирстиля компании и линейки продуктов, система иллюстраций, маскот, стиль диаграмм и управляемый пайплайн нейрогенерации графики — вплоть до генератора кудосов, обученного на бренд-маскоте.',
               metric: 'маскот → продукт', tags: ['айдентика', 'иллюстрации', 'нейрогенерация', 'бренд'], deeplink: 'brand-identity' },
@@ -4329,8 +4329,8 @@
             grid.innerHTML = DEEP_CASES.map(c => `
                 <a class="sc-card"${accStyle(c.company)} data-deep-id="${c.id}" data-deep-company="${c.company}"${c.deeplink ? ` data-deep-link="${c.deeplink}"` : ''} href="#case/${c.company}/${c.id}">
                     <div class="sc-card-thumb" aria-hidden="true">
+                        ${c.image ? `<img class="sc-card-thumb-img" src="${c.image}" alt="" loading="lazy" decoding="async">` : `<span class="sc-card-thumb-glyph">◆</span>`}
                         <span class="sc-card-thumb-tag">${c.companyLabel}</span>
-                        <span class="sc-card-thumb-glyph">◆</span>
                     </div>
                     <div class="sc-card-body">
                         <div class="sc-card-meta">
