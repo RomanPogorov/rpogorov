@@ -218,7 +218,6 @@ const agentsHtml = strengths
         <div class="agent-body">
           <div class="agent-name">${escapeHtml(name)} <span class="agent-tag">${escapeHtml(tagShort)}</span></div>
           <div class="agent-task" data-task>${escapeHtml(d.lead ?? '')}</div>
-          <div class="agent-meta" data-meta>${escapeHtml(meta)}</div>
         </div>
       </li>`;
   })
@@ -241,7 +240,7 @@ const releasesHtml = releases
 
 // Featured written (live) articles → the "Articles" dashboard block.
 // Clicking opens the reader via __openArticleById.
-const FEATURED_ARTICLES = ['designer-pushes-master', 'vibecoding-in-product'];
+const FEATURED_ARTICLES = ['holographic-portfolio-agent', 'designer-pushes-master'];
 const articleCardsHtml = FEATURED_ARTICLES
   .map((id) => articlesData.find((a) => a.id === id))
   .filter(Boolean)
@@ -310,7 +309,7 @@ legacyBody = legacyBody
   )
   .replace(
     /<ul class="agents-list" id="agents-list">[\s\S]*?<\/ul>/,
-    `<ul class="agents-list" id="agents-list">${pastHtml}</ul>`
+    `<ul class="agents-list" id="agents-list">${agentsHtml}</ul>`
   )
   .replace(
     /<ul class="releases-list" id="releases-list">[\s\S]*?<\/ul>/,
