@@ -148,7 +148,7 @@ const OVERLAY_ID: Record<string, string> = {
 // slug lookups and as a reachable overlay, but hidden from the carousel.
 // cs06 is the canonical HS company case and takes its slot (order 2).
 const cardsHtml = _companiesRu
-  .filter((ruEntry) => ruEntry.id !== 'cs02')
+  .filter((ruEntry) => ruEntry.id === 'cs01' || ruEntry.id === 'cs06')
   .map((ruEntry, i) => {
     const c = pickByLang(ruEntry);
     const d = c.data;
