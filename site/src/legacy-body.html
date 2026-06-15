@@ -6068,8 +6068,10 @@
             const captionEl = document.getElementById('am-lb-caption');
             const counterEl = document.getElementById('am-lb-counter');
 
-            // Collect every [data-media] in DOM order; each entry has {src,kind,caption}
-            const tiles = Array.from(document.querySelectorAll('[data-media]'));
+            // Each entry has {src,kind,caption}. Lightbox scoped to the clicked
+            // tile's group (its case page) — prev/next + counter cover that case only.
+            const allTiles = Array.from(document.querySelectorAll('[data-media]'));
+            let group = [];
             let idx = 0;
 
             function buildItem(tile) {
@@ -6082,8 +6084,9 @@
             }
 
             function render(i) {
-                idx = (i + tiles.length) % tiles.length;
-                const item = buildItem(tiles[idx]);
+                if (!group.length) return;
+                idx = (i + group.length) % group.length;
+                const item = buildItem(group[idx]);
                 stage.innerHTML = '';
                 if (item.src) {
                     if (item.kind === 'video') {
@@ -6107,11 +6110,14 @@
                     stage.appendChild(svg);
                 }
                 captionEl.textContent = item.caption || '';
-                counterEl.textContent = `${idx + 1} of ${tiles.length}`;
+                counterEl.textContent = `${idx + 1} of ${group.length}`;
             }
 
-            function open(i) {
-                render(i);
+            function open(tile) {
+                const container = tile.closest('.case-page') || document;
+                group = Array.from(container.querySelectorAll('[data-media]'));
+                const i = group.indexOf(tile);
+                render(i < 0 ? 0 : i);
                 lb.classList.add('open');
                 lb.setAttribute('aria-hidden', 'false');
             }
@@ -6121,7 +6127,7 @@
                 stage.innerHTML = ''; // stop video playback
             }
 
-            tiles.forEach((tile, i) => {
+            allTiles.forEach((tile) => {
                 const trigger = tile.querySelector('.am-media-frame') || tile;
                 // Frames with scroll-x become drag-to-pan + click-to-lightbox
                 // (only fire lightbox if the user didn't actually drag).
@@ -6143,10 +6149,10 @@
                     trigger.addEventListener('mouseleave', stop);
                     trigger.addEventListener('click', (e) => {
                         if (dragged) { e.preventDefault(); e.stopPropagation(); return; }
-                        open(i);
+                        open(tile);
                     });
                 } else {
-                    trigger.addEventListener('click', () => open(i));
+                    trigger.addEventListener('click', () => open(tile));
                     trigger.style.cursor = 'zoom-in';
                 }
             });

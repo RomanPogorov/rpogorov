@@ -34,7 +34,9 @@
     const captionEl = document.getElementById('am-lb-caption');
     const counterEl = document.getElementById('am-lb-counter');
 
-    let tiles = Array.from(document.querySelectorAll('[data-media]'));
+    // Scoped to the group (case page) the clicked tile belongs to, so the
+    // counter + prev/next cover only that case — not every image on the site.
+    let group = [];
     let idx = 0;
 
     function buildItem(tile) {
@@ -47,8 +49,9 @@
     }
 
     function render(i) {
-      idx = (i + tiles.length) % tiles.length;
-      const item = buildItem(tiles[idx]);
+      if (!group.length) return;
+      idx = (i + group.length) % group.length;
+      const item = buildItem(group[idx]);
       stage.innerHTML = '';
       if (item.src) {
         if (item.kind === 'video') {
@@ -73,7 +76,7 @@
         stage.appendChild(placeholder);
       }
       captionEl.textContent = item.caption || '';
-      counterEl.textContent = `${idx + 1} of ${tiles.length}`;
+      counterEl.textContent = `${idx + 1} of ${group.length}`;
     }
 
     function inheritAccent() {
@@ -93,12 +96,13 @@
       if (ink) lb.style.setProperty('--ink', ink);
     }
 
-    function open(i) {
-      // refresh tiles each time — MDX inside the case overlay can be
-      // hidden until __cp.open mounts it; new tiles may appear later
-      tiles = Array.from(document.querySelectorAll('[data-media]'));
+    function open(tile) {
+      // Scope to media inside the same case page (fallback: whole document).
+      const container = tile.closest('.case-page') || document;
+      group = Array.from(container.querySelectorAll('[data-media]'));
+      const i = group.indexOf(tile);
       inheritAccent();
-      render(i);
+      render(i < 0 ? 0 : i);
       lb.classList.add('open');
       lb.setAttribute('aria-hidden', 'false');
     }
@@ -113,11 +117,7 @@
       tile.__lbBound = true;
       const trigger = tile.querySelector('.am-media-frame') || tile;
       trigger.style.cursor = 'zoom-in';
-      trigger.addEventListener('click', () => {
-        tiles = Array.from(document.querySelectorAll('[data-media]'));
-        const newIdx = tiles.indexOf(tile);
-        open(newIdx >= 0 ? newIdx : i);
-      });
+      trigger.addEventListener('click', () => open(tile));
     }
     tiles.forEach((tile, i) => bindTile(tile, i));
 
@@ -135,11 +135,9 @@
         tmp.dataset.kind = 'image';
         tmp.dataset.src = img.src;
         tmp.dataset.caption = img.alt || '';
-        document.body.appendChild(tmp);
-        tiles = Array.from(document.querySelectorAll('[data-media]'));
-        const i = tiles.indexOf(tmp);
-        open(i);
-        // cleanup after close
+        const cp = img.closest('.case-page') || document.body;
+        cp.appendChild(tmp);   // inside the case page so scoping picks it up
+        open(tmp);
         setTimeout(() => tmp.remove(), 0);
       });
     });
