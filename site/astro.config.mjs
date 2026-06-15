@@ -27,30 +27,34 @@ function lazyOffscreenImages() {
             if (st.isDirectory()) walk(p);
             else if (name.endsWith('.html')) {
               files++;
-              let out = readFileSync(p, 'utf8');
+              const original = readFileSync(p, 'utf8');
+              let out = original;
+              // Inject attributes with SINGLE quotes. Many <img>/<video> tags live
+              // inside inline-script data: case bodies in backtick template literals
+              // (double quotes ok) AND window.__RIGHT_PANEL_DETAIL via JSON.stringify
+              // (a double-quote-delimited string — injecting double quotes there
+              // breaks the JSON and silently kills every card-detail open). Single
+              // quotes are valid in HTML, in backtick strings, and inside JSON
+              // strings, so they're safe in all three contexts.
               out = out.replace(/<img\b(?![^>]*\bloading=)[^>]*>/g, (tag) => {
                 if (/showcase\/cases\//.test(tag)) return tag; // visible grid thumbnails stay eager
                 patched++;
-                return tag.replace(/^<img\b/, '<img loading="lazy" decoding="async"');
+                return tag.replace(/^<img\b/, "<img loading='lazy' decoding='async'");
               });
-              // Case-overlay videos are ambient loops inside off-screen overlays.
-              // `autoplay` makes the browser fetch them on first paint (~6 MB)
-              // even with preload="none", because they sit just below the fold.
-              // Strip autoplay + force preload="none" + tag them; a tiny
-              // IntersectionObserver (injected below) plays them only once they
-              // actually scroll into view (i.e. after their overlay opens) and
-              // pauses them when they leave. The hero background (id="bg") is
-              // left exactly as-is.
               let hasLazyVideo = false;
               out = out.replace(/<video\b[^>]*>/g, (tag) => {
                 if (/id="bg"/.test(tag)) return tag;
                 patched++;
                 hasLazyVideo = true;
                 let t = tag.replace(/\s+autoplay\b/g, '');
-                t = /\bpreload=/.test(t) ? t.replace(/\bpreload="[^"]*"/, 'preload="none"') : t.replace(/^<video\b/, '<video preload="none"');
+                t = /\bpreload=/.test(t) ? t.replace(/\bpreload=["'][^"']*["']/, "preload='none'") : t.replace(/^<video\b/, "<video preload='none'");
                 if (!/data-lazyvideo/.test(t)) t = t.replace(/^<video\b/, '<video data-lazyvideo');
                 return t;
               });
+              // Case-overlay videos (ambient loops inside off-screen overlays)
+              // were stripped of autoplay + tagged data-lazyvideo in the segment
+              // pass above. A tiny IntersectionObserver (injected below) plays
+              // them only once they scroll into view and pauses them on exit.
               if (hasLazyVideo && !out.includes('__lazyvideo')) {
                 const script = `<script>/*__lazyvideo*/(function(){var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting){if(v.preload!=='auto')v.preload='auto';v.play&&v.play().catch(function(){});}else{v.pause&&v.pause();}});},{rootMargin:'200px'});function wire(){document.querySelectorAll('video[data-lazyvideo]:not([data-lv])').forEach(function(v){v.setAttribute('data-lv','1');io.observe(v);});}wire();new MutationObserver(wire).observe(document.documentElement,{childList:true,subtree:true});})();<\/script>`;
                 // IMPORTANT: inject before the LAST </body>. The first </body>
@@ -60,8 +64,7 @@ function lazyOffscreenImages() {
                 const idx = out.lastIndexOf('</body>');
                 out = idx !== -1 ? out.slice(0, idx) + script + out.slice(idx) : out + script;
               }
-              const html = readFileSync(p, 'utf8');
-              if (out !== html) writeFileSync(p, out);
+              if (out !== original) writeFileSync(p, out);
             }
           }
         };
