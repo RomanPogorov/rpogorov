@@ -1,4 +1,127 @@
 
+    <!-- ===== Password gate (single password, no login). Verified server-side
+         via /api/gate/verify; "request password" lands in Roman's Telegram. ===== -->
+    <style>
+        .pgate{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;
+            background:radial-gradient(120% 90% at 50% 28%, rgba(8,20,16,.97), rgba(3,6,8,.995));
+            font-family:'JetBrains Mono',ui-monospace,monospace;color:#cfeede;padding:24px;
+            -webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);}
+        .pgate::before{content:'';position:absolute;inset:0;pointer-events:none;
+            background:repeating-linear-gradient(0deg, rgba(0,255,140,.022) 0 1px, transparent 1px 3px);}
+        .pgate.pgate-out{opacity:0;transition:opacity .4s ease;pointer-events:none;}
+        .pgate-panel{position:relative;width:min(430px,92vw);border:1px solid rgba(0,255,150,.28);
+            background:linear-gradient(180deg, rgba(10,18,16,.92), rgba(6,11,12,.95));
+            padding:34px 30px;border-radius:4px;
+            box-shadow:0 0 0 1px rgba(0,255,150,.06), 0 24px 80px rgba(0,0,0,.6), 0 0 60px rgba(0,255,140,.05);}
+        .pgate-eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--acc,#36ffae);opacity:.85;margin-bottom:13px;}
+        .pgate-title{font-size:25px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin:0 0 8px;color:#eafff4;}
+        .pgate-sub{font-size:12.5px;line-height:1.55;opacity:.6;margin:0 0 22px;}
+        .pgate-form{display:flex;gap:8px;}
+        .pgate-input{flex:1;min-width:0;background:rgba(0,0,0,.35);border:1px solid rgba(0,255,150,.22);color:#eafff4;
+            font-family:inherit;font-size:13px;padding:12px 14px;border-radius:3px;outline:none;transition:border-color .15s,box-shadow .15s;}
+        .pgate-input::placeholder{color:rgba(207,238,222,.4);}
+        .pgate-input:focus{border-color:var(--acc,#36ffae);box-shadow:0 0 0 1px rgba(0,255,150,.25);}
+        .pgate-textarea{width:100%;min-height:88px;resize:vertical;margin-top:8px;background:rgba(0,0,0,.35);
+            border:1px solid rgba(0,255,150,.22);color:#eafff4;font-family:inherit;font-size:13px;line-height:1.5;
+            padding:12px 14px;border-radius:3px;outline:none;box-sizing:border-box;}
+        .pgate-textarea::placeholder{color:rgba(207,238,222,.4);}
+        .pgate-textarea:focus{border-color:var(--acc,#36ffae);}
+        .pgate-btn{background:var(--acc,#36ffae);color:#04140d;border:none;font-family:inherit;font-weight:700;font-size:12px;
+            letter-spacing:.12em;text-transform:uppercase;padding:12px 18px;border-radius:3px;cursor:pointer;white-space:nowrap;
+            transition:filter .15s,transform .05s;}
+        .pgate-btn:hover{filter:brightness(1.12);}
+        .pgate-btn:active{transform:translateY(1px);}
+        .pgate-err{color:#ff6b6b;font-size:12px;margin-top:12px;letter-spacing:.03em;}
+        .pgate-ok{color:var(--acc,#36ffae);font-size:12.5px;margin-top:16px;line-height:1.55;}
+        .pgate-link{background:none;border:none;color:var(--acc,#36ffae);font-family:inherit;font-size:12px;letter-spacing:.05em;
+            cursor:pointer;padding:0;margin-top:18px;opacity:.82;transition:opacity .15s;}
+        .pgate-link:hover{opacity:1;text-decoration:underline;}
+        .pgate-reqform{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+        .pgate-reqrow{display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+        .pgate-reqrow .pgate-link{margin-top:0;}
+        html.pgate-locked,html.pgate-locked body{overflow:hidden!important;}
+    </style>
+    <div id="pgate" class="pgate" role="dialog" aria-modal="true" aria-label="Доступ к портфолио">
+        <div class="pgate-panel">
+            <div class="pgate-eyebrow">// закрытый доступ</div>
+            <h2 class="pgate-title">Введите пароль</h2>
+            <p class="pgate-sub">Портфолио открывается по паролю. Нет пароля — запросите доступ ниже, и я свяжусь с вами.</p>
+            <form id="pgate-form" autocomplete="off">
+                <input id="pgate-input" class="pgate-input" type="password" placeholder="пароль" autocomplete="off" aria-label="Пароль" />
+                <button type="submit" class="pgate-btn">Войти</button>
+            </form>
+            <div id="pgate-err" class="pgate-err" hidden>Неверный пароль</div>
+            <button id="pgate-reqtoggle" type="button" class="pgate-link">Запросить пароль →</button>
+            <form id="pgate-reqform" autocomplete="off" hidden>
+                <input id="pgate-name" class="pgate-input" type="text" placeholder="кто вы — имя, компания" maxlength="200" aria-label="Кто вы" />
+                <input id="pgate-contact" class="pgate-input" type="text" placeholder="контакт: telegram / email (необязательно)" maxlength="200" aria-label="Контакт" />
+                <textarea id="pgate-reason" class="pgate-textarea" placeholder="зачем нужен доступ" maxlength="1000" aria-label="Зачем нужен доступ"></textarea>
+                <div class="pgate-reqrow">
+                    <button type="button" id="pgate-reqcancel" class="pgate-link">← назад</button>
+                    <button type="submit" class="pgate-btn">Отправить запрос</button>
+                </div>
+            </form>
+            <div id="pgate-reqok" class="pgate-ok" hidden>Запрос отправлен — я свяжусь с вами. Можно закрыть страницу.</div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var KEY = 'rp-gate-ok';
+            var g = document.getElementById('pgate');
+            if (!g) return;
+            // Returning unlocked visitor — drop the gate before paint, no flash.
+            try { if (localStorage.getItem(KEY) === '1') { g.parentNode && g.parentNode.removeChild(g); return; } } catch (e) {}
+            document.documentElement.classList.add('pgate-locked');
+            var API = '/rpogorov-dev/app/api/gate';
+            var form = document.getElementById('pgate-form');
+            var input = document.getElementById('pgate-input');
+            var err = document.getElementById('pgate-err');
+            function unlock() {
+                try { localStorage.setItem(KEY, '1'); } catch (e) {}
+                g.classList.add('pgate-out');
+                document.documentElement.classList.remove('pgate-locked');
+                setTimeout(function () { g.parentNode && g.parentNode.removeChild(g); }, 420);
+            }
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                err.hidden = true;
+                var pw = input.value;
+                if (!pw) return;
+                fetch(API + '/verify', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: pw }) })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (d && d.ok) { unlock(); }
+                        else { err.textContent = 'Неверный пароль'; err.hidden = false; input.value = ''; input.focus(); }
+                    })
+                    .catch(function () { err.textContent = 'Ошибка сети — попробуйте ещё раз'; err.hidden = false; });
+            });
+            // Request-password sub-form
+            var reqToggle = document.getElementById('pgate-reqtoggle');
+            var reqForm = document.getElementById('pgate-reqform');
+            var reqCancel = document.getElementById('pgate-reqcancel');
+            var reqOk = document.getElementById('pgate-reqok');
+            reqToggle.addEventListener('click', function () { reqForm.hidden = false; reqToggle.hidden = true; document.getElementById('pgate-name').focus(); });
+            reqCancel.addEventListener('click', function () { reqForm.hidden = true; reqToggle.hidden = false; });
+            reqForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var name = document.getElementById('pgate-name').value.trim();
+                var contact = document.getElementById('pgate-contact').value.trim();
+                var reason = document.getElementById('pgate-reason').value.trim();
+                if (!name || !reason) { return; }
+                var btn = reqForm.querySelector('.pgate-btn');
+                btn.disabled = true; btn.textContent = 'Отправляю…';
+                fetch(API + '/request', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: name, contact: contact, reason: reason }) })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (d && d.ok) { reqForm.hidden = true; reqToggle.hidden = true; reqOk.hidden = false; }
+                        else { btn.disabled = false; btn.textContent = 'Отправить запрос'; }
+                    })
+                    .catch(function () { btn.disabled = false; btn.textContent = 'Отправить запрос'; });
+            });
+            input.focus();
+        })();
+    </script>
+
     <!-- Fluid scale: uniform-zoom the body to a fixed 1440px design baseline.
          Enable with ?fluid=1 in URL or localStorage('fluid'='1').
          Disable: remove the param / set localStorage('fluid'='0'). -->
