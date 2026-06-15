@@ -3171,7 +3171,7 @@
             let curRX = baseRX;
 
             document.addEventListener('mousemove', (e) => {
-                const r = hudLeft.getBoundingClientRect();
+                const r = stack.getBoundingClientRect();
                 const inside =
                     e.clientX >= r.left && e.clientX <= r.right &&
                     e.clientY >= r.top  && e.clientY <= r.bottom;
@@ -3221,7 +3221,7 @@
             let curRX = baseRX;
 
             document.addEventListener('mousemove', (e) => {
-                const r = hudRight.getBoundingClientRect();
+                const r = stack.getBoundingClientRect();
                 const inside =
                     e.clientX >= r.left && e.clientX <= r.right &&
                     e.clientY >= r.top  && e.clientY <= r.bottom;
