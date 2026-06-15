@@ -1417,6 +1417,7 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 22px rgba(var(--acc-rgb), 0.15);
         }
+        .case[data-open-case] { cursor: pointer; }
         .sc-card-thumb {
             position: relative;
             aspect-ratio: 16 / 9;

@@ -179,7 +179,7 @@ const cardsHtml = _companiesRu
       : `<img src="${escapeHtml(thumb)}" alt="${escapeHtml(d.name)}">`;
     const cardAccent = companyAccentStyle(d);
     const cardStyle = cardAccent ? ` style="${cardAccent}"` : '';
-    return `<article class="case" data-case="${slug}"${cardStyle}>
+    return `<article class="case" data-case="${slug}"${overlayId ? ` data-open-case="${overlayId}"` : ''}${cardStyle}>
       <div class="${mediaCls}"${mediaTrigger}>
         ${mediaInner}
         ${openCue}
