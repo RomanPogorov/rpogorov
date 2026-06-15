@@ -717,11 +717,11 @@
 
             <div class="panel-content">
                 <nav class="tabs" role="tablist">
-                    <button class="tab active" data-view="about"><span class="num">01</span>Обо мне</button>
-                    <button class="tab" data-view="career"><span class="num">02</span>Карьера</button>
-                    <button class="tab" data-view="work"><span class="num">03</span>Work</button>
-                    <button class="tab" data-view="skills"><span class="num">04</span>Stack</button>
-                    <button class="tab" data-view="contact"><span class="num">05</span>Контакт</button>
+                    <button class="tab active" data-view="about"><span class="num">01</span>Профиль</button>
+                    <button class="tab" data-view="career" style="display:none"><span class="num">02</span>Карьера</button>
+                    <button class="tab" data-view="work" style="display:none"><span class="num">03</span>Work</button>
+                    <button class="tab" data-view="skills"><span class="num">02</span>Скиллы</button>
+                    <button class="tab" data-view="contact"><span class="num">03</span>Контакты</button>
                 </nav>
 
                 <div class="panel-body">
@@ -1168,13 +1168,17 @@
         // (with edge clamp), matches the dw-modal arrow pattern.
         const panelPrev = document.getElementById('panel-prev');
         const panelNext = document.getElementById('panel-next');
+        // Only cycle through visible tabs — some are hidden via display:none.
+        function shownTabs() {
+            return Array.from(tabs).filter(t => getComputedStyle(t).display !== 'none');
+        }
         function activeTabIdx() {
-            return Array.from(tabs).findIndex(t => t.classList.contains('active'));
+            return shownTabs().findIndex(t => t.classList.contains('active'));
         }
         function syncNavDisabled() {
             const i = activeTabIdx();
             if (panelPrev) panelPrev.disabled = i <= 0;
-            if (panelNext) panelNext.disabled = i >= tabs.length - 1;
+            if (panelNext) panelNext.disabled = i >= shownTabs().length - 1;
         }
         function flashPanelBtn(btn) {
             if (!btn) return;
@@ -1182,10 +1186,11 @@
             setTimeout(() => btn.classList.remove('flash'), 220);
         }
         function panelGo(dir) {
-            const i = activeTabIdx();
+            const st = shownTabs();
+            const i = st.findIndex(t => t.classList.contains('active'));
             const next = i + dir;
-            if (next < 0 || next >= tabs.length) return;
-            activateTab(tabs[next]);
+            if (next < 0 || next >= st.length) return;
+            activateTab(st[next]);
             syncNavDisabled();
             window.__sfx?.tick?.();
             flashPanelBtn(dir > 0 ? panelNext : panelPrev);
