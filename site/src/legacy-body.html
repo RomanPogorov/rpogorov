@@ -7009,12 +7009,12 @@
             const TAGS = ['UI', 'Brand', 'System', 'Motion', 'Mobile', 'AI', 'UX', 'Data', 'Figma', 'Tokens', 'Pipeline', 'Flow'];
 
             // --- 360° grid geometry ---
-            const COLS = 16, ROWS = 4;          // full ring of columns × rows
+            const COLS = 16, ROWS = 6;          // full ring (fills the space)
             const R = 12;                        // cylinder radius (camera at centre)
             const ASPECT = 1.5;                  // cell 3:2 landscape
-            const FOV = 74;
+            const FOV = 68;
             const angStep = (Math.PI * 2) / COLS;
-            const cellW = 2 * R * Math.sin(angStep / 2);  // chord → edge-to-edge tiling
+            const cellW = 2 * R * Math.tan(angStep / 2);  // faceted-prism width → true edge-to-edge
             const cellH = cellW / ASPECT;
 
             let THREE = null, gsap = null;
@@ -7073,7 +7073,7 @@
             ].join('\n');
 
             function buildScene() {
-                const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+                const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(1.5, window.devicePixelRatio || 1);
                 scene = new THREE.Scene();
                 camera = new THREE.PerspectiveCamera(FOV, W / H, 0.1, 200);
                 camera.position.set(0, 0, 0);
@@ -7086,15 +7086,16 @@
                 postScene = new THREE.Scene();
                 postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
                 postMat = new THREE.ShaderMaterial({
-                    uniforms: { tDiffuse: { value: rt.texture }, strength: { value: 0.30 }, aspect: { value: W / H } },
+                    uniforms: { tDiffuse: { value: rt.texture }, strength: { value: 0.15 }, aspect: { value: W / H } },
                     vertexShader: VERT, fragmentShader: FRAG, depthTest: false, depthWrite: false
                 });
                 postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
 
                 const a = accent(), accHex = (a.r << 16) | (a.g << 8) | a.b;
-                pitchLimit = ((ROWS - 1) / 2) * cellH / R + 0.12;
+                const visV = 2 * R * Math.tan((FOV * Math.PI / 180) / 2);
+                pitchLimit = Math.atan(Math.max(0.05, (ROWS * cellH - visV) / 2) / R);
                 const N = COLS * ROWS;
-                const innerW = cellW * 0.992, innerH = cellH * 0.992;
+                const innerW = cellW * 0.998, innerH = cellH * 0.998;
                 for (let i = 0; i < N; i++) {
                     const col = i % COLS, row = Math.floor(i / COLS);
                     const ang = col * angStep;
@@ -7196,7 +7197,7 @@
 
             function resize() {
                 if (!renderer) return;
-                const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+                const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(1.5, window.devicePixelRatio || 1);
                 camera.aspect = W / H; camera.updateProjectionMatrix();
                 renderer.setSize(W, H);
                 rt.setSize(Math.floor(W * dpr), Math.floor(H * dpr));
