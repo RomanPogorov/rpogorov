@@ -4329,8 +4329,7 @@
             grid.innerHTML = DEEP_CASES.map(c => `
                 <a class="sc-card"${accStyle(c.company)} data-deep-id="${c.id}" data-deep-company="${c.company}"${c.deeplink ? ` data-deep-link="${c.deeplink}"` : ''} href="#case/${c.company}/${c.id}">
                     <div class="sc-card-thumb" aria-hidden="true">
-                        ${c.image ? `<img class="sc-card-thumb-img" src="${c.image}" alt="" loading="lazy" decoding="async">` : `<span class="sc-card-thumb-glyph">◆</span>`}
-                        <span class="sc-card-thumb-tag">${c.companyLabel}</span>
+                        ${c.image ? `<img class="sc-card-thumb-img" src="${c.image}" alt="" loading="lazy" decoding="async">` : `<span class="sc-card-thumb-glyph">◆</span><span class="sc-card-thumb-tag">${c.companyLabel}</span>`}
                     </div>
                     <div class="sc-card-body">
                         <div class="sc-card-meta">
