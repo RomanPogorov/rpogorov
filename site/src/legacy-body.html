@@ -5248,6 +5248,9 @@
                 // need WebGL effects. Idle (>0.95) just shows the original
                 // HTML video bg — R3F frameloop pauses, GPU stays cool.
                 document.body.classList.toggle('sim-engaged', norm < 0.95);
+                // At exactly 0 the user wants a clean static green frame — no
+                // glitches, tears or flicker. sim-still freezes those layers.
+                document.body.classList.toggle('sim-still', norm <= 0);
                 // Cubic falloff so heavy layers stay nearly invisible above
                 // mid-signal and only ramp up sharply near zero.
                 const inv = 1 - norm;
@@ -5281,7 +5284,7 @@
 
             // ------ Tear-bars: horizontal RGB-split slices ------
             function spawnTear() {
-                if (signal > 0.85 || document.hidden) return;
+                if (signal > 0.85 || signal <= 0 || document.hidden) return;
                 const bar = document.createElement('div');
                 bar.className = 'tear-bar';
                 bar.style.top = (Math.random() * window.innerHeight) + 'px';
@@ -5290,7 +5293,7 @@
                 setTimeout(() => bar.remove(), 240);
             }
             function tearLoop() {
-                if (!document.hidden && signal < 0.85) {
+                if (!document.hidden && signal < 0.85 && signal > 0) {
                     // Burst sometimes
                     const burst = Math.random() < 0.18 + (1 - signal) * 0.4
                         ? 2 + Math.floor(Math.random() * 3) : 1;
@@ -5305,7 +5308,7 @@
             // ------ Glitch cells: 80x80 random squares on the grid ------
             const CELL = 80;
             function spawnGlitchCell() {
-                if (document.hidden) return;
+                if (document.hidden || signal <= 0) return;
                 const cell = document.createElement('div');
                 cell.className = 'grid-glitch-cell';
                 const cols = Math.floor(window.innerWidth  / CELL);
@@ -5316,7 +5319,7 @@
                 setTimeout(() => cell.remove(), 480);
             }
             function cellLoop() {
-                if (!document.hidden && signal < 0.95) {
+                if (!document.hidden && signal < 0.95 && signal > 0) {
                     const burst = Math.random() < 0.22 + (1 - signal) * 0.5
                         ? 2 + Math.floor(Math.random() * 3) : 1;
                     for (let i = 0; i < burst; i++) setTimeout(spawnGlitchCell, i * 60);
@@ -5336,7 +5339,7 @@
             ];
             let glitchIdx = 0;
             function elementGlitchLoop() {
-                if (!document.hidden && signal < 0.45) {
+                if (!document.hidden && signal < 0.45 && signal > 0) {
                     const sel = GLITCH_SELECTORS[glitchIdx % GLITCH_SELECTORS.length];
                     glitchIdx++;
                     const els = document.querySelectorAll(sel);
@@ -6322,6 +6325,13 @@
             return s;
         }
 
+        // Module-level flag: true only when the signal slider sits at exactly 0.
+        let SIGNAL_ZERO = (() => {
+            const v = parseFloat(getComputedStyle(document.body).getPropertyValue('--sim-signal'));
+            return Number.isFinite(v) ? v <= 0 : false;
+        })();
+        document.addEventListener('signal:change', (e) => { SIGNAL_ZERO = e.detail <= 0; });
+
         // Mount bg.mp4 on a fullscreen plane in front of the LowPolyScene.
         // Plane is opaque from signal=1 down to signal=0.10, then fades sharp
         // to zero by signal=0 — so the wireframe scene only reveals at the
@@ -6348,7 +6358,7 @@
             useFrame((state) => {
                 const t = state.clock.elapsedTime;
                 const inv = 1 - signal;
-                if (signal < 0.6 && t > burst.current.until) {
+                if (signal < 0.6 && signal > 0 && t > burst.current.until) {
                     if (Math.random() < 0.004 + inv * 0.025) {
                         const mag = 0.05 + inv * 0.18;
                         burst.current.ox = (Math.random() - 0.5) * mag;
@@ -6455,7 +6465,7 @@
                     const m = winsRef.current[i];
                     if (!m) return;
                     if (w.twinkles) {
-                        m.material.opacity = opacity * (0.4 + Math.abs(Math.sin(t * 1.7 + w.phase)) * 0.6);
+                        m.material.opacity = opacity * (SIGNAL_ZERO ? 0.85 : (0.4 + Math.abs(Math.sin(t * 1.7 + w.phase)) * 0.6));
                     } else {
                         m.material.opacity = opacity * 0.78;
                     }
@@ -6505,7 +6515,7 @@
             useFrame((state) => {
                 if (!candleRef.current) return;
                 const t = state.clock.elapsedTime;
-                candleRef.current.material.opacity = opacity * (0.7 + Math.sin(t * 5) * 0.25);
+                candleRef.current.material.opacity = opacity * (SIGNAL_ZERO ? 0.9 : (0.7 + Math.sin(t * 5) * 0.25));
             });
             return (
                 <group position={position}>
@@ -6563,7 +6573,7 @@
         // Octagonal cage gazebo with a small dome on top.
         function Gazebo({ position = [0, 0, 0], opacity = 1 }) {
             const ref = useRef();
-            useFrame((state, dt) => { if (ref.current) ref.current.rotation.y += dt * 0.04; });
+            useFrame((state, dt) => { if (ref.current && !SIGNAL_ZERO) ref.current.rotation.y += dt * 0.04; });
             return (
                 <group ref={ref} position={position}>
                     {/* 8 vertical posts on a circle of radius 0.9 */}
@@ -6613,7 +6623,7 @@
             useFrame((state) => {
                 if (!blinkRef.current) return;
                 const t = state.clock.elapsedTime + seed;
-                blinkRef.current.material.opacity = opacity * (0.4 + Math.abs(Math.sin(t * 0.9)) * 0.6);
+                blinkRef.current.material.opacity = opacity * (SIGNAL_ZERO ? 0.85 : (0.4 + Math.abs(Math.sin(t * 0.9)) * 0.6));
             });
             return (
                 <group position={position}>
@@ -6678,7 +6688,7 @@
                 return arr;
             }, [count]);
             useFrame((_, dt) => {
-                if (!ref.current) return;
+                if (!ref.current || SIGNAL_ZERO) return;
                 const arr = ref.current.geometry.attributes.position.array;
                 const len = arr.length;
                 for (let i = 0; i < len; i += 6) {
@@ -6757,6 +6767,7 @@
         function CameraDrift() {
             const { camera } = useThree();
             useFrame((state) => {
+                if (SIGNAL_ZERO) return;
                 const t = state.clock.elapsedTime;
                 camera.position.x = Math.sin(t * 0.12) * 0.20;
                 camera.position.y = 1.50 + Math.sin(t * 0.16) * 0.08;
@@ -6770,7 +6781,7 @@
         function GroundGrid() {
             const ref = useRef();
             useFrame((_, dt) => {
-                if (!ref.current) return;
+                if (!ref.current || SIGNAL_ZERO) return;
                 ref.current.position.z = (ref.current.position.z + dt * 0.6) % 4;
             });
             return (
@@ -6785,7 +6796,7 @@
             const ref = useRef();
             const matRef = useRef();
             useFrame((state, dt) => {
-                if (!ref.current) return;
+                if (!ref.current || SIGNAL_ZERO) return;
                 ref.current.rotation.x += dt * 0.18 * speed;
                 ref.current.rotation.y += dt * 0.13 * speed;
                 const t = state.clock.elapsedTime;
@@ -6838,7 +6849,7 @@
             const idle = signal > 0.95;
             const caOffset = useMemo(() => new Vector2(0, 0), []);
             useFrame(() => {
-                if (idle) { caOffset.x = 0; caOffset.y = 0; return; }
+                if (idle || signal <= 0) { caOffset.x = 0; caOffset.y = 0; return; }
                 const jitter = 0.0002 + inv * 0.012;
                 caOffset.x = (Math.random() - 0.5) * jitter;
                 caOffset.y = (Math.random() - 0.5) * jitter * 0.6;
@@ -6847,13 +6858,21 @@
             // pipeline isn't doing 6 fullscreen passes on a hot GPU.
             if (idle) {
                 return (
-                    <EffectComposer multisampling={0}>
+                    <EffectComposer key="fx-idle" multisampling={0}>
                         <Vignette eskil={false} offset={0.2} darkness={0.5} />
                     </EffectComposer>
                 );
             }
+            if (signal <= 0) {
+                return (
+                    <EffectComposer key="fx-still" multisampling={0}>
+                        <Bloom intensity={0.6 + inv * 1.4} luminanceThreshold={0.18} luminanceSmoothing={0.4} mipmapBlur />
+                        <Vignette eskil={false} offset={0.2} darkness={0.5 + fall * 0.3} />
+                    </EffectComposer>
+                );
+            }
             return (
-                <EffectComposer multisampling={0}>
+                <EffectComposer key="fx-full" multisampling={0}>
                     <Bloom
                         intensity={0.6 + inv * 1.4}
                         luminanceThreshold={0.18}

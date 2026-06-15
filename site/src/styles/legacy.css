@@ -220,6 +220,20 @@
             animation-play-state: paused !important;
         }
 
+        /* Signal slider at exactly 0 → clean still green frame. Hide every
+           flickering DOM overlay so only the (frozen) WebGL scene remains. */
+        body.sim-still .layer-holo-flicker,
+        body.sim-still .layer-grid-burn,
+        body.sim-still .layer-grid-interference,
+        body.sim-still .layer-interlace,
+        body.sim-still .layer-scanlines-amp,
+        body.sim-still .layer-tear,
+        body.sim-still .scanlines,
+        body.sim-still .noise {
+            opacity: 0 !important;
+            animation-play-state: paused !important;
+        }
+
         /* ============ NOISE / GRAIN ============ */
         .noise {
             position: fixed;
@@ -607,6 +621,9 @@
             -webkit-backdrop-filter: blur(8px);
             font-family: 'JetBrains Mono', monospace;
         }
+        /* Signal slider only makes sense over the live video bg — hide it when
+           the static image background is selected. */
+        body.bg-static .sim-signal { display: none; }
         .sim-signal-label {
             font-size: 0.5625rem;
             font-weight: 600;
