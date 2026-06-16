@@ -5662,6 +5662,9 @@
         /* one-per-row newsletter mockups, centred */
         .cp-stack { display: flex; flex-direction: column; align-items: center; gap: 22px; margin: 24px 0; }
         .cp-stack img { width: 100%; max-width: 620px; height: auto; display: block; border-radius: 8px; border: 1px solid var(--hs-border); }
+        /* centred portrait demo video (phone recording) */
+        .cp-video { display: flex; justify-content: center; margin: 24px 0; }
+        .cp-video video { width: 100%; max-width: 340px; height: auto; display: block; border-radius: 12px; border: 1px solid var(--hs-border); }
         /* faint border + rounding on brand-identity case images */
         .case-page[data-case-page="brand-identity"] figure img {
             border: 1px solid var(--hs-border);
