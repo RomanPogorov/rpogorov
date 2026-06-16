@@ -92,7 +92,7 @@
                 fetch(API + '/verify', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: pw }) })
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
-                        if (d && d.ok) { unlock(); }
+                        if (d && d.ok) { try { localStorage.setItem('rpogorov_chat_gatepw', pw); } catch (e) {} unlock(); }
                         else { err.textContent = 'Неверный пароль'; err.hidden = false; input.value = ''; input.focus(); }
                     })
                     .catch(function () { err.textContent = 'Ошибка сети — попробуйте ещё раз'; err.hidden = false; });
@@ -2253,10 +2253,12 @@
                 input.value = '';
                 sendBtn.disabled = true;
                 try {
+                    let gatePw = '';
+                    try { gatePw = localStorage.getItem('rpogorov_chat_gatepw') || ''; } catch (e) {}
                     const r = await fetch('api/chat/send', {
                         method: 'POST',
                         headers: { 'content-type': 'application/json' },
-                        body: JSON.stringify({ thread, text }),
+                        body: JSON.stringify({ thread, text, pw: gatePw }),
                     });
                     const data = await r.json();
                     if (data?.msg) addMsg({ role: 'visitor', text: data.msg.text, id: data.msg.id });
