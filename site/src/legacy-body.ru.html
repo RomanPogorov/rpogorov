@@ -786,7 +786,7 @@
     <div class="gallery-overlay" id="gallery-overlay" aria-hidden="true">
         <canvas class="gallery-canvas" id="gallery-canvas"></canvas>
         <div class="gallery-hud">
-            <span class="gallery-hud-title">works — тащи, чтобы осмотреться · клик по карточке</span>
+            <span class="gallery-hud-title">works — тащи, чтобы листать · клик по карточке</span>
             <button type="button" class="gallery-close-btn" id="gallery-close-btn" aria-label="Закрыть галерею">esc · закрыть</button>
         </div>
         <div class="gallery-loading" id="gallery-loading">сборка пространства…</div>
@@ -7106,24 +7106,33 @@
                 'Architecture', 'App screen', 'Flow map', 'Legacy'];
             const TAGS = ['UI', 'Brand', 'System', 'Motion', 'Mobile', 'AI', 'UX', 'Data', 'Figma', 'Tokens', 'Pipeline', 'Flow'];
 
-            // --- 360° grid geometry ---
-            const COLS = 16, ROWS = 6;          // full ring (fills the space)
-            const R = 12;                        // cylinder radius (camera at centre)
-            const ASPECT = 1.5;                  // cell 3:2 landscape
-            const FOV = 68;
-            const angStep = (Math.PI * 2) / COLS;
-            const cellW = 2 * R * Math.tan(angStep / 2);  // faceted-prism width → true edge-to-edge
-            const cellH = cellW / ASPECT;
+            // --- flat grid bent by a lens. The whole grid is ONE coplanar surface
+            // rendered straight by an orthographic camera; a fisheye/barrel shader
+            // then bends the rendered frame. We never distort individual cells in 3D.
+            // A pool of COLS×ROWS tiles wraps infinitely as you drag (toroidal pan).
+            const COLS = 12, ROWS = 8;
+            const TILE_ASPECT = 1.5;             // cell 3:2 landscape
+            let halfH = 5;                        // ortho half-height (world units)
+            let cellW = 0, cellH = 0, innerW = 0, innerH = 0, spanX = 0, spanY = 0;
+            function computeDims() {
+                cellH = (halfH * 2) / 4.2;        // ~4.2 cell-rows tall in view
+                cellW = cellH * TILE_ASPECT;
+                innerW = cellW * 0.9; innerH = cellH * 0.9;   // gap between tiles
+                spanX = COLS * cellW; spanY = ROWS * cellH;
+            }
 
             let THREE = null, gsap = null;
-            let renderer, scene, camera, raycaster, tmpDir;
+            let renderer, scene, camera;
             let rt, postScene, postCam, postMat;
-            let cells = [], pickables = [], ready = false, running = false, raf = 0;
-            let pitchLimit = 0.5;
-            const pointer = { x: 0, y: 0 };
+            let cells = [], ready = false, running = false, raf = 0;
+            const labelCache = new Map();
+            let aspect = 1;
+            const pointer = { x: 0.5, y: 0.5 };   // screen uv, y up
             let dragging = false, lastX = 0, lastY = 0, moved = 0;
-            let targetYaw = 0, curYaw = 0, targetPitch = 0, curPitch = 0, velYaw = 0, velPitch = 0;
-            const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+            let panX = 0, panY = 0, velX = 0, velY = 0, curK1 = 0.34;
+            const K1_BASE = 0.34, K1_DRAG = 0.48, ZOOM = 0.82;
+            const wrap = (v, s) => v - s * Math.round(v / s);
+            const mod = (n, m) => ((n % m) + m) % m;
 
             function accent() {
                 const v = getComputedStyle(document.body).getPropertyValue('--acc-rgb').trim();
@@ -7135,12 +7144,13 @@
                 if (THREE && gsap) return;
                 const [t, g] = await Promise.all([import('three'), import('gsap')]);
                 THREE = t; gsap = g.gsap || g.default || g;
-                raycaster = new THREE.Raycaster();
-                tmpDir = new THREE.Vector3();
             }
 
-            // title (top) + tag (bottom) on a transparent canvas, our type style.
-            function labelTexture(title, tag) {
+            // title (top) + tag (bottom) on a transparent canvas; cached by content.
+            function getLabel(title, tag) {
+                const key = title + '|' + tag;
+                let tex = labelCache.get(key);
+                if (tex) return tex;
                 const a = accent();
                 const W = 512, H = 256, c = document.createElement('canvas'); c.width = W; c.height = H;
                 const ctx = c.getContext('2d');
@@ -7152,29 +7162,41 @@
                 ctx.fillStyle = `rgba(${a.r},${a.g},${a.b},0.92)`;
                 ctx.font = '600 22px "JetBrains Mono", monospace';
                 ctx.fillText('// ' + tag.toUpperCase(), 8, H - 38);
-                const tex = new THREE.CanvasTexture(c);
+                tex = new THREE.CanvasTexture(c);
                 tex.colorSpace = THREE.SRGBColorSpace; tex.minFilter = THREE.LinearFilter;
+                labelCache.set(key, tex);
                 return tex;
             }
 
             const VERT = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
+            // Fisheye/barrel lens over the WHOLE flat render. k1>0 bows the grid
+            // outward (spherical bulge, edges curve away); zoom keeps corners framed.
             const FRAG = [
-                'uniform sampler2D tDiffuse; uniform float strength; uniform float aspect; varying vec2 vUv;',
+                'uniform sampler2D tDiffuse; uniform float k1; uniform float zoom; uniform float aspect; varying vec2 vUv;',
                 'void main(){',
                 '  vec2 cc = vUv - 0.5; cc.x *= aspect;',
                 '  float r2 = dot(cc, cc);',
-                '  float f = 1.0 - r2 * strength;',          // barrel: centre magnified, edges curve away
-                '  vec2 uv = (vUv - 0.5) * f + 0.5;',
+                '  float f = 1.0 + k1 * r2;',
+                '  vec2 uv = (vUv - 0.5) * f * zoom + 0.5;',
                 '  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.02, 0.027, 0.028, 1.0); return; }',
                 '  gl_FragColor = texture2D(tDiffuse, uv);',
                 '}'
             ].join('\n');
 
+            // deterministic content per infinite-grid cell (panning is coherent).
+            function contentFor(wc, wr) {
+                const ti = mod(wc * 3 + wr * 7, TITLES.length);
+                const gi = mod(wc * 5 + wr * 11, TAGS.length);
+                return { title: TITLES[ti], tag: TAGS[gi] };
+            }
+
             function buildScene() {
+                aspect = window.innerWidth / window.innerHeight;
+                computeDims();
                 const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(1.5, window.devicePixelRatio || 1);
                 scene = new THREE.Scene();
-                camera = new THREE.PerspectiveCamera(FOV, W / H, 0.1, 200);
-                camera.position.set(0, 0, 0);
+                camera = new THREE.OrthographicCamera(-halfH * aspect, halfH * aspect, halfH, -halfH, 0.1, 100);
+                camera.position.set(0, 0, 10); camera.lookAt(0, 0, 0);
                 renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
                 renderer.setClearColor(0x050607, 1);
                 renderer.setPixelRatio(dpr);
@@ -7184,70 +7206,92 @@
                 postScene = new THREE.Scene();
                 postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
                 postMat = new THREE.ShaderMaterial({
-                    uniforms: { tDiffuse: { value: rt.texture }, strength: { value: 0.15 }, aspect: { value: W / H } },
+                    uniforms: { tDiffuse: { value: rt.texture }, k1: { value: K1_BASE }, zoom: { value: ZOOM }, aspect: { value: aspect } },
                     vertexShader: VERT, fragmentShader: FRAG, depthTest: false, depthWrite: false
                 });
                 postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
 
                 const a = accent(), accHex = (a.r << 16) | (a.g << 8) | a.b;
-                const visV = 2 * R * Math.tan((FOV * Math.PI / 180) / 2);
-                pitchLimit = Math.atan(Math.max(0.05, (ROWS * cellH - visV) / 2) / R);
-                const N = COLS * ROWS;
-                const innerW = cellW * 0.998, innerH = cellH * 0.998;
-                for (let i = 0; i < N; i++) {
-                    const col = i % COLS, row = Math.floor(i / COLS);
-                    const ang = col * angStep;
-                    const y = ((ROWS - 1) / 2 - row) * cellH;
-                    const pos = new THREE.Vector3(Math.sin(ang) * R, y, Math.cos(ang) * R);
-                    const g = new THREE.Group();
-                    g.position.copy(pos);
-                    g.lookAt(0, 0, 0);
-                    const title = TITLES[i % TITLES.length], tag = TAGS[i % TAGS.length];
-                    g.userData = { hov: 0, item: { title, tag } };
+                for (let sr = 0; sr < ROWS; sr++) {
+                    for (let sc = 0; sc < COLS; sc++) {
+                        const g = new THREE.Group();
+                        g.userData = { sc, sr, hov: 0, wc: NaN, wr: NaN, item: null };
 
-                    const bgMat = new THREE.MeshBasicMaterial({ color: accHex, transparent: true, opacity: 0, depthWrite: false });
-                    const bg = new THREE.Mesh(new THREE.PlaneGeometry(innerW, innerH), bgMat); bg.position.z = 0; g.add(bg);
+                        const bgMat = new THREE.MeshBasicMaterial({ color: accHex, transparent: true, opacity: 0, depthWrite: false });
+                        g.add(new THREE.Mesh(new THREE.PlaneGeometry(innerW, innerH), bgMat));
 
-                    const edges = new THREE.EdgesGeometry(new THREE.PlaneGeometry(innerW, innerH));
-                    const bMat = new THREE.LineBasicMaterial({ color: accHex, transparent: true, opacity: 0.22 });
-                    const border = new THREE.LineSegments(edges, bMat); border.position.z = 0.01; g.add(border);
+                        const bMat = new THREE.LineBasicMaterial({ color: accHex, transparent: true, opacity: 0.22 });
+                        const border = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(innerW, innerH)), bMat);
+                        border.position.z = 0.01; g.add(border);
 
-                    const lblH = (cellW * 0.92) * 256 / 512;
-                    const lblMat = new THREE.MeshBasicMaterial({ map: labelTexture(title, tag), transparent: true, depthWrite: false });
-                    const lbl = new THREE.Mesh(new THREE.PlaneGeometry(cellW * 0.92, lblH), lblMat);
-                    lbl.position.set(0, 0, 0.02); g.add(lbl);
+                        const lblH = innerW * 256 / 512;
+                        const lblMat = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false });
+                        const lbl = new THREE.Mesh(new THREE.PlaneGeometry(innerW, lblH), lblMat);
+                        lbl.position.z = 0.02; g.add(lbl);
 
-                    const pickMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
-                    const pick = new THREE.Mesh(new THREE.PlaneGeometry(cellW, cellH), pickMat); pick.position.z = 0.03;
-                    pick.userData = { group: g }; g.add(pick); pickables.push(pick);
+                        g.userData.bgMat = bgMat; g.userData.bMat = bMat; g.userData.lblMat = lblMat;
+                        scene.add(g); cells.push(g);
+                    }
+                }
+                layout();
+            }
 
-                    g.userData.bgMat = bgMat; g.userData.bMat = bMat;
-                    scene.add(g); cells.push(g);
+            // Each frame: wrap every pool tile into the visible band and (re)assign
+            // its content from the infinite-grid cell it currently lands on.
+            function layout() {
+                for (const g of cells) {
+                    const sc = g.userData.sc, sr = g.userData.sr;
+                    const bx = (sc - (COLS - 1) / 2) * cellW;
+                    const by = (sr - (ROWS - 1) / 2) * cellH;
+                    const x = wrap(bx + panX, spanX);
+                    const y = wrap(by + panY, spanY);
+                    g.position.set(x, y, 0);
+                    const wc = Math.round((x - panX) / cellW);
+                    const wr = Math.round((y - panY) / cellH);
+                    if (wc !== g.userData.wc || wr !== g.userData.wr) {
+                        g.userData.wc = wc; g.userData.wr = wr;
+                        const item = contentFor(wc, wr);
+                        g.userData.item = item;
+                        g.userData.lblMat.map = getLabel(item.title, item.tag);
+                        g.userData.lblMat.needsUpdate = true;
+                    }
                 }
             }
 
-            function updateHover() {
-                raycaster.setFromCamera(pointer, camera);
-                const hit = raycaster.intersectObjects(pickables)[0];
-                const top = hit ? hit.object.userData.group : null;
+            // screen pointer (uv, y up) → world point, through the inverse lens, so
+            // hover/click stay accurate under the distortion.
+            function pointerWorld() {
+                const cx = pointer.x - 0.5, cy = pointer.y - 0.5;
+                const k1 = postMat ? postMat.uniforms.k1.value : K1_BASE;
+                const r2 = (cx * aspect) * (cx * aspect) + cy * cy;
+                const f = 1.0 + k1 * r2;
+                return { x: cx * f * ZOOM * 2 * halfH * aspect, y: cy * f * ZOOM * 2 * halfH };
+            }
+            function hitTile() {
+                const p = pointerWorld();
                 for (const g of cells) {
-                    const want = (g === top && !dragging) ? 1 : 0;
+                    if (Math.abs(p.x - g.position.x) <= innerW / 2 && Math.abs(p.y - g.position.y) <= innerH / 2) return g;
+                }
+                return null;
+            }
+
+            function updateHover() {
+                const top = dragging ? null : hitTile();
+                for (const g of cells) {
+                    const want = (g === top) ? 1 : 0;
                     g.userData.hov += (want - g.userData.hov) * 0.18;
                     g.userData.bgMat.opacity = g.userData.hov * 0.20;
                     g.userData.bMat.opacity = 0.22 + g.userData.hov * 0.55;
                 }
+                canvas.style.cursor = top ? 'pointer' : (dragging ? 'grabbing' : 'grab');
             }
 
             function tick() {
-                if (!dragging) { targetYaw += velYaw; targetPitch += velPitch; velYaw *= 0.9; velPitch *= 0.9; }
-                targetPitch = clamp(targetPitch, -pitchLimit, pitchLimit);   // 360° horizontally, limited vertically
-                curYaw += (targetYaw - curYaw) * 0.08;
-                curPitch += (targetPitch - curPitch) * 0.08;
-                const fovTarget = dragging ? FOV + 16 : FOV;   // camera eases back while dragging, returns on release
-                if (Math.abs(camera.fov - fovTarget) > 0.04) { camera.fov += (fovTarget - camera.fov) * 0.09; camera.updateProjectionMatrix(); }
-                const cp = Math.cos(curPitch);
-                tmpDir.set(cp * Math.sin(curYaw), Math.sin(curPitch), cp * Math.cos(curYaw));
-                camera.lookAt(tmpDir);
+                if (!dragging) { panX += velX; panY += velY; velX *= 0.92; velY *= 0.92; }
+                const k1Target = dragging ? K1_DRAG : K1_BASE;   // lens deepens while dragging, eases back on release
+                curK1 += (k1Target - curK1) * 0.08;
+                postMat.uniforms.k1.value = curK1;
+                layout();
                 updateHover();
                 renderer.setRenderTarget(rt); renderer.render(scene, camera);
                 renderer.setRenderTarget(null); renderer.render(postScene, postCam);
@@ -7255,28 +7299,28 @@
             }
 
             function setPointer(e) {
-                pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-                pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                pointer.x = e.clientX / window.innerWidth;
+                pointer.y = 1 - e.clientY / window.innerHeight;
             }
-            function onDown(e) { dragging = true; canvas.classList.add('dragging'); lastX = e.clientX; lastY = e.clientY; moved = 0; velYaw = velPitch = 0; setPointer(e); }
+            function onDown(e) { dragging = true; canvas.classList.add('dragging'); lastX = e.clientX; lastY = e.clientY; moved = 0; velX = velY = 0; setPointer(e); }
             function onMove(e) {
                 setPointer(e);
                 if (!dragging) return;
                 const dx = e.clientX - lastX, dy = e.clientY - lastY;
                 lastX = e.clientX; lastY = e.clientY;
                 moved += Math.abs(dx) + Math.abs(dy);
-                const sens = 0.0021;
-                targetYaw -= dx * sens; targetPitch -= dy * sens;
-                velYaw = -dx * sens; velPitch = -dy * sens;
+                const wx = dx * (2 * halfH * aspect) / window.innerWidth;
+                const wy = -dy * (2 * halfH) / window.innerHeight;
+                panX += wx; panY += wy;
+                velX = wx; velY = wy;
             }
             function onUp(e) {
                 if (dragging) { setPointer(e); if (moved < 7) tryPick(); }
                 dragging = false; canvas.classList.remove('dragging');
             }
             function tryPick() {
-                raycaster.setFromCamera(pointer, camera);
-                const hit = raycaster.intersectObjects(pickables)[0];
-                if (hit) openDetail(hit.object.userData.group.userData.item);
+                const g = hitTile();
+                if (g && g.userData.item) openDetail(g.userData.item);
             }
 
             function openDetail(item) {
@@ -7296,10 +7340,13 @@
             function resize() {
                 if (!renderer) return;
                 const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(1.5, window.devicePixelRatio || 1);
-                camera.aspect = W / H; camera.updateProjectionMatrix();
+                aspect = W / H;
+                camera.left = -halfH * aspect; camera.right = halfH * aspect;
+                camera.top = halfH; camera.bottom = -halfH;
+                camera.updateProjectionMatrix();
                 renderer.setSize(W, H);
                 rt.setSize(Math.floor(W * dpr), Math.floor(H * dpr));
-                postMat.uniforms.aspect.value = W / H;
+                postMat.uniforms.aspect.value = aspect;
             }
             function addListeners() {
                 canvas.addEventListener('pointerdown', onDown);
