@@ -55,9 +55,13 @@ const localized = (id: string) => {
   if (!ru) return null;
   return pickByLang(ru);
 };
-const subCases = (await getCollection('cases')).sort(
-  (a, b) => a.data.order - b.data.order
-);
+// EN site — prefer EN case variants (*.en.mdx) by id, fall back to the RU
+// original when no English twin exists (e.g. cs06 cases ship RU-only for now).
+const _casesRu = await getCollection('cases');
+const _casesEn = await getCollection('casesEn');
+const subCases = _casesRu
+  .map((ru) => _casesEn.find((e) => e.data.id === ru.data.id) ?? ru)
+  .sort((a, b) => a.data.order - b.data.order);
 // EN site — prefer EN-translated right-panel entries (*.en.md), fall
 // back to RU originals if no EN twin exists.
 const _rightPanelRu = (await getCollection('rightPanel')).sort(

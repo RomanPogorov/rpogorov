@@ -7,9 +7,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const cases = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/cases' }),
-  schema: z.object({
+const casesSchema = z.object({
     id: z.string(),
     company: z.enum(['cs01', 'cs02', 'cs06']),
     companyLabel: z.string(),
@@ -54,7 +52,19 @@ const cases = defineCollection({
         })
       )
       .default([]),
-  }),
+  });
+
+// RU/default cases (everything except *.en.mdx) → feeds the RU page at the root.
+const cases = defineCollection({
+  loader: glob({ pattern: ['**/*.mdx', '!**/*.en.mdx'], base: './src/content/cases' }),
+  schema: casesSchema,
+});
+
+// English case variants (*.en.mdx) → feeds the EN page; falls back to RU when
+// no .en exists (e.g. cs06 cases that only ship in one language).
+const casesEn = defineCollection({
+  loader: glob({ pattern: '**/*.en.mdx', base: './src/content/cases' }),
+  schema: casesSchema,
 });
 
 const companiesSchema = z.object({
@@ -160,4 +170,4 @@ const rightPanelEn = defineCollection({
   schema: rightPanelSchema,
 });
 
-export const collections = { cases, articles, companies, companiesEn, rightPanel, rightPanelEn };
+export const collections = { cases, casesEn, articles, companies, companiesEn, rightPanel, rightPanelEn };
