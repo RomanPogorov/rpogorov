@@ -1863,6 +1863,24 @@
             const isSilent = () => document.body.classList.contains('audio-silent');
             const gate = (fn) => (...args) => { if (isSilent()) return; return fn(...args); };
 
+            // Persistent drag "whoosh" — a looping filtered-noise bed whose volume
+            // and brightness track drag speed. Created lazily on first use.
+            let dragNode = null;
+            function ensureDrag() {
+                const a = ctx(); if (!a) return null;
+                if (dragNode) return dragNode;
+                const buf = a.createBuffer(1, a.sampleRate * 2, a.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+                const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
+                const filt = a.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 280; filt.Q.value = 0.9;
+                const g = a.createGain(); g.gain.value = 0;
+                src.connect(filt).connect(g).connect(a.destination);
+                src.start();
+                dragNode = { filt, g };
+                return dragNode;
+            }
+
             const SFX = {
                 hover:    gate(() => tone({ freq: 1500, dur: 0.04, type: 'triangle', gain: 0.025 })),
                 tick:     gate(() => tone({ freq: 3200, dur: 0.018, type: 'sine', gain: 0.03 })),
@@ -1893,6 +1911,17 @@
                     tone({ freq: 2400, dur: 0.012, type: 'square', gain: 0.022, attack: 0.001 });
                     setTimeout(() => tone({ freq: 1800, dur: 0.014, type: 'square', gain: 0.020, attack: 0.001 }), 70);
                 }),
+                // Stylish drag-scroll whoosh — call with intensity 0..1 each frame
+                // while panning; gain/brightness follow speed, eases to silence.
+                dragSet: (intensity) => {
+                    const a = ctx(); if (!a) return;
+                    const t = a.currentTime;
+                    if (isSilent()) { if (dragNode) dragNode.g.gain.setTargetAtTime(0.0001, t, 0.05); return; }
+                    const n = ensureDrag(); if (!n) return;
+                    const i = Math.max(0, Math.min(1, intensity || 0));
+                    n.g.gain.setTargetAtTime(i * i * 0.05, t, 0.05);
+                    n.filt.frequency.setTargetAtTime(260 + i * 1500, t, 0.05);
+                },
             };
             window.__sfx = SFX;
 
@@ -7131,6 +7160,7 @@
             let dragging = false, lastX = 0, lastY = 0, moved = 0;
             let panX = 0, panY = 0, velX = 0, velY = 0, curK1 = 0.22, viewScale = 1;
             let parX = 0, parY = 0, prevPanX = 0, prevPanY = 0, blockAR = 1.5;
+            let lastHover = null, lastHoverT = 0;
             const K1_BASE = 0.22, K1_DRAG = 0.28, ZOOM = 1.0;   // a touch more edge bend
             const DRAG_PULLBACK = 1.12;          // camera eases back while dragging
             const INERTIA = 0.965;               // longer coast after release
@@ -7355,6 +7385,11 @@
 
             function updateHover() {
                 const top = dragging ? null : hitTile();
+                if (top && top !== lastHover) {
+                    const now = (window.performance && performance.now) ? performance.now() : Date.now();
+                    if (now - lastHoverT > 55) { window.__sfx && window.__sfx.hover && window.__sfx.hover(); lastHoverT = now; }
+                }
+                lastHover = top;
                 for (const g of cells) {
                     const want = (g === top) ? 1 : 0;
                     g.userData.hov += (want - g.userData.hov) * 0.18;
@@ -7383,8 +7418,10 @@
                 parY += ((pointer.y - 0.5) * PARALLAX_AMP - parY) * 0.06;
                 // motion blur from how far the grid moved this frame (uv space)
                 const denom = 2 * halfH * viewScale;
-                postMat.uniforms.vel.value.set((panX - prevPanX) / (denom * aspect) * MOTION_BLUR, (panY - prevPanY) / denom * MOTION_BLUR);
+                const muvx = (panX - prevPanX) / (denom * aspect), muvy = (panY - prevPanY) / denom;
+                postMat.uniforms.vel.value.set(muvx * MOTION_BLUR, muvy * MOTION_BLUR);
                 prevPanX = panX; prevPanY = panY;
+                if (window.__sfx && window.__sfx.dragSet) window.__sfx.dragSet(Math.min(1, Math.hypot(muvx, muvy) * 22));
                 applyCamera();
                 layout();
                 updateHover();
@@ -7468,6 +7505,8 @@
                 overlay.setAttribute('aria-hidden', 'true');
                 document.body.classList.remove('gallery-open');
                 running = false; cancelAnimationFrame(raf);
+                if (window.__sfx && window.__sfx.dragSet) window.__sfx.dragSet(0);
+                lastHover = null;
                 closeDetail();
             }
 
