@@ -436,6 +436,8 @@ const server = http.createServer(async (req, res) => {
           else console.error('gate createForumTopic failed:', JSON.stringify(data).slice(0, 200));
         } catch (e) { console.error('gate topic error:', e.message); }
       }
+      // Remember this password's topic so the visitor's later chat lands here too.
+      if (topicId && state.gatePasswords[password]) { state.gatePasswords[password].topicId = topicId; saveLater(); }
       if (topicId) await sendTelegramMessage(GROUP_CHAT_ID, msg, topicId).catch(() => {});
       else await sendTelegramMessage(ROMAN_CHAT_ID, msg).catch(() => {});
     })();
@@ -452,6 +454,21 @@ const server = http.createServer(async (req, res) => {
     // thread alongside Roman's own TG replies.
     const useClaude = body.useClaude !== false;
     if (!thread || !text) return send(res, 400, { error: 'thread and text required' });
+
+    // If the visitor unlocked with a private password, bind their chat thread to
+    // that password's topic — so the request, the password and the chat all live
+    // in ONE Telegram topic instead of spawning a separate "first message" topic.
+    const gatePw = String(body.pw || '');
+    if (gatePw) {
+      const rec = state.gatePasswords[gatePw];
+      const t = getThread(thread);
+      if (rec && rec.topicId && !t.topicId) {
+        t.topicId = rec.topicId;
+        state.topicMap[rec.topicId] = thread;
+        rec.thread = thread;
+        saveLater();
+      }
+    }
 
     // If Roman is actively handling this thread (spoke within the window, or
     // told the agent to stay quiet), the agent steps aside: no auto-reply AND no
