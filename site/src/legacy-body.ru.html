@@ -61,7 +61,7 @@
                     <button type="submit" class="pgate-btn">Отправить запрос</button>
                 </div>
             </form>
-            <div id="pgate-reqok" class="pgate-ok" hidden>Запрос отправлен — я свяжусь с вами. Можно закрыть страницу.</div>
+            <div id="pgate-reqok" class="pgate-ok" hidden>Спасибо! Я посмотрю запрос и свяжусь с вами по указанному контакту. Эту страницу можно закрыть.</div>
         </div>
     </div>
     <script>
@@ -76,6 +76,8 @@
             var form = document.getElementById('pgate-form');
             var input = document.getElementById('pgate-input');
             var err = document.getElementById('pgate-err');
+            var titleEl = g.querySelector('.pgate-title');
+            var subEl = g.querySelector('.pgate-sub');
             function unlock() {
                 try { localStorage.setItem(KEY, '1'); } catch (e) {}
                 g.classList.add('pgate-out');
@@ -113,7 +115,12 @@
                 fetch(API + '/request', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name: name, contact: contact, reason: reason }) })
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
-                        if (d && d.ok) { reqForm.hidden = true; reqToggle.hidden = true; reqOk.hidden = false; }
+                        if (d && d.ok) {
+                            reqForm.hidden = true; reqToggle.hidden = true; err.hidden = true;
+                            if (titleEl) titleEl.textContent = 'Запрос отправлен';
+                            if (subEl) subEl.hidden = true;
+                            reqOk.hidden = false;
+                        }
                         else { btn.disabled = false; btn.textContent = 'Отправить запрос'; }
                     })
                     .catch(function () { btn.disabled = false; btn.textContent = 'Отправить запрос'; });
