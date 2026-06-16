@@ -7358,7 +7358,7 @@
                 for (const g of cells) {
                     const want = (g === top) ? 1 : 0;
                     g.userData.hov += (want - g.userData.hov) * 0.18;
-                    g.userData.bgMat.opacity = g.userData.hov * 0.85;   // card bg paints its image colour on hover
+                    g.userData.bgMat.opacity = g.userData.hov * 0.6;    // card bg paints its image colour on hover (30% more transparent)
                     g.userData.bMat.opacity = 0.18 + g.userData.hov * 0.32;
                 }
                 canvas.style.cursor = top ? 'pointer' : (dragging ? 'grabbing' : 'grab');
