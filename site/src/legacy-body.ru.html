@@ -1873,7 +1873,7 @@
                 const d = buf.getChannelData(0);
                 for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
                 const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
-                const filt = a.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 280; filt.Q.value = 0.9;
+                const filt = a.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 400; filt.Q.value = 0.7;
                 const g = a.createGain(); g.gain.value = 0;
                 src.connect(filt).connect(g).connect(a.destination);
                 src.start();
@@ -1919,8 +1919,8 @@
                     if (isSilent()) { if (dragNode) dragNode.g.gain.setTargetAtTime(0.0001, t, 0.05); return; }
                     const n = ensureDrag(); if (!n) return;
                     const i = Math.max(0, Math.min(1, intensity || 0));
-                    n.g.gain.setTargetAtTime(i * i * 0.05, t, 0.05);
-                    n.filt.frequency.setTargetAtTime(260 + i * 1500, t, 0.05);
+                    n.g.gain.setTargetAtTime(i * 0.16, t, 0.04);
+                    n.filt.frequency.setTargetAtTime(400 + i * 3000, t, 0.04);
                 },
             };
             window.__sfx = SFX;
@@ -7421,7 +7421,7 @@
                 const muvx = (panX - prevPanX) / (denom * aspect), muvy = (panY - prevPanY) / denom;
                 postMat.uniforms.vel.value.set(muvx * MOTION_BLUR, muvy * MOTION_BLUR);
                 prevPanX = panX; prevPanY = panY;
-                if (window.__sfx && window.__sfx.dragSet) window.__sfx.dragSet(Math.min(1, Math.hypot(muvx, muvy) * 22));
+                if (window.__sfx && window.__sfx.dragSet) window.__sfx.dragSet(Math.min(1, Math.hypot(muvx, muvy) * 32));
                 applyCamera();
                 layout();
                 updateHover();
