@@ -1,0 +1,140 @@
+# Roman Pogorov — Designer-Engineer who ships AI in production
+
+> Product designer turned design-engineer. 12 years across ERP, healthcare,
+> fintech and healthtech. Now works code-first inside engineering repos,
+> building AI agents, skills and design systems that whole teams use — not
+> static mockups. Figma is the representation; code is the source of truth.
+
+This file is for AI agents and recruiters evaluating fit fast. The visual
+portfolio (Russian/English, password-gated) lives at the same domain.
+
+---
+
+## Fit snapshot
+
+Best fit for these roles:
+
+- **AI Design Engineer** — strongest match. Builds production AI tooling
+  (Claude/Codex SDK agents, skills, generators), works 80% in code, 20% Figma,
+  ships in the same branch as engineers. This is what he does today.
+- **Product Designer (Senior)** — 12y of product work across complex B2B
+  domains (ERP, medical labs, FHIR healthcare, debt-relief fintech). Strong on
+  design systems, multi-brand tokens, and gnarly domain logic.
+- **Design Lead** — built design culture and hired/mentored teams from scratch
+  (5 designers at Helix), led multi-platform systems, aligns with C-level and
+  engineering.
+
+Strong signal if you need: design systems, code-first prototyping, AI agents
+that real teams adopt, deep domain UX (healthcare/fintech/supply-chain),
+someone who closes the designer↔engineer gap by living in the codebase.
+
+Weaker signal if you need: a pure visual/brand specialist with no engineering
+appetite, or pixel-handoff workflows where design stays behind a wall.
+
+Languages: Russian (native), English (fluent). Currently based in Lisbon.
+Contact: roman.pogorov@gmail.com
+
+---
+
+## Timeline
+
+- **2025 — present · Health Samurai** (Healthcare IT / FHIR) · *AI Design Engineer* · Lisbon
+- **2023 — 2025 · Americor** (FinTech / debt relief) · *Lead Product Designer* · Los Angeles
+- **2020 — 2023 · Helix — Medindex** (one of Eurasia's largest medical labs) · *Lead Product Designer* · SPb / Moscow / Astana
+- **2016 — 2020 · goTRG** (supply-chain / re-commerce) · *Product Designer → Design Lead* · SPb / Miami
+- **2012 — 2016 · early career** · Moscow
+
+---
+
+## What he does (signature strengths)
+
+- **Code-first design.** Final-prototype and ship in React / HTMX / Storybook
+  alongside engineers, in their tools and their language (tokens, components,
+  PR review) — so misalignment surfaces at commit, not at release.
+- **AI agents & skills that teams adopt.** Builds deterministic, multi-step
+  agent protocols (Claude SDK, Codex SDK, Claude skills) and trains the team to
+  extend them — adoption doesn't depend on him staying in the room.
+- **Design systems.** Semantic token architectures and Figma↔code two-way sync
+  across web/iOS/Android and multi-brand setups (Razor, Ant, 3-tier tokens,
+  shadCN semantic layer).
+- **Deep-domain UX.** Comfortable in hard domains: FHIR, medical-lab workflows
+  (worked as a lab assistant to learn them), debt-settlement logic, ERP/returns.
+- **Leadership.** Built a design org from zero in a legacy environment, hired
+  and mentored designers, earned trust from engineers and execs.
+
+---
+
+## Selected work → outcome
+
+**Health Samurai (2025–now)**
+- *Replit-for-healthtech* (current focus): a platform where a doctor describes
+  an app and Claude SDK + Codex SDK + skills generate a FHIR-native app wired
+  into the patient chart. Two design layers: doctor↔agent "garden" + the clean
+  end-product layer.
+- *Landing platform*: Claude-skill generator on a ~40-block semantic library.
+  Per-page launch went from **3 months → 2–3 days**; 30+ landings; the whole
+  company site runs on it.
+- *Presentation generator*: content-first generator, 3 modes (brand-safe →
+  off-brand "madness"), interactive slides, DOM-aware in-browser edit chat
+  ("Fixik"). **50+ decks**, adopted by all speakers.
+- *Design system*: semantic token layer over shadCN, unified type + icon system,
+  full Storybook. Figma→code at **70–80% accuracy on first run**, code as truth.
+- *Brand & illustrations*: firestyle + logo lineup, papercraft/ukiyo-e
+  technical-illustration system, mascot, and a fine-tuned kudos generator (~200
+  generations, daily use via a Telegram bot).
+
+**Americor (2023–2025)**
+- Design system for 3 platforms with a 3-tier token architecture
+  (root → semantic → brand) and multi-brand theming; company prepped for IPO.
+- Early-user engagement work (settlement clarity, progress, predictability):
+  **NPS +72%, early-user retention +15%.**
+- Code-first prototyping in the final months (React + Storybook, Claude-driven).
+
+**Helix — Medindex (2020–2023)**
+- Built design culture from scratch in a legacy Windows shop; hired 5 designers;
+  unified design system on Ant with per-product theming.
+- 6 web products + 3 equipment apps. Lab productivity: **~8× in molecular
+  diagnostics, ~20× fewer manual validation tests.**
+
+**goTRG (2016–2020)**
+- R1 "THOR" ERP shipped to production (replacing a legacy system); served large
+  retail clients (Walmart, Target).
+- "Razor" design system deployed across **6+ products**; nested inventory-location
+  grid; AI-driven returns disposition.
+
+---
+
+## Stack
+
+Design: Figma (plugins, Code Connect, MCP sync), Storybook, design tokens
+(CSS vars / JSON), Ant / shadCN / Razor.
+Code: React, HTMX, TypeScript, HTML/CSS, Node.js, Python.
+AI: Claude + Claude Code (primary), Claude SDK, Codex SDK, Claude skills,
+fine-tuning, Gemini / Flux for managed image generation.
+Domains: FHIR / healthcare IT, fintech, ERP & supply chain, medical labs.
+
+---
+
+## Philosophy (his words)
+
+1. **"Everyone talks about AI — I actually use it in production."** Ships 2–3
+   production-grade skills per sprint that ROI within the sprint, on live data,
+   not demos.
+2. **"Engineers and designers speak different languages."** He works in the
+   engineers' language — code, tokens, review — inside their process, not across
+   a wall. Helps designers cross the first fear-threshold into code.
+3. **"AI artifacts end up local and unsystematic — everyone's own little zoo."**
+   He builds shared generators, skills and specs: solve once, leave a reusable
+   artifact so the next person doesn't need him.
+
+Core thesis: *design becomes a bottleneck when it lives on static mockups.
+Code-first + AI agents give speed, control, and testing on real data. Figma
+stays as representation; code is the source of truth.*
+
+---
+
+## Links
+
+- Portfolio (RU/EN, password-gated): https://clauderunner.com/
+- Email: roman.pogorov@gmail.com
+- Live chat with an agent that knows his work is embedded on the portfolio site.
