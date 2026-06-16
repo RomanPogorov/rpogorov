@@ -393,7 +393,24 @@ const server = http.createServer(async (req, res) => {
     const contact = String(body.contact || '').trim().slice(0, 200);
     if (!name || !reason) return send(res, 400, { error: 'name and reason required' });
     const msg = `🔑 ЗАПРОС ПАРОЛЯ к портфолио\n\nКто: ${name}${contact ? `\nКонтакт: ${contact}` : ''}\n\nЗачем нужен доступ:\n${reason}`;
-    sendTelegramMessage(ROMAN_CHAT_ID, msg).catch(() => {});
+    // Each request lands in its OWN forum topic in the group; fall back to DM.
+    (async () => {
+      let topicId = null;
+      if (GROUP_CHAT_ID) {
+        try {
+          const r = await fetch(TG_API('createForumTopic'), {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ chat_id: GROUP_CHAT_ID, name: ('🔑 Пароль · ' + name).slice(0, 128), icon_color: 0xFF93B3 }),
+          });
+          const data = await r.json();
+          if (data.ok) topicId = data.result.message_thread_id;
+          else console.error('gate createForumTopic failed:', JSON.stringify(data).slice(0, 200));
+        } catch (e) { console.error('gate topic error:', e.message); }
+      }
+      if (topicId) await sendTelegramMessage(GROUP_CHAT_ID, msg, topicId).catch(() => {});
+      else await sendTelegramMessage(ROMAN_CHAT_ID, msg).catch(() => {});
+    })();
     return send(res, 200, { ok: true });
   }
 
