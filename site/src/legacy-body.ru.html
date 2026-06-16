@@ -7162,7 +7162,7 @@
             let parX = 0, parY = 0, prevPanX = 0, prevPanY = 0, blockAR = 1.5;
             let lastHover = null, lastHoverT = 0;
             const K1_BASE = 0.22, K1_DRAG = 0.28, ZOOM = 1.0;   // a touch more edge bend
-            const DRAG_PULLBACK = 1.12;          // camera eases back while dragging
+            const DRAG_PULLBACK = 1.06;          // camera eases back while dragging (subtle, fast)
             const INERTIA = 0.965;               // longer coast after release
             const PARALLAX_AMP = 0.55;           // hover parallax drift (world units)
             const MOTION_BLUR = 0.9;             // motion-blur amount while moving
@@ -7412,7 +7412,7 @@
                 curK1 += (k1Target - curK1) * 0.08;
                 postMat.uniforms.k1.value = curK1;
                 const vsTarget = dragging ? DRAG_PULLBACK : 1.0;  // camera pulls back on drag, returns on release
-                viewScale += (vsTarget - viewScale) * 0.08;
+                viewScale += (vsTarget - viewScale) * 0.2;        // snappier so it doesn't lag a quick flick
                 // hover parallax — the grid drifts slightly toward the cursor
                 parX += ((pointer.x - 0.5) * PARALLAX_AMP - parX) * 0.06;
                 parY += ((pointer.y - 0.5) * PARALLAX_AMP - parY) * 0.06;
@@ -7445,7 +7445,9 @@
                 const wx = dx * (2 * vh * aspect) / window.innerWidth;
                 const wy = -dy * (2 * vh) / window.innerHeight;
                 panX += wx; panY += wy;
-                velX = wx; velY = wy;
+                // smoothed velocity so a quick flick still flings reliably even if
+                // the very last pointermove before release was small
+                velX = velX * 0.4 + wx * 0.6; velY = velY * 0.4 + wy * 0.6;
             }
             function onUp(e) {
                 if (dragging) { setPointer(e); if (moved < 7) tryPick(); }
