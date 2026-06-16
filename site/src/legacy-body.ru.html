@@ -7266,6 +7266,20 @@
                 const titleBand = cellH * 0.17, metaBand = cellH * 0.12;
                 const imgW = cellW - pad * 2, imgH = cellH - pad * 2 - titleBand - metaBand;
                 const imgCY = (metaBand - titleBand) / 2;
+                // cover-fit each image into the card slot: preserve aspect, crop the
+                // overflow (centre crop) via a UV transform instead of stretching.
+                const planeAR = imgW / imgH;
+                for (const rec of imageRecs) {
+                    if (!rec || !rec.tex || !rec.tex.image) continue;
+                    const iw = rec.tex.image.naturalWidth || rec.tex.image.width;
+                    const ih = rec.tex.image.naturalHeight || rec.tex.image.height;
+                    if (!iw || !ih) continue;
+                    const iAR = iw / ih;
+                    rec.tex.center.set(0.5, 0.5);
+                    if (iAR > planeAR) rec.tex.repeat.set(planeAR / iAR, 1);
+                    else rec.tex.repeat.set(1, iAR / planeAR);
+                    rec.tex.needsUpdate = true;
+                }
                 for (let sr = 0; sr < ROWS; sr++) {
                     for (let sc = 0; sc < COLS; sc++) {
                         const g = new THREE.Group();
