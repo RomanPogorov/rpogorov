@@ -7186,11 +7186,9 @@
             const INERTIA = 0.965;               // longer coast after release
             const PARALLAX_AMP = 0.55;           // hover parallax drift (world units)
             const MOTION_BLUR = 0.9;             // motion-blur amount while moving
-            // placeholder card images (Roman's own work) — swap/extend later.
-            const IMAGES = ['cs01-americor.png', 'cs02-aidbox.jpg', 'cs03-landings.jpg', 'cs04-creditor.png',
-                'cs05-databricks.png', 'deep-brand-identity.jpg', 'deep-design-system.jpg', 'deep-engagement.jpg',
-                'deep-hs-design-system.jpg', 'deep-landing-platform.jpg', 'deep-offer-acceptance.jpg', 'deep-presentation-generator.jpg']
-                .map(n => '/rpogorov-dev/app/showcase/cases/' + n);
+            // Works gallery images (45 pieces of Roman's work). Titles are still placeholder.
+            const IMAGES = Array.from({ length: 45 }, (_, i) =>
+                '/rpogorov-dev/app/showcase/works/work-' + String(i + 1).padStart(2, '0') + '.jpg');
             let imageRecs = [];
             const wrap = (v, s) => v - s * Math.round(v / s);
             const mod = (n, m) => ((n % m) + m) % m;
