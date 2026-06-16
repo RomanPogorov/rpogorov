@@ -5594,6 +5594,46 @@
         .hs-gallery.cols-3 { grid-template-columns: repeat(3, 1fr); }
         .hs-gallery.cols-4 { grid-template-columns: repeat(4, 1fr); }
 
+        /* Stylised prompt block (case content) */
+        .cp-prompt {
+            margin: 24px 0;
+            padding: 22px 24px;
+            border: 1px solid var(--hs-border);
+            border-left: 3px solid var(--hs-red);
+            border-radius: 8px;
+            background: var(--hs-bg-elev);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+            line-height: 1.7;
+            color: var(--hs-text-secondary);
+        }
+        .cp-prompt .cp-prompt-label {
+            display: block;
+            font-size: 0.6875rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--hs-red);
+            margin-bottom: 12px;
+        }
+        /* Metaphor cards: technical topic → papercraft metaphor */
+        .cp-metaphors { display: grid; gap: 14px; margin: 22px 0; }
+        .cp-metaphor {
+            padding: 16px 18px;
+            border: 1px solid var(--hs-border);
+            border-radius: 8px;
+            background: var(--hs-bg-elev);
+        }
+        .cp-metaphor-topic {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.03em;
+            color: var(--hs-red);
+            margin-bottom: 8px;
+        }
+        .cp-metaphor-text { font-size: 0.9375rem; line-height: 1.6; color: var(--hs-text-secondary); }
+        .cp-metaphor-text strong { color: var(--hs-text); font-weight: 600; }
+
         .hs-body {
             font-size: 1rem;
             line-height: 1.65;
