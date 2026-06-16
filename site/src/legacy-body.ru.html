@@ -7129,8 +7129,9 @@
             let aspect = 1;
             const pointer = { x: 0.5, y: 0.5 };   // screen uv, y up
             let dragging = false, lastX = 0, lastY = 0, moved = 0;
-            let panX = 0, panY = 0, velX = 0, velY = 0, curK1 = 0.22;
-            const K1_BASE = 0.22, K1_DRAG = 0.30, ZOOM = 1.0;
+            let panX = 0, panY = 0, velX = 0, velY = 0, curK1 = 0.16, viewScale = 1;
+            const K1_BASE = 0.16, K1_DRAG = 0.21, ZOOM = 1.0;
+            const DRAG_PULLBACK = 1.12;          // camera eases back while dragging
             const wrap = (v, s) => v - s * Math.round(v / s);
             const mod = (n, m) => ((n % m) + m) % m;
 
@@ -7152,18 +7153,20 @@
                 let tex = labelCache.get(key);
                 if (tex) return tex;
                 const a = accent();
-                const W = 512, H = 256, c = document.createElement('canvas'); c.width = W; c.height = H;
+                const W = 1024, H = 512, c = document.createElement('canvas'); c.width = W; c.height = H;
                 const ctx = c.getContext('2d');
                 ctx.textBaseline = 'top';
                 ctx.fillStyle = '#ffffff';
-                ctx.font = '600 34px "Space Grotesk", system-ui, sans-serif';
-                let t = title; while (ctx.measureText(t).width > W - 16 && t.length > 4) t = t.slice(0, -2);
-                ctx.fillText(t, 8, 8);
+                ctx.font = '600 68px "Space Grotesk", system-ui, sans-serif';
+                let t = title; while (ctx.measureText(t).width > W - 32 && t.length > 4) t = t.slice(0, -2);
+                ctx.fillText(t, 16, 16);
                 ctx.fillStyle = `rgba(${a.r},${a.g},${a.b},0.92)`;
-                ctx.font = '600 22px "JetBrains Mono", monospace';
-                ctx.fillText('// ' + tag.toUpperCase(), 8, H - 38);
+                ctx.font = '600 44px "JetBrains Mono", monospace';
+                ctx.fillText('// ' + tag.toUpperCase(), 16, H - 76);
                 tex = new THREE.CanvasTexture(c);
-                tex.colorSpace = THREE.SRGBColorSpace; tex.minFilter = THREE.LinearFilter;
+                tex.colorSpace = THREE.SRGBColorSpace;
+                tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter;
+                tex.anisotropy = (renderer && renderer.capabilities.getMaxAnisotropy) ? renderer.capabilities.getMaxAnisotropy() : 1;
                 labelCache.set(key, tex);
                 return tex;
             }
@@ -7174,9 +7177,9 @@
             const FRAG = [
                 'uniform sampler2D tDiffuse; uniform float k1; uniform float zoom; uniform float aspect; varying vec2 vUv;',
                 'void main(){',
-                '  vec2 cc = vUv - 0.5; cc.x *= aspect;',
+                '  vec2 cc = vUv - 0.5;',                   // no aspect weight → bends X and Y evenly
                 '  float r2 = dot(cc, cc);',
-                '  float f = 1.0 - k1 * r2 * r2;',          // concave (впукло); r^4 keeps the centre flat, bends only the borders
+                '  float f = 1.0 - k1 * r2;',               // concave (впукло), gentle
                 '  vec2 uv = (vUv - 0.5) * f * zoom + 0.5;',
                 '  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.02, 0.027, 0.028, 1.0); return; }',
                 '  gl_FragColor = texture2D(tDiffuse, uv);',
@@ -7193,7 +7196,7 @@
             function buildScene() {
                 aspect = window.innerWidth / window.innerHeight;
                 computeDims();
-                const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(1.5, window.devicePixelRatio || 1);
+                const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
                 scene = new THREE.Scene();
                 camera = new THREE.OrthographicCamera(-halfH * aspect, halfH * aspect, halfH, -halfH, 0.1, 100);
                 camera.position.set(0, 0, 10); camera.lookAt(0, 0, 0);
@@ -7266,9 +7269,10 @@
             function pointerWorld() {
                 const cx = pointer.x - 0.5, cy = pointer.y - 0.5;
                 const k1 = postMat ? postMat.uniforms.k1.value : K1_BASE;
-                const r2 = (cx * aspect) * (cx * aspect) + cy * cy;
-                const f = 1.0 - k1 * r2 * r2;
-                return { x: cx * f * ZOOM * 2 * halfH * aspect, y: cy * f * ZOOM * 2 * halfH };
+                const r2 = cx * cx + cy * cy;
+                const f = 1.0 - k1 * r2;
+                const vh = halfH * viewScale;
+                return { x: cx * f * ZOOM * 2 * vh * aspect, y: cy * f * ZOOM * 2 * vh };
             }
             function hitTile() {
                 const p = pointerWorld();
@@ -7289,11 +7293,21 @@
                 canvas.style.cursor = top ? 'pointer' : (dragging ? 'grabbing' : 'grab');
             }
 
+            function applyCamera() {
+                const vh = halfH * viewScale;
+                camera.left = -vh * aspect; camera.right = vh * aspect;
+                camera.top = vh; camera.bottom = -vh;
+                camera.updateProjectionMatrix();
+            }
+
             function tick() {
                 if (!dragging) { panX += velX; panY += velY; velX *= 0.92; velY *= 0.92; }
                 const k1Target = dragging ? K1_DRAG : K1_BASE;   // lens deepens while dragging, eases back on release
                 curK1 += (k1Target - curK1) * 0.08;
                 postMat.uniforms.k1.value = curK1;
+                const vsTarget = dragging ? DRAG_PULLBACK : 1.0;  // camera pulls back on drag, returns on release
+                viewScale += (vsTarget - viewScale) * 0.08;
+                applyCamera();
                 layout();
                 updateHover();
                 renderer.setRenderTarget(rt); renderer.render(scene, camera);
@@ -7312,8 +7326,9 @@
                 const dx = e.clientX - lastX, dy = e.clientY - lastY;
                 lastX = e.clientX; lastY = e.clientY;
                 moved += Math.abs(dx) + Math.abs(dy);
-                const wx = dx * (2 * halfH * aspect) / window.innerWidth;
-                const wy = -dy * (2 * halfH) / window.innerHeight;
+                const vh = halfH * viewScale;
+                const wx = dx * (2 * vh * aspect) / window.innerWidth;
+                const wy = -dy * (2 * vh) / window.innerHeight;
                 panX += wx; panY += wy;
                 velX = wx; velY = wy;
             }
@@ -7342,11 +7357,10 @@
 
             function resize() {
                 if (!renderer) return;
-                const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(1.5, window.devicePixelRatio || 1);
+                const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
                 aspect = W / H;
-                camera.left = -halfH * aspect; camera.right = halfH * aspect;
-                camera.top = halfH; camera.bottom = -halfH;
-                camera.updateProjectionMatrix();
+                applyCamera();
+                renderer.setPixelRatio(dpr);
                 renderer.setSize(W, H);
                 rt.setSize(Math.floor(W * dpr), Math.floor(H * dpr));
                 postMat.uniforms.aspect.value = aspect;
