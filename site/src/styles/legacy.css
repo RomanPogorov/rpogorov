@@ -5633,6 +5633,11 @@
         }
         .cp-metaphor-text { font-size: 0.9375rem; line-height: 1.6; color: var(--hs-text-secondary); }
         .cp-metaphor-text strong { color: var(--hs-text); font-weight: 600; }
+        /* faint border + rounding on brand-identity case images */
+        .case-page[data-case-page="brand-identity"] figure img {
+            border: 1px solid var(--hs-border);
+            border-radius: 8px;
+        }
 
         .hs-body {
             font-size: 1rem;
