@@ -98,8 +98,8 @@
             var reqForm = document.getElementById('pgate-reqform');
             var reqCancel = document.getElementById('pgate-reqcancel');
             var reqOk = document.getElementById('pgate-reqok');
-            reqToggle.addEventListener('click', function () { reqForm.hidden = false; reqToggle.hidden = true; document.getElementById('pgate-name').focus(); });
-            reqCancel.addEventListener('click', function () { reqForm.hidden = true; reqToggle.hidden = false; });
+            reqToggle.addEventListener('click', function () { form.hidden = true; err.hidden = true; reqForm.hidden = false; reqToggle.hidden = true; document.getElementById('pgate-name').focus(); });
+            reqCancel.addEventListener('click', function () { reqForm.hidden = true; reqToggle.hidden = false; form.hidden = false; });
             reqForm.addEventListener('submit', function (e) {
                 e.preventDefault();
                 var name = document.getElementById('pgate-name').value.trim();
