@@ -3743,667 +3743,667 @@
         const DEEP_CASES = [
             // ===== Americor (cs01) =====
             { id: 'offer-acceptance', company: 'cs01', companyLabel: 'Americor', image: '/rpogorov-dev/app/showcase/cases/deep-offer-acceptance.jpg',
-              title: 'Increasing Settlement Offer Acceptance',
-              desc: 'Addressing concerns and boosting understanding of debt-settlement offers — empower informed decisions and increase online offer acceptance.',
-              metric: '+175%', tags: ['UX Research', 'Conversion', 'Multi-platform'], deeplink: 'offer-acceptance',
+              title: 'Рост принятия офферов по урегулированию долга',
+              desc: 'Снимаю возражения и повышаю понимание офферов по урегулированию долга — помогаю принимать осознанные решения и увеличиваю долю онлайн-принятий.',
+              metric: '+175%', tags: ['UX-исследования', 'Конверсия', 'Мультиплатформа'], deeplink: 'offer-acceptance',
               body: `<div class="dc-impact">
-    <div class="dc-impact-cell"><span class="num">+175%</span><span class="lbl">settlement offers accepted online</span></div>
-    <div class="dc-impact-cell"><span class="num">+44%</span><span class="lbl">offers accepted overall</span></div>
-    <div class="dc-impact-cell"><span class="num">300k</span><span class="lbl">users impacted by redesign</span></div>
+    <div class="dc-impact-cell"><span class="num">+175%</span><span class="lbl">офферов принято онлайн</span></div>
+    <div class="dc-impact-cell"><span class="num">+44%</span><span class="lbl">офферов принято в целом</span></div>
+    <div class="dc-impact-cell"><span class="num">300k</span><span class="lbl">пользователей затронул редизайн</span></div>
 </div>
 
 <div class="dc-meta-grid">
-    <div><span class="lbl">Company</span><span class="val">Americor</span></div>
-    <div><span class="lbl">Timeline</span><span class="val">1 year (2024–2025), alongside other projects</span></div>
-    <div><span class="lbl">Platform</span><span class="val">Web · iOS · Android</span></div>
-    <div><span class="lbl">Team</span><span class="val">Lead PD (me) · 4 dev · 1 PM · 1 UXR · 2 PD · 1 QA</span></div>
+    <div><span class="lbl">Компания</span><span class="val">Americor</span></div>
+    <div><span class="lbl">Сроки</span><span class="val">1 год (2024–2025), параллельно с другими проектами</span></div>
+    <div><span class="lbl">Платформа</span><span class="val">Web · iOS · Android</span></div>
+    <div><span class="lbl">Команда</span><span class="val">Lead PD (я) · 4 dev · 1 PM · 1 UXR · 2 PD · 1 QA</span></div>
 </div>
 
-<h2>// my role</h2>
+<h2>// моя роль</h2>
 <ul>
-    <li>Led discussions with BI to understand and interpret existing settlement-acceptance statistics</li>
-    <li>Designed post-release testing to ascertain effectiveness of designs, derived insights for next iterations</li>
-    <li>Led ideation across teams to brainstorm ideas for users unaffected by initial product changes — full holistic approach</li>
-    <li>Worked with other designers to drive design decisions impacting design strategy</li>
-    <li>Researched theories, ideated and tested hypotheses that drove problem framing — significant impact on final designs</li>
+    <li>Вёл обсуждения с BI, чтобы разобраться в существующей статистике принятия офферов и правильно её интерпретировать</li>
+    <li>Спроектировал пострелизное тестирование, чтобы оценить эффективность решений и собрать инсайты для следующих итераций</li>
+    <li>Вёл кросс-командный брейншторм идей для пользователей, которых не затронули первые изменения продукта — целостный, холистический подход</li>
+    <li>Работал с другими дизайнерами над решениями, влияющими на дизайн-стратегию</li>
+    <li>Исследовал теории, выдвигал и проверял гипотезы, которые задали постановку проблемы — это сильно повлияло на финальные решения</li>
 </ul>
 
-<h2>// background &amp; problem</h2>
-<p>Americor is a debt-settlement company that negotiates users' debts to lower them. After negotiating a settlement, it is presented to a user for acceptance.</p>
-<p><strong>Americor only collects its fees and gets revenue once an offer is accepted.</strong></p>
+<h2>// контекст &amp; проблема</h2>
+<p>Americor — компания по урегулированию долгов: она договаривается с кредиторами о снижении долга пользователя. После переговоров готовый оффер предлагается пользователю на принятие.</p>
+<p><strong>Americor получает комиссию и выручку только после того, как оффер принят.</strong></p>
 
 <div class="dc-pain">
     <div class="dc-pain-card">
-        <span class="icon">// biz</span>
-        <h4>Business problem</h4>
-        <p>The majority of settlements were accepted through phone calls — high-cost, resource-heavy, and a clear lack of self-service.</p>
+        <span class="icon">// бизнес</span>
+        <h4>Проблема бизнеса</h4>
+        <p>Большинство офферов принималось по телефону — дорого, ресурсоёмко и с явной нехваткой самообслуживания.</p>
     </div>
     <div class="dc-pain-card">
-        <span class="icon">// user</span>
-        <h4>User pain</h4>
-        <p>Users were reluctant to accept settlements online — gaps in understanding, motivation, or communication across touchpoints, worsened by dreary, underwhelming patterns.</p>
+        <span class="icon">// юзер</span>
+        <h4>Боль пользователя</h4>
+        <p>Пользователи неохотно принимали офферы онлайн — пробелы в понимании, мотивации и коммуникации между точками контакта, усугублённые унылыми, невзрачными паттернами.</p>
     </div>
 </div>
 
-<h2 class="dc-h-major">// solution breakdown</h2>
-<p>Drive online acceptance through clarity, urgency and a more appealing experience across multiple touchpoints.</p>
+<h2 class="dc-h-major">// разбор решения</h2>
+<p>Поднять онлайн-принятие за счёт ясности, ощущения срочности и более привлекательного опыта на всех точках контакта.</p>
 
 <div class="dc-pillars">
-    <div class="dc-pillar"><span class="dc-pillar-num">01 / appeal</span><p>A more appealing UI to excite and engage users — removing easily dismissed and disruptive patterns.</p></div>
-    <div class="dc-pillar"><span class="dc-pillar-num">02 / clarity</span><p>Ensuring clarity and minimizing misconceptions through rejection guidance — enabling informed decisions.</p></div>
-    <div class="dc-pillar"><span class="dc-pillar-num">03 / urgency</span><p>Creating urgency and reminders through fixed banners visible on every screen.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">01 / привлекательность</span><p>Более привлекательный интерфейс, который вовлекает и зажигает пользователя — убираем легко закрываемые и навязчивые паттерны.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">02 / ясность</span><p>Обеспечиваем ясность и снимаем заблуждения через гайд по отказу — помогаем принимать осознанные решения.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">03 / срочность</span><p>Создаём ощущение срочности и напоминания через фиксированные баннеры, видимые на каждом экране.</p></div>
 </div>
 
 <div class="dc-grid-3">
-    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/pillar-01-appealing-ui.png" alt="Appealing offer UI"><figcaption>// 01 — appeal</figcaption></figure>
-    <figure class="dc-figure dc-figure-portrait"><video src="cases/cs01/offer-acceptance/clarity-rejection.mp4" poster="cases/cs01/offer-acceptance/pillar-02-clarity-static.png" autoplay muted loop playsinline preload="metadata"></video><figcaption>// 02 — clarity (rejection guidance)</figcaption></figure>
-    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/pillar-02-clarity-rejection.png" alt="Urgency — expiring offer banner"><figcaption>// 03 — urgency (expiring banner)</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/pillar-01-appealing-ui.png" alt="Привлекательный интерфейс оффера"><figcaption>// 01 — привлекательность</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><video src="cases/cs01/offer-acceptance/clarity-rejection.mp4" poster="cases/cs01/offer-acceptance/pillar-02-clarity-static.png" autoplay muted loop playsinline preload="metadata"></video><figcaption>// 02 — ясность (гайд по отказу)</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/pillar-02-clarity-rejection.png" alt="Срочность — баннер истекающего оффера"><figcaption>// 03 — срочность (истекающий баннер)</figcaption></figure>
 </div>
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-03-banners-tokenized.png" alt="Banners and tokenized flow"><figcaption>// touchpoints across the program (web)</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/pillar-03-banners-tokenized.png" alt="Баннеры и токенизированный флоу"><figcaption>// точки контакта по всей программе (web)</figcaption></figure>
 
-<h2 class="dc-h-major">// design process</h2>
+<h2 class="dc-h-major">// процесс дизайна</h2>
 
-<h3>Analyzing issues with the original design</h3>
-<p>The original design was an MVP that failed to account for user pain points and used outdated UI/interaction patterns.</p>
+<h3>Анализ проблем исходного дизайна</h3>
+<p>Исходный дизайн был MVP, который не учитывал боли пользователей и использовал устаревшие UI- и интеракционные паттерны.</p>
 
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/original-desktop.png" alt="Original desktop offer"><figcaption>// original — desktop</figcaption></figure>
-<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/original-mobile.png" alt="Original mobile offer"><figcaption>// original — mobile</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/original-desktop.png" alt="Исходный оффер — десктоп"><figcaption>// исходный — десктоп</figcaption></figure>
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/original-mobile.png" alt="Исходный оффер — мобайл"><figcaption>// исходный — мобайл</figcaption></figure>
 
 <div class="dc-pain">
     <div class="dc-pain-card">
         <span class="icon">// 01</span>
-        <h4>Low visibility</h4>
-        <p>Nothing significant in the UI indicated a pending offer besides the modal — users could close it and forget.</p>
+        <h4>Низкая заметность</h4>
+        <p>Кроме модального окна, ничто в интерфейсе не сигнализировало о готовом оффере — пользователь закрывал его и забывал.</p>
     </div>
     <div class="dc-pain-card">
         <span class="icon">// 02</span>
-        <h4>Lack of access points</h4>
-        <p>Modal appeared every login and external notifications existed, but nothing significant let users re-open it once closed.</p>
+        <h4>Нет точек доступа</h4>
+        <p>Модалка показывалась при каждом входе, были и внешние уведомления, но ничто заметное не позволяло открыть её снова после закрытия.</p>
     </div>
 </div>
 
-<h3>Pain points from existing research</h3>
-<p>Ongoing surveys with 500+ users revealed common misconceptions — a clear lack of understanding only addressable via phone calls today:</p>
+<h3>Боли из существующих исследований</h3>
+<p>Постоянные опросы 500+ пользователей вскрыли типичные заблуждения — явную нехватку понимания, которую сегодня закрывают только звонки:</p>
 
-<blockquote class="dc-quote">«Can I get a better settlement? I thought each one saved 50%.»</blockquote>
-<blockquote class="dc-quote">«Will I have to make more deposits to accept this settlement?»</blockquote>
-<blockquote class="dc-quote">«Will this increase how long I'm in the Americor program for?»</blockquote>
-<blockquote class="dc-quote">«Do I have enough funds to accept this offer?»</blockquote>
+<blockquote class="dc-quote">«Могу ли я получить оффер получше? Я думал, каждый экономит 50%.»</blockquote>
+<blockquote class="dc-quote">«Придётся ли мне внести больше депозитов, чтобы принять этот оффер?»</blockquote>
+<blockquote class="dc-quote">«Из-за этого я дольше пробуду в программе Americor?»</blockquote>
+<blockquote class="dc-quote">«Хватит ли мне средств, чтобы принять этот оффер?»</blockquote>
 
-<h2>// improving understanding &amp; access</h2>
+<h2>// улучшаем понимание &amp; доступ</h2>
 
-<h3>How might we make pending offers constantly visible and immediately accessible?</h3>
-<p>Use a fixed banner to allow visibility and access from all screens — ideating on different banner UIs.</p>
+<h3>Как сделать готовые офферы постоянно видимыми и сразу доступными?</h3>
+<p>Использовать фиксированный баннер для видимости и доступа со всех экранов — прорабатываем разные варианты UI баннера.</p>
 
 <div class="dc-grid-3">
-    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-concept-top.png" alt="Top banner concept"><figcaption>// option A — top</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-concept-bottom.png" alt="Bottom banner concept"><figcaption>// option B — bottom + nav</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-option-c.png" alt="Option C banner"><figcaption>// option C — large CTA</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-concept-top.png" alt="Концепт верхнего баннера"><figcaption>// вариант A — сверху</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-concept-bottom.png" alt="Концепт нижнего баннера"><figcaption>// вариант B — снизу + навигация</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/offer-acceptance/banner-option-c.png" alt="Баннер варианта C"><figcaption>// вариант C — крупный CTA</figcaption></figure>
 </div>
 
 <div class="dc-grid-3">
     <div class="dc-pain-card">
         <span class="icon">// A</span>
-        <h4>Top banner</h4>
-        <p>First thing users notice. Natural sticky location without overcrowding UI. But hard to click on top.</p>
+        <h4>Верхний баннер</h4>
+        <p>Первое, что замечает пользователь. Естественное закреплённое место, не перегружает интерфейс. Но в него трудно попасть пальцем сверху.</p>
     </div>
     <div class="dc-pain-card">
         <span class="icon">// B</span>
-        <h4>Bottom banner</h4>
-        <p>Easier to click for hand placement. Combined with nav bar makes UI feel a bit heavy.</p>
+        <h4>Нижний баннер</h4>
+        <p>Удобнее нажимать под хват руки. В связке с навбаром интерфейс кажется чуть тяжеловесным.</p>
     </div>
     <div class="dc-pain-card">
         <span class="icon">// C</span>
-        <h4>Large CTA</h4>
-        <p>Larger CTA and text — calls more attention. Trade-off: takes more screen real estate because it's fixed.</p>
+        <h4>Крупный CTA</h4>
+        <p>Крупнее CTA и текст — больше привлекает внимание. Компромисс: занимает больше места на экране, потому что закреплён.</p>
     </div>
 </div>
 
-<h3>Multi-variant testing</h3>
-<p>Each design had interchangeable pros and cons — implementing all three to test conversion and pick the winner.</p>
+<h3>Мультивариантное тестирование</h3>
+<p>У каждого решения были взаимоисключающие плюсы и минусы — реализовали все три, чтобы протестировать конверсию и выбрать победителя.</p>
 
 <div class="dc-callout">
-    <p><strong>Option C had the highest conversion.</strong> All concepts saw an increase in settlement acceptance, but Option C converted <strong>15% better than A</strong> and <strong>3% better than B</strong>.</p>
+    <p><strong>У варианта C была самая высокая конверсия.</strong> Все концепты дали рост принятия офферов, но вариант C конвертил <strong>на 15% лучше, чем A</strong>, и <strong>на 3% лучше, чем B</strong>.</p>
 </div>
 
-<h3>Expanding on initial designs — adding urgency</h3>
-<p>Post-release research showed high but <em>delayed</em> conversion — creating urgency through banners for faster acceptance.</p>
+<h3>Развиваем первые решения — добавляем срочность</h3>
+<p>Пострелизное исследование показало высокую, но <em>отложенную</em> конверсию — создаём срочность через баннеры ради более быстрого принятия.</p>
 
 <div class="dc-iter">
-    <span class="label">pain point</span>
-    <div class="body"><p>Users did not accept offers immediately — some waited almost <strong>3 weeks</strong> before accepting.</p></div>
+    <span class="label">боль</span>
+    <div class="body"><p>Пользователи не принимали офферы сразу — некоторые ждали почти <strong>3 недели</strong>.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">stats</span>
-    <div class="body"><p>Offers expire in 1 month. Americor policy: customer service calls them a week before expiry — leading to loss in online acceptance.</p></div>
+    <span class="label">статистика</span>
+    <div class="body"><p>Оффер истекает через 1 месяц. По регламенту Americor поддержка звонит за неделю до истечения — и онлайн-принятия теряются.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">iteration</span>
-    <div class="body"><p>Created urgency through banner UI and encouraged earlier acceptance by surfacing date of expiry at <strong>2 weeks</strong>.</p></div>
+    <span class="label">итерация</span>
+    <div class="body"><p>Создали срочность через UI баннера и подтолкнули к раннему принятию, показывая дату истечения за <strong>2 недели</strong>.</p></div>
 </div>
 
-<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/banner-urgency.png" alt="Urgency banner"><figcaption>// urgency banner with expiry counter</figcaption></figure>
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/offer-acceptance/banner-urgency.png" alt="Баннер срочности"><figcaption>// баннер срочности со счётчиком истечения</figcaption></figure>
 
-<h3>Next problem — addressing misconceptions with FAQ</h3>
-<p>Users still lacked understanding — calling in or simply not accepting offers. Addressed misconceptions in the form of an FAQ.</p>
+<h3>Следующая проблема — снимаем заблуждения через FAQ</h3>
+<p>Пользователям по-прежнему не хватало понимания — они звонили или просто не принимали офферы. Сняли заблуждения в формате FAQ.</p>
 
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/faq-original.png" alt="FAQ original"><figcaption>// FAQ — first iteration</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/faq-original.png" alt="Исходный FAQ"><figcaption>// FAQ — первая итерация</figcaption></figure>
 
-<h3>Experience walkthroughs</h3>
-<p>Internal experience walkthroughs allowed quick feedback and iteration — quick MVP release to assess impact on conversion.</p>
+<h3>Прогон сценариев</h3>
+<p>Внутренние прогоны опыта дали быструю обратную связь и итерации — быстрый релиз MVP, чтобы оценить влияние на конверсию.</p>
 
 <div class="dc-iter">
-    <span class="label">iteration</span>
+    <span class="label">итерация</span>
     <div class="body">
-        <p>Participants were inclined to close offers without looking at FAQ.</p>
-        <p><strong>Mandating FAQ</strong> by guiding users through it to close offers.</p>
+        <p>Участники были склонны закрывать офферы, не глядя в FAQ.</p>
+        <p><strong>Сделали FAQ обязательным</strong>, проводя пользователя через него, чтобы закрыть оффер.</p>
     </div>
 </div>
 
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/faq-mandatory.png" alt="Mandatory FAQ flow"><figcaption>// mandatory FAQ flow</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/faq-mandatory.png" alt="Обязательный флоу FAQ"><figcaption>// обязательный флоу FAQ</figcaption></figure>
 
-<h3>Post-release analysis &amp; problem framing</h3>
-<p>Data showed FAQs had a positive impact, but were often unread. Less than <strong>35%</strong> of users that closed offers and got to the FAQ page actually opened and read them.</p>
+<h3>Пострелизный анализ &amp; постановка проблемы</h3>
+<p>Данные показали, что FAQ давал положительный эффект, но его часто не читали. Меньше <strong>35%</strong> пользователей, которые закрывали офферы и доходили до страницы FAQ, реально открывали и читали его.</p>
 
 <div class="dc-pain">
     <div class="dc-pain-card">
-        <span class="icon">// load</span>
-        <h4>High cognitive load &amp; effort</h4>
-        <p>Multiple FAQs rely on users self-diagnosing their own misconceptions — higher cognitive load and user effort.</p>
+        <span class="icon">// нагрузка</span>
+        <h4>Высокая когнитивная нагрузка &amp; усилия</h4>
+        <p>Множество вопросов в FAQ заставляют пользователя самому диагностировать свои заблуждения — выше когнитивная нагрузка и усилия.</p>
     </div>
     <div class="dc-pain-card">
-        <span class="icon">// empathy</span>
-        <h4>Lack of empathy</h4>
-        <p>FAQs feel transactional — fail to show empathy, validate concerns, or guide users during an emotional, critical decision.</p>
+        <span class="icon">// эмпатия</span>
+        <h4>Нет эмпатии</h4>
+        <p>FAQ ощущается транзакционно — не проявляет эмпатии, не валидирует переживания и не ведёт пользователя в эмоциональный, критический момент решения.</p>
     </div>
     <div class="dc-pain-card">
-        <span class="icon">// skip</span>
-        <h4>Not actionable, skippable</h4>
-        <p>A static FAQ is not actionable — users skip it during decision-making, limiting effectiveness in guiding behavior.</p>
+        <span class="icon">// пропуск</span>
+        <h4>Неактивный, легко пропустить</h4>
+        <p>Статичный FAQ не побуждает к действию — пользователь пропускает его в момент принятия решения, и тот слабо влияет на поведение.</p>
     </div>
     <div class="dc-pain-card">
-        <span class="icon">// gap</span>
-        <h4>Missed opportunity</h4>
-        <p>FAQ limited to known hesitancies — no option for users to voice <em>their own</em> concerns directly.</p>
+        <span class="icon">// пробел</span>
+        <h4>Упущенная возможность</h4>
+        <p>FAQ ограничен известными сомнениями — нет способа высказать <em>свои собственные</em> переживания напрямую.</p>
     </div>
 </div>
 
-<h3>Design decision — reframing FAQ as rejection guidance</h3>
-<p>Reframing FAQ into a <strong>questionnaire</strong> that slows users down to reconsider the offer in a more direct way.</p>
+<h3>Дизайн-решение — переосмысляем FAQ как гайд по отказу</h3>
+<p>Переосмысляем FAQ в <strong>опросник</strong>, который притормаживает пользователя, чтобы он более прямо переосмыслил оффер.</p>
 
 <div class="dc-iter">
-    <span class="label">iteration 1</span>
+    <span class="label">итерация 1</span>
     <div class="body">
-        <p>Users don't wait or take time to read FAQ.</p>
-        <p>→ Users are <strong>forced to select a reason</strong>, ensuring reconsideration.</p>
+        <p>Пользователи не ждут и не тратят время на чтение FAQ.</p>
+        <p>→ Пользователя <strong>обязывают выбрать причину</strong>, гарантируя переосмысление.</p>
     </div>
 </div>
 <div class="dc-iter">
-    <span class="label">iteration 2</span>
+    <span class="label">итерация 2</span>
     <div class="body">
-        <p>FAQs can feel avoidant of actual user issues — like they're trying to convince.</p>
-        <p>→ Asking users their thoughts directly makes them feel <strong>heard</strong>.</p>
+        <p>FAQ может ощущаться как уход от реальных проблем пользователя — будто его пытаются убедить.</p>
+        <p>→ Прямой вопрос о его мыслях даёт ощущение, что его <strong>услышали</strong>.</p>
     </div>
 </div>
 <div class="dc-iter">
-    <span class="label">iteration 3</span>
+    <span class="label">итерация 3</span>
     <div class="body">
-        <p>Users have to self-diagnose concerns in FAQ — high effort.</p>
-        <p>→ Framing it as <em>why they're not accepting</em> aids their thought process and pinpoints the appropriate answer.</p>
+        <p>Пользователю приходится самому диагностировать сомнения в FAQ — много усилий.</p>
+        <p>→ Формулировка в духе <em>почему он не принимает</em> помогает ходу мысли и точно подсказывает нужный ответ.</p>
     </div>
 </div>
 
 <aside class="dc-tradeoff">
-    <span class="label">trade-off</span>
-    <p>This creates an extra step — friction in the rejection flow. What makes up for it: the extra step <strong>prioritizes user thoughts and shows empathy</strong>.</p>
+    <span class="label">компромисс</span>
+    <p>Это добавляет лишний шаг — трение во флоу отказа. Что это окупает: лишний шаг <strong>ставит мысли пользователя в приоритет и показывает эмпатию</strong>.</p>
 </aside>
 
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/rejection-guidance.png" alt="Rejection guidance UI"><figcaption>// rejection guidance — questionnaire flow</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/rejection-guidance.png" alt="Интерфейс гайда по отказу"><figcaption>// гайд по отказу — флоу опросника</figcaption></figure>
 
 <div class="dc-stat-row">
-    <div class="cell"><span class="lbl">Result</span><p>"Other Reason" expands to a text field — constant data collection, ongoing research into settlement acceptance.</p></div>
-    <div class="cell"><span class="lbl">Result</span><p>Limited-group testing showed significant conversion going back to offers from rejection flow — <strong>+20% from static FAQ</strong>.</p></div>
-    <div class="cell"><span class="lbl">Overall</span><p>Led to <strong>+4% offer acceptance overall</strong>.</p></div>
+    <div class="cell"><span class="lbl">Результат</span><p>«Другая причина» раскрывается в текстовое поле — постоянный сбор данных и непрерывное исследование принятия офферов.</p></div>
+    <div class="cell"><span class="lbl">Результат</span><p>Тестирование на ограниченной группе показало заметный возврат к офферам из флоу отказа — <strong>+20% к статичному FAQ</strong>.</p></div>
+    <div class="cell"><span class="lbl">Итого</span><p>Дало <strong>+4% к принятию офферов в целом</strong>.</p></div>
 </div>
 
-<h2>// redesigning offer UI</h2>
+<h2>// редизайн интерфейса оффера</h2>
 
-<h3>Concept testing &amp; interviews</h3>
-<p>Concept testing with users to identify pain points and understand decision drivers for accepting a settlement.</p>
+<h3>Концепт-тестирование &amp; интервью</h3>
+<p>Концепт-тестирование с пользователями, чтобы выявить боли и понять, что движет решением принять оффер.</p>
 
 <div class="dc-stat-row">
-    <div class="cell"><span class="lbl">Method</span><p>1:1 semi-structured video calls — users walk through the prototype.</p></div>
-    <div class="cell"><span class="lbl">Sample</span><p>15 users who have accepted and rejected at least one settlement.</p></div>
-    <div class="cell"><span class="lbl">Goals</span><p>Decision factors · gaps in understanding · visual cues that drive acceptance.</p></div>
+    <div class="cell"><span class="lbl">Метод</span><p>Полуструктурированные видеозвонки 1:1 — пользователи проходят прототип.</p></div>
+    <div class="cell"><span class="lbl">Выборка</span><p>15 пользователей, которые приняли и отклонили хотя бы один оффер.</p></div>
+    <div class="cell"><span class="lbl">Цели</span><p>Факторы решения · пробелы в понимании · визуальные сигналы, подталкивающие к принятию.</p></div>
 </div>
 
-<h3>Problem framing — offer UI lacked scannability</h3>
+<h3>Постановка проблемы — интерфейс оффера плохо сканировался</h3>
 
 <div class="dc-pain">
     <div class="dc-pain-card">
-        <span class="icon">// priority</span>
-        <h4>Wrong priority</h4>
-        <p>Offer didn't prioritize info that mattered most: <strong>settlement amount vs. original amount</strong>.</p>
+        <span class="icon">// приоритет</span>
+        <h4>Неверный приоритет</h4>
+        <p>Оффер не выделял самое важное: <strong>сумму урегулирования против исходной суммы</strong>.</p>
     </div>
     <div class="dc-pain-card">
-        <span class="icon">// labels</span>
-        <h4>Unclear labels</h4>
-        <p>"Settlement rate", "term", "start date" — confusing to users.</p>
+        <span class="icon">// подписи</span>
+        <h4>Непонятные подписи</h4>
+        <p>«Ставка урегулирования», «срок», «дата старта» — сбивали пользователей с толку.</p>
     </div>
     <div class="dc-pain-card">
-        <span class="icon">// scan</span>
-        <h4>Hard to scan</h4>
-        <p>Difficult to scan settlements quickly — had to look over the offer multiple times.</p>
+        <span class="icon">// скан</span>
+        <h4>Трудно сканировать</h4>
+        <p>Сложно было быстро просмотреть оффер — приходилось вчитываться несколько раз.</p>
     </div>
     <div class="dc-pain-card">
-        <span class="icon">// trust</span>
-        <h4>"Scammy" feel</h4>
-        <p>Felt overeager on the savings — failed to take fees into account, creating trust issues.</p>
+        <span class="icon">// доверие</span>
+        <h4>Ощущение «развода»</h4>
+        <p>Слишком напирал на экономию — не учитывал комиссии, что подрывало доверие.</p>
     </div>
 </div>
 
-<h3>Iterations — addressing user pain while redesigning legacy UI</h3>
+<h3>Итерации — снимаем боли пользователя, переделывая legacy-интерфейс</h3>
 
 <div class="dc-iter">
-    <span class="label">iteration 1</span>
-    <div class="body"><p>Users care about original vs. settled amounts → reorganized information hierarchy to prioritize decision-driving data points.</p></div>
+    <span class="label">итерация 1</span>
+    <div class="body"><p>Пользователю важны исходная и урегулированная суммы → перестроил иерархию информации в пользу данных, которые движут решением.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">iteration 2</span>
-    <div class="body"><p>Users don't understand some information → improved copy and added tooltips for unclear info.</p></div>
+    <span class="label">итерация 2</span>
+    <div class="body"><p>Пользователь не понимает часть информации → улучшил тексты и добавил тултипы к непонятным местам.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">iteration 3</span>
-    <div class="body"><p>Redesigned legacy UI → reorganized layout to feel more professional, added creditor logos for easier identification.</p></div>
+    <span class="label">итерация 3</span>
+    <div class="body"><p>Переделал legacy-интерфейс → перекомпоновал лейаут, чтобы он выглядел солиднее, добавил логотипы кредиторов для быстрой идентификации.</p></div>
 </div>
 
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/offer-redesign-1.png" alt="Offer redesign with savings block"><figcaption>// initial redesign — with savings block</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/offer-redesign-1.png" alt="Редизайн оффера с блоком экономии"><figcaption>// первый редизайн — с блоком экономии</figcaption></figure>
 
-<h3>Design decision — removing the misleading savings block</h3>
-<p>Avoided a misleading, overly promotional impression by <strong>removing the blue savings block</strong> — it excluded fees and felt salesy.</p>
+<h3>Дизайн-решение — убираем вводящий в заблуждение блок экономии</h3>
+<p>Избежал вводящего в заблуждение, слишком рекламного впечатления, <strong>убрав синий блок экономии</strong> — он не учитывал комиссии и отдавал продажностью.</p>
 
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/offer-redesign-2.png" alt="Offer redesign without savings block"><figcaption>// final — comparison original vs. settlement amount</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/offer-redesign-2.png" alt="Редизайн оффера без блока экономии"><figcaption>// финал — сравнение исходной и урегулированной суммы</figcaption></figure>
 
 <div class="dc-iter">
-    <span class="label">iteration 1</span>
+    <span class="label">итерация 1</span>
     <div class="body">
-        <p>The savings block came off as "scam-like".</p>
-        <p>→ Removed it. Highlighted the comparison between original vs. settlement amount.</p>
+        <p>Блок экономии воспринимался как «развод».</p>
+        <p>→ Убрал его. Подсветил сравнение исходной и урегулированной суммы.</p>
     </div>
 </div>
 <div class="dc-iter">
-    <span class="label">iteration 2</span>
+    <span class="label">итерация 2</span>
     <div class="body">
-        <p>FAQs and questions were limited to users <em>rejecting</em> offers.</p>
-        <p>→ Bringing FAQs to users who may not want to reject, but are reluctant.</p>
+        <p>FAQ и вопросы видели только пользователи, <em>отклоняющие</em> офферы.</p>
+        <p>→ Показываем FAQ и тем, кто не хочет отказываться, но колеблется.</p>
     </div>
 </div>
 
 <aside class="dc-tradeoff">
-    <span class="label">trade-off</span>
-    <p>The savings block caught attention and could be attributed to some acceptance — but it was better to not mislead users and protect trust.</p>
+    <span class="label">компромисс</span>
+    <p>Блок экономии привлекал внимание и мог давать часть принятий — но лучше не вводить пользователя в заблуждение и беречь доверие.</p>
 </aside>
 
-<h2>// covering the last 5%</h2>
-<p>Addressed the 5% of Americor users who never registered on the app/online portal. Unregistered users had to rely on phone calls — a workshop with internal teams unblocked them.</p>
+<h2>// закрываем последние 5%</h2>
+<p>Закрыл 5% пользователей Americor, которые так и не зарегистрировались в приложении или онлайн-портале. Незарегистрированным приходилось полагаться на звонки — воркшоп с внутренними командами разблокировал их.</p>
 
-<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/workshop-unregistered.png" alt="Workshop session"><figcaption>// internal workshop — handling unregistered users</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/offer-acceptance/workshop-unregistered.png" alt="Сессия воркшопа"><figcaption>// внутренний воркшоп — работа с незарегистрированными пользователями</figcaption></figure>
 
 <div class="dc-callout">
-    <p><strong>Solution:</strong> a <strong>tokenized email flow</strong> allowed offer acceptance without needing to register online — covering every user, online or not.</p>
+    <p><strong>Решение:</strong> <strong>токенизированный email-флоу</strong> позволил принимать оффер без онлайн-регистрации — закрыли всех пользователей, онлайн и нет.</p>
 </div>
 
-<h2 class="dc-h-major">// takeaways &amp; challenges</h2>
+<h2 class="dc-h-major">// выводы &amp; вызовы</h2>
 
 <div class="dc-iter">
-    <span class="label">challenge</span>
-    <div class="body"><p>Qualitative testing with users directly was particularly difficult here. Pain points were easy to identify and resolve early on, but didn't necessarily translate to equal conversion. Especially problematic when post-release testing presented gaps in results.</p></div>
+    <span class="label">вызов</span>
+    <div class="body"><p>Качественное тестирование напрямую с пользователями было здесь особенно сложным. Боли легко выявлялись и закрывались на раннем этапе, но это не всегда давало пропорциональную конверсию. Особенно остро, когда пострелизное тестирование обнажало расхождения в результатах.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">takeaway</span>
-    <div class="body"><p>When user testing pre-release becomes ineffective, post-release testing is necessary — especially when the main outcome is conversion.</p></div>
+    <span class="label">вывод</span>
+    <div class="body"><p>Когда предрелизное тестирование с пользователями перестаёт работать, нужно пострелизное — особенно когда главный результат это конверсия.</p></div>
 </div>
 
 <div class="dc-iter">
-    <span class="label">challenge</span>
-    <div class="body"><p>A significant number of identified problems and inherent solutions were based on hypothesis and design expertise — this study established a sense of design confidence in me.</p></div>
+    <span class="label">вызов</span>
+    <div class="body"><p>Значительная часть выявленных проблем и заложенных в них решений строилась на гипотезах и дизайнерской экспертизе — этот проект укрепил во мне дизайнерскую уверенность.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">takeaway</span>
-    <div class="body"><p>When testing isn't providing constructive results, it becomes apparent to <em>test out ideas</em> — throw things at the wall and see what sticks, as long as the things you throw are based in expertise or knowledge.</p></div>
+    <span class="label">вывод</span>
+    <div class="body"><p>Когда тестирование не даёт конструктивных результатов, становится ясно, что нужно <em>пробовать идеи</em> — закидывать гипотезы и смотреть, что выстрелит, лишь бы то, что закидываешь, опиралось на экспертизу или знание.</p></div>
 </div>` },
             { id: 'engagement', company: 'cs01', companyLabel: 'Americor', image: '/rpogorov-dev/app/showcase/cases/deep-engagement.jpg',
-              title: 'Engaging Early-Stage Users in Americor',
-              desc: 'Improving progress visibility, clarity, and predictability of the debt-settlement process to boost user confidence and engagement.',
-              metric: '+72% NPS', tags: ['UX Research', 'Retention', 'Multi-platform'], deeplink: 'engagement',
+              title: 'Вовлечение пользователей на раннем этапе в Americor',
+              desc: 'Повышаю видимость прогресса, ясность и предсказуемость процесса урегулирования долга, чтобы укрепить уверенность пользователей и их вовлечённость.',
+              metric: '+72% NPS', tags: ['UX-исследования', 'Удержание', 'Мультиплатформа'], deeplink: 'engagement',
               body: `<div class="dc-impact">
-    <div class="dc-impact-cell"><span class="num">+72%</span><span class="lbl">avg NPS lift across platforms</span></div>
-    <div class="dc-impact-cell"><span class="num">+15%</span><span class="lbl">early-user retention</span></div>
-    <div class="dc-impact-cell"><span class="num">4 mo</span><span class="lbl">end-to-end design</span></div>
+    <div class="dc-impact-cell"><span class="num">+72%</span><span class="lbl">средний рост NPS по платформам</span></div>
+    <div class="dc-impact-cell"><span class="num">+15%</span><span class="lbl">удержание ранних пользователей</span></div>
+    <div class="dc-impact-cell"><span class="num">4 мес</span><span class="lbl">дизайн от начала до конца</span></div>
 </div>
 
 <div class="dc-meta-grid">
-    <div><span class="lbl">Company</span><span class="val">Americor</span></div>
-    <div><span class="lbl">Timeline</span><span class="val">4 months</span></div>
-    <div><span class="lbl">Platform</span><span class="val">Web · iOS · Android (app showcased)</span></div>
-    <div><span class="lbl">Team</span><span class="val">Lead PD (me) · 4 dev · 1 PM · 1 UXR · 2 PD · 1 QA</span></div>
+    <div><span class="lbl">Компания</span><span class="val">Americor</span></div>
+    <div><span class="lbl">Сроки</span><span class="val">4 месяца</span></div>
+    <div><span class="lbl">Платформа</span><span class="val">Web · iOS · Android (показано приложение)</span></div>
+    <div><span class="lbl">Команда</span><span class="val">Lead PD (я) · 4 dev · 1 PM · 1 UXR · 2 PD · 1 QA</span></div>
 </div>
 
-<h2>// my role</h2>
+<h2>// моя роль</h2>
 <ul>
-    <li>Aligned product changes with stakeholders and execs across teams — decisions that rippled company-wide</li>
-    <li>Ran cross-team ideation to surface features and changes that drove the design</li>
-    <li>Shipped two new features and three redesigns under tight deadlines, hand-in-hand with engineering</li>
-    <li>Led legacy-UI refresh inside redesigns to bring a more premium feel</li>
-    <li>Worked with the UX researcher on usability and concept testing — insights drove every iteration</li>
+    <li>Согласовывал изменения продукта со стейкхолдерами и руководителями разных команд — решения, отдававшиеся по всей компании</li>
+    <li>Вёл кросс-командный брейншторм, чтобы вытащить фичи и изменения, которые задали дизайн</li>
+    <li>Выкатил две новые фичи и три редизайна в сжатые сроки, рука об руку с инженерией</li>
+    <li>Вёл обновление legacy-интерфейса внутри редизайнов, чтобы придать продукту более премиальное ощущение</li>
+    <li>Работал с UX-исследователем над юзабилити- и концепт-тестами — инсайты двигали каждую итерацию</li>
 </ul>
 
-<h2>// background &amp; problem</h2>
-<p>Americor negotiates with creditors to settle users' debts for less than they owe. Negotiation takes time — settlements emerge unevenly, often months apart.</p>
+<h2>// контекст &amp; проблема</h2>
+<p>Americor договаривается с кредиторами об урегулировании долгов пользователя на сумму меньше задолженности. Переговоры требуют времени — урегулирования появляются неравномерно, часто с разрывом в месяцы.</p>
 
 <div class="dc-pain">
     <div class="dc-pain-card">
-        <span class="icon">// biz</span>
-        <h4>Business problem</h4>
-        <p>Engagement nosedives 2–3 months in. Onboarding cost is paid up front; revenue only lands after a settlement — early disengagement is expensive.</p>
+        <span class="icon">// бизнес</span>
+        <h4>Проблема бизнеса</h4>
+        <p>Вовлечённость резко падает на 2–3-м месяце. Стоимость онбординга оплачена заранее, выручка приходит только после урегулирования — ранний отток обходится дорого.</p>
     </div>
     <div class="dc-pain-card">
-        <span class="icon">// user</span>
-        <h4>User pain</h4>
-        <p>Users start the program without clear expectations. Long quiet stretches breed confusion, frustration, and doubt — they stop believing deposits are doing anything.</p>
+        <span class="icon">// юзер</span>
+        <h4>Боль пользователя</h4>
+        <p>Пользователь входит в программу без ясных ожиданий. Долгие тихие периоды рождают непонимание, фрустрацию и сомнение — он перестаёт верить, что депозиты вообще что-то дают.</p>
     </div>
 </div>
 
-<h2 class="dc-h-major">// solution breakdown</h2>
-<p>Boost confidence and engagement by making the settlement process visible, predictable, and clear.</p>
+<h2 class="dc-h-major">// разбор решения</h2>
+<p>Укрепить уверенность и вовлечённость, сделав процесс урегулирования видимым, предсказуемым и понятным.</p>
 
-<figure class="dc-figure"><img src="cases/cs01/engagement/solution-overview.png" alt="Solution overview diagram"><figcaption>// solution map — clarity, progress, expectations</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/engagement/solution-overview.png" alt="Схема обзора решения"><figcaption>// карта решения — ясность, прогресс, ожидания</figcaption></figure>
 
 <div class="dc-pillars">
-    <div class="dc-pillar"><span class="dc-pillar-num">01 / clarity</span><p>Cut steps in the settlement process and rewrite how it's communicated.</p></div>
-    <div class="dc-pillar"><span class="dc-pillar-num">02 / movement</span><p>Replace static creditor status with a dynamic progress signal.</p></div>
-    <div class="dc-pillar"><span class="dc-pillar-num">03 / activity</span><p>Surface what changed since last login — no need to dig through every account.</p></div>
-    <div class="dc-pillar"><span class="dc-pillar-num">04 / expectations</span><p>Set realistic timelines so users know when to expect a settlement.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">01 / ясность</span><p>Сократить шаги в процессе урегулирования и переписать то, как он подаётся.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">02 / движение</span><p>Заменить статичный статус кредитора динамическим сигналом прогресса.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">03 / активность</span><p>Показывать, что изменилось с последнего входа — не надо рыться по каждому счёту.</p></div>
+    <div class="dc-pillar"><span class="dc-pillar-num">04 / ожидания</span><p>Задать реалистичные сроки, чтобы пользователь знал, когда ждать урегулирования.</p></div>
 </div>
 
-<figure class="dc-figure"><img src="cases/cs01/engagement/creditor-overview-redesign.png" alt="Creditor overview redesign"><figcaption>// creditor overview — dynamic progress</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/engagement/creditor-overview-redesign.png" alt="Редизайн обзора кредиторов"><figcaption>// обзор кредиторов — динамический прогресс</figcaption></figure>
 
 <div class="dc-grid-2">
-    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/recent-activity-feed.png" alt="Recent activity feed"><figcaption>// recent activity — what changed since last login</figcaption></figure>
-    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/settlement-timeline.png" alt="Settlement timeline"><figcaption>// expectations timeline</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/recent-activity-feed.png" alt="Лента недавней активности"><figcaption>// недавняя активность — что изменилось с последнего входа</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/settlement-timeline.png" alt="Таймлайн урегулирования"><figcaption>// таймлайн ожиданий</figcaption></figure>
 </div>
 
-<h2 class="dc-h-major">// design process</h2>
+<h2 class="dc-h-major">// процесс дизайна</h2>
 
-<h2>// user research — interviews</h2>
-<p>Existing data showed early-program turnover; interviews aimed to dig into the <em>why</em>.</p>
+<h2>// пользовательское исследование — интервью</h2>
+<p>Имеющиеся данные показывали отток на раннем этапе программы; интервью должны были докопаться до <em>почему</em>.</p>
 <ul>
-    <li>10 users between 30–90 days in the program</li>
-    <li>1:1 semi-structured video calls</li>
-    <li>Tracked emotional state from enrollment → early program → later program</li>
-    <li>Mapped pain points specific to the early window where users disengage</li>
+    <li>10 пользователей со стажем в программе от 30 до 90 дней</li>
+    <li>Полуструктурированные видеозвонки 1:1</li>
+    <li>Отслеживал эмоциональное состояние на пути зачисление → ранний этап → поздний этап</li>
+    <li>Картировал боли, специфичные именно для раннего окна, где пользователи отваливаются</li>
 </ul>
 
 <div class="dc-pain">
     <div class="dc-pain-card">
         <span class="icon">// 01</span>
-        <h4>Lack of understanding</h4>
-        <p>Users couldn't connect individual statuses to the bigger settlement picture. <em>"How does my debt go from coming to Americor to being paid off?"</em></p>
+        <h4>Нет понимания</h4>
+        <p>Пользователь не связывал отдельные статусы с общей картиной урегулирования. <em>«Как мой долг проходит путь от прихода в Americor до полного погашения?»</em></p>
     </div>
     <div class="dc-pain-card">
         <span class="icon">// 02</span>
-        <h4>Missing feeling of progress</h4>
-        <p>Months of deposits with no visible outcomes — <em>"I've been depositing for so long, but nothing has happened."</em></p>
+        <h4>Нет ощущения прогресса</h4>
+        <p>Месяцы депозитов без видимых результатов — <em>«Я так долго вношу деньги, а ничего не происходит.»</em></p>
     </div>
     <div class="dc-pain-card">
         <span class="icon">// 03</span>
-        <h4>Uncertainty</h4>
-        <p><em>"I don't know if I'm moving in the right direction."</em> First three months left users questioning whether the program was a scam.</p>
+        <h4>Неопределённость</h4>
+        <p><em>«Я не знаю, в ту ли сторону двигаюсь.»</em> Первые три месяца оставляли пользователя в сомнении, не развод ли вся программа.</p>
     </div>
 </div>
 
-<h2 class="dc-h-major">// settlement-process clarity</h2>
-<p>The process was depicted exactly as it ran internally — overengineered for users.</p>
+<h2 class="dc-h-major">// ясность процесса урегулирования</h2>
+<p>Процесс изображался ровно так, как он шёл внутри компании — переусложнённо для пользователя.</p>
 
-<figure class="dc-figure"><img src="cases/cs01/engagement/legacy-process-map.png" alt="Legacy process map"><figcaption>// legacy — process drawn the way it runs internally</figcaption></figure>
-
-<div class="dc-iter">
-    <span class="label">decision</span>
-    <div class="body"><p>Condense and simplify the negotiation flow for users — the literal version creates more confusion than confidence.</p></div>
-</div>
-
-<figure class="dc-figure"><img src="cases/cs01/engagement/condensed-process.png" alt="Condensed process"><figcaption>// condensed — process the user actually needs</figcaption></figure>
-
-<h3>UI iteration</h3>
-<figure class="dc-figure"><img src="cases/cs01/engagement/ui-iteration-board.png" alt="UI iteration board"><figcaption>// iteration board — pulling pain points into UI</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/engagement/legacy-process-map.png" alt="Legacy-карта процесса"><figcaption>// legacy — процесс, нарисованный так, как он идёт внутри</figcaption></figure>
 
 <div class="dc-iter">
-    <span class="label">iter 1 — feeling of progress</span>
-    <div class="body"><p>Reframed the UI as a timeline — moving through statuses instead of being parked in one.</p></div>
-</div>
-<div class="dc-iter">
-    <span class="label">iter 2 — opaque statuses</span>
-    <div class="body"><p>Inlined descriptions — visibility without an extra interaction step.</p></div>
+    <span class="label">решение</span>
+    <div class="body"><p>Сжать и упростить флоу переговоров для пользователя — буквальная версия рождает больше непонимания, чем уверенности.</p></div>
 </div>
 
-<h3>Moderated concept testing</h3>
-<p>Better understanding of each status. Better sense of moving step-to-step. UI was preferred. But — early users misread settlement as the <em>final</em> step, and the wholistic picture stayed fuzzy.</p>
+<figure class="dc-figure"><img src="cases/cs01/engagement/condensed-process.png" alt="Сжатый процесс"><figcaption>// сжатый — процесс, который реально нужен пользователю</figcaption></figure>
 
-<figure class="dc-figure"><img src="cases/cs01/engagement/iteration-pre-settlement.png" alt="Pre-settlement iteration"><figcaption>// iter — pre-settlement</figcaption></figure>
-<figure class="dc-figure"><img src="cases/cs01/engagement/iteration-post-settlement.png" alt="Post-settlement iteration"><figcaption>// iter — post-settlement</figcaption></figure>
+<h3>Итерация UI</h3>
+<figure class="dc-figure"><img src="cases/cs01/engagement/ui-iteration-board.png" alt="Доска итераций UI"><figcaption>// доска итераций — переносим боли в интерфейс</figcaption></figure>
 
 <div class="dc-iter">
-    <span class="label">decision</span>
-    <div class="body"><p>Reframe "process" as a creditor lifecycle — enrollment → paid off. Combine pre and post settlement under one continuous journey, then keep the same UI in both phases for consistency.</p></div>
+    <span class="label">итер 1 — ощущение прогресса</span>
+    <div class="body"><p>Переосмыслил UI как таймлайн — движение по статусам, а не застывание в одном.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">итер 2 — непрозрачные статусы</span>
+    <div class="body"><p>Встроил описания прямо в строку — видимость без лишнего шага взаимодействия.</p></div>
 </div>
 
-<h2 class="dc-h-major">// dynamic progress</h2>
-<p>Real progress was slow and uneven — and the UI wasn't helping users feel any of it.</p>
+<h3>Модерируемое концепт-тестирование</h3>
+<p>Лучше понимали каждый статус. Лучше ощущали движение от шага к шагу. UI предпочитали. Но — ранние пользователи принимали урегулирование за <em>финальный</em> шаг, и целостная картина оставалась размытой.</p>
 
-<h3>The aging-vs-funds asymmetry</h3>
+<figure class="dc-figure"><img src="cases/cs01/engagement/iteration-pre-settlement.png" alt="Итерация до урегулирования"><figcaption>// итер — до урегулирования</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/engagement/iteration-post-settlement.png" alt="Итерация после урегулирования"><figcaption>// итер — после урегулирования</figcaption></figure>
+
+<div class="dc-iter">
+    <span class="label">решение</span>
+    <div class="body"><p>Переосмыслить «процесс» как жизненный цикл кредитора — зачисление → погашено. Объединить до- и постурегулирование в один непрерывный путь, а затем сохранить одинаковый UI в обеих фазах ради консистентности.</p></div>
+</div>
+
+<h2 class="dc-h-major">// динамический прогресс</h2>
+<p>Реальный прогресс был медленным и неравномерным — а UI совсем не помогал его почувствовать.</p>
+
+<h3>Асимметрия старения и накоплений</h3>
 <ul>
-    <li>Accounts age automatically as users intentionally miss creditor payments</li>
-    <li>Funds accrue from steady deposits — at the user's pace</li>
-    <li>Funds save against one or two creditors at a time, then reset after each settlement</li>
-    <li>Roughly half of users can't deposit fast enough to keep up with aging</li>
-    <li>Early progress concentrates on a couple of creditors while the rest sit still</li>
+    <li>Счета стареют автоматически, по мере того как пользователь намеренно пропускает платежи кредиторам</li>
+    <li>Средства накапливаются из регулярных депозитов — в темпе пользователя</li>
+    <li>Средства копятся на одного-двух кредиторов за раз, затем обнуляются после каждого урегулирования</li>
+    <li>Примерно половина пользователей не успевает депонировать так быстро, чтобы поспевать за старением</li>
+    <li>Ранний прогресс концентрируется на паре кредиторов, а остальные стоят на месте</li>
 </ul>
 
 <div class="dc-iter">
-    <span class="label">decision</span>
-    <div class="body"><p>Decouple early progress from deposit speed — let aging and saving move in parallel so all creditors show motion regardless of which finishes first.</p></div>
+    <span class="label">решение</span>
+    <div class="body"><p>Отвязать ранний прогресс от скорости депозитов — пусть старение и накопление идут параллельно, чтобы движение показывали все кредиторы, независимо от того, какой завершится первым.</p></div>
 </div>
 
 <div class="dc-grid-2">
-    <figure class="dc-figure"><img src="cases/cs01/engagement/aging-vs-funds-flow-1.png" alt="Aging vs funds flow 1"><figcaption>// flow 01 — sequence problem</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/engagement/aging-vs-funds-flow-2.png" alt="Aging vs funds flow 2"><figcaption>// flow 02 — concurrent progress</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/aging-vs-funds-flow-1.png" alt="Флоу старения и накоплений 1"><figcaption>// флоу 01 — проблема последовательности</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/aging-vs-funds-flow-2.png" alt="Флоу старения и накоплений 2"><figcaption>// флоу 02 — параллельный прогресс</figcaption></figure>
 </div>
 
-<h3>Reframing the problem</h3>
-<p>Walkthroughs with stakeholders surfaced something deeper — progress was happening, just invisibly. The overview page lacked any signal that something had changed since last login. With no signal, users had to <em>remember</em> their previous status to perceive any progress at all.</p>
+<h3>Переосмысление проблемы</h3>
+<p>Прогоны со стейкхолдерами вскрыли кое-что глубже — прогресс происходил, просто невидимо. На странице обзора не было ни одного сигнала, что что-то изменилось с последнего входа. Без сигнала пользователю приходилось <em>помнить</em> свой прежний статус, чтобы вообще заметить прогресс.</p>
 
-<h3>How might we make progress visible</h3>
-<p>Four directions explored — each with different tradeoffs.</p>
+<h3>Как сделать прогресс видимым</h3>
+<p>Исследовали четыре направления — каждое со своими компромиссами.</p>
 
 <div class="dc-grid-2">
-    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-progress-report.png" alt="Progress report"><figcaption>// progress report</figcaption></figure>
-    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-progress-overview.png" alt="Progress overview"><figcaption>// progress overview</figcaption></figure>
-    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-recent-activity.png" alt="Recent activity"><figcaption>// recent activity</figcaption></figure>
-    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-update-notifications.png" alt="Update notifications"><figcaption>// update notifications</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-progress-report.png" alt="Отчёт о прогрессе"><figcaption>// отчёт о прогрессе</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-progress-overview.png" alt="Обзор прогресса"><figcaption>// обзор прогресса</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-recent-activity.png" alt="Недавняя активность"><figcaption>// недавняя активность</figcaption></figure>
+    <figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/signal-update-notifications.png" alt="Уведомления об обновлениях"><figcaption>// уведомления об обновлениях</figcaption></figure>
 </div>
 
 <div class="dc-iter">
-    <span class="label">decision</span>
-    <div class="body"><p>Recent activity won — most honest, most immediate, doesn't depend on memory.</p></div>
+    <span class="label">решение</span>
+    <div class="body"><p>Победила недавняя активность — самая честная, самая мгновенная, не зависит от памяти.</p></div>
 </div>
 
-<figure class="dc-figure"><img src="cases/cs01/engagement/recent-activity-iterations.png" alt="Recent activity iterations"><figcaption>// recent activity — iterations</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/engagement/recent-activity-iterations.png" alt="Итерации недавней активности"><figcaption>// недавняя активность — итерации</figcaption></figure>
 
 <div class="dc-iter">
-    <span class="label">iter 1</span>
-    <div class="body"><p>"New" badge for everything that changed since last login — pulls attention without requiring users to recall their previous state.</p></div>
+    <span class="label">итер 1</span>
+    <div class="body"><p>Бейдж «Новое» на всём, что изменилось с последнего входа — притягивает внимание, не требуя вспоминать прежнее состояние.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">iter 2</span>
-    <div class="body"><p>Push notifications for activity events — immediate gratification for users with notifications enabled.</p></div>
+    <span class="label">итер 2</span>
+    <div class="body"><p>Пуш-уведомления о событиях активности — мгновенное вознаграждение для пользователей с включёнными уведомлениями.</p></div>
 </div>
 
-<h3>Concept testing — recent activity</h3>
-<blockquote>"This makes it really clear that something is actually happening. Before, I wouldn't even notice."</blockquote>
-<blockquote>"This is exactly what I want. When will I be able to see this on my app?"</blockquote>
-<blockquote>"I'd check this all the time to see what's changing."</blockquote>
+<h3>Концепт-тестирование — недавняя активность</h3>
+<blockquote>«Так реально понятно, что что-то происходит. Раньше я бы и не заметил.»</blockquote>
+<blockquote>«Это именно то, что мне нужно. Когда я смогу увидеть это в своём приложении?»</blockquote>
+<blockquote>«Я бы заглядывал сюда постоянно, чтобы смотреть, что меняется.»</blockquote>
 
-<h2 class="dc-h-major">// creditor-overview redesign</h2>
-<p>The overview page focused on a static status — no signal of progress, no context for new settlement steps.</p>
+<h2 class="dc-h-major">// редизайн обзора кредиторов</h2>
+<p>Страница обзора фокусировалась на статичном статусе — ни сигнала прогресса, ни контекста для новых шагов урегулирования.</p>
 
-<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/creditor-overview-legacy.png" alt="Legacy creditor overview"><figcaption>// legacy — static status</figcaption></figure>
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/creditor-overview-legacy.png" alt="Legacy-обзор кредиторов"><figcaption>// legacy — статичный статус</figcaption></figure>
 
-<h3>UI iterations on the status row</h3>
+<h3>Итерации UI по строке статуса</h3>
 <div class="dc-grid-2">
-    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-1.png" alt="Status row iteration 1"><figcaption>// iter 1</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-2.png" alt="Status row iteration 2"><figcaption>// iter 2</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-3.png" alt="Status row iteration 3"><figcaption>// iter 3</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-4.png" alt="Status row iteration 4"><figcaption>// iter 4</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-1.png" alt="Строка статуса, итерация 1"><figcaption>// итер 1</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-2.png" alt="Строка статуса, итерация 2"><figcaption>// итер 2</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-3.png" alt="Строка статуса, итерация 3"><figcaption>// итер 3</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/status-row-iter-4.png" alt="Строка статуса, итерация 4"><figcaption>// итер 4</figcaption></figure>
 </div>
 
 <div class="dc-iter">
-    <span class="label">decision 01</span>
-    <div class="body"><p>Show <em>progress</em>, not status — hint at forward motion instead of advertising stasis.</p></div>
+    <span class="label">решение 01</span>
+    <div class="body"><p>Показывать <em>прогресс</em>, а не статус — намекать на движение вперёд, а не рекламировать застой.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">decision 02</span>
-    <div class="body"><p>Tie the progress visual to current status — context for where the user is in the wider journey.</p></div>
+    <span class="label">решение 02</span>
+    <div class="body"><p>Привязать визуал прогресса к текущему статусу — контекст того, где пользователь на общем пути.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">decision 03</span>
-    <div class="body"><p>Refresh the legacy UI around what users care about — pre and post settlement amounts on top.</p></div>
+    <span class="label">решение 03</span>
+    <div class="body"><p>Обновить legacy-интерфейс вокруг того, что важно пользователю — суммы до и после урегулирования наверху.</p></div>
 </div>
 
-<h3>Pre vs post settlement overview</h3>
-<p>Concept testing showed users with active settlements care about payment progress, not status progression — separate views for pre and post settlement, but only on the overview screen.</p>
+<h3>Обзор до и после урегулирования</h3>
+<p>Концепт-тестирование показало: пользователям с активными урегулированиями важен прогресс выплат, а не движение по статусам — разные виды для до- и постурегулирования, но только на экране обзора.</p>
 
 <div class="dc-grid-2">
-    <figure class="dc-figure"><img src="cases/cs01/engagement/post-settlement-overview.png" alt="Post-settlement overview"><figcaption>// post-settlement</figcaption></figure>
-    <figure class="dc-figure"><img src="cases/cs01/engagement/pre-settlement-overview.png" alt="Pre-settlement overview"><figcaption>// pre-settlement</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/post-settlement-overview.png" alt="Обзор после урегулирования"><figcaption>// после урегулирования</figcaption></figure>
+    <figure class="dc-figure"><img src="cases/cs01/engagement/pre-settlement-overview.png" alt="Обзор до урегулирования"><figcaption>// до урегулирования</figcaption></figure>
 </div>
 
 <div class="dc-iter">
-    <span class="label">trade-off</span>
-    <div class="body"><p>Pre-settlement overview shows 4 steps, process detail shows 6 — accepted minor discrepancy, telegraphed via a checkpoint flag matching the icon. Most users either didn't notice or weren't confused.</p></div>
+    <span class="label">компромисс</span>
+    <div class="body"><p>Обзор до урегулирования показывает 4 шага, детализация процесса — 6. Приняли мелкое расхождение, обозначив его флажком чекпоинта в тон иконке. Большинство пользователей либо не замечали, либо не путались.</p></div>
 </div>
 
-<h2 class="dc-h-major">// managing expectations</h2>
-<p>Initial interviews surfaced an even earlier problem — the debt overview was tuned for post-settlement progress. For early users, that meant a frozen progress bar and rising remaining-debt numbers. Users felt off-track before they had a chance to be on it.</p>
+<h2 class="dc-h-major">// управление ожиданиями</h2>
+<p>Первые интервью вскрыли ещё более раннюю проблему — обзор долга был заточен под прогресс после урегулирования. Для ранних пользователей это означало замороженный прогресс-бар и растущие цифры остатка долга. Пользователь чувствовал, что сбился с пути, ещё не успев на него встать.</p>
 
-<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/debt-overview-legacy.png" alt="Legacy debt overview"><figcaption>// legacy — debt overview</figcaption></figure>
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/debt-overview-legacy.png" alt="Legacy-обзор долга"><figcaption>// legacy — обзор долга</figcaption></figure>
 
 <ul>
-    <li>Progress bar didn't move until first settlement (3–6 months)</li>
-    <li>Each login highlighted a lack of motion</li>
-    <li>Remaining debt could grow before settlement due to interest — felt like negative progress</li>
+    <li>Прогресс-бар не двигался до первого урегулирования (3–6 месяцев)</li>
+    <li>Каждый вход подчёркивал отсутствие движения</li>
+    <li>Остаток долга мог расти до урегулирования из-за процентов — ощущался как отрицательный прогресс</li>
 </ul>
 
 <div class="dc-iter">
-    <span class="label">decision</span>
-    <div class="body"><p>Split the progress overview by phase — distinct views before and after the user's first settlement.</p></div>
+    <span class="label">решение</span>
+    <div class="body"><p>Разделить обзор прогресса по фазам — отдельные виды до и после первого урегулирования пользователя.</p></div>
 </div>
 
-<figure class="dc-figure"><img src="cases/cs01/engagement/debt-overview-split-views.png" alt="Split debt-overview views"><figcaption>// split — pre and post first settlement</figcaption></figure>
+<figure class="dc-figure"><img src="cases/cs01/engagement/debt-overview-split-views.png" alt="Разделённые виды обзора долга"><figcaption>// разделение — до и после первого урегулирования</figcaption></figure>
 
 <div class="dc-iter">
-    <span class="label">decision 01</span>
-    <div class="body"><p>No progress bar in pre-settlement — kills the expectation of movement that won't happen yet.</p></div>
+    <span class="label">решение 01</span>
+    <div class="body"><p>Никакого прогресс-бара до урегулирования — убирает ожидание движения, которого пока не будет.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">decision 02</span>
-    <div class="body"><p>Reframe "settlements" as "creditors" so users aren't reminded of what they don't have yet.</p></div>
+    <span class="label">решение 02</span>
+    <div class="body"><p>Переименовать «урегулирования» в «кредиторов», чтобы не напоминать пользователю о том, чего у него ещё нет.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">decision 03</span>
-    <div class="body"><p>Drop "remaining debt", focus on enrolled debt — remove the interest-driven negative signal.</p></div>
+    <span class="label">решение 03</span>
+    <div class="body"><p>Убрать «остаток долга», сделать акцент на зачисленном долге — снять отрицательный сигнал, вызванный процентами.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">trade-off</span>
-    <div class="body"><p>These calls strip progress signals — but the signals were static anyway. Compensated by the new recent-activity feature.</p></div>
-</div>
-
-<h3>New feature — settlement timeline</h3>
-<p>Users wrongly anchored to specific dates and got frustrated when reality didn't match. A projected timeline sets a realistic, flexible expectation.</p>
-
-<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/settlement-timeline-feature.png" alt="Settlement timeline feature"><figcaption>// feature — settlement timeline</figcaption></figure>
-
-<h3>Iterations</h3>
-<div class="dc-iter">
-    <span class="label">iter 1</span>
-    <div class="body"><p>Timeline + percentage format raised cognitive load — users misinterpreted the data. Stripped to require zero interpretation.</p></div>
-</div>
-<div class="dc-iter">
-    <span class="label">iter 2</span>
-    <div class="body"><p>Users read early settlement projections as guarantees — added plain-text framing to position the data as a <em>projection</em>, not a promise.</p></div>
+    <span class="label">компромисс</span>
+    <div class="body"><p>Эти решения убирают сигналы прогресса — но сигналы и так были статичными. Компенсировали новой фичей недавней активности.</p></div>
 </div>
 
-<figure class="dc-figure"><img src="cases/cs01/engagement/timeline-iterations.png" alt="Timeline iterations"><figcaption>// timeline — iterations</figcaption></figure>
+<h3>Новая фича — таймлайн урегулирования</h3>
+<p>Пользователи ошибочно цеплялись за конкретные даты и расстраивались, когда реальность не совпадала. Прогнозный таймлайн задаёт реалистичное, гибкое ожидание.</p>
 
-<h2 class="dc-h-major">// takeaways &amp; challenges</h2>
+<figure class="dc-figure dc-figure-portrait"><img src="cases/cs01/engagement/settlement-timeline-feature.png" alt="Фича таймлайна урегулирования"><figcaption>// фича — таймлайн урегулирования</figcaption></figure>
+
+<h3>Итерации</h3>
+<div class="dc-iter">
+    <span class="label">итер 1</span>
+    <div class="body"><p>Таймлайн + формат процентов повышали когнитивную нагрузку — пользователи неверно трактовали данные. Упростил так, чтобы вообще не требовалось интерпретации.</p></div>
+</div>
+<div class="dc-iter">
+    <span class="label">итер 2</span>
+    <div class="body"><p>Пользователи читали ранние прогнозы урегулирования как гарантии — добавил текстовую обводку, чтобы позиционировать данные как <em>прогноз</em>, а не обещание.</p></div>
+</div>
+
+<figure class="dc-figure"><img src="cases/cs01/engagement/timeline-iterations.png" alt="Итерации таймлайна"><figcaption>// таймлайн — итерации</figcaption></figure>
+
+<h2 class="dc-h-major">// выводы &amp; вызовы</h2>
 
 <div class="dc-iter">
-    <span class="label">challenge</span>
-    <div class="body"><p>Showing detailed information without losing the user. Early-stage and late-stage users wanted different things at different fidelities — finding the balance was the bulk of the project.</p></div>
+    <span class="label">вызов</span>
+    <div class="body"><p>Показывать детальную информацию, не теряя пользователя. Ранним и поздним пользователям нужны были разные вещи на разном уровне детализации — поиск этого баланса и составил основную часть проекта.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">takeaway</span>
-    <div class="body"><p>"Tell users everything" sounds responsible until you ship it. Information overload causes the same — sometimes worse — confusion as too little. For consumer products, simplifying complex data, sometimes hiding it, is often the right call.</p></div>
+    <span class="label">вывод</span>
+    <div class="body"><p>«Рассказать пользователю всё» звучит ответственно, пока не выкатишь это в прод. Перегруз информацией вызывает такое же — иногда худшее — непонимание, как и её нехватка. Для потребительских продуктов упрощать сложные данные, а иногда и прятать, часто правильный выбор.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">challenge</span>
-    <div class="body"><p>Users' needs shift inside a single goal-oriented product. What works for a 30-day user actively misleads a 12-month user. Different mental models for the same screens.</p></div>
+    <span class="label">вызов</span>
+    <div class="body"><p>Потребности пользователя меняются внутри одного целеориентированного продукта. То, что работает для пользователя на 30-й день, активно сбивает с толку пользователя на 12-м месяце. Разные ментальные модели для одних и тех же экранов.</p></div>
 </div>
 <div class="dc-iter">
-    <span class="label">takeaway</span>
-    <div class="body"><p>Test with the target audience and with the users who'll be impacted as a side effect. Both groups change the answer.</p></div>
+    <span class="label">вывод</span>
+    <div class="body"><p>Тестируй с целевой аудиторией и с теми, кого затронет побочно. Обе группы меняют ответ.</p></div>
 </div>` },
             { id: 'design-system', company: 'cs01', companyLabel: 'Americor', image: '/rpogorov-dev/app/showcase/cases/deep-design-system.jpg',
-              title: 'Americor Design System',
-              desc: 'Three-tier token architecture and a shared component spec across web, iOS and Android — instant theming via Figma modes, Code Connect to React.',
-              metric: '3 platforms', tags: ['Design System', 'Tokens', 'Multi-platform'], deeplink: 'design-system', theme: 'bright',
+              title: 'Дизайн-система Americor',
+              desc: 'Трёхуровневая архитектура токенов и единая спецификация компонентов для web, iOS и Android — мгновенное тематизирование через Figma-моды, Code Connect в React.',
+              metric: '3 платформы', tags: ['Дизайн-система', 'Токены', 'Мультиплатформа'], deeplink: 'design-system', theme: 'bright',
               body: `<div class="dc-impact">
-    <div class="dc-impact-cell"><span class="num">3</span><span class="lbl">products unified — web, iOS, Android</span></div>
-    <div class="dc-impact-cell"><span class="num">2</span><span class="lbl">brands themed via Figma modes</span></div>
-    <div class="dc-impact-cell"><span class="num">3-tier</span><span class="lbl">token architecture from scratch</span></div>
+    <div class="dc-impact-cell"><span class="num">3</span><span class="lbl">продукта объединено — web, iOS, Android</span></div>
+    <div class="dc-impact-cell"><span class="num">2</span><span class="lbl">бренда тематизировано через Figma-моды</span></div>
+    <div class="dc-impact-cell"><span class="num">3 уровня</span><span class="lbl">архитектура токенов с нуля</span></div>
 </div>
 
 <div class="dc-meta-grid">
-    <div><span class="lbl">Company</span><span class="val">Americor</span></div>
-    <div><span class="lbl">Role</span><span class="val">Lead Product Designer</span></div>
-    <div><span class="lbl">Platform</span><span class="val">Web · iOS · Android</span></div>
-    <div><span class="lbl">Scope</span><span class="val">Tokens · components · governance</span></div>
+    <div><span class="lbl">Компания</span><span class="val">Americor</span></div>
+    <div><span class="lbl">Роль</span><span class="val">Lead Product Designer</span></div>
+    <div><span class="lbl">Платформа</span><span class="val">Web · iOS · Android</span></div>
+    <div><span class="lbl">Скоуп</span><span class="val">Токены · компоненты · управление</span></div>
 </div>
 
-<h2>My role</h2>
+<h2>Моя роль</h2>
 <ul>
-    <li>Owned the system architecture, token structure, and component design</li>
-    <li>Made the case to pause feature work and invest in foundations — got product and engineering buy-in</li>
-    <li>Designed and documented foundational tokens, core components, and usage guidelines</li>
-    <li>Stayed embedded with engineering for three months of post-design implementation</li>
+    <li>Отвечал за архитектуру системы, структуру токенов и дизайн компонентов</li>
+    <li>Обосновал паузу в продуктовой работе ради инвестиций в фундамент — получил поддержку продукта и инженерии</li>
+    <li>Спроектировал и задокументировал базовые токены, ключевые компоненты и гайдлайны по использованию</li>
+    <li>Оставался встроенным в инженерную команду на три месяца внедрения после дизайна</li>
 </ul>
 
-<h2 class="dc-h-major">Token architecture</h2>
-<figure class="dc-figure"><img src="cases/cs01/design-system/01-token-architecture.png" alt="Token architecture overview"><figcaption>Three-tier tokens — primitive → semantic → component — with Figma modes per brand</figcaption></figure>
+<h2 class="dc-h-major">Архитектура токенов</h2>
+<figure class="dc-figure"><img src="cases/cs01/design-system/01-token-architecture.png" alt="Обзор архитектуры токенов"><figcaption>Трёхуровневые токены — примитив → семантика → компонент — с Figma-модами под каждый бренд</figcaption></figure>
 
-<h2 class="dc-h-major">Cross-platform component spec</h2>
-<figure class="dc-figure"><img src="cases/cs01/design-system/02-cross-platform-spec.png" alt="Cross-platform spec"><figcaption>One shared spec across web, iOS, and Android — native customised, not abandoned</figcaption></figure>
+<h2 class="dc-h-major">Кроссплатформенная спецификация компонентов</h2>
+<figure class="dc-figure"><img src="cases/cs01/design-system/02-cross-platform-spec.png" alt="Кроссплатформенная спецификация"><figcaption>Одна общая спецификация для web, iOS и Android — нативность кастомизирована, а не отброшена</figcaption></figure>
 
-<h2 class="dc-h-major">Platform-appropriate interactions</h2>
-<figure class="dc-figure"><img src="cases/cs01/design-system/03-platform-interactions.png" alt="Platform interactions"><figcaption>Drop-down on desktop · bottom-sheet on mobile · same visual language</figcaption></figure>
+<h2 class="dc-h-major">Уместные для платформы взаимодействия</h2>
+<figure class="dc-figure"><img src="cases/cs01/design-system/03-platform-interactions.png" alt="Взаимодействия по платформам"><figcaption>Выпадающий список на десктопе · нижний шит на мобайле · единый визуальный язык</figcaption></figure>
 
-<h2 class="dc-h-major">Configurable components</h2>
-<figure class="dc-figure"><img src="cases/cs01/design-system/04-configurable-components.png" alt="Configurable components"><figcaption>Kitchen-sink primitives with toggleable slots replace dozens of bespoke variants</figcaption></figure>
+<h2 class="dc-h-major">Конфигурируемые компоненты</h2>
+<figure class="dc-figure"><img src="cases/cs01/design-system/04-configurable-components.png" alt="Конфигурируемые компоненты"><figcaption>Универсальные примитивы с переключаемыми слотами заменяют десятки штучных вариантов</figcaption></figure>
 
-<h2 class="dc-h-major">Slot-based cards</h2>
-<figure class="dc-figure"><img src="cases/cs01/design-system/05-card-slot-system.png" alt="Slot-based cards"><figcaption>Consistent outer shell, freeform interior — compose without detaching</figcaption></figure>
+<h2 class="dc-h-major">Карточки на слотах</h2>
+<figure class="dc-figure"><img src="cases/cs01/design-system/05-card-slot-system.png" alt="Карточки на слотах"><figcaption>Единая внешняя оболочка, свободное наполнение — собирай, не отвязывая компонент</figcaption></figure>
 
-<h2 class="dc-h-major">Design ↔ code connectivity</h2>
-<figure class="dc-figure"><img src="cases/cs01/design-system/06-code-connect-storybook.png" alt="Code Connect and Storybook"><figcaption>Figma Code Connect → React in Storybook — engineers inspect real props in Figma</figcaption></figure>` },
+<h2 class="dc-h-major">Связка дизайн ↔ код</h2>
+<figure class="dc-figure"><img src="cases/cs01/design-system/06-code-connect-storybook.png" alt="Code Connect и Storybook"><figcaption>Figma Code Connect → React в Storybook — инженеры видят реальные пропсы прямо в Figma</figcaption></figure>` },
             // ===== Health Samurai (cs06) — bodies render from MDX overlays =====
             { id: 'landing-platform', company: 'cs06', companyLabel: 'Health Samurai', image: '/rpogorov-dev/app/showcase/cases/deep-landing-platform.jpg',
               title: 'Платформа генерации лендингов и AI-пайплайн',
