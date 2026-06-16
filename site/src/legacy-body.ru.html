@@ -7154,37 +7154,26 @@
                 THREE = t; gsap = g.gsap || g.default || g;
             }
 
-            // Card text overlay: title (one line, truncated) at top; type bottom-left,
-            // year bottom-right. Transparent canvas the size of the tile; cached.
-            function getCardCanvas(title, type, year) {
-                const key = title + '|' + type + '|' + year;
-                let tex = labelCache.get(key);
+            // Card text overlay: small, tracked-out CAPS title on top — nothing else.
+            // Transparent canvas the size of the tile; cached by title.
+            function getCardCanvas(title) {
+                let tex = labelCache.get(title);
                 if (tex) return tex;
-                const a = accent();
                 const CW = 900, CH = 600, c = document.createElement('canvas'); c.width = CW; c.height = CH;
                 const ctx = c.getContext('2d');
                 const pad = CW * 0.05;
-                // title — top, single line with ellipsis
                 ctx.textBaseline = 'top';
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '600 58px "Space Grotesk", system-ui, sans-serif';
-                let t = title, ell = '';
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.font = '600 30px "Space Grotesk", system-ui, sans-serif';
+                ctx.letterSpacing = '5px';
+                let t = title.toUpperCase(), ell = '';
                 while (ctx.measureText(t + ell).width > CW - pad * 2 && t.length > 1) { t = t.slice(0, -1); ell = '…'; }
                 ctx.fillText(t + ell, pad, pad);
-                // meta — bottom: type left, year right
-                ctx.textBaseline = 'alphabetic';
-                ctx.font = '600 34px "JetBrains Mono", monospace';
-                ctx.fillStyle = `rgba(${a.r},${a.g},${a.b},0.95)`;
-                ctx.textAlign = 'left';
-                ctx.fillText('// ' + String(type).toUpperCase(), pad, CH - pad);
-                ctx.textAlign = 'right';
-                ctx.fillText(String(year), CW - pad, CH - pad);
-                ctx.textAlign = 'left';
                 tex = new THREE.CanvasTexture(c);
                 tex.colorSpace = THREE.SRGBColorSpace;
                 tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter;
                 tex.anisotropy = (renderer && renderer.capabilities.getMaxAnisotropy) ? renderer.capabilities.getMaxAnisotropy() : 1;
-                labelCache.set(key, tex);
+                labelCache.set(title, tex);
                 return tex;
             }
 
@@ -7219,13 +7208,18 @@
             // outward (spherical bulge, edges curve away); zoom keeps corners framed.
             const FRAG = [
                 'uniform sampler2D tDiffuse; uniform float k1; uniform float zoom; uniform float aspect; varying vec2 vUv;',
+                // This is the final pass to the canvas. A custom ShaderMaterial does
+                // NOT get three.js\' automatic linear→sRGB output encode, so without
+                // this the RT\'s linear colours hit the sRGB canvas raw and look
+                // over-saturated / "burnt". Encode here (same as three OutputPass).
+                'vec3 toSRGB(vec3 c){ c = max(c, vec3(0.0)); return mix(c * 12.92, 1.055 * pow(c, vec3(1.0/2.4)) - 0.055, step(0.0031308, c)); }',
                 'void main(){',
                 '  vec2 cc = vUv - 0.5;',                   // no aspect weight → bends X and Y evenly
                 '  float r2 = dot(cc, cc);',
                 '  float f = 1.0 - k1 * r2;',               // concave (впукло), gentle
                 '  vec2 uv = (vUv - 0.5) * f * zoom + 0.5;',
                 '  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.02, 0.027, 0.028, 1.0); return; }',
-                '  gl_FragColor = texture2D(tDiffuse, uv);',
+                '  gl_FragColor = vec4(toSRGB(texture2D(tDiffuse, uv).rgb), 1.0);',
                 '}'
             ].join('\n');
 
@@ -7263,7 +7257,7 @@
                 // card layout inside each стык-в-стык tile (padding → image centred,
                 // title band on top, type/year band on the bottom)
                 const pad = cellW * 0.05;
-                const titleBand = cellH * 0.17, metaBand = cellH * 0.12;
+                const titleBand = cellH * 0.12, metaBand = 0;   // only a small title band on top
                 const imgW = cellW - pad * 2, imgH = cellH - pad * 2 - titleBand - metaBand;
                 const imgCY = (metaBand - titleBand) / 2;
                 // cover-fit each image into the card slot: preserve aspect, crop the
@@ -7334,7 +7328,7 @@
                             if (rec.tex) { g.userData.imgMat.map = rec.tex; g.userData.imgMat.needsUpdate = true; }
                             if (typeof rec.color === 'number') g.userData.bgMat.color.setHex(rec.color);
                         }
-                        g.userData.textMat.map = getCardCanvas(item.title, item.type, item.year);
+                        g.userData.textMat.map = getCardCanvas(item.title);
                         g.userData.textMat.needsUpdate = true;
                     }
                 }
