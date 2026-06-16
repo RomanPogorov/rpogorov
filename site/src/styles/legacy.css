@@ -5633,6 +5633,32 @@
         }
         .cp-metaphor-text { font-size: 0.9375rem; line-height: 1.6; color: var(--hs-text-secondary); }
         .cp-metaphor-text strong { color: var(--hs-text); font-weight: 600; }
+        /* metaphor ↔ illustration pairs */
+        .cp-pairs { display: grid; gap: 18px; margin: 24px 0; }
+        .cp-pair {
+            display: grid;
+            grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+            gap: 24px;
+            align-items: center;
+            padding: 18px;
+            border: 1px solid var(--hs-border);
+            border-radius: 12px;
+            background: var(--hs-bg-elev);
+        }
+        .cp-pair img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--hs-border); }
+        .cp-pair-topic {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.03em;
+            color: var(--hs-red);
+            margin-bottom: 10px;
+        }
+        .cp-pair-text { font-size: 0.9375rem; line-height: 1.6; color: var(--hs-text-secondary); margin: 0; }
+        .cp-pair-text strong { color: var(--hs-text); font-weight: 600; }
+        @media (max-width: 640px) {
+            .cp-pair { grid-template-columns: 1fr; gap: 14px; }
+        }
         /* faint border + rounding on brand-identity case images */
         .case-page[data-case-page="brand-identity"] figure img {
             border: 1px solid var(--hs-border);
