@@ -786,7 +786,7 @@
     <div class="gallery-overlay" id="gallery-overlay" aria-hidden="true">
         <canvas class="gallery-canvas" id="gallery-canvas"></canvas>
         <div class="gallery-hud">
-            <span class="gallery-hud-title">works — тащи, чтобы листать · клик по карточке</span>
+            <span class="gallery-hud-title">works — тащи или скролль · ⌘ + scroll — вбок · клик по карточке</span>
             <button type="button" class="gallery-close-btn" id="gallery-close-btn" aria-label="Закрыть галерею">esc · закрыть</button>
         </div>
         <div class="gallery-loading" id="gallery-loading">сборка пространства…</div>
@@ -7451,6 +7451,21 @@
                 if (dragging) { setPointer(e); if (moved < 7) tryPick(); }
                 dragging = false; canvas.classList.remove('dragging');
             }
+            // Wheel / trackpad — plain scroll pans vertically; ⌘/Ctrl + scroll
+            // pans horizontally. (deltaX from the trackpad is ignored on purpose.)
+            function onWheel(e) {
+                if (!overlay.classList.contains('open')) return;
+                e.preventDefault();
+                const vh = halfH * viewScale;
+                const amount = e.deltaY * (e.deltaMode === 1 ? 16 : 1) * 0.5;   // line-mode → ~px, then damp
+                if (e.metaKey || e.ctrlKey) {
+                    const dx = -amount * (2 * vh * aspect) / window.innerWidth;
+                    panX += dx; velX = dx * 0.5;
+                } else {
+                    const dy = amount * (2 * vh) / window.innerHeight;
+                    panY += dy; velY = dy * 0.5;
+                }
+            }
             function tryPick() {
                 const g = hitTile();
                 if (g && g.userData.item) openDetail(g.userData.item);
@@ -7484,6 +7499,7 @@
                 canvas.addEventListener('pointerdown', onDown);
                 window.addEventListener('pointermove', onMove);
                 window.addEventListener('pointerup', onUp);
+                canvas.addEventListener('wheel', onWheel, { passive: false });
                 window.addEventListener('resize', resize);
             }
 
