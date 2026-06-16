@@ -7164,7 +7164,7 @@
                 const pad = CW * 0.05;
                 ctx.textBaseline = 'top';
                 ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                ctx.font = '600 30px "Space Grotesk", system-ui, sans-serif';
+                ctx.font = '400 25px "Space Grotesk", system-ui, sans-serif';
                 ctx.letterSpacing = '5px';
                 let t = title.toUpperCase(), ell = '';
                 while (ctx.measureText(t + ell).width > CW - pad * 2 && t.length > 1) { t = t.slice(0, -1); ell = '…'; }
@@ -7283,7 +7283,7 @@
                         const bgMat = new THREE.MeshBasicMaterial({ color: 0x0a1410, transparent: true, opacity: 0, depthWrite: false });
                         g.add(new THREE.Mesh(new THREE.PlaneGeometry(cellW, cellH), bgMat));
 
-                        const bMat = new THREE.LineBasicMaterial({ color: accHex, transparent: true, opacity: 0.1 });
+                        const bMat = new THREE.LineBasicMaterial({ color: 0x707070, transparent: true, opacity: 0.18 });
                         const border = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(cellW, cellH)), bMat);
                         border.position.z = 0.005; g.add(border);
 
@@ -7358,7 +7358,7 @@
                     const want = (g === top) ? 1 : 0;
                     g.userData.hov += (want - g.userData.hov) * 0.18;
                     g.userData.bgMat.opacity = g.userData.hov * 0.85;   // card bg paints its image colour on hover
-                    g.userData.bMat.opacity = 0.1 + g.userData.hov * 0.45;
+                    g.userData.bMat.opacity = 0.18 + g.userData.hov * 0.32;
                 }
                 canvas.style.cursor = top ? 'pointer' : (dragging ? 'grabbing' : 'grab');
             }
