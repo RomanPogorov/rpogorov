@@ -1873,7 +1873,7 @@
                 const d = buf.getChannelData(0);
                 for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
                 const src = a.createBufferSource(); src.buffer = buf; src.loop = true;
-                const filt = a.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 400; filt.Q.value = 0.7;
+                const filt = a.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 150; filt.Q.value = 1.0;
                 const g = a.createGain(); g.gain.value = 0;
                 src.connect(filt).connect(g).connect(a.destination);
                 src.start();
@@ -1919,8 +1919,8 @@
                     if (isSilent()) { if (dragNode) dragNode.g.gain.setTargetAtTime(0.0001, t, 0.05); return; }
                     const n = ensureDrag(); if (!n) return;
                     const i = Math.max(0, Math.min(1, intensity || 0));
-                    n.g.gain.setTargetAtTime(i * 0.16, t, 0.04);
-                    n.filt.frequency.setTargetAtTime(400 + i * 3000, t, 0.04);
+                    n.g.gain.setTargetAtTime(i * 0.22, t, 0.04);          // low freq reads quieter → a bit more gain
+                    n.filt.frequency.setTargetAtTime(120 + i * 450, t, 0.04);   // muffled low rumble, not airy wind
                 },
             };
             window.__sfx = SFX;
