@@ -7117,7 +7117,7 @@
             function computeDims() {
                 cellH = (halfH * 2) / 4.2;        // ~4.2 cell-rows tall in view
                 cellW = cellH * TILE_ASPECT;
-                innerW = cellW * 0.9; innerH = cellH * 0.9;   // gap between tiles
+                innerW = cellW; innerH = cellH;               // стык в стык (no gap)
                 spanX = COLS * cellW; spanY = ROWS * cellH;
             }
 
@@ -7129,8 +7129,8 @@
             let aspect = 1;
             const pointer = { x: 0.5, y: 0.5 };   // screen uv, y up
             let dragging = false, lastX = 0, lastY = 0, moved = 0;
-            let panX = 0, panY = 0, velX = 0, velY = 0, curK1 = 0.34;
-            const K1_BASE = 0.34, K1_DRAG = 0.48, ZOOM = 0.82;
+            let panX = 0, panY = 0, velX = 0, velY = 0, curK1 = 0.22;
+            const K1_BASE = 0.22, K1_DRAG = 0.30, ZOOM = 1.0;
             const wrap = (v, s) => v - s * Math.round(v / s);
             const mod = (n, m) => ((n % m) + m) % m;
 
@@ -7176,7 +7176,7 @@
                 'void main(){',
                 '  vec2 cc = vUv - 0.5; cc.x *= aspect;',
                 '  float r2 = dot(cc, cc);',
-                '  float f = 1.0 + k1 * r2;',
+                '  float f = 1.0 - k1 * r2 * r2;',          // concave (впукло); r^4 keeps the centre flat, bends only the borders
                 '  vec2 uv = (vUv - 0.5) * f * zoom + 0.5;',
                 '  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.02, 0.027, 0.028, 1.0); return; }',
                 '  gl_FragColor = texture2D(tDiffuse, uv);',
@@ -7241,13 +7241,16 @@
             function layout() {
                 for (const g of cells) {
                     const sc = g.userData.sc, sr = g.userData.sr;
-                    const bx = (sc - (COLS - 1) / 2) * cellW;
-                    const by = (sr - (ROWS - 1) / 2) * cellH;
-                    const x = wrap(bx + panX, spanX);
-                    const y = wrap(by + panY, spanY);
-                    g.position.set(x, y, 0);
-                    const wc = Math.round((x - panX) / cellW);
-                    const wr = Math.round((y - panY) / cellH);
+                    const rawX = (sc - (COLS - 1) / 2) * cellW + panX;
+                    const rawY = (sr - (ROWS - 1) / 2) * cellH + panY;
+                    const kx = Math.round(rawX / spanX), ky = Math.round(rawY / spanY);
+                    g.position.set(rawX - kx * spanX, rawY - ky * spanY, 0);
+                    // Integer world-cell index. The old Math.round((x-panX)/cellW) sat
+                    // on a half-integer (even COLS) and flipped randomly under float
+                    // noise → titles glitched mid-scroll. This changes content ONLY
+                    // when a tile teleports across the (off-screen) wrap seam.
+                    const wc = sc - kx * COLS;
+                    const wr = sr - ky * ROWS;
                     if (wc !== g.userData.wc || wr !== g.userData.wr) {
                         g.userData.wc = wc; g.userData.wr = wr;
                         const item = contentFor(wc, wr);
@@ -7264,7 +7267,7 @@
                 const cx = pointer.x - 0.5, cy = pointer.y - 0.5;
                 const k1 = postMat ? postMat.uniforms.k1.value : K1_BASE;
                 const r2 = (cx * aspect) * (cx * aspect) + cy * cy;
-                const f = 1.0 + k1 * r2;
+                const f = 1.0 - k1 * r2 * r2;
                 return { x: cx * f * ZOOM * 2 * halfH * aspect, y: cy * f * ZOOM * 2 * halfH };
             }
             function hitTile() {
