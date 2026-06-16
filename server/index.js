@@ -23,9 +23,20 @@ const { spawn } = require('child_process');
 const PORT = parseInt(process.env.PORT || '3055', 10);
 const TG_TOKEN = process.env.TG_BOT_TOKEN;
 const ROMAN_CHAT_ID = process.env.ROMAN_CHAT_ID || '126145988';
-// Portfolio password gate. Visitors enter this single password (no login) to
-// unlock the site. Change it in server/.env (GATE_PASSWORD=...) + restart.
+// Portfolio password gate. GATE_PASSWORD is the SHARED ("общий") password.
+// Each access request also mints a PRIVATE ("частный") per-user password,
+// stored in state.gatePasswords with usage stats. Both unlock the site.
 const GATE_PASSWORD = process.env.GATE_PASSWORD || 'change-me-in-env';
+// Readable, unique-ish per-user password: themed word + 4 hex chars.
+const PW_WORDS = ['ronin', 'katana', 'origami', 'samurai', 'aidbox', 'runner', 'torii', 'sakura', 'sensei', 'kaizen', 'dojo', 'shogun', 'bonsai', 'tanto', 'zen'];
+function genPassword() {
+  let p, guard = 0;
+  do {
+    const w = PW_WORDS[crypto.randomBytes(1)[0] % PW_WORDS.length];
+    p = w + '-' + crypto.randomBytes(2).toString('hex');
+  } while (state.gatePasswords && state.gatePasswords[p] && guard++ < 50);
+  return p;
+}
 // Forum supergroup ("Portfolio viewers") — each visitor gets a Topic in here.
 // Bot must be admin with "Manage Topics". Empty → fall back to Roman's DM.
 const GROUP_CHAT_ID = process.env.GROUP_CHAT_ID || '-1004299399598';
@@ -55,6 +66,8 @@ let state = {
   chatToThread: {},
   // optional username metadata supplied via /api/chat/pickup
   threadUsername: {},
+  // per-user portfolio passwords: password -> { name, contact, reason, createdAt, uses, lastUsed }
+  gatePasswords: {},
 };
 try {
   state = Object.assign(state, JSON.parse(fs.readFileSync(STATE_PATH, 'utf-8')));
@@ -381,7 +394,18 @@ const server = http.createServer(async (req, res) => {
     let body;
     try { body = JSON.parse(await readBody(req)); } catch { return send(res, 400, { error: 'bad json' }); }
     const pw = String(body.password || '');
-    const ok = pw.length > 0 && pw === GATE_PASSWORD;
+    let ok = false;
+    if (pw.length > 0) {
+      if (pw === GATE_PASSWORD) {
+        ok = true;                                  // shared / общий password
+      } else if (state.gatePasswords[pw]) {
+        ok = true;                                  // private / частный per-user password
+        const rec = state.gatePasswords[pw];
+        rec.uses = (rec.uses || 0) + 1;
+        rec.lastUsed = Date.now();
+        saveLater();
+      }
+    }
     return send(res, 200, { ok });
   }
   // "Request password" — visitor says who they are and why; it lands in Roman's TG.
@@ -391,8 +415,12 @@ const server = http.createServer(async (req, res) => {
     const name = String(body.name || '').trim().slice(0, 200);
     const reason = String(body.reason || '').trim().slice(0, 1000);
     const contact = String(body.contact || '').trim().slice(0, 200);
-    if (!name || !reason) return send(res, 400, { error: 'name and reason required' });
-    const msg = `🔑 ЗАПРОС ПАРОЛЯ к портфолио\n\nКто: ${name}${contact ? `\nКонтакт: ${contact}` : ''}\n\nЗачем нужен доступ:\n${reason}`;
+    if (!name || !contact || !reason) return send(res, 400, { error: 'name, contact and reason required' });
+    // Mint a private per-user password and remember who it belongs to.
+    const password = genPassword();
+    state.gatePasswords[password] = { name, contact, reason, createdAt: Date.now(), uses: 0, lastUsed: null };
+    saveLater();
+    const msg = `🔑 ЗАПРОС ПАРОЛЯ\n\nКто: ${name}\nКонтакт: ${contact}\n\nЗачем:\n${reason}\n\n🔓 Личный пароль для него:\n${password}\n\nОтправь его на контакт выше. Общий пароль тоже работает.`;
     // Each request lands in its OWN forum topic in the group; fall back to DM.
     (async () => {
       let topicId = null;
