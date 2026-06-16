@@ -7130,9 +7130,12 @@
             const pointer = { x: 0.5, y: 0.5 };   // screen uv, y up
             let dragging = false, lastX = 0, lastY = 0, moved = 0;
             let panX = 0, panY = 0, velX = 0, velY = 0, curK1 = 0.22, viewScale = 1;
+            let parX = 0, parY = 0, prevPanX = 0, prevPanY = 0, blockAR = 1.5;
             const K1_BASE = 0.22, K1_DRAG = 0.28, ZOOM = 1.0;   // a touch more edge bend
             const DRAG_PULLBACK = 1.12;          // camera eases back while dragging
-            const INERTIA = 0.95;                // longer coast after release
+            const INERTIA = 0.965;               // longer coast after release
+            const PARALLAX_AMP = 0.55;           // hover parallax drift (world units)
+            const MOTION_BLUR = 0.9;             // motion-blur amount while moving
             // placeholder card images (Roman's own work) — swap/extend later.
             const IMAGES = ['cs01-americor.png', 'cs02-aidbox.jpg', 'cs03-landings.jpg', 'cs04-creditor.png',
                 'cs05-databricks.png', 'deep-brand-identity.jpg', 'deep-design-system.jpg', 'deep-engagement.jpg',
@@ -7162,10 +7165,11 @@
                 const CW = 900, CH = 600, c = document.createElement('canvas'); c.width = CW; c.height = CH;
                 const ctx = c.getContext('2d');
                 const pad = CW * 0.05;
+                const a = accent();
                 ctx.textBaseline = 'top';
-                ctx.fillStyle = 'rgba(255,255,255,0.9)';
-                ctx.font = '400 25px "Space Grotesk", system-ui, sans-serif';
-                ctx.letterSpacing = '5px';
+                ctx.fillStyle = `rgba(${a.r},${a.g},${a.b},0.92)`;   // accent green, site style
+                ctx.font = '400 20px "JetBrains Mono", monospace';   // thinner + smaller, mono
+                ctx.letterSpacing = '2px';
                 let t = title.toUpperCase(), ell = '';
                 while (ctx.measureText(t + ell).width > CW - pad * 2 && t.length > 1) { t = t.slice(0, -1); ell = '…'; }
                 ctx.fillText(t + ell, pad, pad);
@@ -7196,9 +7200,9 @@
                             for (let i = 0; i < d.length; i += 4) { R += d[i]; G += d[i + 1]; B += d[i + 2]; n++; }
                             r = Math.round(R / n); g = Math.round(G / n); b = Math.round(B / n);
                         } catch (e) {}
-                        res({ tex, color: (r << 16) | (g << 8) | b });
+                        res({ tex, color: (r << 16) | (g << 8) | b, aspect: (img.naturalWidth / img.naturalHeight) || 1.5 });
                     };
-                    img.onerror = () => res({ tex: null, color: 0x0a1410 });
+                    img.onerror = () => res({ tex: null, color: 0x0a1410, aspect: 1.5 });
                     img.src = url;
                 }))).then(recs => { imageRecs = recs; });
             }
@@ -7207,19 +7211,24 @@
             // Fisheye/barrel lens over the WHOLE flat render. k1>0 bows the grid
             // outward (spherical bulge, edges curve away); zoom keeps corners framed.
             const FRAG = [
-                'uniform sampler2D tDiffuse; uniform float k1; uniform float zoom; uniform float aspect; varying vec2 vUv;',
-                // This is the final pass to the canvas. A custom ShaderMaterial does
-                // NOT get three.js\' automatic linear→sRGB output encode, so without
-                // this the RT\'s linear colours hit the sRGB canvas raw and look
-                // over-saturated / "burnt". Encode here (same as three OutputPass).
+                'uniform sampler2D tDiffuse; uniform float k1; uniform float zoom; uniform float aspect; uniform vec2 vel; varying vec2 vUv;',
+                // Final pass to the canvas. A custom ShaderMaterial does NOT get
+                // three.js\' automatic linear→sRGB output encode, so without this the
+                // RT\'s linear colours hit the sRGB canvas raw and look over-saturated
+                // / "burnt". Encode here (same as three OutputPass).
                 'vec3 toSRGB(vec3 c){ c = max(c, vec3(0.0)); return mix(c * 12.92, 1.055 * pow(c, vec3(1.0/2.4)) - 0.055, step(0.0031308, c)); }',
+                'vec3 samp(vec2 uv){ if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) return vec3(0.02, 0.027, 0.028); return texture2D(tDiffuse, uv).rgb; }',
                 'void main(){',
                 '  vec2 cc = vUv - 0.5;',                   // no aspect weight → bends X and Y evenly
                 '  float r2 = dot(cc, cc);',
                 '  float f = 1.0 - k1 * r2;',               // concave (впукло), gentle
                 '  vec2 uv = (vUv - 0.5) * f * zoom + 0.5;',
-                '  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) { gl_FragColor = vec4(0.02, 0.027, 0.028, 1.0); return; }',
-                '  gl_FragColor = vec4(toSRGB(texture2D(tDiffuse, uv).rgb), 1.0);',
+                '  vec3 col;',
+                '  if (dot(vel, vel) < 1e-8) { col = samp(uv); }',   // still → single tap
+                '  else { col = vec3(0.0);',                          // moving → directional motion blur
+                '    for (int i = -3; i <= 3; i++) { col += samp(uv + vel * (float(i) / 3.0)); }',
+                '    col /= 7.0; }',
+                '  gl_FragColor = vec4(toSRGB(col), 1.0);',
                 '}'
             ].join('\n');
 
@@ -7248,7 +7257,7 @@
                 postScene = new THREE.Scene();
                 postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
                 postMat = new THREE.ShaderMaterial({
-                    uniforms: { tDiffuse: { value: rt.texture }, k1: { value: K1_BASE }, zoom: { value: ZOOM }, aspect: { value: aspect } },
+                    uniforms: { tDiffuse: { value: rt.texture }, k1: { value: K1_BASE }, zoom: { value: ZOOM }, aspect: { value: aspect }, vel: { value: new THREE.Vector2(0, 0) } },
                     vertexShader: VERT, fragmentShader: FRAG, depthTest: false, depthWrite: false
                 });
                 postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
@@ -7260,20 +7269,7 @@
                 const titleBand = cellH * 0.12, metaBand = 0;   // only a small title band on top
                 const imgW = cellW - pad * 2, imgH = cellH - pad * 2 - titleBand - metaBand;
                 const imgCY = (metaBand - titleBand) / 2;
-                // cover-fit each image into the card slot: preserve aspect, crop the
-                // overflow (centre crop) via a UV transform instead of stretching.
-                const planeAR = imgW / imgH;
-                for (const rec of imageRecs) {
-                    if (!rec || !rec.tex || !rec.tex.image) continue;
-                    const iw = rec.tex.image.naturalWidth || rec.tex.image.width;
-                    const ih = rec.tex.image.naturalHeight || rec.tex.image.height;
-                    if (!iw || !ih) continue;
-                    const iAR = iw / ih;
-                    rec.tex.center.set(0.5, 0.5);
-                    if (iAR > planeAR) rec.tex.repeat.set(planeAR / iAR, 1);
-                    else rec.tex.repeat.set(1, iAR / planeAR);
-                    rec.tex.needsUpdate = true;
-                }
+                blockAR = imgW / imgH;   // card image slot aspect — used to contain-fit each image
                 for (let sr = 0; sr < ROWS; sr++) {
                     for (let sc = 0; sc < COLS; sc++) {
                         const g = new THREE.Group();
@@ -7297,7 +7293,7 @@
                         const textMesh = new THREE.Mesh(new THREE.PlaneGeometry(cellW, cellH), textMat);
                         textMesh.position.z = 0.02; g.add(textMesh);
 
-                        g.userData.bgMat = bgMat; g.userData.bMat = bMat; g.userData.imgMat = imgMat; g.userData.textMat = textMat;
+                        g.userData.bgMat = bgMat; g.userData.bMat = bMat; g.userData.imgMat = imgMat; g.userData.imgMesh = imgMesh; g.userData.textMat = textMat;
                         scene.add(g); cells.push(g);
                     }
                 }
@@ -7312,7 +7308,7 @@
                     const rawX = (sc - (COLS - 1) / 2) * cellW + panX;
                     const rawY = (sr - (ROWS - 1) / 2) * cellH + panY;
                     const kx = Math.round(rawX / spanX), ky = Math.round(rawY / spanY);
-                    g.position.set(rawX - kx * spanX, rawY - ky * spanY, 0);
+                    g.position.set(rawX - kx * spanX + parX, rawY - ky * spanY + parY, 0);
                     // Integer world-cell index. The old Math.round((x-panX)/cellW) sat
                     // on a half-integer (even COLS) and flipped randomly under float
                     // noise → titles glitched mid-scroll. This changes content ONLY
@@ -7327,6 +7323,11 @@
                         if (rec) {
                             if (rec.tex) { g.userData.imgMat.map = rec.tex; g.userData.imgMat.needsUpdate = true; }
                             if (typeof rec.color === 'number') g.userData.bgMat.color.setHex(rec.color);
+                            // contain-fit: scale the image mesh to the image's aspect so
+                            // it sits fully inside the slot (no crop, no stretch).
+                            const iAR = rec.aspect || blockAR;
+                            if (iAR >= blockAR) g.userData.imgMesh.scale.set(1, blockAR / iAR, 1);
+                            else g.userData.imgMesh.scale.set(iAR / blockAR, 1, 1);
                         }
                         g.userData.textMat.map = getCardCanvas(item.title);
                         g.userData.textMat.needsUpdate = true;
@@ -7377,6 +7378,13 @@
                 postMat.uniforms.k1.value = curK1;
                 const vsTarget = dragging ? DRAG_PULLBACK : 1.0;  // camera pulls back on drag, returns on release
                 viewScale += (vsTarget - viewScale) * 0.08;
+                // hover parallax — the grid drifts slightly toward the cursor
+                parX += ((pointer.x - 0.5) * PARALLAX_AMP - parX) * 0.06;
+                parY += ((pointer.y - 0.5) * PARALLAX_AMP - parY) * 0.06;
+                // motion blur from how far the grid moved this frame (uv space)
+                const denom = 2 * halfH * viewScale;
+                postMat.uniforms.vel.value.set((panX - prevPanX) / (denom * aspect) * MOTION_BLUR, (panY - prevPanY) / denom * MOTION_BLUR);
+                prevPanX = panX; prevPanY = panY;
                 applyCamera();
                 layout();
                 updateHover();
