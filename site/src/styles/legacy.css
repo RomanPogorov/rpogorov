@@ -5645,7 +5645,7 @@
             border-radius: 12px;
             background: var(--hs-bg-elev);
         }
-        .cp-pair img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--hs-border); }
+        .cp-pair img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.12); }
         .cp-pair-topic {
             display: block;
             font-family: 'JetBrains Mono', monospace;
@@ -5661,13 +5661,13 @@
         }
         /* one-per-row newsletter mockups, centred */
         .cp-stack { display: flex; flex-direction: column; align-items: center; gap: 22px; margin: 24px 0; }
-        .cp-stack img { width: 100%; max-width: 620px; height: auto; display: block; border-radius: 8px; border: 1px solid var(--hs-border); }
+        .cp-stack img { width: 100%; max-width: 620px; height: auto; display: block; border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.12); }
         /* centred portrait demo video (phone recording) */
         .cp-video { display: flex; justify-content: center; margin: 24px 0; }
-        .cp-video video { width: 100%; max-width: 340px; height: auto; display: block; border-radius: 12px; border: 1px solid var(--hs-border); }
+        .cp-video video { width: 100%; max-width: 340px; height: auto; display: block; border-radius: 8px; border: 1px solid rgba(0, 0, 0, 0.12); }
         /* faint border + rounding on brand-identity case images */
         .case-page[data-case-page="brand-identity"] figure img {
-            border: 1px solid var(--hs-border);
+            border: 1px solid rgba(0, 0, 0, 0.12);
             border-radius: 8px;
         }
 
