@@ -631,7 +631,7 @@
         /* SHELVED 2026-06-15 — gallery WIP (needs flat-grid + whole-image lens, not
            per-cell cylinder). To resume: change display below back to inline-flex. */
         .gallery-open-btn {
-            display: inline-flex;
+            display: none; /* hidden (Roman) — gallery WIP */
             align-items: center;
             gap: 7px;
             padding: 7px 12px;
