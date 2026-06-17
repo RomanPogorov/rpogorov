@@ -12992,8 +12992,9 @@
             .hs-achievements-grid { grid-template-columns: 1fr; }
         }
 
-        /* career timeline: Americor butts directly against Health Samurai */
-        .ctl-axis-row[data-ctl-row="main"] .ctl-co[data-role="americor"] { margin-right: -4px; }
+        /* career timeline: Americor ends exactly where Health Samurai starts
+           (grid line 12 = 2025). The grid-column end is calc(--e + 1), so
+           Americor --e:11 → ends at line 12 = HS --s:12. No overlap, no hack. */
         /* clickable project cards open the case overlay */
         .ctl-project--link { cursor: pointer; text-decoration: none; transition: border-color .18s, background .18s, transform .18s; }
         .ctl-project--link:hover { border-color: rgba(var(--acc-rgb), 0.55); background: rgba(var(--acc-rgb), 0.06); transform: translateY(-1px); }
