@@ -37,6 +37,42 @@ function genPassword() {
   } while (state.gatePasswords && state.gatePasswords[p] && guard++ < 50);
   return p;
 }
+
+// --- Signed gate cookie. The real, server-enforced gate: Caddy forward_auth
+// calls /api/gate/check, which only passes if the request carries a valid
+// HMAC-signed cookie. The cookie is minted here (never in the client bundle),
+// so it can't be forged without GATE_COOKIE_SECRET. ---
+const GATE_COOKIE_SECRET = process.env.GATE_COOKIE_SECRET || '';
+const GATE_COOKIE_NAME = 'rp_gate';
+const GATE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+function signGate(exp) {
+  return crypto.createHmac('sha256', GATE_COOKIE_SECRET).update(String(exp)).digest('base64url');
+}
+function makeGateToken() {
+  const exp = Date.now() + GATE_TTL_MS;
+  return `${exp}.${signGate(exp)}`;
+}
+function gateTokenValid(token) {
+  if (!token || !GATE_COOKIE_SECRET) return false;
+  const dot = token.indexOf('.');
+  if (dot < 0) return false;
+  const exp = token.slice(0, dot), sig = token.slice(dot + 1);
+  if (!/^\d+$/.test(exp) || Number(exp) < Date.now()) return false;
+  const expected = signGate(exp);
+  if (sig.length !== expected.length) return false;
+  try { return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected)); } catch { return false; }
+}
+function parseCookies(req) {
+  const out = {};
+  (req.headers.cookie || '').split(';').forEach((p) => {
+    const i = p.indexOf('=');
+    if (i > 0) out[p.slice(0, i).trim()] = p.slice(i + 1).trim();
+  });
+  return out;
+}
+function gateCookieHeader() {
+  return `${GATE_COOKIE_NAME}=${makeGateToken()}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${Math.floor(GATE_TTL_MS / 1000)}`;
+}
 // Forum supergroup ("Portfolio viewers") — each visitor gets a Topic in here.
 // Bot must be admin with "Manage Topics". Empty → fall back to Roman's DM.
 const GROUP_CHAT_ID = process.env.GROUP_CHAT_ID || '-1004299399598';
@@ -406,7 +442,23 @@ const server = http.createServer(async (req, res) => {
         saveLater();
       }
     }
-    return send(res, 200, { ok });
+    if (ok) {
+      // Mint the signed gate cookie so Caddy forward_auth will serve content.
+      res.writeHead(200, {
+        'content-type': 'application/json',
+        'cache-control': 'no-store',
+        'Set-Cookie': gateCookieHeader(),
+      });
+      return res.end(JSON.stringify({ ok: true }));
+    }
+    return send(res, 200, { ok: false });
+  }
+  // Gate check for Caddy forward_auth: 200 if a valid gate cookie is present,
+  // 401 otherwise (Caddy then serves the gate page instead of the content).
+  if (req.method === 'GET' && url.pathname === '/api/gate/check') {
+    const cookies = parseCookies(req);
+    if (gateTokenValid(cookies[GATE_COOKIE_NAME])) return send(res, 200, { ok: true });
+    return send(res, 401, { ok: false });
   }
   // "Request password" — visitor says who they are and why; it lands in Roman's TG.
   if (req.method === 'POST' && url.pathname === '/api/gate/request') {
